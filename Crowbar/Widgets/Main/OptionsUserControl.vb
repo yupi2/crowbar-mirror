@@ -172,17 +172,17 @@ Public Class OptionsUserControl
 
 	Private Sub ApplyAutoOpenMdlFileOptions()
 		If TheApp.Settings.OptionsAutoOpenMdlFileIsChecked Then
-			Win32.CreateFileAssociation("mdl", "mdlFile", "MDL File", Application.ExecutablePath)
+			Win32Api.CreateFileAssociation("mdl", "mdlFile", "MDL File", Application.ExecutablePath)
 		Else
-			Win32.DeleteFileAssociation("mdl", "mdlFile", "MDL File", Application.ExecutablePath)
+			Win32Api.DeleteFileAssociation("mdl", "mdlFile", "MDL File", Application.ExecutablePath)
 		End If
 	End Sub
 
 	Private Sub ApplyAutoOpenQcFileOptions()
 		If TheApp.Settings.OptionsAutoOpenQcFileIsChecked Then
-			Win32.CreateFileAssociation("qc", "qcFile", "QC File", Application.ExecutablePath)
+			Win32Api.CreateFileAssociation("qc", "qcFile", "QC File", Application.ExecutablePath)
 		Else
-			Win32.DeleteFileAssociation("qc", "qcFile", "QC File", Application.ExecutablePath)
+			Win32Api.DeleteFileAssociation("qc", "qcFile", "QC File", Application.ExecutablePath)
 		End If
 	End Sub
 
@@ -194,14 +194,14 @@ Public Class OptionsUserControl
 		'My.Computer.Registry.ClassesRoot.CreateSubKey("mdlFile").SetValue("", "MDL File", Microsoft.Win32.RegistryValueKind.String)
 		'My.Computer.Registry.ClassesRoot.CreateSubKey("mdlFile\shell\open\command").SetValue("", Application.ExecutablePath + " ""%l"" ", Microsoft.Win32.RegistryValueKind.String)
 		If TheApp.Settings.OptionsAutoOpenMdlFileIsChecked Then
-			Win32.CreateFileAssociation("mdl", "mdlFile", "MDL File", Application.ExecutablePath)
+			Win32Api.CreateFileAssociation("mdl", "mdlFile", "MDL File", Application.ExecutablePath)
 		Else
-			Win32.DeleteFileAssociation("mdl", "mdlFile", "MDL File", Application.ExecutablePath)
+			Win32Api.DeleteFileAssociation("mdl", "mdlFile", "MDL File", Application.ExecutablePath)
 		End If
 		If TheApp.Settings.OptionsAutoOpenQcFileIsChecked Then
-			Win32.CreateFileAssociation("qc", "qcFile", "QC File", Application.ExecutablePath)
+			Win32Api.CreateFileAssociation("qc", "qcFile", "QC File", Application.ExecutablePath)
 		Else
-			Win32.DeleteFileAssociation("qc", "qcFile", "QC File", Application.ExecutablePath)
+			Win32Api.DeleteFileAssociation("qc", "qcFile", "QC File", Application.ExecutablePath)
 		End If
 
 		'TODO: Apply the context menu options to Windows.

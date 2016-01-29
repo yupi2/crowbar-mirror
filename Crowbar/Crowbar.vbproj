@@ -13,7 +13,7 @@
     <MyType>WindowsFormsWithCustomSubMain</MyType>
     <OptionStrict>On</OptionStrict>
     <ApplicationIcon>resources\crowbar_icon.ico</ApplicationIcon>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
@@ -31,6 +31,7 @@
     </DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>Full</DebugType>
@@ -45,6 +46,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <DebugSymbols>true</DebugSymbols>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
@@ -71,6 +73,10 @@
     <Compile Include="Core\- Application\AppConstants.vb" />
     <Compile Include="Core\- Application\AppEnums.vb" />
     <Compile Include="Core\- Application\AppExceptionHandler.vb" />
+    <Compile Include="Core\- General\Bitmap\BitmapFile.vb" />
+    <Compile Include="Core\- General\Bitmap\BitmapFileHeader.vb" />
+    <Compile Include="Core\- General\Bitmap\BitmapInfoHeader.vb" />
+    <Compile Include="Core\- General\Bitmap\BitmapRgbQuad.vb" />
     <Compile Include="Core\- General\EnumHelper.vb" />
     <Compile Include="Core\- General\GenericsModule.vb" />
     <Compile Include="Core\- General\StringClass.vb" />
@@ -94,77 +100,237 @@
     <Compile Include="Core\- General\IntermediateExpression.vb" />
     <Compile Include="Core\- General\MathModule.vb" />
     <Compile Include="Core\- General\PropertyComparer.vb" />
-    <Compile Include="Core\- General\Win32.vb" />
+    <Compile Include="Core\- General\Win32Api.vb" />
     <Compile Include="Core\- General\WindowsJob.vb" />
     <Compile Include="Core\Decompiler\DecompilerOutputInfo.vb" />
     <Compile Include="Core\Decompiler\DecompilerInputInfo.vb" />
     <Compile Include="Core\Decompiler\Decompiler.vb">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Core\FileDataCompiled\SourceAniFile.vb" />
-    <Compile Include="Core\FileDataCompiled\SourceVtxFile.vb" />
-    <Compile Include="Core\FileDataCompiled\SourceVvdFile.vb" />
-    <Compile Include="Core\FileDataDecompiled\SourceVrdFile.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlCompressedIkError.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlLocalHierarchy.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlWeightList.vb" />
+    <Compile Include="Core\SourceModel\- Base\SourceMdlAnimationDescBase.vb" />
+    <Compile Include="Core\SourceModel\- Base\SourceMdlFileDataBase.vb" />
+    <Compile Include="Core\SourceModel\- Base\SourceMdlSequenceDescBase.vb" />
+    <Compile Include="Core\SourceModel\- Debug\AccessedBytesDebugFile.vb" />
+    <Compile Include="Core\SourceModel\- Base\Enums.vb" />
+    <Compile Include="Core\SourceModel\- Base\SourceModelProgressEventArgs.vb" />
+    <Compile Include="Core\SourceModel\- Base\SourceModelProgressEventHandler.vb" />
+    <Compile Include="Core\SourceModel\- Base\SourceFileNamesModule.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlBoneTransform.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlLinearBone.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceVtxFile.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceVvdFile.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlCompressedIkError.vb" />
+    <Compile Include="Core\SourceModel\- Base\SourceFileData.vb" />
+    <Compile Include="Core\SourceModel\SourceGlobal\SourceFloat8bits.vb" />
+    <Compile Include="Core\SourceModel\SourceModel04\SourceMdlFileData\SourceMdlBone04.vb" />
+    <Compile Include="Core\SourceModel\SourceModel04\SourceMdlFileData\SourceMdlFileData04.vb" />
+    <Compile Include="Core\SourceModel\SourceModel04\SourceMdlFile04.vb" />
+    <Compile Include="Core\SourceModel\SourceModel04\SourceModel04.vb" />
+    <Compile Include="Core\SourceModel\SourceModel06\SourceMdlFileData\SourceBonePostionAndRotation06.vb" />
+    <Compile Include="Core\SourceModel\SourceModel06\SourceMdlFileData\SourceBoneTransform06.vb" />
+    <Compile Include="Core\SourceModel\SourceModel06\SourceMdlFileData\SourceMdlAnimation06.vb" />
+    <Compile Include="Core\SourceModel\SourceModel06\SourceMdlFileData\SourceMdlBodyPart06.vb" />
+    <Compile Include="Core\SourceModel\SourceModel06\SourceMdlFileData\SourceMdlFileData06.vb" />
+    <Compile Include="Core\SourceModel\SourceModel06\SourceMdlFileData\SourceMdlBone06.vb" />
+    <Compile Include="Core\SourceModel\SourceModel06\SourceMdlFileData\SourceMdlBoneController06.vb" />
+    <Compile Include="Core\SourceModel\SourceModel06\SourceMdlFileData\SourceMdlBonePosition06.vb" />
+    <Compile Include="Core\SourceModel\SourceModel06\SourceMdlFileData\SourceMdlBoneRotation06.vb" />
+    <Compile Include="Core\SourceModel\SourceModel06\SourceMdlFileData\SourceMdlEvent06.vb" />
+    <Compile Include="Core\SourceModel\SourceModel06\SourceMdlFileData\SourceMdlMesh06.vb" />
+    <Compile Include="Core\SourceModel\SourceModel06\SourceMdlFileData\SourceMdlModel06.vb" />
+    <Compile Include="Core\SourceModel\SourceModel06\SourceMdlFileData\SourceMdlModelData06.vb" />
+    <Compile Include="Core\SourceModel\SourceModel06\SourceMdlFileData\SourceMdlPivot06.vb" />
+    <Compile Include="Core\SourceModel\SourceModel06\SourceMdlFileData\SourceMdlSequenceDesc06.vb" />
+    <Compile Include="Core\SourceModel\SourceModel06\SourceMdlFileData\SourceMdlTexture06.vb" />
+    <Compile Include="Core\SourceModel\SourceModel06\SourceMdlFileData\SourceMdlTriangleVertex06.vb" />
+    <Compile Include="Core\SourceModel\SourceModel06\SourceMdlFile06.vb" />
+    <Compile Include="Core\SourceModel\SourceModel06\SourceModule06.vb" />
+    <Compile Include="Core\SourceModel\SourceModel06\SourceQcFile06.vb" />
+    <Compile Include="Core\SourceModel\SourceModel06\SourceSmdFile06.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceBoneTransform10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceMeshTriangleStripOrFan10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceModule10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceMdlAnimation10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceMdlAnimationValue10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceMdlAttachment10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceMdlBodyPart10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceMdlBone10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceMdlBoneController10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceMdlEvent10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceMdlHitbox10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceMdlMesh10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceMdlModel10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceMdlPivot10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceMdlSequenceDesc10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceMdlSequenceGroup10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceMdlSequenceGroupFileHeader10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceMdlTexture10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceMdlVertexInfo10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFile10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceMdlFileData10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceQcFile10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceSmdFile10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\FlexFrame2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlFileData2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel06\SourceModel06.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlAnimation2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlAnimationDesc2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlAnimationValue2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlAttachment2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlAxisInterpBone2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlBodyPart2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlBone2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlBoneController2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlEyeball2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlFlex2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlHitbox2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlHitboxSet2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlIncludeModel2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlMesh2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlModel2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlPoseParamDesc2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlQuatInterpBone2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlSequenceDesc2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlSequenceGroup2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlTangent2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlTexture2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlQuatInterpInfo2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlType1Vertex2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlType2Vertex2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlType0Vertex2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFileData\SourceMdlVertAnim2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceModule2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourcePhyFile2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourcePhyFileData\SourcePhyFileData2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceQcFile2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceVtaFile2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceVtxFileData\SourceVertex2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceVtxFileData\SourceVtxFileData107.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceVtxFileData\SourceVtxBodyPart107.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceVtxFileData\SourceVtxBoneStateChange107.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceVtxFileData\SourceVtxMesh107.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceVtxFileData\SourceVtxModel107.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceVtxFileData\SourceVtxModelLod107.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceVtxFileData\SourceVtxStrip107.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceVtxFileData\SourceVtxStripGroup107.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceVtxFileData\SourceVtxVertex107.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceMdlFile2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceSmdFile2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceVtxFile107.vb" />
+    <Compile Include="Core\SourceModel\SourceModel29\SourceModel29.vb" />
+    <Compile Include="Core\SourceModel\SourceModel37\SourceModel37.vb" />
+    <Compile Include="Core\SourceModel\SourceModel38\SourceAniFileData\SourceAniFileData38.vb" />
+    <Compile Include="Core\SourceModel\SourceModel38\SourceMdlFileData\SourceMdlFileData38.vb" />
+    <Compile Include="Core\SourceModel\SourceModel38\SourceVvdFileData\SourceVvdFileData38.vb" />
+    <Compile Include="Core\SourceModel\SourceModel38\SourceModel38.vb" />
+    <Compile Include="Core\SourceModel\SourceModel44\SourceAniFile44.vb" />
+    <Compile Include="Core\SourceModel\SourceModel44\SourceAniFileData\SourceAniFileData44.vb" />
+    <Compile Include="Core\SourceModel\SourceModel44\SourceMdlFile44.vb" />
+    <Compile Include="Core\SourceModel\SourceModel44\SourceMdlFileData\SourceMdlAnimationDesc44.vb" />
+    <Compile Include="Core\SourceModel\SourceModel44\SourceMdlFileData\SourceMdlFileData44.vb" />
+    <Compile Include="Core\SourceModel\SourceModel44\SourceModel44.vb" />
+    <Compile Include="Core\SourceModel\SourceModel44\SourcePhyFile44.vb" />
+    <Compile Include="Core\SourceModel\SourceModel44\SourcePhyFileData\SourcePhyFileData44.vb" />
+    <Compile Include="Core\SourceModel\SourceModel44\SourceVrdFile44.vb" />
+    <Compile Include="Core\SourceModel\SourceModel44\SourceVtaFile44.vb" />
+    <Compile Include="Core\SourceModel\SourceModel44\SourceVtxFile44.vb" />
+    <Compile Include="Core\SourceModel\SourceModel44\SourceVtxFileData\SourceVtxFileData44.vb" />
+    <Compile Include="Core\SourceModel\SourceModel44\SourceVvdFile44.vb" />
+    <Compile Include="Core\SourceModel\SourceModel44\SourceVvdFileData\SourceVvdFileData44.vb" />
+    <Compile Include="Core\SourceModel\SourceModel48\SourceAniFileData\SourceAniFileData48.vb" />
+    <Compile Include="Core\SourceModel\SourceModel48\SourceMdlFileData\SourceMdlAnimationDesc48.vb" />
+    <Compile Include="Core\SourceModel\SourceModel48\SourceMdlFileData\SourceMdlFileData48.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlLocalHierarchy.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlWeightList.vb" />
+    <Compile Include="Core\SourceModel\- Base\SourceModel.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceModel10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel2531\SourceModel2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel48\SourcePhyFileData\SourcePhyFileData48.vb" />
+    <Compile Include="Core\SourceModel\SourceModel48\SourceVtxFileData\SourceVtxFileData48.vb" />
+    <Compile Include="Core\SourceModel\SourceModel48\SourceVvdFileData\SourceVvdFileData48.vb" />
+    <Compile Include="Core\SourceModel\SourceModel48\SourceModel48.vb" />
+    <Compile Include="Core\SourceModel\SourceModel48\SourceAniFile48.vb" />
+    <Compile Include="Core\SourceModel\SourceModel48\SourceMdlFile48.vb" />
+    <Compile Include="Core\SourceModel\SourceModel48\SourcePhyFile48.vb" />
+    <Compile Include="Core\SourceModel\SourceModel48\SourceQcFile48.vb" />
+    <Compile Include="Core\SourceModel\SourceModel48\SourceSmdFile48.vb" />
+    <Compile Include="Core\SourceModel\SourceModel48\SourceVrdFile48.vb" />
+    <Compile Include="Core\SourceModel\SourceModel48\SourceVtaFile48.vb" />
+    <Compile Include="Core\SourceModel\SourceModel48\SourceVtxFile48.vb" />
+    <Compile Include="Core\SourceModel\SourceModel48\SourceVvdFile48.vb" />
+    <Compile Include="Core\SourceModel\SourceModel49\SourceAniFileData\SourceAniFileData49.vb" />
+    <Compile Include="Core\SourceModel\SourceModel49\SourceMdlFileData\SourceMdlAnimationDesc49.vb" />
+    <Compile Include="Core\SourceModel\SourceModel49\SourceMdlFileData\SourceMdlFileData49.vb" />
+    <Compile Include="Core\SourceModel\SourceModel49\SourcePhyFileData\SourcePhyFileData49.vb" />
+    <Compile Include="Core\SourceModel\SourceModel49\SourceVtxFileData\SourceVtxFileData49.vb" />
+    <Compile Include="Core\SourceModel\SourceModel49\SourceVvdFileData\SourceVvdFileData49.vb" />
+    <Compile Include="Core\SourceModel\SourceModel49\SourceModel49.vb" />
+    <Compile Include="Core\SourceModel\SourceModel49\SourceAniFile49.vb" />
+    <Compile Include="Core\SourceModel\SourceModel49\SourceMdlFile49.vb" />
+    <Compile Include="Core\SourceModel\SourceModel49\SourcePhyFile49.vb" />
+    <Compile Include="Core\SourceModel\SourceModel49\SourceQcFile49.vb" />
+    <Compile Include="Core\SourceModel\SourceModel49\SourceSmdFile49.vb" />
+    <Compile Include="Core\SourceModel\SourceModel49\SourceVrdFile49.vb" />
+    <Compile Include="Core\SourceModel\SourceModel49\SourceVtaFile49.vb" />
+    <Compile Include="Core\SourceModel\SourceModel49\SourceVtxFile49.vb" />
+    <Compile Include="Core\SourceModel\SourceModel49\SourceVvdFile49.vb" />
     <Compile Include="Core\Viewer\Viewer.vb">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Core\Viewer\ViewerInfo.vb" />
-    <Compile Include="Core\SourceAniFileData\BoneConstantInfo.vb" />
-    <Compile Include="Core\SourceAniFileData\BoneFrameDataInfo.vb" />
-    <Compile Include="Core\SourceAniFileData\SourceAniFrameAnim.vb" />
-    <Compile Include="Core\SourceAniFileData\SourceAniFileHeader.vb" />
-    <Compile Include="Core\SourceGlobal\SourceConstants.vb" />
-    <Compile Include="Core\SourceGlobal\SourceFloat16.vb" />
-    <Compile Include="Core\SourceGlobal\SourceQuaternion.vb" />
-    <Compile Include="Core\SourceGlobal\SourceQuaternion48.vb" />
-    <Compile Include="Core\SourceGlobal\SourceQuaternion64.vb" />
-    <Compile Include="Core\SourceGlobal\SourceVector48.vb" />
-    <Compile Include="Core\SourceMdlFileData\AnimationFrameLine.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlActivityModifier.vb" />
-    <Compile Include="Core\SourceMdlFileData\LodQcInfo.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlAnimBlock.vb" />
-    <Compile Include="Core\SourceMdlFileData\FlexFrame.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlAutoLayer.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlAxisInterpBone.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlBoneController.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlEvent.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlEyeball.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlFlex.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlIkLock.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlFlexOp.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlAnimation.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlAnimationSection.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlAnimationValue.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlAnimationValuePointer.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlFlexControllerUi.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlHitbox.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlHitboxSet.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlIkRule.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlJiggleBone.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlMovement.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlQuatInterpBone.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlQuatInterpBoneInfo.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlVertAnim.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlVertAnimWrinkle.vb" />
-    <Compile Include="Core\SourcePhyFileData\SourcePhyFaceSection.vb" />
-    <Compile Include="Core\SourcePhyFileData\SourcePhyFace.vb" />
-    <Compile Include="Core\SourcePhyFileData\SourcePhyVertex.vb" />
-    <Compile Include="Core\SourceVvdFileData\SourceVvdFileHeader.vb" />
-    <Compile Include="Core\SourceVtxFileData\SourceVtxBoneStateChange.vb" />
-    <Compile Include="Core\SourceVtxFileData\SourceVtxMaterialReplacement.vb" />
-    <Compile Include="Core\SourceVtxFileData\SourceVtxBodyPart.vb" />
-    <Compile Include="Core\SourceVtxFileData\SourceVtxMaterialReplacementList.vb" />
-    <Compile Include="Core\SourceVtxFileData\SourceVtxModel.vb" />
-    <Compile Include="Core\SourceVtxFileData\SourceVtxModelLod.vb" />
-    <Compile Include="Core\SourceVtxFileData\SourceVtxMesh.vb" />
-    <Compile Include="Core\SourceVtxFileData\SourceVtxStripGroup.vb" />
-    <Compile Include="Core\SourceVtxFileData\SourceVtxStrip.vb" />
-    <Compile Include="Core\SourceVtxFileData\SourceVtxVertex.vb" />
-    <Compile Include="Core\SourceVtxFileData\SourceVtxFileHeader.vb" />
-    <Compile Include="Core\SourceVvdFileData\SourceVvdFixup.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceAniFileData\BoneConstantInfo.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceAniFileData\BoneFrameDataInfo.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceAniFileData\SourceAniFrameAnim.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceAniFileData\SourceAniFileData.vb" />
+    <Compile Include="Core\SourceModel\SourceGlobal\SourceConstants.vb" />
+    <Compile Include="Core\SourceModel\SourceGlobal\SourceFloat16bits.vb" />
+    <Compile Include="Core\SourceModel\SourceGlobal\SourceQuaternion.vb" />
+    <Compile Include="Core\SourceModel\SourceGlobal\SourceQuaternion48bits.vb" />
+    <Compile Include="Core\SourceModel\SourceGlobal\SourceQuaternion64bits.vb" />
+    <Compile Include="Core\SourceModel\SourceGlobal\SourceVector48bits.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\AnimationFrameLine.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlActivityModifier.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\LodQcInfo.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlAnimBlock.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\FlexFrame.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlAutoLayer.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlAxisInterpBone.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlBoneController.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlEvent.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlEyeball.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlFlex.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlIkLock.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlFlexOp.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlAnimation.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlAnimationSection.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlAnimationValue.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlAnimationValuePointer.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlFlexControllerUi.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlHitbox.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlHitboxSet.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlIkRule.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlJiggleBone.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlMovement.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlQuatInterpBone.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlQuatInterpBoneInfo.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlVertAnim.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlVertAnimWrinkle.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourcePhyFileData\SourcePhyFaceSection.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourcePhyFileData\SourcePhyFace.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourcePhyFileData\SourcePhyVertex.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceVvdFileData\SourceVvdFileData.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceVtxFileData\SourceVtxBoneStateChange.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceVtxFileData\SourceVtxMaterialReplacement.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceVtxFileData\SourceVtxBodyPart.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceVtxFileData\SourceVtxMaterialReplacementList.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceVtxFileData\SourceVtxModel.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceVtxFileData\SourceVtxModelLod.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceVtxFileData\SourceVtxMesh.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceVtxFileData\SourceVtxStripGroup.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceVtxFileData\SourceVtxStrip.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceVtxFileData\SourceVtxVertex.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceVtxFileData\SourceVtxFileData.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceVvdFileData\SourceVvdFixup.vb" />
     <Compile Include="Widgets\- General\RichTextBoxEx.vb">
       <SubType>Component</SubType>
     </Compile>
@@ -260,40 +426,39 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Core\FileDataCompiled\SourceMdlFile.vb" />
-    <Compile Include="Core\FileDataCompiled\SourcePhyFile.vb" />
-    <Compile Include="Core\FileDataDecompiled\SourceQcFile.vb" />
-    <Compile Include="Core\- Application\SourceModel.vb" />
-    <Compile Include="Core\FileDataDecompiled\SourceSmdFile.vb" />
-    <Compile Include="Core\SourcePhyFileData\SourcePhyCollisionPair.vb" />
-    <Compile Include="Core\SourcePhyFileData\SourcePhyEditParamsSection.vb" />
-    <Compile Include="Core\SourcePhyFileData\SourcePhyRagdollConstraint.vb" />
-    <Compile Include="Core\SourcePhyFileData\SourcePhyCollisionData.vb" />
-    <Compile Include="Core\SourcePhyFileData\SourcePhyFileHeader.vb" />
-    <Compile Include="Core\SourcePhyFileData\SourcePhysCollisionModel.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlSkinFamily.vb" />
-    <Compile Include="Core\SourceGlobal\SourceVector.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlAnimationDesc.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlAttachment.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlBone.vb" />
-    <Compile Include="Core\SourceGlobal\SourceBoneWeight.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlFlexController.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlFlexDesc.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlFlexRule.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlFileHeader.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlBodyPart.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlIkChain.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlIkLink.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlMesh.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlMeshVertexData.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlModel.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlModelGroup.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlModelVertexData.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlMouth.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlPoseParamDesc.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlSequenceDesc.vb" />
-    <Compile Include="Core\SourceMdlFileData\SourceMdlTexture.vb" />
-    <Compile Include="Core\SourceGlobal\SourceVertex.vb" />
+    <Compile Include="Core\SourceModel\- Base\SourceMdlFile.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourcePhyFile.vb" />
+    <Compile Include="Core\SourceModel\- Base\SourceQcFile.vb" />
+    <Compile Include="Core\SourceModel\- Base\SourceModel_Old.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourcePhyFileData\SourcePhyCollisionPair.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourcePhyFileData\SourcePhyEditParamsSection.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourcePhyFileData\SourcePhyRagdollConstraint.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourcePhyFileData\SourcePhyCollisionData.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourcePhyFileData\SourcePhyFileData.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourcePhyFileData\SourcePhysCollisionModel.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlSkinFamily.vb" />
+    <Compile Include="Core\SourceModel\SourceGlobal\SourceVector.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlAnimationDesc.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlAttachment.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlBone.vb" />
+    <Compile Include="Core\SourceModel\SourceGlobal\SourceBoneWeight.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlFlexController.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlFlexDesc.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlFlexRule.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlFileData.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlBodyPart.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlIkChain.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlIkLink.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlMesh.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlMeshVertexData.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlModel.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlModelGroup.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlModelVertexData.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlMouth.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlPoseParamDesc.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlSequenceDesc.vb" />
+    <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlTexture.vb" />
+    <Compile Include="Core\SourceModel\SourceGlobal\SourceVertex.vb" />
     <Compile Include="Widgets\- Application\UnhandledExceptionWindow.Designer.vb">
       <DependentUpon>UnhandledExceptionWindow.vb</DependentUpon>
     </Compile>
@@ -302,6 +467,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Widgets\- Application\MainForm.de-DE.resx">
+      <DependentUpon>MainForm.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Widgets\Main\AboutUserControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AboutUserControl.vb</DependentUpon>
@@ -362,6 +530,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="My Project\app.manifest" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
@@ -379,6 +548,7 @@
     <Content Include="- Documents\License.txt" />
     <Content Include="- Documents\History 2014.txt" />
     <Content Include="- Documents\Specifications.txt" />
+    <Content Include="- Documents\String Resources.txt" />
     <Content Include="- Documents\ToDo.txt" />
     <Content Include="Data\Crowbar Settings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -388,6 +558,7 @@
     <None Include="resources\crowbar_icon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Core\SourceModel\SourceModel52\" />
     <Folder Include="Documents\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />

@@ -237,6 +237,16 @@ Public Class AppSettings
         End Set
     End Property
 
+	Public Property DecompileQcSkinFamilyOnSingleLineIsChecked() As Boolean
+		Get
+			Return Me.theDecompileQcSkinFamilyOnSingleLineIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theDecompileQcSkinFamilyOnSingleLineIsChecked = value
+			NotifyPropertyChanged("DecompileQcSkinFamilyOnSingleLineIsChecked")
+		End Set
+	End Property
+
     Public Property DecompileReferenceMeshSmdFileIsChecked() As Boolean
         Get
             Return Me.theDecompileReferenceMeshSmdFileIsChecked
@@ -257,98 +267,108 @@ Public Class AppSettings
         End Set
     End Property
 
-    Public Property DecompileLodMeshSmdFilesIsChecked() As Boolean
-        Get
-            Return Me.theDecompileLodMeshSmdFilesIsChecked
-        End Get
-        Set(ByVal value As Boolean)
-            Me.theDecompileLodMeshSmdFilesIsChecked = value
-            NotifyPropertyChanged("DecompileLodMeshSmdFilesIsChecked")
-        End Set
-    End Property
+	Public Property DecompileBoneAnimationSmdFilesIsChecked() As Boolean
+		Get
+			Return Me.theDecompileBoneAnimationSmdFilesIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theDecompileBoneAnimationSmdFilesIsChecked = value
+			NotifyPropertyChanged("DecompileBoneAnimationSmdFilesIsChecked")
+		End Set
+	End Property
 
-    Public Property DecompilePhysicsMeshSmdFileIsChecked() As Boolean
-        Get
-            Return Me.theDecompilePhysicsMeshSmdFileIsChecked
-        End Get
-        Set(ByVal value As Boolean)
-            Me.theDecompilePhysicsMeshSmdFileIsChecked = value
-            NotifyPropertyChanged("DecompilePhysicsMeshSmdFileIsChecked")
-        End Set
-    End Property
+	Public Property DecompileBoneAnimationPlaceInSubfolderIsChecked() As Boolean
+		Get
+			Return Me.theDecompileBoneAnimationPlaceInSubfolderIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theDecompileBoneAnimationPlaceInSubfolderIsChecked = value
+			NotifyPropertyChanged("DecompileBoneAnimationPlaceInSubfolderIsChecked")
+		End Set
+	End Property
 
-    Public Property DecompileVertexAnimationVtaFileIsChecked() As Boolean
-        Get
-            Return Me.theDecompileVertexAnimationVtaFileIsChecked
-        End Get
-        Set(ByVal value As Boolean)
-            Me.theDecompileVertexAnimationVtaFileIsChecked = value
-            NotifyPropertyChanged("DecompileVertexAnimationVtaFileIsChecked")
-        End Set
-    End Property
+	Public Property DecompileTextureBmpFilesIsChecked() As Boolean
+		Get
+			Return Me.theDecompileTextureBmpFileIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theDecompileTextureBmpFileIsChecked = value
+			NotifyPropertyChanged("DecompileTextureBmpFileIsChecked")
+		End Set
+	End Property
 
-    Public Property DecompileBoneAnimationSmdFilesIsChecked() As Boolean
-        Get
-            Return Me.theDecompileBoneAnimationSmdFilesIsChecked
-        End Get
-        Set(ByVal value As Boolean)
-            Me.theDecompileBoneAnimationSmdFilesIsChecked = value
-            NotifyPropertyChanged("DecompileBoneAnimationSmdFilesIsChecked")
-        End Set
-    End Property
+	Public Property DecompileLodMeshSmdFilesIsChecked() As Boolean
+		Get
+			Return Me.theDecompileLodMeshSmdFilesIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theDecompileLodMeshSmdFilesIsChecked = value
+			NotifyPropertyChanged("DecompileLodMeshSmdFilesIsChecked")
+		End Set
+	End Property
 
-    Public Property DecompileBoneAnimationPlaceInSubfolderIsChecked() As Boolean
-        Get
-            Return Me.theDecompileBoneAnimationPlaceInSubfolderIsChecked
-        End Get
-        Set(ByVal value As Boolean)
-            Me.theDecompileBoneAnimationPlaceInSubfolderIsChecked = value
-            NotifyPropertyChanged("DecompileBoneAnimationPlaceInSubfolderIsChecked")
-        End Set
-    End Property
+	Public Property DecompilePhysicsMeshSmdFileIsChecked() As Boolean
+		Get
+			Return Me.theDecompilePhysicsMeshSmdFileIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theDecompilePhysicsMeshSmdFileIsChecked = value
+			NotifyPropertyChanged("DecompilePhysicsMeshSmdFileIsChecked")
+		End Set
+	End Property
 
-    Public Property DecompileProceduralBonesVrdFileIsChecked() As Boolean
-        Get
-            Return Me.theDecompileProceduralBonesVrdFileIsChecked
-        End Get
-        Set(ByVal value As Boolean)
-            Me.theDecompileProceduralBonesVrdFileIsChecked = value
-            NotifyPropertyChanged("DecompileProceduralBonesVrdFileIsChecked")
-        End Set
-    End Property
+	Public Property DecompileVertexAnimationVtaFileIsChecked() As Boolean
+		Get
+			Return Me.theDecompileVertexAnimationVtaFileIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theDecompileVertexAnimationVtaFileIsChecked = value
+			NotifyPropertyChanged("DecompileVertexAnimationVtaFileIsChecked")
+		End Set
+	End Property
 
-    Public Property DecompileFolderForEachModelIsChecked() As Boolean
-        Get
-            Return Me.theDecompileFolderForEachModelIsChecked
-        End Get
-        Set(ByVal value As Boolean)
-            Me.theDecompileFolderForEachModelIsChecked = value
-            NotifyPropertyChanged("DecompileFolderForEachModelIsChecked")
-        End Set
-    End Property
+	Public Property DecompileProceduralBonesVrdFileIsChecked() As Boolean
+		Get
+			Return Me.theDecompileProceduralBonesVrdFileIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theDecompileProceduralBonesVrdFileIsChecked = value
+			NotifyPropertyChanged("DecompileProceduralBonesVrdFileIsChecked")
+		End Set
+	End Property
 
-    Public Property DecompileLogFileIsChecked() As Boolean
-        Get
-            Return Me.theDecompileLogFileIsChecked
-        End Get
-        Set(ByVal value As Boolean)
-            Me.theDecompileLogFileIsChecked = value
-            NotifyPropertyChanged("DecompileLogFileIsChecked")
-        End Set
-    End Property
+	Public Property DecompileFolderForEachModelIsChecked() As Boolean
+		Get
+			Return Me.theDecompileFolderForEachModelIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theDecompileFolderForEachModelIsChecked = value
+			NotifyPropertyChanged("DecompileFolderForEachModelIsChecked")
+		End Set
+	End Property
 
-    Public Property DecompileDebugInfoFilesIsChecked() As Boolean
-        Get
-            Return Me.theDecompileDebugInfoFilesIsChecked
-        End Get
-        Set(ByVal value As Boolean)
-            Me.theDecompileDebugInfoFilesIsChecked = value
-            NotifyPropertyChanged("DecompileDebugInfoFilesIsChecked")
-        End Set
-    End Property
+	Public Property DecompileLogFileIsChecked() As Boolean
+		Get
+			Return Me.theDecompileLogFileIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theDecompileLogFileIsChecked = value
+			NotifyPropertyChanged("DecompileLogFileIsChecked")
+		End Set
+	End Property
 
-    Public Property DecompileStricterFormatIsChecked() As Boolean
-        Get
+	Public Property DecompileDebugInfoFilesIsChecked() As Boolean
+		Get
+			Return Me.theDecompileDebugInfoFilesIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theDecompileDebugInfoFilesIsChecked = value
+			NotifyPropertyChanged("DecompileDebugInfoFilesIsChecked")
+		End Set
+	End Property
+
+	Public Property DecompileStricterFormatIsChecked() As Boolean
+		Get
 			Return Me.theDecompileStricterFormatIsChecked
 		End Get
 		Set(ByVal value As Boolean)
@@ -764,13 +784,16 @@ Public Class AppSettings
 		Me.DecompileQcFileIsChecked = True
 		Me.DecompileGroupIntoQciFilesIsChecked = False
 		Me.DecompileQcIncludeDefineBoneLinesIsChecked = False
+		Me.DecompileQcSkinFamilyOnSingleLineIsChecked = True
 		Me.DecompileReferenceMeshSmdFileIsChecked = True
 		Me.DecompileApplyRightHandFixIsChecked = False
+		Me.DecompileBoneAnimationSmdFilesIsChecked = True
+		Me.DecompileBoneAnimationPlaceInSubfolderIsChecked = True
+
+		Me.DecompileTextureBmpFilesIsChecked = True
 		Me.DecompileLodMeshSmdFilesIsChecked = True
 		Me.DecompilePhysicsMeshSmdFileIsChecked = True
 		Me.DecompileVertexAnimationVtaFileIsChecked = True
-		Me.DecompileBoneAnimationSmdFilesIsChecked = True
-		Me.DecompileBoneAnimationPlaceInSubfolderIsChecked = True
 		Me.DecompileProceduralBonesVrdFileIsChecked = True
 
 		Me.DecompileFolderForEachModelIsChecked = False
@@ -874,13 +897,16 @@ Public Class AppSettings
 	Private theDecompileQcFileIsChecked As Boolean
 	Private theDecompileGroupIntoQciFilesIsChecked As Boolean
 	Private theDecompileQcIncludeDefineBoneLinesIsChecked As Boolean
+	Private theDecompileQcSkinFamilyOnSingleLineIsChecked As Boolean
 	Private theDecompileReferenceMeshSmdFileIsChecked As Boolean
 	Private theDecompileApplyRightHandFixIsChecked As Boolean
+	Private theDecompileBoneAnimationSmdFilesIsChecked As Boolean
+	Private theDecompileBoneAnimationPlaceInSubfolderIsChecked As Boolean
+
+	Private theDecompileTextureBmpFileIsChecked As Boolean
 	Private theDecompileLodMeshSmdFilesIsChecked As Boolean
 	Private theDecompilePhysicsMeshSmdFileIsChecked As Boolean
 	Private theDecompileVertexAnimationVtaFileIsChecked As Boolean
-	Private theDecompileBoneAnimationSmdFilesIsChecked As Boolean
-	Private theDecompileBoneAnimationPlaceInSubfolderIsChecked As Boolean
 	Private theDecompileProceduralBonesVrdFileIsChecked As Boolean
 
 	Private theDecompileFolderForEachModelIsChecked As Boolean

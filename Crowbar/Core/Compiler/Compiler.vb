@@ -273,7 +273,7 @@ Public Class Compiler
 			Dim qcRelativePathFileName As String
 			qcPathName = FileManager.GetPath(qcPathFileName)
 			qcFileName = Path.GetFileName(qcPathFileName)
-			qcRelativePathName = FileManager.GetRelativePath(Me.theInputQcPath, FileManager.GetPath(qcPathFileName))
+			qcRelativePathName = FileManager.GetRelativePathFileName(Me.theInputQcPath, FileManager.GetPath(qcPathFileName))
 			qcRelativePathFileName = Path.Combine(qcRelativePathName, qcFileName)
 
 			'Dim gameSetup As GameSetup
@@ -422,7 +422,7 @@ Public Class Compiler
 				End If
 
 				If Path.GetExtension(targetPathFileName) = ".mdl" Then
-					Me.theCompiledMdlFiles.Add(FileManager.GetRelativePath(Me.theOutputPath, targetPathFileName))
+					Me.theCompiledMdlFiles.Add(FileManager.GetRelativePathFileName(Me.theOutputPath, targetPathFileName))
 				End If
 			Catch ex As Exception
 				'TODO: Write a warning message.
@@ -515,7 +515,7 @@ Public Class Compiler
 
 			If File.Exists(logPathFileName) Then
 				'Me.theCompiledLogFiles.Add(FileManager.GetRelativePath(Me.theOutputPath, logPathFileName))
-				Me.theCompiledLogFiles.Add(FileManager.GetRelativePath(Me.theInputQcPath, logPathFileName))
+				Me.theCompiledLogFiles.Add(FileManager.GetRelativePathFileName(Me.theInputQcPath, logPathFileName))
 			End If
 
 			Me.theLogFileStream.WriteLine("// " + TheApp.GetHeaderComment())

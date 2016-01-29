@@ -112,6 +112,9 @@ Public Class ViewUserControl
 	Private Sub UseInDecompileButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles UseInDecompileButton.Click
 		TheApp.Settings.DecompileMdlPathFileName = TheApp.Settings.ViewMdlPathFileName
 	End Sub
+	Private Sub OpenViewerButton_Click(sender As Object, e As EventArgs) Handles OpenViewerButton.Click
+		Me.OpenViewer()
+	End Sub
 
 #End Region
 
@@ -157,7 +160,7 @@ Public Class ViewUserControl
 
 	Private Sub UpdateButtons()
 		If String.IsNullOrEmpty(TheApp.Settings.ViewMdlPathFileName) _
-			OrElse Not (Path.GetExtension(TheApp.Settings.ViewMdlPathFileName) = ".mdl") _
+			OrElse Not (Path.GetExtension(TheApp.Settings.ViewMdlPathFileName).ToLower() = ".mdl") _
 			OrElse Not File.Exists(TheApp.Settings.ViewMdlPathFileName) Then
 			Me.ViewButton.Enabled = False
 			Me.ViewAsReplacementButton.Enabled = False
@@ -180,10 +183,19 @@ Public Class ViewUserControl
 	End Sub
 
 	Private Sub RunViewer(ByVal viewAsReplacement As Boolean)
-		Dim meshViewer As Viewer
-		meshViewer = New Viewer()
-		AddHandler meshViewer.RunWorkerCompleted, AddressOf Me.ViewerBackgroundWorker_RunWorkerCompleted
-		meshViewer.Run(TheApp.Settings.ViewGameSetupSelectedIndex, TheApp.Settings.ViewMdlPathFileName, viewAsReplacement)
+		Dim modelViewer As Viewer
+		modelViewer = New Viewer()
+		AddHandler modelViewer.RunWorkerCompleted, AddressOf Me.ViewerBackgroundWorker_RunWorkerCompleted
+		modelViewer.Run(TheApp.Settings.ViewGameSetupSelectedIndex, TheApp.Settings.ViewMdlPathFileName, viewAsReplacement)
+
+		'TODO: If viewer is not running, give user indication of what prevents viewing.
+	End Sub
+
+	Private Sub OpenViewer()
+		Dim aViewer As Viewer
+		aViewer = New Viewer()
+		AddHandler aViewer.RunWorkerCompleted, AddressOf Me.ViewerBackgroundWorker_RunWorkerCompleted
+		aViewer.Run()
 
 		'TODO: If viewer is not running, give user indication of what prevents viewing.
 	End Sub

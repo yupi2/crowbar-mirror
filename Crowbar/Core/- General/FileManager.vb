@@ -36,6 +36,8 @@ Public Class FileManager
 		While inputFileReader.PeekChar() > 0
 			text.Append(inputFileReader.ReadChar())
 		End While
+		' Read the null character.
+		inputFileReader.ReadChar()
 		Return text.ToString()
 	End Function
 
@@ -201,20 +203,20 @@ Public Class FileManager
 	'	Return maybeRelativePath
 	'End Function
 
-	Public Shared Function GetRelativePath(ByVal fromPath As String, ByVal toPath As String) As String
+	Public Shared Function GetRelativePathFileName(ByVal fromPath As String, ByVal toPathFileName As String) As String
 		'Dim fromPathAbsolute As String
 		'Dim toPathAbsolute As String
 
 		'fromPathAbsolute = path.GetFullPath(path.Combine(basepath, relative))
 
 		Dim fromAttr As Integer = GetPathAttribute(fromPath)
-		Dim toAttr As Integer = GetPathAttribute(toPath)
+		Dim toAttr As Integer = GetPathAttribute(toPathFileName)
 
 		Dim path As New StringBuilder(260)
 		' MAX_PATH
-		If PathRelativePathTo(path, fromPath, fromAttr, toPath, toAttr) = 0 Then
+		If PathRelativePathTo(path, fromPath, fromAttr, toPathFileName, toAttr) = 0 Then
 			'Throw New ArgumentException("Paths must have a common prefix")
-			Return toPath
+			Return toPathFileName
 		End If
 
 		Dim cleanedPath As String

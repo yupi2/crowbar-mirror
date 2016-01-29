@@ -15,11 +15,17 @@ Public Module AppEnums
 
 	Public Enum StatusMessage
 		<Description("Success")> Success
-		<Description("Cancelled")> Cancelled
-		<Description("Skipped")> Skipped
-		<Description("ErrorRequiredFileNotFound")> ErrorRequiredFileNotFound
-		<Description("ErrorInvalidMdlFile")> ErrorInvalidMdlFile
 		<Description("Error")> [Error]
+		<Description("Cancelled")> Canceled
+		<Description("Skipped")> Skipped
+
+		<Description("ErrorRequiredMdlFileNotFound")> ErrorRequiredMdlFileNotFound
+		<Description("ErrorRequiredAniFileNotFound")> ErrorRequiredAniFileNotFound
+		<Description("ErrorRequiredVtxFileNotFound")> ErrorRequiredVtxFileNotFound
+		<Description("ErrorRequiredVvdFileNotFound")> ErrorRequiredVvdFileNotFound
+
+		<Description("ErrorInvalidMdlFileId")> ErrorInvalidMdlFileId
+		<Description("ErrorInvalidInternalMdlFileSize")> ErrorInvalidInternalMdlFileSize
 	End Enum
 
 	Public Enum ActionType
@@ -32,6 +38,14 @@ Public Module AppEnums
 		<Description("Pack")> Pack
 		'<Description("Release")> Release
 		'<Description("Options")> Options
+	End Enum
+
+	Public Enum DecompiledFileType
+		ReferenceMesh
+		LodMesh
+		BoneAnimation
+		PhysicsMesh
+		TextureBmp
 	End Enum
 
 End Module

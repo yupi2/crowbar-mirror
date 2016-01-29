@@ -31,36 +31,9 @@ Public Class AboutUserControl
 		Me.AuthorLinkLabel.Text = My.Application.Info.CompanyName
 		Me.AuthorLinkLabel.Links.Add(0, My.Application.Info.CompanyName.Length(), AboutAuthorLink)
 
-		Me.ProductDescriptionTextBox.Text = "Source Engine Model Toolset:" + vbCrLf
-		Me.ProductDescriptionTextBox.Text += vbTab + "Decompiler of Valve's MDL and Related Files" + vbCrLf
-		Me.ProductDescriptionTextBox.Text += vbTab + "Compiler Interface to Valve's StudioMDL.exe Tool" + vbCrLf
-		Me.ProductDescriptionTextBox.Text += vbTab + "Model Viewer Interface to Valve's Half-Life Model Viewer Tool"
+		Me.ProductDescriptionTextBox.Text = My.Resources.About_ProductDescription
 
-		Me.CreditsTextBox.Text = "Special thanks to:" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "arby26" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "Artfunkel" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "atrblizzard" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "Avengito" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "BANG!" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "BinaryRifle" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "Cra0kalo" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "da1barker" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "Doktor haus" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "Drsalvador" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "Funreal" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "Game Zombie" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "GPZ" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "k@rt" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "K1CHWA" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "mrlanky" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "Pajama" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "pappaskurtz" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "Rantis" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "Seraphim" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "Splinks" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "Stiffy360" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "Stay Puft" + vbCrLf
-		Me.CreditsTextBox.Text += vbTab + "Vincentor"
+		Me.CreditsTextBox.Text = My.Resources.About_SpecialThanksText
 	End Sub
 
 	'Private Sub Free()

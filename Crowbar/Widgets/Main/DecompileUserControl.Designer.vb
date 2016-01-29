@@ -37,6 +37,8 @@ Partial Class DecompileUserControl
 		Me.OutputSubfolderNameRadioButton = New System.Windows.Forms.RadioButton()
 		Me.OptionsGroupBox = New System.Windows.Forms.GroupBox()
 		Me.Panel1 = New System.Windows.Forms.Panel()
+		Me.SkinFamilyOnSingleLineCheckBox = New System.Windows.Forms.CheckBox()
+		Me.TextureBmpFilesCheckBox = New System.Windows.Forms.CheckBox()
 		Me.DecompileOptionsUseDefaultsButton = New System.Windows.Forms.Button()
 		Me.FolderForEachModelCheckBox = New System.Windows.Forms.CheckBox()
 		Me.IncludeDefineBoneLinesCheckBox = New System.Windows.Forms.CheckBox()
@@ -67,10 +69,12 @@ Partial Class DecompileUserControl
 		Me.DecompilerLogTextBox = New Crowbar.RichTextBoxEx()
 		Me.DecompiledFilesComboBox = New System.Windows.Forms.ComboBox()
 		Me.GotoDecompiledFileButton = New System.Windows.Forms.Button()
+		Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
 		Me.OutputFolderGroupBox.SuspendLayout()
 		Me.OptionsGroupBox.SuspendLayout()
 		Me.Panel1.SuspendLayout()
 		Me.Panel2.SuspendLayout()
+		CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
 		Me.SplitContainer1.Panel1.SuspendLayout()
 		Me.SplitContainer1.Panel2.SuspendLayout()
 		Me.SplitContainer1.SuspendLayout()
@@ -218,6 +222,8 @@ Partial Class DecompileUserControl
 		'Panel1
 		'
 		Me.Panel1.AutoScroll = True
+		Me.Panel1.Controls.Add(Me.SkinFamilyOnSingleLineCheckBox)
+		Me.Panel1.Controls.Add(Me.TextureBmpFilesCheckBox)
 		Me.Panel1.Controls.Add(Me.DecompileOptionsUseDefaultsButton)
 		Me.Panel1.Controls.Add(Me.FolderForEachModelCheckBox)
 		Me.Panel1.Controls.Add(Me.IncludeDefineBoneLinesCheckBox)
@@ -242,10 +248,33 @@ Partial Class DecompileUserControl
 		Me.Panel1.Size = New System.Drawing.Size(772, 237)
 		Me.Panel1.TabIndex = 11
 		'
+		'SkinFamilyOnSingleLineCheckBox
+		'
+		Me.SkinFamilyOnSingleLineCheckBox.AutoSize = True
+		Me.SkinFamilyOnSingleLineCheckBox.Checked = True
+		Me.SkinFamilyOnSingleLineCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
+		Me.SkinFamilyOnSingleLineCheckBox.Location = New System.Drawing.Point(20, 26)
+		Me.SkinFamilyOnSingleLineCheckBox.Name = "SkinFamilyOnSingleLineCheckBox"
+		Me.SkinFamilyOnSingleLineCheckBox.Size = New System.Drawing.Size(234, 17)
+		Me.SkinFamilyOnSingleLineCheckBox.TabIndex = 39
+		Me.SkinFamilyOnSingleLineCheckBox.Text = "Each $texturegroup skin-family on single line"
+		Me.SkinFamilyOnSingleLineCheckBox.UseVisualStyleBackColor = True
+		'
+		'TextureBmpFilesCheckBox
+		'
+		Me.TextureBmpFilesCheckBox.AutoSize = True
+		Me.TextureBmpFilesCheckBox.Checked = True
+		Me.TextureBmpFilesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
+		Me.TextureBmpFilesCheckBox.Location = New System.Drawing.Point(318, 3)
+		Me.TextureBmpFilesCheckBox.Name = "TextureBmpFilesCheckBox"
+		Me.TextureBmpFilesCheckBox.Size = New System.Drawing.Size(174, 17)
+		Me.TextureBmpFilesCheckBox.TabIndex = 38
+		Me.TextureBmpFilesCheckBox.Text = "Texture BMP files (GoldSource)"
+		Me.TextureBmpFilesCheckBox.UseVisualStyleBackColor = True
+		'
 		'DecompileOptionsUseDefaultsButton
 		'
-		Me.DecompileOptionsUseDefaultsButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.DecompileOptionsUseDefaultsButton.Location = New System.Drawing.Point(679, 3)
+		Me.DecompileOptionsUseDefaultsButton.Location = New System.Drawing.Point(341, 170)
 		Me.DecompileOptionsUseDefaultsButton.Name = "DecompileOptionsUseDefaultsButton"
 		Me.DecompileOptionsUseDefaultsButton.Size = New System.Drawing.Size(90, 23)
 		Me.DecompileOptionsUseDefaultsButton.TabIndex = 37
@@ -255,7 +284,7 @@ Partial Class DecompileUserControl
 		'FolderForEachModelCheckBox
 		'
 		Me.FolderForEachModelCheckBox.AutoSize = True
-		Me.FolderForEachModelCheckBox.Location = New System.Drawing.Point(320, 3)
+		Me.FolderForEachModelCheckBox.Location = New System.Drawing.Point(565, 3)
 		Me.FolderForEachModelCheckBox.Name = "FolderForEachModelCheckBox"
 		Me.FolderForEachModelCheckBox.Size = New System.Drawing.Size(128, 17)
 		Me.FolderForEachModelCheckBox.TabIndex = 11
@@ -267,11 +296,11 @@ Partial Class DecompileUserControl
 		Me.IncludeDefineBoneLinesCheckBox.AutoSize = True
 		Me.IncludeDefineBoneLinesCheckBox.Checked = True
 		Me.IncludeDefineBoneLinesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
-		Me.IncludeDefineBoneLinesCheckBox.Location = New System.Drawing.Point(20, 26)
+		Me.IncludeDefineBoneLinesCheckBox.Location = New System.Drawing.Point(20, 49)
 		Me.IncludeDefineBoneLinesCheckBox.Name = "IncludeDefineBoneLinesCheckBox"
-		Me.IncludeDefineBoneLinesCheckBox.Size = New System.Drawing.Size(147, 17)
+		Me.IncludeDefineBoneLinesCheckBox.Size = New System.Drawing.Size(262, 17)
 		Me.IncludeDefineBoneLinesCheckBox.TabIndex = 2
-		Me.IncludeDefineBoneLinesCheckBox.Text = "Include $definebone lines"
+		Me.IncludeDefineBoneLinesCheckBox.Text = "Include $definebone lines (typical for view models)"
 		Me.IncludeDefineBoneLinesCheckBox.UseVisualStyleBackColor = True
 		'
 		'GroupIntoQciFilesCheckBox
@@ -291,7 +320,7 @@ Partial Class DecompileUserControl
 		Me.PlaceInAnimsSubfolderCheckBox.AutoSize = True
 		Me.PlaceInAnimsSubfolderCheckBox.Checked = True
 		Me.PlaceInAnimsSubfolderCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
-		Me.PlaceInAnimsSubfolderCheckBox.Location = New System.Drawing.Point(20, 187)
+		Me.PlaceInAnimsSubfolderCheckBox.Location = New System.Drawing.Point(20, 141)
 		Me.PlaceInAnimsSubfolderCheckBox.Name = "PlaceInAnimsSubfolderCheckBox"
 		Me.PlaceInAnimsSubfolderCheckBox.Size = New System.Drawing.Size(150, 17)
 		Me.PlaceInAnimsSubfolderCheckBox.TabIndex = 9
@@ -301,27 +330,30 @@ Partial Class DecompileUserControl
 		'LogFileCheckBox
 		'
 		Me.LogFileCheckBox.AutoSize = True
-		Me.LogFileCheckBox.Location = New System.Drawing.Point(320, 72)
+		Me.LogFileCheckBox.Location = New System.Drawing.Point(565, 72)
 		Me.LogFileCheckBox.Name = "LogFileCheckBox"
 		Me.LogFileCheckBox.Size = New System.Drawing.Size(60, 17)
 		Me.LogFileCheckBox.TabIndex = 13
 		Me.LogFileCheckBox.Text = "Log file"
+		Me.ToolTip1.SetToolTip(Me.LogFileCheckBox, "Write the decompile log to a file.")
 		Me.LogFileCheckBox.UseVisualStyleBackColor = True
 		'
 		'FormatForStricterImportersCheckBox
 		'
 		Me.FormatForStricterImportersCheckBox.AutoSize = True
-		Me.FormatForStricterImportersCheckBox.Location = New System.Drawing.Point(320, 26)
+		Me.FormatForStricterImportersCheckBox.Location = New System.Drawing.Point(565, 26)
 		Me.FormatForStricterImportersCheckBox.Name = "FormatForStricterImportersCheckBox"
 		Me.FormatForStricterImportersCheckBox.Size = New System.Drawing.Size(152, 17)
 		Me.FormatForStricterImportersCheckBox.TabIndex = 12
 		Me.FormatForStricterImportersCheckBox.Text = "Format for stricter importers"
+		Me.ToolTip1.SetToolTip(Me.FormatForStricterImportersCheckBox, "Write decompiled files in a format that some importers expect, but is not as easy" & _
+		" to read.")
 		Me.FormatForStricterImportersCheckBox.UseVisualStyleBackColor = True
 		'
 		'Label2
 		'
 		Me.Label2.AutoSize = True
-		Me.Label2.Location = New System.Drawing.Point(450, 144)
+		Me.Label2.Location = New System.Drawing.Point(562, 209)
 		Me.Label2.Name = "Label2"
 		Me.Label2.Size = New System.Drawing.Size(71, 13)
 		Me.Label2.TabIndex = 23
@@ -331,7 +363,7 @@ Partial Class DecompileUserControl
 		'ComboBox2
 		'
 		Me.ComboBox2.FormattingEnabled = True
-		Me.ComboBox2.Location = New System.Drawing.Point(527, 141)
+		Me.ComboBox2.Location = New System.Drawing.Point(639, 206)
 		Me.ComboBox2.Name = "ComboBox2"
 		Me.ComboBox2.Size = New System.Drawing.Size(125, 21)
 		Me.ComboBox2.TabIndex = 15
@@ -342,7 +374,7 @@ Partial Class DecompileUserControl
 		Me.LodMeshSmdFilesCheckBox.AutoSize = True
 		Me.LodMeshSmdFilesCheckBox.Checked = True
 		Me.LodMeshSmdFilesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
-		Me.LodMeshSmdFilesCheckBox.Location = New System.Drawing.Point(3, 95)
+		Me.LodMeshSmdFilesCheckBox.Location = New System.Drawing.Point(318, 26)
 		Me.LodMeshSmdFilesCheckBox.Name = "LodMeshSmdFilesCheckBox"
 		Me.LodMeshSmdFilesCheckBox.Size = New System.Drawing.Size(124, 17)
 		Me.LodMeshSmdFilesCheckBox.TabIndex = 5
@@ -354,7 +386,7 @@ Partial Class DecompileUserControl
 		Me.ProceduralBonesVrdFileCheckBox.AutoSize = True
 		Me.ProceduralBonesVrdFileCheckBox.Checked = True
 		Me.ProceduralBonesVrdFileCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
-		Me.ProceduralBonesVrdFileCheckBox.Location = New System.Drawing.Point(3, 210)
+		Me.ProceduralBonesVrdFileCheckBox.Location = New System.Drawing.Point(318, 95)
 		Me.ProceduralBonesVrdFileCheckBox.Name = "ProceduralBonesVrdFileCheckBox"
 		Me.ProceduralBonesVrdFileCheckBox.Size = New System.Drawing.Size(151, 17)
 		Me.ProceduralBonesVrdFileCheckBox.TabIndex = 10
@@ -366,7 +398,7 @@ Partial Class DecompileUserControl
 		Me.BoneAnimationSmdFilesCheckBox.AutoSize = True
 		Me.BoneAnimationSmdFilesCheckBox.Checked = True
 		Me.BoneAnimationSmdFilesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
-		Me.BoneAnimationSmdFilesCheckBox.Location = New System.Drawing.Point(3, 164)
+		Me.BoneAnimationSmdFilesCheckBox.Location = New System.Drawing.Point(3, 118)
 		Me.BoneAnimationSmdFilesCheckBox.Name = "BoneAnimationSmdFilesCheckBox"
 		Me.BoneAnimationSmdFilesCheckBox.Size = New System.Drawing.Size(147, 17)
 		Me.BoneAnimationSmdFilesCheckBox.TabIndex = 8
@@ -378,7 +410,7 @@ Partial Class DecompileUserControl
 		Me.VertexAnimationVtaFileCheckBox.AutoSize = True
 		Me.VertexAnimationVtaFileCheckBox.Checked = True
 		Me.VertexAnimationVtaFileCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
-		Me.VertexAnimationVtaFileCheckBox.Location = New System.Drawing.Point(3, 141)
+		Me.VertexAnimationVtaFileCheckBox.Location = New System.Drawing.Point(318, 72)
 		Me.VertexAnimationVtaFileCheckBox.Name = "VertexAnimationVtaFileCheckBox"
 		Me.VertexAnimationVtaFileCheckBox.Size = New System.Drawing.Size(204, 17)
 		Me.VertexAnimationVtaFileCheckBox.TabIndex = 7
@@ -390,7 +422,7 @@ Partial Class DecompileUserControl
 		Me.PhysicsMeshSmdFileCheckBox.AutoSize = True
 		Me.PhysicsMeshSmdFileCheckBox.Checked = True
 		Me.PhysicsMeshSmdFileCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
-		Me.PhysicsMeshSmdFileCheckBox.Location = New System.Drawing.Point(3, 118)
+		Me.PhysicsMeshSmdFileCheckBox.Location = New System.Drawing.Point(318, 49)
 		Me.PhysicsMeshSmdFileCheckBox.Name = "PhysicsMeshSmdFileCheckBox"
 		Me.PhysicsMeshSmdFileCheckBox.Size = New System.Drawing.Size(133, 17)
 		Me.PhysicsMeshSmdFileCheckBox.TabIndex = 6
@@ -400,11 +432,12 @@ Partial Class DecompileUserControl
 		'DebugInfoCheckBox
 		'
 		Me.DebugInfoCheckBox.AutoSize = True
-		Me.DebugInfoCheckBox.Location = New System.Drawing.Point(320, 95)
+		Me.DebugInfoCheckBox.Location = New System.Drawing.Point(565, 95)
 		Me.DebugInfoCheckBox.Name = "DebugInfoCheckBox"
-		Me.DebugInfoCheckBox.Size = New System.Drawing.Size(171, 17)
+		Me.DebugInfoCheckBox.Size = New System.Drawing.Size(189, 17)
 		Me.DebugInfoCheckBox.TabIndex = 14
-		Me.DebugInfoCheckBox.Text = "Debug-info comments and files"
+		Me.DebugInfoCheckBox.Text = "Decompile-info comments and files"
+		Me.ToolTip1.SetToolTip(Me.DebugInfoCheckBox, "Write comments and extra files that include decompile info useful in debugging.")
 		Me.DebugInfoCheckBox.UseVisualStyleBackColor = True
 		'
 		'ReferenceMeshSmdFileCheckBox
@@ -412,7 +445,7 @@ Partial Class DecompileUserControl
 		Me.ReferenceMeshSmdFileCheckBox.AutoSize = True
 		Me.ReferenceMeshSmdFileCheckBox.Checked = True
 		Me.ReferenceMeshSmdFileCheckBox.CheckState = System.Windows.Forms.CheckState.Checked
-		Me.ReferenceMeshSmdFileCheckBox.Location = New System.Drawing.Point(3, 49)
+		Me.ReferenceMeshSmdFileCheckBox.Location = New System.Drawing.Point(3, 72)
 		Me.ReferenceMeshSmdFileCheckBox.Name = "ReferenceMeshSmdFileCheckBox"
 		Me.ReferenceMeshSmdFileCheckBox.Size = New System.Drawing.Size(147, 17)
 		Me.ReferenceMeshSmdFileCheckBox.TabIndex = 3
@@ -434,7 +467,7 @@ Partial Class DecompileUserControl
 		'ApplyRightHandFixCheckBox
 		'
 		Me.ApplyRightHandFixCheckBox.AutoSize = True
-		Me.ApplyRightHandFixCheckBox.Location = New System.Drawing.Point(20, 72)
+		Me.ApplyRightHandFixCheckBox.Location = New System.Drawing.Point(20, 95)
 		Me.ApplyRightHandFixCheckBox.Name = "ApplyRightHandFixCheckBox"
 		Me.ApplyRightHandFixCheckBox.Size = New System.Drawing.Size(263, 17)
 		Me.ApplyRightHandFixCheckBox.TabIndex = 4
@@ -616,6 +649,7 @@ Partial Class DecompileUserControl
 		Me.Panel2.PerformLayout()
 		Me.SplitContainer1.Panel1.ResumeLayout(False)
 		Me.SplitContainer1.Panel2.ResumeLayout(False)
+		CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
 		Me.SplitContainer1.ResumeLayout(False)
 		Me.ResumeLayout(False)
 
@@ -664,5 +698,8 @@ Partial Class DecompileUserControl
 	Friend WithEvents UseInCompileButton As System.Windows.Forms.Button
 	Friend WithEvents UseAllInCompileButton As System.Windows.Forms.Button
 	Friend WithEvents DecompileOptionsUseDefaultsButton As System.Windows.Forms.Button
+	Friend WithEvents ToolTip1 As System.Windows.Forms.ToolTip
+	Friend WithEvents TextureBmpFilesCheckBox As System.Windows.Forms.CheckBox
+	Friend WithEvents SkinFamilyOnSingleLineCheckBox As System.Windows.Forms.CheckBox
 
 End Class

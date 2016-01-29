@@ -174,38 +174,86 @@ Module MathModule
 	'	matrix[2][3] = 0.f;
 	'}
 	''Public Sub AngleMatrix(ByVal pitchDegrees As Double, ByVal yawDegrees As Double, ByVal rollDegrees As Double, ByRef matrixColumn0 As SourceVector, ByRef matrixColumn1 As SourceVector, ByRef matrixColumn2 As SourceVector)
-	'Public Sub AngleMatrix(ByVal pitchRadians As Double, ByVal yawRadians As Double, ByVal rollRadians As Double, ByRef matrixColumn0 As SourceVector, ByRef matrixColumn1 As SourceVector, ByRef matrixColumn2 As SourceVector)
-	'	'Dim pitchRadians As Double
-	'	'Dim yawRadians As Double
-	'	'Dim rollRadians As Double
-	'	Dim sr As Double
-	'	Dim sp As Double
-	'	Dim sy As Double
-	'	Dim cr As Double
-	'	Dim cp As Double
-	'	Dim cy As Double
+	Public Sub AngleMatrix(ByVal pitchRadians As Double, ByVal yawRadians As Double, ByVal rollRadians As Double, ByRef matrixColumn0 As SourceVector, ByRef matrixColumn1 As SourceVector, ByRef matrixColumn2 As SourceVector, ByRef matrixColumn3 As SourceVector)
+		'Dim pitchRadians As Double
+		'Dim yawRadians As Double
+		'Dim rollRadians As Double
+		Dim sr As Double
+		Dim sp As Double
+		Dim sy As Double
+		Dim cr As Double
+		Dim cp As Double
+		Dim cy As Double
 
-	'	'pitchRadians = DegreesToRadians(pitchDegrees)
-	'	'yawRadians = DegreesToRadians(yawDegrees)
-	'	'rollRadians = DegreesToRadians(rollDegrees)
+		'pitchRadians = DegreesToRadians(pitchDegrees)
+		'yawRadians = DegreesToRadians(yawDegrees)
+		'rollRadians = DegreesToRadians(rollDegrees)
 
-	'	sy = Math.Sin(yawRadians)
-	'	cy = Math.Cos(yawRadians)
-	'	sp = Math.Sin(pitchRadians)
-	'	cp = Math.Cos(pitchRadians)
-	'	sr = Math.Sin(rollRadians)
-	'	cr = Math.Cos(rollRadians)
+		sy = Math.Sin(yawRadians)
+		cy = Math.Cos(yawRadians)
+		sp = Math.Sin(pitchRadians)
+		cp = Math.Cos(pitchRadians)
+		sr = Math.Sin(rollRadians)
+		cr = Math.Cos(rollRadians)
 
-	'	matrixColumn0.x = cp * cy
-	'	matrixColumn0.y = cp * sy
-	'	matrixColumn0.z = -sp
-	'	matrixColumn1.x = sr * sp * cy + cr * -sy
-	'	matrixColumn1.y = sr * sp * sy + cr * cy
-	'	matrixColumn1.z = sr * cp
-	'	matrixColumn2.x = (cr * sp * cy + -sr * -sy)
-	'	matrixColumn2.y = (cr * sp * sy + -sr * cy)
-	'	matrixColumn2.z = cr * cp
-	'End Sub
+		matrixColumn0.x = cp * cy
+		matrixColumn0.y = cp * sy
+		matrixColumn0.z = -sp
+		matrixColumn1.x = sr * sp * cy + cr * -sy
+		matrixColumn1.y = sr * sp * sy + cr * cy
+		matrixColumn1.z = sr * cp
+		matrixColumn2.x = (cr * sp * cy + -sr * -sy)
+		matrixColumn2.y = (cr * sp * sy + -sr * cy)
+		matrixColumn2.z = cr * cp
+		matrixColumn3.x = 0
+		matrixColumn3.y = 0
+		matrixColumn3.z = 0
+	End Sub
+
+	'FROM: [1999] HLStandardSDK\SourceCode\utils\common\mathlib.c
+	'void R_ConcatTransforms (const float in1[3][4], const float in2[3][4], float out[3][4])
+	'{
+	'	out[0][0] = in1[0][0] * in2[0][0] + in1[0][1] * in2[1][0] +
+	'				in1[0][2] * in2[2][0];
+	'	out[0][1] = in1[0][0] * in2[0][1] + in1[0][1] * in2[1][1] +
+	'				in1[0][2] * in2[2][1];
+	'	out[0][2] = in1[0][0] * in2[0][2] + in1[0][1] * in2[1][2] +
+	'				in1[0][2] * in2[2][2];
+	'	out[0][3] = in1[0][0] * in2[0][3] + in1[0][1] * in2[1][3] +
+	'				in1[0][2] * in2[2][3] + in1[0][3];
+	'	out[1][0] = in1[1][0] * in2[0][0] + in1[1][1] * in2[1][0] +
+	'				in1[1][2] * in2[2][0];
+	'	out[1][1] = in1[1][0] * in2[0][1] + in1[1][1] * in2[1][1] +
+	'				in1[1][2] * in2[2][1];
+	'	out[1][2] = in1[1][0] * in2[0][2] + in1[1][1] * in2[1][2] +
+	'				in1[1][2] * in2[2][2];
+	'	out[1][3] = in1[1][0] * in2[0][3] + in1[1][1] * in2[1][3] +
+	'				in1[1][2] * in2[2][3] + in1[1][3];
+	'	out[2][0] = in1[2][0] * in2[0][0] + in1[2][1] * in2[1][0] +
+	'				in1[2][2] * in2[2][0];
+	'	out[2][1] = in1[2][0] * in2[0][1] + in1[2][1] * in2[1][1] +
+	'				in1[2][2] * in2[2][1];
+	'	out[2][2] = in1[2][0] * in2[0][2] + in1[2][1] * in2[1][2] +
+	'				in1[2][2] * in2[2][2];
+	'	out[2][3] = in1[2][0] * in2[0][3] + in1[2][1] * in2[1][3] +
+	'				in1[2][2] * in2[2][3] + in1[2][3];
+	'}
+	Public Sub R_ConcatTransforms(ByVal in1_matrixColumn0 As SourceVector, ByVal in1_matrixColumn1 As SourceVector, ByVal in1_matrixColumn2 As SourceVector, ByVal in1_matrixColumn3 As SourceVector, ByVal in2_matrixColumn0 As SourceVector, ByVal in2_matrixColumn1 As SourceVector, ByVal in2_matrixColumn2 As SourceVector, ByVal in2_matrixColumn3 As SourceVector, ByRef out_matrixColumn0 As SourceVector, ByRef out_matrixColumn1 As SourceVector, ByRef out_matrixColumn2 As SourceVector, ByRef out_matrixColumn3 As SourceVector)
+		out_matrixColumn0.x = in1_matrixColumn0.x * in2_matrixColumn0.x + in1_matrixColumn1.x * in2_matrixColumn0.y + in1_matrixColumn2.x * in2_matrixColumn0.z
+		out_matrixColumn1.x = in1_matrixColumn0.x * in2_matrixColumn1.x + in1_matrixColumn1.x * in2_matrixColumn1.y + in1_matrixColumn2.x * in2_matrixColumn1.z
+		out_matrixColumn2.x = in1_matrixColumn0.x * in2_matrixColumn2.x + in1_matrixColumn1.x * in2_matrixColumn2.y + in1_matrixColumn2.x * in2_matrixColumn2.z
+		out_matrixColumn3.x = in1_matrixColumn0.x * in2_matrixColumn3.x + in1_matrixColumn1.x * in2_matrixColumn3.y + in1_matrixColumn2.x * in2_matrixColumn3.z + in1_matrixColumn3.x
+
+		out_matrixColumn0.y = in1_matrixColumn0.y * in2_matrixColumn0.x + in1_matrixColumn1.y * in2_matrixColumn0.y + in1_matrixColumn2.y * in2_matrixColumn0.z
+		out_matrixColumn1.y = in1_matrixColumn0.y * in2_matrixColumn1.x + in1_matrixColumn1.y * in2_matrixColumn1.y + in1_matrixColumn2.y * in2_matrixColumn1.z
+		out_matrixColumn2.y = in1_matrixColumn0.y * in2_matrixColumn2.x + in1_matrixColumn1.y * in2_matrixColumn2.y + in1_matrixColumn2.y * in2_matrixColumn2.z
+		out_matrixColumn3.y = in1_matrixColumn0.y * in2_matrixColumn3.x + in1_matrixColumn1.y * in2_matrixColumn3.y + in1_matrixColumn2.y * in2_matrixColumn3.z + in1_matrixColumn3.y
+
+		out_matrixColumn0.z = in1_matrixColumn0.z * in2_matrixColumn0.x + in1_matrixColumn1.z * in2_matrixColumn0.y + in1_matrixColumn2.z * in2_matrixColumn0.z
+		out_matrixColumn1.z = in1_matrixColumn0.z * in2_matrixColumn1.x + in1_matrixColumn1.z * in2_matrixColumn1.y + in1_matrixColumn2.z * in2_matrixColumn1.z
+		out_matrixColumn2.z = in1_matrixColumn0.z * in2_matrixColumn2.x + in1_matrixColumn1.z * in2_matrixColumn2.y + in1_matrixColumn2.z * in2_matrixColumn2.z
+		out_matrixColumn3.z = in1_matrixColumn0.z * in2_matrixColumn3.x + in1_matrixColumn1.z * in2_matrixColumn3.y + in1_matrixColumn2.z * in2_matrixColumn3.z + in1_matrixColumn3.z
+	End Sub
 
 
 
@@ -216,6 +264,91 @@ Module MathModule
 	'}
 	Public Function DotProduct(ByVal vector1 As SourceVector, ByVal vector2 As SourceVector) As Double
 		Return vector1.x * vector2.x + vector1.y * vector2.y + vector1.z * vector2.z
+	End Function
+
+
+	Public Sub VectorCopy(ByVal input As SourceVector, ByRef output As SourceVector)
+		output.x = input.x
+		output.y = input.y
+		output.z = input.z
+	End Sub
+
+	'FROM: HL1Alpha model viewer gsmv_beta2a_bin_src\src\src\sdk\mathlib.c
+	'void VectorRotate (const vec3_t in1, const float in2[3][4], vec3_t out)
+	'{
+	'	out[0] = DotProduct(in1, in2[0]);
+	'	out[1] = DotProduct(in1, in2[1]);
+	'	out[2] = DotProduct(in1, in2[2]);
+	'}
+	Public Function VectorRotate(ByVal input As SourceVector, ByVal matrixColumn0 As SourceVector, ByVal matrixColumn1 As SourceVector, ByVal matrixColumn2 As SourceVector, ByVal matrixColumn3 As SourceVector) As SourceVector
+		Dim output As SourceVector
+		Dim matrixRow0 As SourceVector
+		Dim matrixRow1 As SourceVector
+		Dim matrixRow2 As SourceVector
+
+		output = New SourceVector()
+		matrixRow0 = New SourceVector()
+		matrixRow1 = New SourceVector()
+		matrixRow2 = New SourceVector()
+
+		matrixRow0.x = matrixColumn0.x
+		matrixRow0.y = matrixColumn1.x
+		matrixRow0.z = matrixColumn2.x
+
+		matrixRow1.x = matrixColumn0.y
+		matrixRow1.y = matrixColumn1.y
+		matrixRow1.z = matrixColumn2.y
+
+		matrixRow2.x = matrixColumn0.z
+		matrixRow2.y = matrixColumn1.z
+		matrixRow2.z = matrixColumn2.z
+
+		output.x = DotProduct(input, matrixRow0)
+		output.y = DotProduct(input, matrixRow1)
+		output.z = DotProduct(input, matrixRow2)
+
+		Return output
+	End Function
+
+
+	'FROM: HL1Alpha model viewer gsmv_beta2a_bin_src\src\src\sdk\mathlib.c
+	'vec_t VectorNormalize (vec3_t v)
+	'{
+	'	int		i;
+	'	double	length;
+	'
+	'	if ( fabs(v[1] - 0.000215956) < 0.0001)
+	'		i=1;
+	'
+	'	length = 0;
+	'	for (i=0 ; i< 3 ; i++)
+	'		length += v[i]*v[i];
+	'	length = sqrt (length);
+	'	if (length == 0)
+	'		return 0;
+	'		
+	'	for (i=0 ; i< 3 ; i++)
+	'		v[i] /= length;	
+	'
+	'	return length;
+	'}
+	Public Function VectorNormalize(ByRef ioVector As SourceVector) As Double
+		Dim length As Double
+
+		length = 0
+		length += ioVector.x * ioVector.x
+		length += ioVector.y * ioVector.y
+		length += ioVector.z * ioVector.z
+		length = Math.Sqrt(length)
+		If length = 0 Then
+			Return 0
+		End If
+
+		ioVector.x /= length
+		ioVector.y /= length
+		ioVector.z /= length
+
+		Return length
 	End Function
 
 
@@ -551,6 +684,29 @@ Module MathModule
 		'Return MathModule.Eul_FromQuat(q, 2, 0, 1, 0, EulerParity.Odd, EulerRepeat.No, EulerFrame.S)
 	End Function
 
+	Public Function ToEulerAngles2531(ByVal q As SourceQuaternion) As SourceVector
+		'NOTE: Incorrect.
+		'Return MathModule.Eul_FromQuat(q, 0, 1, 2, 0, EulerParity.Even, EulerRepeat.No, EulerFrame.R)
+		'NOTE: Incorrect.
+		'Return MathModule.Eul_FromQuat(q, 1, 2, 0, 0, EulerParity.Even, EulerRepeat.No, EulerFrame.R)
+		'Return MathModule.Eul_FromQuat(q, 2, 0, 1, 0, EulerParity.Even, EulerRepeat.No, EulerFrame.R)
+
+		'NOTE: Incorrect.
+		'Return MathModule.Eul_FromQuat(q, 0, 1, 2, 0, EulerParity.Odd, EulerRepeat.No, EulerFrame.R)
+		'Return MathModule.Eul_FromQuat(q, 1, 2, 0, 0, EulerParity.Odd, EulerRepeat.No, EulerFrame.R)
+		'Return MathModule.Eul_FromQuat(q, 2, 0, 1, 0, EulerParity.Odd, EulerRepeat.No, EulerFrame.R)
+
+		'NOTE: Not completely correct.
+		Return MathModule.Eul_FromQuat(q, 0, 1, 2, 0, EulerParity.Even, EulerRepeat.No, EulerFrame.S)
+		'NOTE: Incorrect.
+		'Return MathModule.Eul_FromQuat(q, 1, 2, 0, 0, EulerParity.Even, EulerRepeat.No, EulerFrame.S)
+		'Return MathModule.Eul_FromQuat(q, 2, 0, 1, 0, EulerParity.Even, EulerRepeat.No, EulerFrame.S)
+
+		'NOTE: Incorrect.
+		'Return MathModule.Eul_FromQuat(q, 0, 1, 2, 0, EulerParity.Odd, EulerRepeat.No, EulerFrame.S)
+		'Return MathModule.Eul_FromQuat(q, 1, 2, 0, 0, EulerParity.Odd, EulerRepeat.No, EulerFrame.S)
+		'Return MathModule.Eul_FromQuat(q, 2, 0, 1, 0, EulerParity.Odd, EulerRepeat.No, EulerFrame.S)
+	End Function
 
 	'FROM: http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/indexLocal.htm
 	'double sqw = q1.w*q1.w;

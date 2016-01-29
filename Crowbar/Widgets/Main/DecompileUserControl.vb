@@ -45,14 +45,17 @@ Public Class DecompileUserControl
 	Private Sub InitDecompilerOptions()
 		Me.QcFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileQcFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.GroupIntoQciFilesCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileGroupIntoQciFilesIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
+		Me.SkinFamilyOnSingleLineCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileQcSkinFamilyOnSingleLineIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.IncludeDefineBoneLinesCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileQcIncludeDefineBoneLinesIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.ReferenceMeshSmdFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileReferenceMeshSmdFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.ApplyRightHandFixCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileApplyRightHandFixIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
+		Me.BoneAnimationSmdFilesCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileBoneAnimationSmdFilesIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
+		Me.PlaceInAnimsSubfolderCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileBoneAnimationPlaceInSubfolderIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
+
+		Me.TextureBmpFilesCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileTextureBmpFilesIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.LodMeshSmdFilesCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileLodMeshSmdFilesIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.PhysicsMeshSmdFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompilePhysicsMeshSmdFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.VertexAnimationVtaFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileVertexAnimationVtaFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
-		Me.BoneAnimationSmdFilesCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileBoneAnimationSmdFilesIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
-		Me.PlaceInAnimsSubfolderCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileBoneAnimationPlaceInSubfolderIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.ProceduralBonesVrdFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileProceduralBonesVrdFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 
 		Me.FolderForEachModelCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileFolderForEachModelIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
@@ -80,14 +83,17 @@ Public Class DecompileUserControl
 	Private Sub FreeDecompilerOptions()
 		Me.QcFileCheckBox.DataBindings.Clear()
 		Me.GroupIntoQciFilesCheckBox.DataBindings.Clear()
+		Me.SkinFamilyOnSingleLineCheckBox.DataBindings.Clear()
 		Me.IncludeDefineBoneLinesCheckBox.DataBindings.Clear()
 		Me.ReferenceMeshSmdFileCheckBox.DataBindings.Clear()
 		Me.ApplyRightHandFixCheckBox.DataBindings.Clear()
+		Me.BoneAnimationSmdFilesCheckBox.DataBindings.Clear()
+		Me.PlaceInAnimsSubfolderCheckBox.DataBindings.Clear()
+
+		Me.TextureBmpFilesCheckBox.DataBindings.Clear()
 		Me.LodMeshSmdFilesCheckBox.DataBindings.Clear()
 		Me.PhysicsMeshSmdFileCheckBox.DataBindings.Clear()
 		Me.VertexAnimationVtaFileCheckBox.DataBindings.Clear()
-		Me.BoneAnimationSmdFilesCheckBox.DataBindings.Clear()
-		Me.PlaceInAnimsSubfolderCheckBox.DataBindings.Clear()
 		Me.ProceduralBonesVrdFileCheckBox.DataBindings.Clear()
 
 		Me.FolderForEachModelCheckBox.DataBindings.Clear()
@@ -319,6 +325,7 @@ Public Class DecompileUserControl
 
 		Me.OptionsGroupBox.Enabled = Not decompilerIsRunning
 		Me.GroupIntoQciFilesCheckBox.Enabled = TheApp.Settings.DecompileQcFileIsChecked
+		Me.SkinFamilyOnSingleLineCheckBox.Enabled = TheApp.Settings.DecompileQcFileIsChecked
 		Me.IncludeDefineBoneLinesCheckBox.Enabled = TheApp.Settings.DecompileQcFileIsChecked
 		Me.ApplyRightHandFixCheckBox.Enabled = TheApp.Settings.DecompileReferenceMeshSmdFileIsChecked
 		Me.PlaceInAnimsSubfolderCheckBox.Enabled = TheApp.Settings.DecompileBoneAnimationSmdFilesIsChecked
@@ -332,6 +339,7 @@ Public Class DecompileUserControl
 		 OrElse TheApp.Settings.DecompileVertexAnimationVtaFileIsChecked _
 		 OrElse TheApp.Settings.DecompileBoneAnimationSmdFilesIsChecked _
 		 OrElse TheApp.Settings.DecompileProceduralBonesVrdFileIsChecked _
+		 OrElse TheApp.Settings.DecompileTextureBmpFilesIsChecked _
 		 OrElse TheApp.Settings.DecompileLogFileIsChecked _
 		 OrElse TheApp.Settings.DecompileDebugInfoFilesIsChecked)
 		Me.SkipCurrentModelButton.Enabled = decompilerIsRunning

@@ -61,6 +61,54 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized string similar to GoldSource and Source Engine Model Toolset:
+        '''	Decompiler of Valve&apos;s MDL and related files.
+        '''	Compiler interface to Valve&apos;s StudioMDL.exe tool.
+        '''	Model viewer interface to Valve&apos;s Half-Life Model Viewer tool.
+        '''.
+        '''</summary>
+        Friend ReadOnly Property About_ProductDescription() As String
+            Get
+                Return ResourceManager.GetString("About_ProductDescription", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to Special thanks to:
+        '''	arby26
+        '''	Artfunkel
+        '''	atrblizzard
+        '''	Avengito
+        '''	BANG!
+        '''	BinaryRifle
+        '''	Cra0kalo
+        '''	da1barker
+        '''	Doktor haus
+        '''	Drsalvador
+        '''	Funreal
+        '''	Game Zombie
+        '''	GeckoN
+        '''	GPZ
+        '''	k@rt
+        '''	K1CHWA
+        '''	mrlanky
+        '''	Pajama
+        '''	pappaskurtz
+        '''	Rantis
+        '''	Seraphim
+        '''	Splinks
+        '''	Stiffy360
+        '''	Stay Puft
+        '''	Vincentor
+        '''.
+        '''</summary>
+        Friend ReadOnly Property About_SpecialThanksText() As String
+            Get
+                Return ResourceManager.GetString("About_SpecialThanksText", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         '''</summary>
         Friend ReadOnly Property crowbar_icon() As System.Drawing.Icon
@@ -77,6 +125,78 @@ Namespace My.Resources
             Get
                 Dim obj As Object = ResourceManager.GetObject("crowbar_icon_large", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to decompile-ANI.txt.
+        '''</summary>
+        Friend ReadOnly Property Decompile_DebugAniFileNameSuffix() As String
+            Get
+                Return ResourceManager.GetString("Decompile_DebugAniFileNameSuffix", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to decompile-MDL.txt.
+        '''</summary>
+        Friend ReadOnly Property Decompile_DebugMdlFileNameSuffix() As String
+            Get
+                Return ResourceManager.GetString("Decompile_DebugMdlFileNameSuffix", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to decompile-PHY.txt.
+        '''</summary>
+        Friend ReadOnly Property Decompile_DebugPhyFileNameSuffix() As String
+            Get
+                Return ResourceManager.GetString("Decompile_DebugPhyFileNameSuffix", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to decompile-SequenceGroupMDL.txt.
+        '''</summary>
+        Friend ReadOnly Property Decompile_DebugSequenceGroupMDLFileNameSuffix() As String
+            Get
+                Return ResourceManager.GetString("Decompile_DebugSequenceGroupMDLFileNameSuffix", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to decompile-TextureMDL.txt.
+        '''</summary>
+        Friend ReadOnly Property Decompile_DebugTextureMDLFileNameSuffix() As String
+            Get
+                Return ResourceManager.GetString("Decompile_DebugTextureMDLFileNameSuffix", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to decompile-VTX.txt.
+        '''</summary>
+        Friend ReadOnly Property Decompile_DebugVtxFileNameSuffix() As String
+            Get
+                Return ResourceManager.GetString("Decompile_DebugVtxFileNameSuffix", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to decompile-VVD.txt.
+        '''</summary>
+        Friend ReadOnly Property Decompile_DebugVvdFileNameSuffix() As String
+            Get
+                Return ResourceManager.GetString("Decompile_DebugVvdFileNameSuffix", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to decompile-log.txt.
+        '''</summary>
+        Friend ReadOnly Property Decompile_LogFileNameSuffix() As String
+            Get
+                Return ResourceManager.GetString("Decompile_LogFileNameSuffix", resourceCulture)
             End Get
         End Property
         

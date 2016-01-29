@@ -5,6 +5,20 @@ Public Class MainForm
 
 #Region "Creation and Destruction"
 
+	Public Sub New()
+		''DEBUG: Be sure to comment this out before release.
+		'' Set the culture and UI culture before 
+		'' the call to InitializeComponent.
+		'Threading.Thread.CurrentThread.CurrentCulture = New Globalization.CultureInfo("de-DE")
+		'Threading.Thread.CurrentThread.CurrentUICulture = New Globalization.CultureInfo("de-DE")
+
+		' This call is required by the designer.
+		InitializeComponent()
+
+		' Add any initialization after the InitializeComponent() call.
+
+	End Sub
+
 #End Region
 
 #Region "Init and Free"
@@ -26,8 +40,12 @@ Public Class MainForm
 			If Me.Location.Y < aScreen.Bounds.Top OrElse Me.Location.Y + Me.Size.Height > aScreen.Bounds.Top + aScreen.Bounds.Height Then
 				Me.Top = aScreen.Bounds.Top
 			End If
-		Catch
+		Catch ex As Exception
+			Dim debug As Integer = 4242
 		End Try
+
+		''TEST:
+		'JumpList()
 
 		Dim commandLineParams() As String = System.Environment.GetCommandLineArgs()
 		If commandLineParams.Length > 1 AndAlso commandLineParams(1) <> "" Then

@@ -5,8 +5,8 @@ Public Class AppDebug3File
 
 #Region "Write Log File Methods"
 
-	Public Sub WriteFile(ByVal pathFileName As String, ByVal aSourceEngineModel As SourceModel)
-		If aSourceEngineModel.MdlFileHeader Is Nothing Then
+	Public Sub WriteFile(ByVal pathFileName As String, ByVal mdlFileData As List(Of UnknownValue))
+		If mdlFileData Is Nothing Then
 			Return
 		End If
 
@@ -15,7 +15,7 @@ Public Class AppDebug3File
 
 			Me.WriteHeaderComment()
 
-			Me.WriteUnknownValues(aSourceEngineModel)
+			Me.WriteUnknownValues(mdlFileData)
 		Catch
 		Finally
 			Me.theOutputFileStream.Flush()
@@ -56,19 +56,19 @@ Public Class AppDebug3File
 		Me.theOutputFileStream.Flush()
 	End Sub
 
-	Private Sub WriteUnknownValues(ByVal aSourceEngineModel As SourceModel)
+	Private Sub WriteUnknownValues(ByVal mdlFileData As List(Of UnknownValue))
 		Dim line As String
 
 		line = "====== MDL Unknown Bytes ======"
 		Me.WriteLogLine(0, line)
 
-		If aSourceEngineModel.MdlFileHeader.theUnknownValues Is Nothing Then
+		If mdlFileData Is Nothing Then
 			Return
 		End If
 
-		For i As Integer = 0 To aSourceEngineModel.MdlFileHeader.theUnknownValues.Count - 1
+		For i As Integer = 0 To mdlFileData.Count - 1
 			Dim anUnknownValue As UnknownValue
-			anUnknownValue = aSourceEngineModel.MdlFileHeader.theUnknownValues(i)
+			anUnknownValue = mdlFileData(i)
 			line = DebugFormatModule.FormatLongWithHexLine("offset", anUnknownValue.offset)
 			line += " ("
 			line += anUnknownValue.type

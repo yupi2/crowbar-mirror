@@ -81,6 +81,7 @@ Partial Class CompileUserControl
 		Me.OrangeBoxOptionsTabPage.SuspendLayout()
 		Me.Panel1.SuspendLayout()
 		Me.CompileOutputFolderGroupBox.SuspendLayout()
+		CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).BeginInit()
 		Me.SplitContainer2.Panel1.SuspendLayout()
 		Me.SplitContainer2.Panel2.SuspendLayout()
 		Me.SplitContainer2.SuspendLayout()
@@ -237,7 +238,7 @@ Partial Class CompileUserControl
 		Me.LogFileCheckBox.Size = New System.Drawing.Size(60, 17)
 		Me.LogFileCheckBox.TabIndex = 1
 		Me.LogFileCheckBox.Text = "Log file"
-		Me.ToolTip1.SetToolTip(Me.LogFileCheckBox, "Write compile log to a file (in same folder as QC file)")
+		Me.ToolTip1.SetToolTip(Me.LogFileCheckBox, "Write compile log to a file (in same folder as QC file).")
 		Me.LogFileCheckBox.UseVisualStyleBackColor = True
 		'
 		'CompilerOptionDefineBonesCheckBox
@@ -258,7 +259,7 @@ Partial Class CompileUserControl
 		Me.CompilerOptionNoP4CheckBox.Size = New System.Drawing.Size(56, 17)
 		Me.CompilerOptionNoP4CheckBox.TabIndex = 0
 		Me.CompilerOptionNoP4CheckBox.Text = "No P4"
-		Me.ToolTip1.SetToolTip(Me.CompilerOptionNoP4CheckBox, "No perforce integration (modders do not usually have Perforce software)")
+		Me.ToolTip1.SetToolTip(Me.CompilerOptionNoP4CheckBox, "No perforce integration (modders do not usually have Perforce software).")
 		Me.CompilerOptionNoP4CheckBox.UseVisualStyleBackColor = True
 		'
 		'CompilerOptionVerboseCheckBox
@@ -269,7 +270,7 @@ Partial Class CompileUserControl
 		Me.CompilerOptionVerboseCheckBox.Size = New System.Drawing.Size(65, 17)
 		Me.CompilerOptionVerboseCheckBox.TabIndex = 1
 		Me.CompilerOptionVerboseCheckBox.Text = "Verbose"
-		Me.ToolTip1.SetToolTip(Me.CompilerOptionVerboseCheckBox, "Write more info in compile log")
+		Me.ToolTip1.SetToolTip(Me.CompilerOptionVerboseCheckBox, "Write more info in compile log.")
 		Me.CompilerOptionVerboseCheckBox.UseVisualStyleBackColor = True
 		'
 		'CompilerOptionDefineBonesModifyQcFileCheckBox
@@ -725,6 +726,7 @@ Partial Class CompileUserControl
 		Me.CompileOutputFolderGroupBox.PerformLayout()
 		Me.SplitContainer2.Panel1.ResumeLayout(False)
 		Me.SplitContainer2.Panel2.ResumeLayout(False)
+		CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).EndInit()
 		Me.SplitContainer2.ResumeLayout(False)
 		Me.OptionsGroupBox.ResumeLayout(False)
 		Me.Panel2.ResumeLayout(False)

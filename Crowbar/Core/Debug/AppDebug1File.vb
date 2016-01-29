@@ -5,19 +5,19 @@ Public Class AppDebug1File
 
 #Region "Write Log File Methods"
 
-	Public Sub WriteFile(ByVal pathFileName As String, ByVal aSourceEngineModel As SourceModel)
-		If aSourceEngineModel.MdlFileHeader Is Nothing Then
+	Public Sub WriteFile(ByVal pathFileName As String, ByVal aMdlFileData As SourceMdlFileData)
+		If aMdlFileData Is Nothing Then
 			Return
 		End If
 
 		Try
 			Me.theOutputFileStream = File.CreateText(pathFileName)
 
-			Me.theSourceEngineModel = aSourceEngineModel
+			'Me.theSourceEngineModel = aMdlFileData
 
 			Me.WriteHeaderComment()
 
-			Me.WriteMdlFileInfo(Me.theSourceEngineModel.MdlFileHeader)
+			Me.WriteMdlFileInfo(aMdlFileData)
 			'Me.WritePhyFileInfo()
 			'Me.WriteVtxFileInfo()
 			'Me.WriteVtxFileInfoCalculatedOffsets2()
@@ -67,16 +67,16 @@ Public Class AppDebug1File
 
 #Region "Write MDL-File Related"
 
-	Private Sub WriteMdlModelGroupMdlFileInfos(ByVal aMdlFileHeader As SourceMdlFileHeader)
-		If aMdlFileHeader.theModelGroups IsNot Nothing Then
-			For i As Integer = 0 To aMdlFileHeader.theModelGroups.Count - 1
-				Me.WriteMdlFileInfo(aMdlFileHeader.theModelGroups(i).theMdlFileData)
-				Me.WriteMdlModelGroupMdlFileInfos(aMdlFileHeader.theModelGroups(i).theMdlFileData)
+	Private Sub WriteMdlModelGroupMdlFileInfos(ByVal aMdlFileData As SourceMdlFileData)
+		If aMdlFileData.theModelGroups IsNot Nothing Then
+			For i As Integer = 0 To aMdlFileData.theModelGroups.Count - 1
+				Me.WriteMdlFileInfo(aMdlFileData.theModelGroups(i).theMdlFileData)
+				Me.WriteMdlModelGroupMdlFileInfos(aMdlFileData.theModelGroups(i).theMdlFileData)
 			Next
 		End If
 	End Sub
 
-	Private Sub WriteMdlFileInfo(ByVal aMdlFileHeader As SourceMdlFileHeader)
+	Private Sub WriteMdlFileInfo(ByVal aMdlFileHeader As SourceMdlFileData)
 		Me.WriteFileSeparatorLines()
 
 		Me.WriteMdlHeader(aMdlFileHeader)
@@ -102,7 +102,7 @@ Public Class AppDebug1File
 		Me.WriteMdlFlexControllerUis(aMdlFileHeader)
 	End Sub
 
-	Private Sub WriteMdlHeader(ByVal aMdlFileHeader As SourceMdlFileHeader)
+	Private Sub WriteMdlHeader(ByVal aMdlFileHeader As SourceMdlFileData)
 		Dim line As String
 
 		line = "====== MDL Header ======"
@@ -266,7 +266,7 @@ Public Class AppDebug1File
 		Me.WriteLogLine(0, line)
 	End Sub
 
-	Private Sub WriteMdlBones(ByVal aMdlFileHeader As SourceMdlFileHeader)
+	Private Sub WriteMdlBones(ByVal aMdlFileHeader As SourceMdlFileData)
 		Dim line As String
 
 		If aMdlFileHeader.theBones IsNot Nothing Then
@@ -316,7 +316,7 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteMdlAnimationDescs(ByVal aMdlFileHeader As SourceMdlFileHeader)
+	Private Sub WriteMdlAnimationDescs(ByVal aMdlFileHeader As SourceMdlFileData)
 		Dim line As String
 
 		If aMdlFileHeader.theAnimationDescs IsNot Nothing Then
@@ -375,7 +375,7 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteMdlAnimation(ByVal aMdlFileHeader As SourceMdlFileHeader, ByVal anAnimationDesc As SourceMdlAnimationDesc)
+	Private Sub WriteMdlAnimation(ByVal aMdlFileHeader As SourceMdlFileData, ByVal anAnimationDesc As SourceMdlAnimationDesc)
 		Dim line As String
 		Dim anAnimation As SourceMdlAnimation
 
@@ -494,7 +494,7 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteMdlIkRules(ByVal aMdlFileHeader As SourceMdlFileHeader, ByVal anAnimationDesc As SourceMdlAnimationDesc)
+	Private Sub WriteMdlIkRules(ByVal aMdlFileHeader As SourceMdlFileData, ByVal anAnimationDesc As SourceMdlAnimationDesc)
 		Dim line As String
 
 		If anAnimationDesc.theIkRules IsNot Nothing Then
@@ -582,7 +582,7 @@ Public Class AppDebug1File
 	'	End If
 	'End Sub
 
-	Private Sub WriteMdlSequenceDescs(ByVal aMdlFileHeader As SourceMdlFileHeader)
+	Private Sub WriteMdlSequenceDescs(ByVal aMdlFileHeader As SourceMdlFileData)
 		Dim line As String
 
 		If aMdlFileHeader.theSequenceDescs IsNot Nothing Then
@@ -665,7 +665,7 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteMdlAnimIndexes(ByVal aMdlFileHeader As SourceMdlFileHeader, ByVal aSequenceDesc As SourceMdlSequenceDesc)
+	Private Sub WriteMdlAnimIndexes(ByVal aMdlFileHeader As SourceMdlFileData, ByVal aSequenceDesc As SourceMdlSequenceDesc)
 		Dim line As String
 
 		If aSequenceDesc.theAnimDescIndexes IsNot Nothing Then
@@ -686,7 +686,7 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteMdlAnimBoneWeights(ByVal aMdlFileHeader As SourceMdlFileHeader, ByVal aSequenceDesc As SourceMdlSequenceDesc)
+	Private Sub WriteMdlAnimBoneWeights(ByVal aMdlFileHeader As SourceMdlFileData, ByVal aSequenceDesc As SourceMdlSequenceDesc)
 		Dim line As String
 
 		If aSequenceDesc.theBoneWeights IsNot Nothing Then
@@ -707,7 +707,7 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteMdlTextures(ByVal aMdlFileHeader As SourceMdlFileHeader)
+	Private Sub WriteMdlTextures(ByVal aMdlFileHeader As SourceMdlFileData)
 		Dim line As String
 
 		If aMdlFileHeader.theTextures IsNot Nothing Then
@@ -723,14 +723,14 @@ Public Class AppDebug1File
 				'Me.WriteLogLine(1, "[index: " + i.ToString() + "]")
 				Me.WriteLogLine(1, DebugFormatModule.FormatIndexLine("Texture", i))
 
-				Me.WriteLogLine(1, DebugFormatModule.FormatIntegerLine("00 nameOffset", aTexture.nameOffset) + " (" + aTexture.theName + ")")
+				Me.WriteLogLine(1, DebugFormatModule.FormatIntegerLine("00 nameOffset", aTexture.nameOffset) + " (" + aTexture.theFileName + ")")
 				line = "--------------------"
 				Me.WriteLogLine(1, line)
 			Next
 		End If
 	End Sub
 
-	Private Sub WriteMdlTexturePaths(ByVal aMdlFileHeader As SourceMdlFileHeader)
+	Private Sub WriteMdlTexturePaths(ByVal aMdlFileHeader As SourceMdlFileData)
 		Dim line As String
 
 		If aMdlFileHeader.theTexturePaths IsNot Nothing Then
@@ -756,7 +756,7 @@ Public Class AppDebug1File
 	'	Dim line As String
 	'End Sub
 
-	Private Sub WriteMdlModelGroups(ByVal aMdlFileHeader As SourceMdlFileHeader)
+	Private Sub WriteMdlModelGroups(ByVal aMdlFileHeader As SourceMdlFileData)
 		Dim line As String
 
 		If aMdlFileHeader.theModelGroups IsNot Nothing Then
@@ -781,7 +781,7 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteMdlBodyParts(ByVal aMdlFileHeader As SourceMdlFileHeader)
+	Private Sub WriteMdlBodyParts(ByVal aMdlFileHeader As SourceMdlFileData)
 		Dim line As String
 
 		If aMdlFileHeader.theBodyParts IsNot Nothing Then
@@ -810,7 +810,7 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteMdlModels(ByVal aMdlFileHeader As SourceMdlFileHeader, ByVal aBodyPart As SourceMdlBodyPart)
+	Private Sub WriteMdlModels(ByVal aMdlFileHeader As SourceMdlFileData, ByVal aBodyPart As SourceMdlBodyPart)
 		Dim line As String
 
 		If aBodyPart.theModels IsNot Nothing Then
@@ -850,7 +850,7 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteMdlMeshes(ByVal aMdlFileHeader As SourceMdlFileHeader, ByVal aModel As SourceMdlModel)
+	Private Sub WriteMdlMeshes(ByVal aMdlFileHeader As SourceMdlFileData, ByVal aModel As SourceMdlModel)
 		Dim line As String
 
 		If aModel.theMeshes IsNot Nothing Then
@@ -932,7 +932,7 @@ Public Class AppDebug1File
 	'	End If
 	'End Sub
 
-	Private Sub WriteMdlFlexes(ByVal aMdlFileHeader As SourceMdlFileHeader, ByVal aMesh As SourceMdlMesh)
+	Private Sub WriteMdlFlexes(ByVal aMdlFileHeader As SourceMdlFileData, ByVal aMesh As SourceMdlMesh)
 		Dim line As String
 
 		If aMesh.theFlexes IsNot Nothing Then
@@ -953,7 +953,7 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteMdlAttachments(ByVal aMdlFileHeader As SourceMdlFileHeader)
+	Private Sub WriteMdlAttachments(ByVal aMdlFileHeader As SourceMdlFileData)
 		Dim line As String
 
 		If aMdlFileHeader.theAttachments IsNot Nothing Then
@@ -994,7 +994,7 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteMdlFlexDescs(ByVal aMdlFileHeader As SourceMdlFileHeader)
+	Private Sub WriteMdlFlexDescs(ByVal aMdlFileHeader As SourceMdlFileData)
 		Dim line As String
 
 		If aMdlFileHeader.theFlexDescs IsNot Nothing Then
@@ -1017,7 +1017,7 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteMdlFlexControllers(ByVal aMdlFileHeader As SourceMdlFileHeader)
+	Private Sub WriteMdlFlexControllers(ByVal aMdlFileHeader As SourceMdlFileData)
 		Dim line As String
 
 		If aMdlFileHeader.theFlexControllers IsNot Nothing Then
@@ -1044,7 +1044,7 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteMdlFlexRules(ByVal aMdlFileHeader As SourceMdlFileHeader)
+	Private Sub WriteMdlFlexRules(ByVal aMdlFileHeader As SourceMdlFileData)
 		Dim line As String
 
 		If aMdlFileHeader.theFlexRules IsNot Nothing Then
@@ -1069,7 +1069,7 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteMdlIkChains(ByVal aMdlFileHeader As SourceMdlFileHeader)
+	Private Sub WriteMdlIkChains(ByVal aMdlFileHeader As SourceMdlFileData)
 		Dim line As String
 
 		If aMdlFileHeader.theIkChains IsNot Nothing Then
@@ -1098,7 +1098,7 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteMdlIkLinks(ByVal aMdlFileHeader As SourceMdlFileHeader, ByVal anIkChain As SourceMdlIkChain)
+	Private Sub WriteMdlIkLinks(ByVal aMdlFileHeader As SourceMdlFileData, ByVal anIkChain As SourceMdlIkChain)
 		Dim line As String
 
 		If anIkChain.theLinks IsNot Nothing Then
@@ -1125,7 +1125,7 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteMdlMouths(ByVal aMdlFileHeader As SourceMdlFileHeader)
+	Private Sub WriteMdlMouths(ByVal aMdlFileHeader As SourceMdlFileData)
 		Dim line As String
 
 		If aMdlFileHeader.theMouths IsNot Nothing Then
@@ -1152,7 +1152,7 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteMdlPoseParamDescs(ByVal aMdlFileHeader As SourceMdlFileHeader)
+	Private Sub WriteMdlPoseParamDescs(ByVal aMdlFileHeader As SourceMdlFileData)
 		Dim line As String
 
 		If aMdlFileHeader.thePoseParamDescs IsNot Nothing Then
@@ -1180,7 +1180,7 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteMdlHitboxSets(ByVal aMdlFileHeader As SourceMdlFileHeader)
+	Private Sub WriteMdlHitboxSets(ByVal aMdlFileHeader As SourceMdlFileData)
 		Dim line As String
 
 		If aMdlFileHeader.theHitboxSets IsNot Nothing Then
@@ -1208,7 +1208,7 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteMdlHitboxes(ByVal aMdlFileHeader As SourceMdlFileHeader, ByVal aHitboxSet As SourceMdlHitboxSet)
+	Private Sub WriteMdlHitboxes(ByVal aMdlFileHeader As SourceMdlFileData, ByVal aHitboxSet As SourceMdlHitboxSet)
 		Dim line As String
 
 		If aHitboxSet.theHitboxes IsNot Nothing Then
@@ -1242,7 +1242,7 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteMdlFlexControllerUis(ByVal aMdlFileHeader As SourceMdlFileHeader)
+	Private Sub WriteMdlFlexControllerUis(ByVal aMdlFileHeader As SourceMdlFileData)
 		Dim line As String
 
 		If aMdlFileHeader.theFlexControllerUis IsNot Nothing Then
@@ -1278,57 +1278,57 @@ Public Class AppDebug1File
 
 #Region "Write PHY-File Related"
 
-	Private Sub WritePhyFileInfo()
-		If Me.theSourceEngineModel.PhyFileHeader Is Nothing Then
+	Private Sub WritePhyFileInfo(ByVal aPhyFileData As SourcePhyFileData)
+		If aPhyFileData Is Nothing Then
 			Exit Sub
 		End If
 
 		Me.WriteFileSeparatorLines()
 
-		Me.WriteSourcePhyHeader()
-		Me.WritePhyKeyValueDataStartOffset()
-		Me.WriteSourcePhysCollsionModels()
-		Me.WriteSourcePhyRagdollConstraintDescs()
-		Me.WriteSourcePhyCollisionPairs()
+		Me.WriteSourcePhyHeader(aPhyFileData)
+		Me.WritePhyKeyValueDataStartOffset(aPhyFileData)
+		Me.WriteSourcePhysCollsionModels(aPhyFileData)
+		Me.WriteSourcePhyRagdollConstraintDescs(aPhyFileData)
+		Me.WriteSourcePhyCollisionPairs(aPhyFileData)
 	End Sub
 
-	Private Sub WriteSourcePhyHeader()
+	Private Sub WriteSourcePhyHeader(ByVal aPhyFileData As SourcePhyFileData)
 		Dim line As String
 
 		line = "====== PHY Header ======"
 		Me.WriteLogLine(0, line)
 
-		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("00 size", Me.theSourceEngineModel.PhyFileHeader.size))
-		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("04 id", Me.theSourceEngineModel.PhyFileHeader.id))
-		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerLine("08 solidCount", Me.theSourceEngineModel.PhyFileHeader.solidCount))
-		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerAsHexLine("0C checksum", Me.theSourceEngineModel.PhyFileHeader.checksum))
+		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("00 size", aPhyFileData.size))
+		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("04 id", aPhyFileData.id))
+		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerLine("08 solidCount", aPhyFileData.solidCount))
+		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerAsHexLine("0C checksum", aPhyFileData.checksum))
 
 		line = "========================"
 		Me.WriteLogLine(0, line)
 	End Sub
 
-	Private Sub WritePhyKeyValueDataStartOffset()
+	Private Sub WritePhyKeyValueDataStartOffset(ByVal aPhyFileData As SourcePhyFileData)
 		Dim line As String
 
 		line = "====== PHY Key Value Data Offset ======"
 		Me.WriteLogLine(0, line)
 
-		Me.WriteLogLine(0, DebugFormatModule.FormatLongWithHexLine("offset", Me.theSourceEngineModel.PhyFileHeader.theSourcePhyKeyValueDataOffset))
+		Me.WriteLogLine(0, DebugFormatModule.FormatLongWithHexLine("offset", aPhyFileData.theSourcePhyKeyValueDataOffset))
 
 		line = "========================"
 		Me.WriteLogLine(0, line)
 	End Sub
 
-	Private Sub WriteSourcePhysCollsionModels()
-		If Me.theSourceEngineModel.PhyFileHeader.theSourcePhyPhysCollisionModels IsNot Nothing Then
+	Private Sub WriteSourcePhysCollsionModels(ByVal aPhyFileData As SourcePhyFileData)
+		If aPhyFileData.theSourcePhyPhysCollisionModels IsNot Nothing Then
 			Dim line As String
 			Dim aSourcePhysCollisionModel As SourcePhyPhysCollisionModel
 
 			line = "====== PHY Collision Models ======"
 			Me.WriteLogLine(0, line)
 
-			For i As Integer = 0 To Me.theSourceEngineModel.PhyFileHeader.theSourcePhyPhysCollisionModels.Count - 1
-				aSourcePhysCollisionModel = Me.theSourceEngineModel.PhyFileHeader.theSourcePhyPhysCollisionModels(i)
+			For i As Integer = 0 To aPhyFileData.theSourcePhyPhysCollisionModels.Count - 1
+				aSourcePhysCollisionModel = aPhyFileData.theSourcePhyPhysCollisionModels(i)
 				Me.WriteLogLine(1, DebugFormatModule.FormatSingleFloatLine("theIndex", aSourcePhysCollisionModel.theIndex))
 				Me.WriteLogLine(1, DebugFormatModule.FormatStringLine("theName", aSourcePhysCollisionModel.theName))
 				If aSourcePhysCollisionModel.theParentIsValid Then
@@ -1356,16 +1356,16 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteSourcePhyRagdollConstraintDescs()
-		If Me.theSourceEngineModel.PhyFileHeader.theSourcePhyRagdollConstraintDescs IsNot Nothing Then
+	Private Sub WriteSourcePhyRagdollConstraintDescs(ByVal aPhyFileData As SourcePhyFileData)
+		If aPhyFileData.theSourcePhyRagdollConstraintDescs IsNot Nothing Then
 			Dim line As String
 			Dim aSourceRagdollConstraintDesc As SourcePhyRagdollConstraint
 
 			line = "====== PHY Ragdoll Constraints ======"
 			Me.WriteLogLine(0, line)
 
-			For i As Integer = 0 To Me.theSourceEngineModel.PhyFileHeader.theSourcePhyRagdollConstraintDescs.Count - 1
-				aSourceRagdollConstraintDesc = Me.theSourceEngineModel.PhyFileHeader.theSourcePhyRagdollConstraintDescs.Values(i)
+			For i As Integer = 0 To aPhyFileData.theSourcePhyRagdollConstraintDescs.Count - 1
+				aSourceRagdollConstraintDesc = aPhyFileData.theSourcePhyRagdollConstraintDescs.Values(i)
 				Me.WriteLogLine(1, DebugFormatModule.FormatIntegerLine("theParentIndex", aSourceRagdollConstraintDesc.theParentIndex))
 				Me.WriteLogLine(1, DebugFormatModule.FormatIntegerLine("theChildIndex", aSourceRagdollConstraintDesc.theChildIndex))
 				Me.WriteLogLine(1, DebugFormatModule.FormatSingleFloatLine("theXMin", aSourceRagdollConstraintDesc.theXMin))
@@ -1387,16 +1387,16 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteSourcePhyCollisionPairs()
-		If Me.theSourceEngineModel.PhyFileHeader.theSourcePhyCollisionPairs IsNot Nothing Then
+	Private Sub WriteSourcePhyCollisionPairs(ByVal aPhyFileData As SourcePhyFileData)
+		If aPhyFileData.theSourcePhyCollisionPairs IsNot Nothing Then
 			Dim line As String
 			Dim aSourcePhyCollisionPair As SourcePhyCollisionPair
 
 			line = "====== PHY Collision Pairs ======"
 			Me.WriteLogLine(0, line)
 
-			For i As Integer = 0 To Me.theSourceEngineModel.PhyFileHeader.theSourcePhyCollisionPairs.Count - 1
-				aSourcePhyCollisionPair = Me.theSourceEngineModel.PhyFileHeader.theSourcePhyCollisionPairs(i)
+			For i As Integer = 0 To aPhyFileData.theSourcePhyCollisionPairs.Count - 1
+				aSourcePhyCollisionPair = aPhyFileData.theSourcePhyCollisionPairs(i)
 				Me.WriteLogLine(1, DebugFormatModule.FormatIntegerLine("obj0", aSourcePhyCollisionPair.obj0))
 				Me.WriteLogLine(1, DebugFormatModule.FormatIntegerLine("obj1", aSourcePhyCollisionPair.obj1))
 
@@ -1409,7 +1409,7 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteVertexes()
+	Private Sub WriteVertexes(ByVal aPhyFileData As SourcePhyFileData)
 		'line = "====== Vertexes ======"
 		'Me.WriteLogLine(0, line)
 
@@ -1445,46 +1445,46 @@ Public Class AppDebug1File
 
 #Region "Write VTX-File Related"
 
-	Private Sub WriteVtxFileInfo()
+	Private Sub WriteVtxFileInfo(ByVal aVtxFileData As SourceVtxFileData)
 		Me.WriteFileSeparatorLines()
 
-		Me.WriteVtxHeader()
-		Me.WriteVtxBodyParts()
+		Me.WriteVtxHeader(aVtxFileData)
+		Me.WriteVtxBodyParts(aVtxFileData)
 	End Sub
 
-	Private Sub WriteVtxHeader()
+	Private Sub WriteVtxHeader(ByVal aVtxFileData As SourceVtxFileData)
 		Dim line As String
 
 		line = "====== VTX Header ======"
 		Me.WriteLogLine(0, line)
 
-		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("00 version", Me.theSourceEngineModel.VtxFileHeader.version))
-		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("04 vertexCacheSize", Me.theSourceEngineModel.VtxFileHeader.vertexCacheSize))
-		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("08 maxBonesPerStrip", Me.theSourceEngineModel.VtxFileHeader.maxBonesPerStrip))
-		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("0A maxBonesPerTri", Me.theSourceEngineModel.VtxFileHeader.maxBonesPerTri))
-		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("0C maxBonesPerVertex", Me.theSourceEngineModel.VtxFileHeader.maxBonesPerVertex))
-		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("10 checksum", Me.theSourceEngineModel.VtxFileHeader.checksum))
-		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerLine("14 lodCount", Me.theSourceEngineModel.VtxFileHeader.lodCount))
-		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("18 materialReplacementListOffset", Me.theSourceEngineModel.VtxFileHeader.materialReplacementListOffset))
-		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerLine("1C bodyPartCount", Me.theSourceEngineModel.VtxFileHeader.bodyPartCount))
-		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("20 bodyPartOffset", Me.theSourceEngineModel.VtxFileHeader.bodyPartOffset))
+		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("00 version", aVtxFileData.version))
+		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("04 vertexCacheSize", aVtxFileData.vertexCacheSize))
+		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("08 maxBonesPerStrip", aVtxFileData.maxBonesPerStrip))
+		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("0A maxBonesPerTri", aVtxFileData.maxBonesPerTri))
+		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("0C maxBonesPerVertex", aVtxFileData.maxBonesPerVertex))
+		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("10 checksum", aVtxFileData.checksum))
+		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerLine("14 lodCount", aVtxFileData.lodCount))
+		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("18 materialReplacementListOffset", aVtxFileData.materialReplacementListOffset))
+		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerLine("1C bodyPartCount", aVtxFileData.bodyPartCount))
+		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("20 bodyPartOffset", aVtxFileData.bodyPartOffset))
 
 		line = "========================"
 		Me.WriteLogLine(0, line)
 	End Sub
 
-	Private Sub WriteVtxBodyParts()
+	Private Sub WriteVtxBodyParts(ByVal aVtxFileData As SourceVtxFileData)
 		Dim line As String
 
-		If Me.theSourceEngineModel.VtxFileHeader.theVtxBodyParts IsNot Nothing Then
+		If aVtxFileData.theVtxBodyParts IsNot Nothing Then
 			Me.WriteLogLine(0, "")
 			Me.WriteLogLine(0, "")
 			line = "====== Vtx Body Parts ======"
 			Me.WriteLogLine(0, line)
 
-			For i As Integer = 0 To Me.theSourceEngineModel.VtxFileHeader.theVtxBodyParts.Count - 1
+			For i As Integer = 0 To aVtxFileData.theVtxBodyParts.Count - 1
 				Dim aBodyPart As SourceVtxBodyPart
-				aBodyPart = Me.theSourceEngineModel.VtxFileHeader.theVtxBodyParts(i)
+				aBodyPart = aVtxFileData.theVtxBodyParts(i)
 
 				Me.WriteLogLine(1, DebugFormatModule.FormatIntegerLine("00 modelCount", aBodyPart.modelCount))
 				Me.WriteLogLine(1, DebugFormatModule.FormatIntegerWithHexLine("04 modelOffset", aBodyPart.modelOffset))
@@ -1633,29 +1633,29 @@ Public Class AppDebug1File
 
 	'===========================================================================
 
-	Private Sub WriteVtxFileInfoCalculatedOffsets()
+	Private Sub WriteVtxFileInfoCalculatedOffsets(ByVal aVtxFileData As SourceVtxFileData)
 		Me.WriteFileSeparatorLines()
 
-		Me.WriteVtxHeader()
-		Me.WriteVtxBodyPartsCalculatedOffsets()
+		Me.WriteVtxHeader(aVtxFileData)
+		Me.WriteVtxBodyPartsCalculatedOffsets(aVtxFileData)
 	End Sub
 
-	Private Sub WriteVtxBodyPartsCalculatedOffsets()
+	Private Sub WriteVtxBodyPartsCalculatedOffsets(ByVal aVtxFileData As SourceVtxFileData)
 		Dim line As String
 		Dim addressStart As Integer
 		Dim addressStop As Integer
 
-		If Me.theSourceEngineModel.VtxFileHeader.theVtxBodyParts IsNot Nothing Then
+		If aVtxFileData.theVtxBodyParts IsNot Nothing Then
 			Me.WriteLogLine(0, "")
 			Me.WriteLogLine(0, "")
 			line = "====== Vtx Body Parts ======"
 			Me.WriteLogLine(0, line)
-			Me.WriteLogLine(0, DebugFormatModule.FormatIntegerLine("BodyPart count", Me.theSourceEngineModel.VtxFileHeader.theVtxBodyParts.Count))
+			Me.WriteLogLine(0, DebugFormatModule.FormatIntegerLine("BodyPart count", aVtxFileData.theVtxBodyParts.Count))
 
-			addressStart = Me.theSourceEngineModel.VtxFileHeader.bodyPartOffset
-			For i As Integer = 0 To Me.theSourceEngineModel.VtxFileHeader.theVtxBodyParts.Count - 1
+			addressStart = aVtxFileData.bodyPartOffset
+			For i As Integer = 0 To aVtxFileData.theVtxBodyParts.Count - 1
 				Dim aBodyPart As SourceVtxBodyPart
-				aBodyPart = Me.theSourceEngineModel.VtxFileHeader.theVtxBodyParts(i)
+				aBodyPart = aVtxFileData.theVtxBodyParts(i)
 
 				addressStop = addressStart + 7
 				'Me.WriteLogLine(1, DebugFormatModule.FormatIntegerLine("00 modelCount", aBodyPart.modelCount))
@@ -1833,11 +1833,11 @@ Public Class AppDebug1File
 
 	'===========================================================================
 
-	Private Sub WriteVtxFileInfoCalculatedOffsets2()
+	Private Sub WriteVtxFileInfoCalculatedOffsets2(ByVal aVtxFileData As SourceVtxFileData)
 		Me.WriteFileSeparatorLines()
 
-		Me.WriteVtxHeader()
-		Me.WriteVtxBodyPartsCalculatedOffsets2()
+		Me.WriteVtxHeader(aVtxFileData)
+		Me.WriteVtxBodyPartsCalculatedOffsets2(aVtxFileData)
 		Dim addressStart As Integer
 		Dim bodyPartCount As Integer = 0
 		'Dim modelCount As Integer = 0
@@ -1845,18 +1845,18 @@ Public Class AppDebug1File
 		'Dim meshCount As Integer = 0
 		'Dim stripGroupCount As Integer = 0
 
-		addressStart = Me.theSourceEngineModel.VtxFileHeader.bodyPartOffset
-		bodyPartCount = Me.theSourceEngineModel.VtxFileHeader.theVtxBodyParts.Count
+		addressStart = aVtxFileData.bodyPartOffset
+		bodyPartCount = aVtxFileData.theVtxBodyParts.Count
 		addressStart += bodyPartCount * 8
-		For i As Integer = 0 To Me.theSourceEngineModel.VtxFileHeader.theVtxBodyParts.Count - 1
+		For i As Integer = 0 To aVtxFileData.theVtxBodyParts.Count - 1
 			Dim aBodyPart As SourceVtxBodyPart
-			aBodyPart = Me.theSourceEngineModel.VtxFileHeader.theVtxBodyParts(i)
+			aBodyPart = aVtxFileData.theVtxBodyParts(i)
 			addressStart = Me.WriteVtxModelsCalculatedOffsets2(aBodyPart, addressStart)
 		Next
 
-		For i As Integer = 0 To Me.theSourceEngineModel.VtxFileHeader.theVtxBodyParts.Count - 1
+		For i As Integer = 0 To aVtxFileData.theVtxBodyParts.Count - 1
 			Dim aBodyPart As SourceVtxBodyPart
-			aBodyPart = Me.theSourceEngineModel.VtxFileHeader.theVtxBodyParts(i)
+			aBodyPart = aVtxFileData.theVtxBodyParts(i)
 			'modelCount += aBodyPart.theVtxModels.Count
 			For j As Integer = 0 To aBodyPart.theVtxModels.Count - 1
 				Dim aModel As SourceVtxModel
@@ -1865,9 +1865,9 @@ Public Class AppDebug1File
 			Next
 		Next
 
-		For i As Integer = 0 To Me.theSourceEngineModel.VtxFileHeader.theVtxBodyParts.Count - 1
+		For i As Integer = 0 To aVtxFileData.theVtxBodyParts.Count - 1
 			Dim aBodyPart As SourceVtxBodyPart
-			aBodyPart = Me.theSourceEngineModel.VtxFileHeader.theVtxBodyParts(i)
+			aBodyPart = aVtxFileData.theVtxBodyParts(i)
 			For j As Integer = 0 To aBodyPart.theVtxModels.Count - 1
 				Dim aModel As SourceVtxModel
 				aModel = aBodyPart.theVtxModels(j)
@@ -1880,9 +1880,9 @@ Public Class AppDebug1File
 			Next
 		Next
 
-		For i As Integer = 0 To Me.theSourceEngineModel.VtxFileHeader.theVtxBodyParts.Count - 1
+		For i As Integer = 0 To aVtxFileData.theVtxBodyParts.Count - 1
 			Dim aBodyPart As SourceVtxBodyPart
-			aBodyPart = Me.theSourceEngineModel.VtxFileHeader.theVtxBodyParts(i)
+			aBodyPart = aVtxFileData.theVtxBodyParts(i)
 			For j As Integer = 0 To aBodyPart.theVtxModels.Count - 1
 				Dim aModel As SourceVtxModel
 				aModel = aBodyPart.theVtxModels(j)
@@ -1901,9 +1901,9 @@ Public Class AppDebug1File
 			Next
 		Next
 
-		For i As Integer = 0 To Me.theSourceEngineModel.VtxFileHeader.theVtxBodyParts.Count - 1
+		For i As Integer = 0 To aVtxFileData.theVtxBodyParts.Count - 1
 			Dim aBodyPart As SourceVtxBodyPart
-			aBodyPart = Me.theSourceEngineModel.VtxFileHeader.theVtxBodyParts(i)
+			aBodyPart = aVtxFileData.theVtxBodyParts(i)
 			For j As Integer = 0 To aBodyPart.theVtxModels.Count - 1
 				Dim aModel As SourceVtxModel
 				aModel = aBodyPart.theVtxModels(j)
@@ -1930,22 +1930,22 @@ Public Class AppDebug1File
 
 	End Sub
 
-	Private Sub WriteVtxBodyPartsCalculatedOffsets2()
+	Private Sub WriteVtxBodyPartsCalculatedOffsets2(ByVal aVtxFileData As SourceVtxFileData)
 		Dim line As String
 		Dim addressStart As Integer
 		Dim addressStop As Integer
 
-		If Me.theSourceEngineModel.VtxFileHeader.theVtxBodyParts IsNot Nothing Then
+		If aVtxFileData.theVtxBodyParts IsNot Nothing Then
 			Me.WriteLogLine(0, "")
 			Me.WriteLogLine(0, "")
 			line = "====== Vtx Body Parts ======"
 			Me.WriteLogLine(0, line)
-			Me.WriteLogLine(0, DebugFormatModule.FormatIntegerLine("BodyPart count", Me.theSourceEngineModel.VtxFileHeader.theVtxBodyParts.Count))
+			Me.WriteLogLine(0, DebugFormatModule.FormatIntegerLine("BodyPart count", aVtxFileData.theVtxBodyParts.Count))
 
-			addressStart = Me.theSourceEngineModel.VtxFileHeader.bodyPartOffset
-			For i As Integer = 0 To Me.theSourceEngineModel.VtxFileHeader.theVtxBodyParts.Count - 1
+			addressStart = aVtxFileData.bodyPartOffset
+			For i As Integer = 0 To aVtxFileData.theVtxBodyParts.Count - 1
 				Dim aBodyPart As SourceVtxBodyPart
-				aBodyPart = Me.theSourceEngineModel.VtxFileHeader.theVtxBodyParts(i)
+				aBodyPart = aVtxFileData.theVtxBodyParts(i)
 
 				addressStop = addressStart + 7
 				'Me.WriteLogLine(1, DebugFormatModule.FormatIntegerLine("00 modelCount", aBodyPart.modelCount))
@@ -2132,49 +2132,49 @@ Public Class AppDebug1File
 
 #Region "Write VVD-File Related"
 
-	Private Sub WriteVvdFileInfo()
+	Private Sub WriteVvdFileInfo(ByVal aVvdFileData As SourceVvdFileData)
 		Me.WriteFileSeparatorLines()
 
-		Me.WriteVvdData()
+		Me.WriteVvdData(aVvdFileData)
 	End Sub
 
-	Private Sub WriteVvdData()
+	Private Sub WriteVvdData(ByVal aVvdFileData As SourceVvdFileData)
 		Dim line As String
 
 		line = "====== VVD Data ======"
 		Me.WriteLogLine(0, line)
 
-		Me.WriteLogLine(0, DebugFormatModule.FormatStringLine("00 id", Me.theSourceEngineModel.VvdFileHeader.id))
-		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerLine("04 version", Me.theSourceEngineModel.VvdFileHeader.version))
-		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("08 checksum", Me.theSourceEngineModel.VvdFileHeader.checksum))
-		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerLine("0C lodCount", Me.theSourceEngineModel.VvdFileHeader.lodCount))
-		For i As Integer = 0 To Me.theSourceEngineModel.VvdFileHeader.lodVertexCount.Length - 1
-			Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("lodVertexCount(" + i.ToString() + ")", Me.theSourceEngineModel.VvdFileHeader.lodVertexCount(i)))
+		Me.WriteLogLine(0, DebugFormatModule.FormatStringLine("00 id", aVvdFileData.id))
+		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerLine("04 version", aVvdFileData.version))
+		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("08 checksum", aVvdFileData.checksum))
+		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerLine("0C lodCount", aVvdFileData.lodCount))
+		For i As Integer = 0 To aVvdFileData.lodVertexCount.Length - 1
+			Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("lodVertexCount(" + i.ToString() + ")", aVvdFileData.lodVertexCount(i)))
 		Next
-		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerLine("fixupCount", Me.theSourceEngineModel.VvdFileHeader.fixupCount))
-		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("fixupTableOffset", Me.theSourceEngineModel.VvdFileHeader.fixupTableOffset))
-		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("vertexDataOffset", Me.theSourceEngineModel.VvdFileHeader.vertexDataOffset))
-		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("tangentDataOffset", Me.theSourceEngineModel.VvdFileHeader.tangentDataOffset))
+		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerLine("fixupCount", aVvdFileData.fixupCount))
+		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("fixupTableOffset", aVvdFileData.fixupTableOffset))
+		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("vertexDataOffset", aVvdFileData.vertexDataOffset))
+		Me.WriteLogLine(0, DebugFormatModule.FormatIntegerWithHexLine("tangentDataOffset", aVvdFileData.tangentDataOffset))
 
-		Me.WriteVvdFixups()
-		Me.WriteVvdVertexes()
+		Me.WriteVvdFixups(aVvdFileData)
+		Me.WriteVvdVertexes(aVvdFileData)
 
 		line = "========================"
 		Me.WriteLogLine(0, line)
 	End Sub
 
-	Private Sub WriteVvdFixups()
+	Private Sub WriteVvdFixups(ByVal aVvdFileData As SourceVvdFileData)
 		Dim line As String
 
-		If Me.theSourceEngineModel.VvdFileHeader.theFixups IsNot Nothing Then
+		If aVvdFileData.theFixups IsNot Nothing Then
 			Me.WriteLogLine(1, "")
 			Me.WriteLogLine(1, "")
 			line = "====== Vvd Fixups ======"
 			Me.WriteLogLine(1, line)
 
-			For fixupIndex As Integer = 0 To Me.theSourceEngineModel.VvdFileHeader.theFixups.Count - 1
+			For fixupIndex As Integer = 0 To aVvdFileData.theFixups.Count - 1
 				Dim aFixup As New SourceVvdFixup()
-				aFixup = Me.theSourceEngineModel.VvdFileHeader.theFixups(fixupIndex)
+				aFixup = aVvdFileData.theFixups(fixupIndex)
 
 				Me.WriteLogLine(2, DebugFormatModule.FormatIntegerLine("lodIndex", aFixup.lodIndex))
 				Me.WriteLogLine(2, DebugFormatModule.FormatIntegerLine("vertexIndex", aFixup.vertexIndex))
@@ -2186,18 +2186,18 @@ Public Class AppDebug1File
 		End If
 	End Sub
 
-	Private Sub WriteVvdVertexes()
+	Private Sub WriteVvdVertexes(ByVal aVvdFileData As SourceVvdFileData)
 		Dim line As String
 
-		If Me.theSourceEngineModel.VvdFileHeader.theVertexes IsNot Nothing Then
+		If aVvdFileData.theVertexes IsNot Nothing Then
 			Me.WriteLogLine(1, "")
 			Me.WriteLogLine(1, "")
 			line = "====== Vvd Vertexes ======"
 			Me.WriteLogLine(1, line)
 
-			For k As Integer = 0 To Me.theSourceEngineModel.VvdFileHeader.theVertexes.Count - 1
+			For k As Integer = 0 To aVvdFileData.theVertexes.Count - 1
 				Dim aVertex As SourceVertex
-				aVertex = Me.theSourceEngineModel.VvdFileHeader.theVertexes(k)
+				aVertex = aVvdFileData.theVertexes(k)
 
 				line = "VVD Vertex Index: " + k.ToString()
 				Me.WriteLogLine(2, line)
@@ -2232,7 +2232,7 @@ Public Class AppDebug1File
 
 #Region "Data"
 
-	Private theSourceEngineModel As SourceModel
+	'Private theSourceEngineModel As SourceModel_Old
 	Private theOutputFileStream As StreamWriter
 
 #End Region

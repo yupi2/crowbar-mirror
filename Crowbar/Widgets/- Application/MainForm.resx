@@ -112,18 +112,287 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="MainToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>25</value>
-  </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="&gt;&gt;DecompilerUserControl1.Parent" xml:space="preserve">
+    <value>DecompileTabPage</value>
+  </data>
+  <data name="&gt;&gt;AboutTabPage.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="AboutCrowbarToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>147, 22</value>
+  </data>
+  <data name="&gt;&gt;DecompilerUserControl1.Type" xml:space="preserve">
+    <value>Crowbar.DecompileUserControl, Crowbar, Version=0.30.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;OptionsTabPage.Parent" xml:space="preserve">
+    <value>MainTabControl</value>
+  </data>
+  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>800, 600</value>
+  </data>
+  <data name="&gt;&gt;CompileTabPage.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="ViewTabPage.Size" type="System.Drawing.Size, System.Drawing">
+    <value>784, 547</value>
+  </data>
+  <data name="ViewTabPage.Text" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="&gt;&gt;OptionsUserControl1.Name" xml:space="preserve">
+    <value>OptionsUserControl1</value>
+  </data>
+  <data name="ViewUserControl1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="&gt;&gt;CompileTabPage.Name" xml:space="preserve">
+    <value>CompileTabPage</value>
+  </data>
+  <data name="AboutCrowbarToolStripMenuItem.Text" xml:space="preserve">
+    <value>About Crowbar</value>
+  </data>
+  <data name="&gt;&gt;ViewUserControl1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;AboutCrowbarToolStripMenuItem1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;OptionsUserControl1.Type" xml:space="preserve">
+    <value>Crowbar.OptionsUserControl, Crowbar, Version=0.30.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="OptionsUserControl1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="&gt;&gt;DecompileTabPage.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;MainTabControl.Name" xml:space="preserve">
+    <value>MainTabControl</value>
+  </data>
+  <data name="OptionsTabPage.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="&gt;&gt;ViewUserControl1.Name" xml:space="preserve">
+    <value>ViewUserControl1</value>
+  </data>
+  <data name="&gt;&gt;CompileTabPage.Parent" xml:space="preserve">
+    <value>MainTabControl</value>
+  </data>
+  <data name="AboutUserControl1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="&gt;&gt;AboutTabPage.Parent" xml:space="preserve">
+    <value>MainTabControl</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="CompileTabPage.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;AboutCrowbarToolStripMenuItem.Name" xml:space="preserve">
+    <value>AboutCrowbarToolStripMenuItem</value>
+  </data>
+  <data name="AboutUserControl1.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="AboutTabPage.Size" type="System.Drawing.Size, System.Drawing">
+    <value>784, 547</value>
+  </data>
+  <data name="&gt;&gt;ViewTabPage.Name" xml:space="preserve">
+    <value>ViewTabPage</value>
+  </data>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
+  </data>
+  <data name="CompileTabPage.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ViewUserControl1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ToolStripMenuItem2.Text" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="&gt;&gt;MainTabControl.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;AboutTabPage.Name" xml:space="preserve">
+    <value>AboutTabPage</value>
+  </data>
+  <data name="&gt;&gt;AboutCrowbarToolStripMenuItem2.Name" xml:space="preserve">
+    <value>AboutCrowbarToolStripMenuItem2</value>
+  </data>
+  <data name="&gt;&gt;OptionsTabPage.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="DecompileTabPage.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DecompilerUserControl1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="&gt;&gt;ToolStripMenuItem2.Name" xml:space="preserve">
+    <value>ToolStripMenuItem2</value>
+  </data>
+  <data name="&gt;&gt;AboutTabPage.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;MainToolTip.Name" xml:space="preserve">
+    <value>MainToolTip</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="CompilerUserControl1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="&gt;&gt;ViewUserControl1.Parent" xml:space="preserve">
+    <value>ViewTabPage</value>
+  </data>
+  <data name="DecompilerUserControl1.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="CompileTabPage.Size" type="System.Drawing.Size, System.Drawing">
+    <value>784, 547</value>
+  </data>
+  <data name="&gt;&gt;AboutCrowbarToolStripMenuItem2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="MainTabControl.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="AboutCrowbarToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>147, 22</value>
+  </data>
+  <data name="AboutCrowbarToolStripMenuItem1.Text" xml:space="preserve">
+    <value>About Crowbar</value>
+  </data>
+  <data name="OptionsUserControl1.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;CompileTabPage.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="DecompileTabPage.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="ViewUserControl1.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="OptionsTabPage.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="&gt;&gt;ToolStripMenuItem1.Name" xml:space="preserve">
+    <value>ToolStripMenuItem1</value>
+  </data>
+  <data name="&gt;&gt;CompilerUserControl1.Name" xml:space="preserve">
+    <value>CompilerUserControl1</value>
+  </data>
+  <data name="OptionsTabPage.Text" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="DecompilerUserControl1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="&gt;&gt;OptionsTabPage.Name" xml:space="preserve">
+    <value>OptionsTabPage</value>
+  </data>
+  <data name="&gt;&gt;CompilerUserControl1.Parent" xml:space="preserve">
+    <value>CompileTabPage</value>
+  </data>
+  <data name="ViewUserControl1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="&gt;&gt;ViewTabPage.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="ToolStripMenuItem2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>40, 20</value>
+  </data>
+  <data name="&gt;&gt;AboutCrowbarToolStripMenuItem1.Name" xml:space="preserve">
+    <value>AboutCrowbarToolStripMenuItem1</value>
+  </data>
+  <data name="&gt;&gt;ViewTabPage.Parent" xml:space="preserve">
+    <value>MainTabControl</value>
+  </data>
+  <data name="CompilerUserControl1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="$this.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="OptionsTabPage.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="AboutUserControl1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>784, 547</value>
+  </data>
+  <data name="&gt;&gt;CompilerUserControl1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="MainTabControl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="&gt;&gt;AboutUserControl1.Type" xml:space="preserve">
+    <value>Crowbar.AboutUserControl, Crowbar, Version=0.30.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="AboutTabPage.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="&gt;&gt;AboutUserControl1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;OptionsUserControl1.Parent" xml:space="preserve">
+    <value>OptionsTabPage</value>
+  </data>
+  <data name="OptionsUserControl1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="&gt;&gt;DecompilerUserControl1.Name" xml:space="preserve">
+    <value>DecompilerUserControl1</value>
+  </data>
+  <data name="ViewTabPage.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="&gt;&gt;MainTabControl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="AboutCrowbarToolStripMenuItem2.Text" xml:space="preserve">
+    <value>About Crowbar</value>
+  </data>
+  <data name="AboutUserControl1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="&gt;&gt;MainTabControl.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="ViewTabPage.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="DecompileTabPage.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="&gt;&gt;MainToolTip.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolTip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="AboutCrowbarToolStripMenuItem2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>152, 22</value>
+  </data>
+  <data name="&gt;&gt;OptionsTabPage.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="AboutUserControl1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MainTabControl.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="CompilerUserControl1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>784, 547</value>
+  </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAcAEBAAAAEAIABoBAAAdgAAACAgAAABACAAqBAAAN4EAAAwMAAAAQAgAKglAACGFQAAQEAAAAEA
@@ -2652,4 +2921,127 @@
         0WQaHkuFqQGgUPobTyHB/w9xv9hVcdON2AAAAABJRU5ErkJggg==
 </value>
   </data>
+  <data name="AboutTabPage.Text" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="OptionsUserControl1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="ToolStripMenuItem1.Text" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="&gt;&gt;AboutCrowbarToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="AboutTabPage.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="DecompileTabPage.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="OptionsTabPage.Size" type="System.Drawing.Size, System.Drawing">
+    <value>784, 547</value>
+  </data>
+  <data name="DecompilerUserControl1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>784, 547</value>
+  </data>
+  <data name="CompilerUserControl1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="&gt;&gt;AboutUserControl1.Parent" xml:space="preserve">
+    <value>AboutTabPage</value>
+  </data>
+  <data name="CompileTabPage.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="DecompileTabPage.Text" xml:space="preserve">
+    <value>Decompile</value>
+  </data>
+  <data name="&gt;&gt;AboutUserControl1.Name" xml:space="preserve">
+    <value>AboutUserControl1</value>
+  </data>
+  <data name="&gt;&gt;CompilerUserControl1.Type" xml:space="preserve">
+    <value>Crowbar.CompileUserControl, Crowbar, Version=0.30.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;DecompileTabPage.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="ViewUserControl1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>784, 547</value>
+  </data>
+  <data name="OptionsUserControl1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>784, 547</value>
+  </data>
+  <data name="DecompilerUserControl1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="&gt;&gt;ViewUserControl1.Type" xml:space="preserve">
+    <value>Crowbar.ViewUserControl, Crowbar, Version=0.30.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="AboutTabPage.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Crowbar</value>
+  </data>
+  <data name="&gt;&gt;ToolStripMenuItem2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="DecompileTabPage.Size" type="System.Drawing.Size, System.Drawing">
+    <value>784, 547</value>
+  </data>
+  <data name="CompileTabPage.Text" xml:space="preserve">
+    <value>Compile</value>
+  </data>
+  <data name="MainTabControl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>792, 573</value>
+  </data>
+  <data name="&gt;&gt;ViewTabPage.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;DecompileTabPage.Parent" xml:space="preserve">
+    <value>MainTabControl</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>792, 573</value>
+  </data>
+  <data name="MainTabControl.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>MainForm</value>
+  </data>
+  <data name="CompilerUserControl1.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;ToolStripMenuItem1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;DecompileTabPage.Name" xml:space="preserve">
+    <value>DecompileTabPage</value>
+  </data>
+  <data name="ToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>40, 20</value>
+  </data>
+  <data name="&gt;&gt;OptionsUserControl1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;DecompilerUserControl1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="ViewTabPage.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="MainToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>28</value>
+  </metadata>
 </root>

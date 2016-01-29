@@ -6,6 +6,10 @@ Public Class AppDebug2File
 #Region "Write Log File Methods"
 
 	Public Sub WriteFile(ByVal pathFileName As String, ByVal name As String, ByVal aFileSeekLog As FileSeekLog)
+		If aFileSeekLog Is Nothing Then
+			Exit Sub
+		End If
+
 		Try
 			Me.theOutputFileStream = File.CreateText(pathFileName)
 

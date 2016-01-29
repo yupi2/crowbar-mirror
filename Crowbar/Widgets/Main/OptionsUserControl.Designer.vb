@@ -40,6 +40,8 @@ Partial Class OptionsUserControl
 		Me.AutoOpenMdlFileCheckBox = New System.Windows.Forms.CheckBox()
 		Me.AutoOpenQcFileCheckBox = New System.Windows.Forms.CheckBox()
 		Me.GroupBox2 = New System.Windows.Forms.GroupBox()
+		Me.Label4 = New System.Windows.Forms.Label()
+		Me.Label2 = New System.Windows.Forms.Label()
 		Me.AutoOpenUseDefaultsButton = New System.Windows.Forms.Button()
 		Me.Panel1 = New System.Windows.Forms.Panel()
 		Me.AutoOpenMdlFileForDecompilingRadioButton = New System.Windows.Forms.RadioButton()
@@ -50,6 +52,8 @@ Partial Class OptionsUserControl
 		Me.AutoOpenVpkFileForUnpackingCheckBox = New System.Windows.Forms.CheckBox()
 		Me.ApplyButton = New System.Windows.Forms.Button()
 		Me.GroupBox3 = New System.Windows.Forms.GroupBox()
+		Me.Label5 = New System.Windows.Forms.Label()
+		Me.Label3 = New System.Windows.Forms.Label()
 		Me.DragAndDropUseDefaultsButton = New System.Windows.Forms.Button()
 		Me.Panel4 = New System.Windows.Forms.Panel()
 		Me.DragAndDropFolderForCompilingRadioButton = New System.Windows.Forms.RadioButton()
@@ -66,10 +70,6 @@ Partial Class OptionsUserControl
 		Me.DragAndDropQcFileForCompilingRadioButton = New System.Windows.Forms.RadioButton()
 		Me.DragAndDropQcFileForEditingRadioButton = New System.Windows.Forms.RadioButton()
 		Me.DragAndDropVpkFileForUnpackingCheckBox = New System.Windows.Forms.CheckBox()
-		Me.Label2 = New System.Windows.Forms.Label()
-		Me.Label3 = New System.Windows.Forms.Label()
-		Me.Label4 = New System.Windows.Forms.Label()
-		Me.Label5 = New System.Windows.Forms.Label()
 		Me.GroupBox1.SuspendLayout()
 		Me.Panel7.SuspendLayout()
 		Me.GroupBox2.SuspendLayout()
@@ -274,7 +274,28 @@ Partial Class OptionsUserControl
 		Me.GroupBox2.Size = New System.Drawing.Size(185, 267)
 		Me.GroupBox2.TabIndex = 9
 		Me.GroupBox2.TabStop = False
-		Me.GroupBox2.Text = "Windows Explorer Auto-Open"
+		Me.GroupBox2.Text = "Windows Explorer File Association"
+		'
+		'Label4
+		'
+		Me.Label4.AutoSize = True
+		Me.Label4.BackColor = System.Drawing.SystemColors.Window
+		Me.Label4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+		Me.Label4.Location = New System.Drawing.Point(69, 142)
+		Me.Label4.Name = "Label4"
+		Me.Label4.Size = New System.Drawing.Size(46, 15)
+		Me.Label4.TabIndex = 18
+		Me.Label4.Text = "Compile"
+		'
+		'Label2
+		'
+		Me.Label2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+		Me.Label2.Location = New System.Drawing.Point(6, 20)
+		Me.Label2.Name = "Label2"
+		Me.Label2.Size = New System.Drawing.Size(173, 57)
+		Me.Label2.TabIndex = 14
+		Me.Label2.Text = "Change the default program to Crowbar for the following file extensions and which" & _
+	" tab to set up."
 		'
 		'AutoOpenUseDefaultsButton
 		'
@@ -390,6 +411,26 @@ Partial Class OptionsUserControl
 		Me.GroupBox3.TabIndex = 17
 		Me.GroupBox3.TabStop = False
 		Me.GroupBox3.Text = "Windows Explorer Drag-and-Drop"
+		'
+		'Label5
+		'
+		Me.Label5.AutoSize = True
+		Me.Label5.BackColor = System.Drawing.SystemColors.Window
+		Me.Label5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+		Me.Label5.Location = New System.Drawing.Point(69, 142)
+		Me.Label5.Name = "Label5"
+		Me.Label5.Size = New System.Drawing.Size(46, 15)
+		Me.Label5.TabIndex = 20
+		Me.Label5.Text = "Compile"
+		'
+		'Label3
+		'
+		Me.Label3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+		Me.Label3.Location = New System.Drawing.Point(6, 20)
+		Me.Label3.Name = "Label3"
+		Me.Label3.Size = New System.Drawing.Size(173, 57)
+		Me.Label3.TabIndex = 19
+		Me.Label3.Text = "Change whether Crowbar sets up a tab when a file or folder is dragged onto it. "
 		'
 		'DragAndDropUseDefaultsButton
 		'
@@ -564,47 +605,6 @@ Partial Class OptionsUserControl
 		Me.DragAndDropVpkFileForUnpackingCheckBox.Text = "VPK file for unpacking"
 		Me.DragAndDropVpkFileForUnpackingCheckBox.UseVisualStyleBackColor = True
 		Me.DragAndDropVpkFileForUnpackingCheckBox.Visible = False
-		'
-		'Label2
-		'
-		Me.Label2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
-		Me.Label2.Location = New System.Drawing.Point(6, 20)
-		Me.Label2.Name = "Label2"
-		Me.Label2.Size = New System.Drawing.Size(173, 57)
-		Me.Label2.TabIndex = 14
-		Me.Label2.Text = "Change the default program to Crowbar for the following file extensions and which" & _
-	" tab to set up."
-		'
-		'Label3
-		'
-		Me.Label3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
-		Me.Label3.Location = New System.Drawing.Point(6, 20)
-		Me.Label3.Name = "Label3"
-		Me.Label3.Size = New System.Drawing.Size(173, 57)
-		Me.Label3.TabIndex = 19
-		Me.Label3.Text = "Change whether Crowbar sets up a tab when a file or folder is dragged onto it. "
-		'
-		'Label4
-		'
-		Me.Label4.AutoSize = True
-		Me.Label4.BackColor = System.Drawing.SystemColors.Window
-		Me.Label4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-		Me.Label4.Location = New System.Drawing.Point(69, 142)
-		Me.Label4.Name = "Label4"
-		Me.Label4.Size = New System.Drawing.Size(46, 15)
-		Me.Label4.TabIndex = 18
-		Me.Label4.Text = "Compile"
-		'
-		'Label5
-		'
-		Me.Label5.AutoSize = True
-		Me.Label5.BackColor = System.Drawing.SystemColors.Window
-		Me.Label5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-		Me.Label5.Location = New System.Drawing.Point(69, 142)
-		Me.Label5.Name = "Label5"
-		Me.Label5.Size = New System.Drawing.Size(46, 15)
-		Me.Label5.TabIndex = 20
-		Me.Label5.Text = "Compile"
 		'
 		'OptionsUserControl
 		'

@@ -108,7 +108,7 @@ Public Class WindowsJob
 	End Sub
 
 	Public Sub Close()
-		Win32.CloseHandle(m_handle)
+		Win32Api.CloseHandle(m_handle)
 		m_handle = IntPtr.Zero
 	End Sub
 

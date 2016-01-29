@@ -22,11 +22,13 @@ Partial Class ViewUserControl
 	'Do not modify it using the code editor.
 	<System.Diagnostics.DebuggerStepThrough()> _
 	Private Sub InitializeComponent()
+		Me.components = New System.ComponentModel.Container()
 		Me.ViewButton = New System.Windows.Forms.Button()
 		Me.MdlPathFileTextBox = New Crowbar.TextBoxEx()
 		Me.BrowseForMdlFileButton = New System.Windows.Forms.Button()
 		Me.Label1 = New System.Windows.Forms.Label()
 		Me.Panel2 = New System.Windows.Forms.Panel()
+		Me.OpenViewerButton = New System.Windows.Forms.Button()
 		Me.GotoMdlFileButton = New System.Windows.Forms.Button()
 		Me.GroupBox1 = New System.Windows.Forms.GroupBox()
 		Me.InfoRichTextBox = New Crowbar.RichTextBoxEx()
@@ -80,6 +82,7 @@ Partial Class ViewUserControl
 		'
 		'Panel2
 		'
+		Me.Panel2.Controls.Add(Me.OpenViewerButton)
 		Me.Panel2.Controls.Add(Me.Label1)
 		Me.Panel2.Controls.Add(Me.MdlPathFileTextBox)
 		Me.Panel2.Controls.Add(Me.BrowseForMdlFileButton)
@@ -97,6 +100,16 @@ Partial Class ViewUserControl
 		Me.Panel2.Name = "Panel2"
 		Me.Panel2.Size = New System.Drawing.Size(784, 547)
 		Me.Panel2.TabIndex = 8
+		'
+		'OpenViewerButton
+		'
+		Me.OpenViewerButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.OpenViewerButton.Location = New System.Drawing.Point(691, 521)
+		Me.OpenViewerButton.Name = "OpenViewerButton"
+		Me.OpenViewerButton.Size = New System.Drawing.Size(90, 23)
+		Me.OpenViewerButton.TabIndex = 11
+		Me.OpenViewerButton.Text = "Open Viewer"
+		Me.OpenViewerButton.UseVisualStyleBackColor = True
 		'
 		'GotoMdlFileButton
 		'
@@ -211,5 +224,6 @@ Partial Class ViewUserControl
 	Friend WithEvents GroupBox1 As System.Windows.Forms.GroupBox
 	Friend WithEvents InfoRichTextBox As Crowbar.RichTextBoxEx
 	Friend WithEvents UseInDecompileButton As System.Windows.Forms.Button
+	Friend WithEvents OpenViewerButton As System.Windows.Forms.Button
 
 End Class
