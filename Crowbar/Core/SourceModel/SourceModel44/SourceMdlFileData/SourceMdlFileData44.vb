@@ -269,11 +269,11 @@ Public Class SourceMdlFileData44
 	'Public eyePositionX As Single
 	'Public eyePositionY As Single
 	'Public eyePositionZ As Single
-	Public eyePosition As SourceVector
+	Public eyePosition As New SourceVector()
 	'Public illuminationPositionX As Single
 	'Public illuminationPositionY As Single
 	'Public illuminationPositionZ As Single
-	Public illuminationPosition As SourceVector
+	Public illuminationPosition As New SourceVector()
 
 	'Public hullMinPositionX As Single
 	'Public hullMinPositionY As Single
@@ -281,8 +281,8 @@ Public Class SourceMdlFileData44
 	'Public hullMaxPositionX As Single
 	'Public hullMaxPositionY As Single
 	'Public hullMaxPositionZ As Single
-	Public hullMinPosition As SourceVector
-	Public hullMaxPosition As SourceVector
+	Public hullMinPosition As New SourceVector()
+	Public hullMaxPosition As New SourceVector()
 
 	'Public viewBoundingBoxMinPositionX As Single
 	'Public viewBoundingBoxMinPositionY As Single
@@ -290,8 +290,8 @@ Public Class SourceMdlFileData44
 	'Public viewBoundingBoxMaxPositionX As Single
 	'Public viewBoundingBoxMaxPositionY As Single
 	'Public viewBoundingBoxMaxPositionZ As Single
-	Public viewBoundingBoxMinPosition As SourceVector
-	Public viewBoundingBoxMaxPosition As SourceVector
+	Public viewBoundingBoxMinPosition As New SourceVector()
+	Public viewBoundingBoxMaxPosition As New SourceVector()
 
 	Public flags As Integer
 
