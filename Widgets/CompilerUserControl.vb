@@ -38,12 +38,9 @@ Public Class CompilerUserControl
 		Me.CompilerOptionNoP4CheckBox.DataBindings.Add("Checked", TheApp.Settings, "CompilerOptionNoP4IsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.CompilerOptionVerboseCheckBox.DataBindings.Add("Checked", TheApp.Settings, "CompilerOptionVerboseIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 
-		'Me.compilerOptions.Add("-")
-		Me.compilerOptions.Add("-nop4")
-		Me.compilerOptions.Add("-verbose")
-		Me.compilerOptions.Sort()
+		Me.EditCompilerOptionsText("nop4", Me.CompilerOptionVerboseCheckBox.Checked)
+		Me.EditCompilerOptionsText("verbose", Me.CompilerOptionVerboseCheckBox.Checked)
 
-		'Me.CompilerOptionsTextBox.DataBindings.Add("Text", TheApp.Settings, "CompilerOptionsText", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.SetCompilerOptionsText()
 
 		AddHandler TheApp.Compiler.ProgressChanged, AddressOf Me.CompilerBackgroundWorker_ProgressChanged

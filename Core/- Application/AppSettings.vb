@@ -360,7 +360,7 @@ Public Class AppSettings
 	End Sub
 
 	Public Sub SetDefaultCompileOutputSubfolderName()
-		Me.theCompileOutputSubfolderName = "custom"
+		Me.theCompileOutputSubfolderName = "for_model_viewer"
 	End Sub
 
 #End Region

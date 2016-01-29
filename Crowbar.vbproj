@@ -59,6 +59,7 @@
     <Compile Include="Core\- Application\AppConstants.vb" />
     <Compile Include="Core\- Application\AppEnums.vb" />
     <Compile Include="Core\- Application\AppExceptionHandler.vb" />
+    <Compile Include="Core\- General\StringClass.vb" />
     <Compile Include="Core\Compiler\GameSetupFormInfo.vb" />
     <Compile Include="Core\Debug\AppLog1File.vb" />
     <Compile Include="Core\Debug\AppLog2File.vb" />
@@ -99,6 +100,7 @@
     <Compile Include="Core\SourceGlobal\SourceQuaternion64.vb" />
     <Compile Include="Core\SourceGlobal\SourceVector48.vb" />
     <Compile Include="Core\SourceMdlFileData\AnimationFrameLine.vb" />
+    <Compile Include="Core\SourceMdlFileData\SourceMdlAnimBlock.vb" />
     <Compile Include="Core\SourceMdlFileData\FlexFrame.vb" />
     <Compile Include="Core\SourceMdlFileData\SourceMdlAutoLayer.vb" />
     <Compile Include="Core\SourceMdlFileData\SourceMdlAxisInterpBone.vb" />
@@ -117,6 +119,7 @@
     <Compile Include="Core\SourceMdlFileData\SourceMdlHitboxSet.vb" />
     <Compile Include="Core\SourceMdlFileData\SourceMdlIkRule.vb" />
     <Compile Include="Core\SourceMdlFileData\SourceMdlJiggleBone.vb" />
+    <Compile Include="Core\SourceMdlFileData\SourceMdlMovement.vb" />
     <Compile Include="Core\SourceMdlFileData\SourceMdlQuatInterpBone.vb" />
     <Compile Include="Core\SourceMdlFileData\SourceMdlQuatInterpBoneInfo.vb" />
     <Compile Include="Core\SourceMdlFileData\SourceMdlVertAnim.vb" />

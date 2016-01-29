@@ -200,7 +200,7 @@ Partial Class GameSetupForm
 		Me.ShowIcon = False
 		Me.ShowInTaskbar = False
 		Me.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show
-		Me.Text = "Setup Games"
+		Me.Text = "Set Up Games"
 		Me.GroupBox1.ResumeLayout(False)
 		Me.GroupBox1.PerformLayout()
 		Me.ResumeLayout(False)

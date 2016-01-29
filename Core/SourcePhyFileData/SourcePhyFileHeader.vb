@@ -28,5 +28,6 @@ Public Class SourcePhyFileHeader
 	Public theSourcePhyEditParamsSection As SourcePhyEditParamsSection
 	Public theSourcePhyPhysCollisionModelMostUsedValues As SourcePhyPhysCollisionModel
 	Public theSourcePhyCollisionText As String
+	Public theSourcePhyIsCollisionModel As Boolean = False
 
 End Class

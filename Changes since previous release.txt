@@ -1,0 +1,29 @@
+Crowbar 0.23
+Changes since previous release
+
+
+Decompiling of animation MDL+ANI files for some MDL versions before v49. Tested on versions: .
+Default Compile Output Subfolder changed from "custom" to "for_model_viewer" to make it more obvious why to use it.
+Improved messages in decompile and compile logs.
+Added $definebone QC command to decompile.
+Added $weightlist QC command to decompile.
+Added weightlist option to $animation QC command in decompile.
+Added weightlist option to $sequence QC command in decompile.
+Corrected Counter-Strike Global Offensive "Location of game's model compiler".
+Changed default Source Filmmaker "Location of game"
+	FROM: C:\Program Files (x86)\Steam\steamapps\common\SourceFilmmaker\game\hl2\gameinfo.txt
+	TO: C:\Program Files (x86)\Steam\steamapps\common\SourceFilmmaker\game\usermod\gameinfo.txt
+Added Half-Life 2: Episode 1 and Half-Life 2: Episode 2 to default game setups.
+Added Garry's Mod (using Source SDK Base 2013 MP) to default game setups.
+When encountering an error in batch decompiling, Crowbar will continue to the next MDL in the list, instead of stopping the batch decompile.
+When encountering an error in batch compiling, Crowbar will continue to the next QC in the list, instead of stopping the batch compile.
+Added "Skip current model decompile" button for batch decompiling.
+[FIX] Corrected UV coordinates in mesh SMD files in decompile.
+[FIX] Corrected the decompiling of the $jigglebone angle_constraint option to be degrees instead of radians.
+[FIX] Corrected syntax of $jointcontents QC command.
+[FIX] Write out $collisionmodel or $collisionjoints QC command in decompile even when PHY file checksum does not match MDL file checksum.
+[FIX] Corrected not decompiling all files for "Dark Messiah of Might and Magic" npc_leanna.mdl.
+[FIX] Corrected decompile of Dota 2 models not writing the $cdmaterials lines in the QC file.
+[FIX] Corrected problem where decompile buttons were not showing at bottom of window. Seems to only show when Windows is set to use non-default text size.
+[FIX] Corrected problem with decompiling animations of certain models, such as the reported Tidehunter's "tidehunter_fish.mdl".
+[FIX] Incomplete QC file for TF2 HWM models.

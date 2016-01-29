@@ -1,5 +1,17 @@
 Public Class SourceMdlBoneController
 
+	'FROM: VERSION 10, inputfield is called index. Also, unused[8] is not in the struct.
+	'// bone controllers
+	'typedef struct 
+	'{
+	'	int					bone;	// -1 == 0
+	'	int					type;	// X, Y, Z, XR, YR, ZR, M
+	'	float				start;
+	'	float				end;
+	'	int					rest;	// byte index value at rest
+	'	int					index;	// 0-3 user set controller, 4 mouth
+	'} mstudiobonecontroller_t;
+
 	'FROM: SourceEngineXXXX_source\public\studio.h
 	'// bone controllers
 	'struct mstudiobonecontroller_t
@@ -13,6 +25,7 @@ Public Class SourceMdlBoneController
 	'	int					inputfield;	// 0-3 user set controller, 4 mouth
 	'	int					unused[8];
 	'};
+
 
 	Public boneIndex As Integer
 	Public type As Integer

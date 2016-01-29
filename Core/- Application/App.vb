@@ -228,11 +228,19 @@ Public Class App
 		Dim line As String
 
 		line = "Created by "
-		line += My.Application.Info.ProductName
-		line += " "
-		line += My.Application.Info.Version.ToString()
+		line += Me.GetProductNameAndVersion()
 
 		Return line
+	End Function
+
+	Public Function GetProductNameAndVersion() As String
+		Dim result As String
+
+		result = My.Application.Info.ProductName
+		result += " "
+		result += My.Application.Info.Version.ToString()
+
+		Return result
 	End Function
 
 #End Region

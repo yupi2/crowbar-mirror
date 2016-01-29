@@ -1,5 +1,26 @@
 Public Class SourceMdlAttachment
 
+	'FROM: VERSION 10
+	'// attachment
+	'typedef struct 
+	'{
+	'	char				name[32];
+	'	int					type;
+	'	int					bone;
+	'	vec3_t				org;	// attachment point
+	'	vec3_t				vectors[3];
+	'} mstudioattachment_t;
+
+
+
+	Public name(31) As Char
+	Public type As Integer
+	Public bone As Integer
+	Public attachmentPoint As SourceVector
+	Public vectors(2) As SourceVector
+
+
+
 	'struct mstudioattachment_t
 	'{
 	'	DECLARE_BYTESWAP_DATADESC();
@@ -10,6 +31,8 @@ Public Class SourceMdlAttachment
 	'	matrix3x4_t			local; // attachment point
 	'	int					unused[8];
 	'};
+
+
 
 	'	int					sznameindex;
 	Public nameOffset As Integer
@@ -33,6 +56,8 @@ Public Class SourceMdlAttachment
 	Public localM34 As Single
 	'	int					unused[8];
 	Public unused(7) As Integer
+
+
 
 	Public theName As String
 

@@ -101,6 +101,11 @@ Public Class Compiler
 		Return modelFileName
 	End Function
 
+	Public Sub SkipCurrentModel()
+		'NOTE: This might have thread race condition.
+		Me.theSkipCurrentModelIsActive = True
+	End Sub
+
 #End Region
 
 #Region "Private Methods"
@@ -112,21 +117,27 @@ Public Class Compiler
 	Private Sub Compiler_DoWork(ByVal sender As System.Object, ByVal e As System.ComponentModel.DoWorkEventArgs)
 		Dim info As CompilerInfo
 
+		Me.theSkipCurrentModelIsActive = False
+
 		Me.ReportProgress(0, "")
 
 		info = CType(e.Argument, CompilerInfo)
+		e.Result = info
 
 		'NOTE: Check for qc path file name first, because status file is written relative to it.
 		If Not File.Exists(info.qcPathFileName) Then
-			WriteCriticalErrorMesssage("", Nothing, "ERROR: Missing file.", e, info)
+			'WriteCriticalErrorMesssage("", Nothing, "ERROR: Missing file.", e, info)
+			WriteCriticalErrorMesssage("", "Missing file: " + info.qcPathFileName, info)
 			Return
 		End If
 		If Not File.Exists(info.compilerPathFileName) Then
-			WriteCriticalErrorMesssage(info.qcPathFileName, Nothing, "ERROR: Missing file.", e, info)
+			'WriteCriticalErrorMesssage(info.qcPathFileName, Nothing, "ERROR: Missing file.", e, info)
+			WriteCriticalErrorMesssage(info.qcPathFileName, "Missing file: " + info.compilerPathFileName, info)
 			Return
 		End If
 		If Not File.Exists(info.gamePathFileName) Then
-			WriteCriticalErrorMesssage(info.qcPathFileName, Nothing, "ERROR: Missing file.", e, info)
+			'WriteCriticalErrorMesssage(info.qcPathFileName, Nothing, "ERROR: Missing file.", e, info)
+			WriteCriticalErrorMesssage(info.qcPathFileName, "Missing file: " + info.gamePathFileName, info)
 			Return
 		End If
 
@@ -139,7 +150,8 @@ Public Class Compiler
 			Try
 				FileManager.CreatePath(customModelPath)
 			Catch
-				e.Result = "<error>"
+				WriteCriticalErrorMesssage(info.qcPathFileName, "Unable to create folder: " + customModelPath, info)
+				info.result = "<error>"
 				Return
 			End Try
 		End If
@@ -149,7 +161,7 @@ Public Class Compiler
 		'e.Result = Me.Compile(info)
 		Me.Compile(info)
 		info.result = "<success>"
-		e.Result = info
+		'e.Result = info
 
 		If Me.CancellationPending Then
 			e.Cancel = True
@@ -162,8 +174,8 @@ Public Class Compiler
 		'status = "cancelled"
 
 		'TODO: state which set of models
-		Me.ReportProgress(5, "Compiling...")
-		'Me.UpdateProgress(5, "Compiling...")
+		'Me.ReportProgress(5, "Compiling...")
+		''Me.UpdateProgress(5, "Compiling...")
 
 		'TODO: Decompile one model, a folder of models, or folder + subfolders of models.
 		If info.theCompileType = CompilerInfo.CompileType.Folder Then
@@ -175,8 +187,8 @@ Public Class Compiler
 		End If
 
 		'TODO: state which set of models
-		Me.ReportProgress(100, "...Compiling finished.")
-		'Me.UpdateProgress(100, "...Compiling finished.")
+		'Me.ReportProgress(100, "...Compiling finished.")
+		''Me.UpdateProgress(100, "...Compiling finished.")
 
 		status = "<success>"
 		Return status
@@ -197,8 +209,12 @@ Public Class Compiler
 		For Each aPathFileName As String In Directory.GetFiles(modelsPathName)
 			If Path.GetExtension(aPathFileName) = ".qc" Then
 				Me.CompileOneModel(aPathFileName, info)
+				Me.ReportProgress(5, "")
 				If Me.CancellationPending Then
 					Return
+				ElseIf Me.theSkipCurrentModelIsActive Then
+					Me.theSkipCurrentModelIsActive = False
+					Continue For
 				End If
 			End If
 		Next
@@ -218,54 +234,60 @@ Public Class Compiler
 		'Dim statusFileStream As StreamWriter
 		Dim line As String
 
-		currentFolder = Directory.GetCurrentDirectory()
-
-		If CompileIsForHlmv Then
-			qcPathFileNameForHlmv = Path.Combine(FileManager.GetPath(qcPathFileName), Path.GetFileNameWithoutExtension(qcPathFileName))
-			qcPathFileNameForHlmv += "_hlmv"
-			qcPathFileNameForHlmv += Path.GetExtension(qcPathFileName)
-			qcFileName = Path.GetFileName(qcPathFileNameForHlmv)
-		Else
-			qcFileName = Path.GetFileName(qcPathFileName)
-		End If
-
-		statusFileStream = Me.CreateLogTextFile(qcPathFileName)
-
-		line = "// "
-		line += TheApp.GetHeaderComment()
-		statusFileStream.WriteLine(line)
-		statusFileStream.WriteLine()
-
-		line = "Compiling..."
-		statusFileStream.WriteLine(line)
-		statusFileStream.WriteLine()
-		Me.ReportProgress(1, line)
-
-		Me.theLastLine = "...Compiling finished. Check above for any errors."
-
-		If CompileIsForHlmv Then
-			Me.ChangeQcFileForHlmv(qcPathFileName, qcPathFileNameForHlmv, info)
-			If Me.CancellationPending Then
-				Me.StopCompile(True, Nothing)
-				Return
-			End If
-		Else
-			info.modelRelativePathFileName = TheApp.Compiler.GetMdlRelativePathFileNameFromQcFile(qcPathFileName)
-		End If
-
-		gamePath = FileManager.GetPath(info.gamePathFileName)
-
-		Dim arguments As String = ""
-		arguments += " -game """
-		arguments += gamePath
-		arguments += """ "
-		arguments += info.compilerOptions
-		arguments += " "
-		arguments += """"
-		arguments += qcFileName
-		arguments += """"
-
 		Try
+			currentFolder = Directory.GetCurrentDirectory()
+
+			If CompileIsForHlmv Then
+				qcPathFileNameForHlmv = Path.Combine(FileManager.GetPath(qcPathFileName), Path.GetFileNameWithoutExtension(qcPathFileName))
+				qcPathFileNameForHlmv += "_hlmv"
+				qcPathFileNameForHlmv += Path.GetExtension(qcPathFileName)
+				qcFileName = Path.GetFileName(qcPathFileNameForHlmv)
+			Else
+				qcFileName = Path.GetFileName(qcPathFileName)
+			End If
+
+			statusFileStream = Me.CreateLogTextFile(qcPathFileName)
+
+			line = "// "
+			line += TheApp.GetHeaderComment()
+			statusFileStream.WriteLine(line)
+			statusFileStream.WriteLine()
+			Me.ReportProgress(1, line)
+
+			line = "Compiling..."
+			statusFileStream.WriteLine(line)
+			statusFileStream.WriteLine()
+			Me.ReportProgress(1, line)
+
+			Me.theLastLine = "...Compiling cancelled."
+
+			If CompileIsForHlmv Then
+				Me.ChangeQcFileForHlmv(qcPathFileName, qcPathFileNameForHlmv, info)
+				If Me.CancellationPending Then
+					Me.StopCompile(True, Nothing)
+					Return
+				ElseIf Me.theSkipCurrentModelIsActive Then
+					Me.StopCompile(True, Nothing)
+					Return
+				End If
+			Else
+				info.modelRelativePathFileName = TheApp.Compiler.GetMdlRelativePathFileNameFromQcFile(qcPathFileName)
+			End If
+
+			Me.theLastLine = "...Compiling finished. Check above for any errors."
+
+			gamePath = FileManager.GetPath(info.gamePathFileName)
+
+			Dim arguments As String = ""
+			arguments += " -game """
+			arguments += gamePath
+			arguments += """ "
+			arguments += info.compilerOptions
+			arguments += " "
+			arguments += """"
+			arguments += qcFileName
+			arguments += """"
+
 			Dim myProcess As New Process()
 			Dim myProcessStartInfo As New ProcessStartInfo(info.compilerPathFileName, arguments)
 			myProcessStartInfo.UseShellExecute = False
@@ -326,6 +348,8 @@ Public Class Compiler
 		Finally
 			If Me.CancellationPending Then
 				Me.StopCompile(True, myProcess)
+			ElseIf Me.theSkipCurrentModelIsActive Then
+				Me.StopCompile(True, myProcess)
 			End If
 		End Try
 	End Sub
@@ -344,6 +368,8 @@ Public Class Compiler
 		Catch
 		Finally
 			If Me.CancellationPending Then
+				Me.StopCompile(True, myProcess)
+			ElseIf Me.theSkipCurrentModelIsActive Then
 				Me.StopCompile(True, myProcess)
 			End If
 		End Try
@@ -364,143 +390,6 @@ Public Class Compiler
 		End If
 	End Sub
 
-	'Private Sub RunStudioMdlApp(ByVal compilerPathFileName As String, ByVal compilerOptions As String, ByVal gamePathFileName As String, ByVal qcPathFileName As String, ByVal compileIsForHlmv As Boolean, ByVal customModelFolder As String, ByVal modelRelativePathFileName As String)
-	'	'Dim compilerHasBeenRunSuccessfully As Boolean = False
-	'	Dim gamePath As String
-	'	Dim currentFolder As String
-	'	'Dim qcPath As String
-	'	Dim qcPathFileNameForHlmv As String = ""
-	'	Dim qcFileName As String
-	'	'Dim logsPath As String
-	'	Dim statusFileStream As StreamWriter
-	'	'Dim statusRelativePathFileName As String
-	'	Dim line As String
-
-	'	currentFolder = Directory.GetCurrentDirectory()
-
-	'	'qcPath = FileManager.GetPath(qcPathFileName)
-	'	'Directory.SetCurrentDirectory(qcPath)
-
-	'	'logsPath = TheApp.GetLogsPath(qcPath, Path.GetFileNameWithoutExtension(qcPathFileName))
-	'	'FileManager.CreatePath(logsPath)
-
-	'	'statusRelativePathFileName = Path.Combine(FileManager.GetRelativePath(qcPath, logsPath), "compile_for_")
-	'	If compileIsForHlmv Then
-	'		'statusRelativePathFileName += "hlmv"
-	'		qcPathFileNameForHlmv = Path.Combine(FileManager.GetPath(qcPathFileName), Path.GetFileNameWithoutExtension(qcPathFileName))
-	'		qcPathFileNameForHlmv += "_hlmv"
-	'		qcPathFileNameForHlmv += Path.GetExtension(qcPathFileName)
-	'		qcFileName = Path.GetFileName(qcPathFileNameForHlmv)
-	'	Else
-	'		'statusRelativePathFileName += "game"
-	'		qcFileName = Path.GetFileName(qcPathFileName)
-	'	End If
-	'	'statusRelativePathFileName += ".log"
-
-	'	'statusFileStream = File.CreateText(statusRelativePathFileName)
-	'	statusFileStream = Me.CreateLogTextFile(qcPathFileName)
-
-	'	line = "// "
-	'	line += TheApp.GetHeaderComment()
-	'	statusFileStream.WriteLine(line)
-	'	statusFileStream.WriteLine()
-
-	'	line = "Compiling..."
-	'	statusFileStream.WriteLine(line)
-	'	statusFileStream.WriteLine()
-	'	Me.ReportProgress(1, line)
-
-	'	If compileIsForHlmv Then
-	'		Me.ChangeQcFileForHlmv(qcPathFileName, qcPathFileNameForHlmv, customModelFolder, modelRelativePathFileName)
-	'		If Me.CancellationPending Then
-	'			statusFileStream.WriteLine()
-	'			line = "...Compiling cancelled."
-	'			statusFileStream.WriteLine(line)
-	'			Me.ReportProgress(3, line)
-
-	'			statusFileStream.Flush()
-	'			statusFileStream.Close()
-
-	'			Return
-	'		End If
-	'	Else
-	'		TheApp.ModelRelativePathFileName = TheApp.Compiler.GetMdlRelativePathFileNameFromQcFile(qcPathFileName)
-	'	End If
-
-	'	gamePath = FileManager.GetPath(gamePathFileName)
-
-	'	Dim arguments As String = ""
-	'	arguments += " -game """
-	'	arguments += gamePath
-	'	arguments += """ "
-	'	arguments += compilerOptions
-	'	arguments += " "
-	'	arguments += """"
-	'	arguments += qcFileName
-	'	arguments += """"
-
-	'	Dim myProcess As New Process()
-	'	Dim myProcessStartInfo As New ProcessStartInfo(compilerPathFileName, arguments)
-	'	myProcessStartInfo.UseShellExecute = False
-	'	myProcessStartInfo.RedirectStandardOutput = True
-	'	myProcessStartInfo.RedirectStandardError = True
-	'	myProcessStartInfo.CreateNoWindow = True
-	'	myProcess.StartInfo = myProcessStartInfo
-	'	myProcess.Start()
-
-	'	Dim outputStreamReader As StreamReader = myProcess.StandardOutput
-	'	Do
-	'		If Me.CancellationPending Then
-	'			statusFileStream.WriteLine()
-	'			line = "...Compiling cancelled."
-	'			statusFileStream.WriteLine(line)
-	'			Me.ReportProgress(3, line)
-
-	'			statusFileStream.Flush()
-	'			statusFileStream.Close()
-	'			myProcess.Close()
-	'			Return
-	'		End If
-
-	'		line = outputStreamReader.ReadLine()
-	'		statusFileStream.WriteLine(line)
-	'		Me.ReportProgress(2, line)
-	'	Loop Until line Is Nothing
-	'	'======
-	'	'Dim errorStreamReader As StreamReader = myProcess.StandardError
-	'	'Do
-	'	'	line = errorStreamReader.ReadLine()
-	'	'	statusFileStream.WriteLine(line)
-	'	'Loop Until line Is Nothing
-
-	'	'Try
-	'	'	Dim inputFile As New FileInfo(qcPathFileName)
-	'	'	Dim statusFile As New FileInfo(statusRelativePathFileName)
-	'	'	'If inputFile.Exists Then
-	'	'	'	If statusFile.Exists Then
-	'	'	'		compilerHasBeenRunSuccessfully = True
-	'	'	'	End If
-	'	'	'End If
-	'	'	If Not inputFile.Exists Then
-
-	'	'	End If
-	'	'Catch
-	'	'Finally
-	'	Directory.SetCurrentDirectory(currentFolder)
-	'	'End Try
-
-	'	statusFileStream.WriteLine()
-	'	line = "...Compiling finished. Check above for any errors."
-	'	statusFileStream.WriteLine(line)
-	'	Me.ReportProgress(3, line)
-
-	'	statusFileStream.Flush()
-	'	statusFileStream.Close()
-	'	myProcess.Close()
-
-	'	Return
-	'End Sub
-
 	Private Sub ChangeQcFileForHlmv(ByVal qcPathFileName As String, ByVal qcPathFileNameForHlmv As String, ByVal info As CompilerInfo)
 		Dim inputFile As New StreamReader(qcPathFileName)
 		Dim outputFile As New StreamWriter(qcPathFileNameForHlmv)
@@ -516,6 +405,10 @@ Public Class Compiler
 				inputFile.Close()
 				outputFile.Close()
 				Return
+			ElseIf Me.theSkipCurrentModelIsActive Then
+				outputFile.Flush()
+				inputFile.Close()
+				outputFile.Close()
 			End If
 
 			inputLine = inputFile.ReadLine()
@@ -567,19 +460,20 @@ Public Class Compiler
 		Return File.CreateText(statusRelativePathFileName)
 	End Function
 
-	Private Sub WriteCriticalErrorMesssage(ByVal qcPathFileName As String, ByVal statusFileStream As StreamWriter, ByVal line As String, ByVal e As System.ComponentModel.DoWorkEventArgs, ByVal info As CompilerInfo)
-		If statusFileStream Is Nothing AndAlso qcPathFileName <> "" Then
+	'Private Sub WriteCriticalErrorMesssage(ByVal qcPathFileName As String, ByVal statusFileStream As StreamWriter, ByVal line As String, ByVal e As System.ComponentModel.DoWorkEventArgs, ByVal info As CompilerInfo)
+	Private Sub WriteCriticalErrorMesssage(ByVal qcPathFileName As String, ByVal line As String, ByVal info As CompilerInfo)
+		'If statusFileStream Is Nothing AndAlso qcPathFileName <> "" Then
+		If qcPathFileName <> "" Then
 
 			statusFileStream = Me.CreateLogTextFile(qcPathFileName)
-			WriteErrorMessage(statusFileStream, line)
+			WriteErrorMessage(statusFileStream, "Crowbar ERROR: " + line)
 
 			statusFileStream.Flush()
 			statusFileStream.Close()
 		End If
 
-		'e.Result = "<error>"
-		info.result = "<success>"
-		e.Result = info
+		info.result = "<error>"
+		'e.Result = info
 	End Sub
 
 	Private Sub WriteErrorMessage(ByVal statusFileStream As StreamWriter, ByVal line As String)
@@ -612,6 +506,7 @@ Public Class Compiler
 
 	Private theCompileType As CompilerInfo.CompileType
 	Private theCompileIsForHlmv As Boolean
+	Private theSkipCurrentModelIsActive As Boolean
 
 	Private statusFileStream As StreamWriter
 	Private theLastLine As String

@@ -65,6 +65,11 @@ Public Class SourceMdlBone
 	'	Quaternion			quat;
 	Public quat As SourceQuaternion
 
+	' VERSION 2531: 
+	'FROM: MDLConverter for VtMB
+	'	float AnimChannels[NUMANIMCHANNELS];
+	Public animChannels(6) As Double
+
 	'NOTE: Changed to Double, so that the values will be properly written to file with 6 decimal digits.
 	'	RadianEuler			rot;
 	Public rotation As SourceVector

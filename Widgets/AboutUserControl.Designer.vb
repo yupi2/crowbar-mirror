@@ -29,17 +29,19 @@ Partial Class AboutUserControl
 		Me.CreditsTextBox = New System.Windows.Forms.TextBox
 		Me.AuthorLinkLabel = New System.Windows.Forms.LinkLabel
 		Me.ProductNameLinkLabel = New System.Windows.Forms.LinkLabel
+		Me.Panel1 = New System.Windows.Forms.Panel
+		Me.Panel1.SuspendLayout()
 		Me.SuspendLayout()
 		'
 		'ProductInfoTextBox
 		'
 		Me.ProductInfoTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None
-		Me.ProductInfoTextBox.Location = New System.Drawing.Point(3, 157)
-		Me.ProductInfoTextBox.Margin = New System.Windows.Forms.Padding(3, 2, 3, 2)
+		Me.ProductInfoTextBox.Location = New System.Drawing.Point(4, 193)
+		Me.ProductInfoTextBox.Margin = New System.Windows.Forms.Padding(4, 2, 4, 2)
 		Me.ProductInfoTextBox.Multiline = True
 		Me.ProductInfoTextBox.Name = "ProductInfoTextBox"
 		Me.ProductInfoTextBox.ReadOnly = True
-		Me.ProductInfoTextBox.Size = New System.Drawing.Size(128, 48)
+		Me.ProductInfoTextBox.Size = New System.Drawing.Size(171, 59)
 		Me.ProductInfoTextBox.TabIndex = 2
 		Me.ProductInfoTextBox.Text = "Version" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Copyright" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Company Name"
 		Me.ProductInfoTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
@@ -47,34 +49,35 @@ Partial Class AboutUserControl
 		'
 		'ProductDescriptionTextBox
 		'
-		Me.ProductDescriptionTextBox.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-					Or System.Windows.Forms.AnchorStyles.Left) _
+		Me.ProductDescriptionTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
 					Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.ProductDescriptionTextBox.Location = New System.Drawing.Point(140, 3)
-		Me.ProductDescriptionTextBox.Margin = New System.Windows.Forms.Padding(6, 3, 3, 3)
+		Me.ProductDescriptionTextBox.Location = New System.Drawing.Point(187, 4)
+		Me.ProductDescriptionTextBox.Margin = New System.Windows.Forms.Padding(8, 4, 4, 4)
 		Me.ProductDescriptionTextBox.Multiline = True
 		Me.ProductDescriptionTextBox.Name = "ProductDescriptionTextBox"
 		Me.ProductDescriptionTextBox.ReadOnly = True
 		Me.ProductDescriptionTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both
-		Me.ProductDescriptionTextBox.Size = New System.Drawing.Size(476, 67)
+		Me.ProductDescriptionTextBox.Size = New System.Drawing.Size(633, 82)
 		Me.ProductDescriptionTextBox.TabIndex = 5
 		Me.ProductDescriptionTextBox.TabStop = False
 		'
 		'ProductLogoButton
 		'
 		Me.ProductLogoButton.Image = Global.Crowbar.My.Resources.Resources.crowbar_icon_large
-		Me.ProductLogoButton.Location = New System.Drawing.Point(3, 3)
+		Me.ProductLogoButton.Location = New System.Drawing.Point(4, 4)
+		Me.ProductLogoButton.Margin = New System.Windows.Forms.Padding(4)
 		Me.ProductLogoButton.Name = "ProductLogoButton"
-		Me.ProductLogoButton.Size = New System.Drawing.Size(128, 128)
+		Me.ProductLogoButton.Size = New System.Drawing.Size(171, 158)
 		Me.ProductLogoButton.TabIndex = 0
 		Me.ProductLogoButton.UseVisualStyleBackColor = True
 		'
 		'AuthorIconButton
 		'
 		Me.AuthorIconButton.Image = Global.Crowbar.My.Resources.Resources.macaw
-		Me.AuthorIconButton.Location = New System.Drawing.Point(3, 210)
+		Me.AuthorIconButton.Location = New System.Drawing.Point(4, 258)
+		Me.AuthorIconButton.Margin = New System.Windows.Forms.Padding(4)
 		Me.AuthorIconButton.Name = "AuthorIconButton"
-		Me.AuthorIconButton.Size = New System.Drawing.Size(128, 128)
+		Me.AuthorIconButton.Size = New System.Drawing.Size(171, 158)
 		Me.AuthorIconButton.TabIndex = 3
 		Me.AuthorIconButton.UseVisualStyleBackColor = True
 		'
@@ -83,13 +86,13 @@ Partial Class AboutUserControl
 		Me.CreditsTextBox.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
 					Or System.Windows.Forms.AnchorStyles.Left) _
 					Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.CreditsTextBox.Location = New System.Drawing.Point(140, 76)
-		Me.CreditsTextBox.Margin = New System.Windows.Forms.Padding(6, 3, 3, 3)
+		Me.CreditsTextBox.Location = New System.Drawing.Point(187, 94)
+		Me.CreditsTextBox.Margin = New System.Windows.Forms.Padding(8, 4, 4, 4)
 		Me.CreditsTextBox.Multiline = True
 		Me.CreditsTextBox.Name = "CreditsTextBox"
 		Me.CreditsTextBox.ReadOnly = True
 		Me.CreditsTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both
-		Me.CreditsTextBox.Size = New System.Drawing.Size(476, 344)
+		Me.CreditsTextBox.Size = New System.Drawing.Size(633, 422)
 		Me.CreditsTextBox.TabIndex = 6
 		Me.CreditsTextBox.TabStop = False
 		'
@@ -98,9 +101,10 @@ Partial Class AboutUserControl
 		Me.AuthorLinkLabel.ActiveLinkColor = System.Drawing.Color.LimeGreen
 		Me.AuthorLinkLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
 		Me.AuthorLinkLabel.LinkColor = System.Drawing.Color.Green
-		Me.AuthorLinkLabel.Location = New System.Drawing.Point(3, 341)
+		Me.AuthorLinkLabel.Location = New System.Drawing.Point(4, 420)
+		Me.AuthorLinkLabel.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
 		Me.AuthorLinkLabel.Name = "AuthorLinkLabel"
-		Me.AuthorLinkLabel.Size = New System.Drawing.Size(128, 20)
+		Me.AuthorLinkLabel.Size = New System.Drawing.Size(171, 25)
 		Me.AuthorLinkLabel.TabIndex = 4
 		Me.AuthorLinkLabel.TabStop = True
 		Me.AuthorLinkLabel.Text = "Author"
@@ -112,30 +116,42 @@ Partial Class AboutUserControl
 		Me.ProductNameLinkLabel.ActiveLinkColor = System.Drawing.Color.LimeGreen
 		Me.ProductNameLinkLabel.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
 		Me.ProductNameLinkLabel.LinkColor = System.Drawing.Color.Green
-		Me.ProductNameLinkLabel.Location = New System.Drawing.Point(3, 134)
+		Me.ProductNameLinkLabel.Location = New System.Drawing.Point(4, 165)
+		Me.ProductNameLinkLabel.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
 		Me.ProductNameLinkLabel.Name = "ProductNameLinkLabel"
-		Me.ProductNameLinkLabel.Size = New System.Drawing.Size(128, 21)
+		Me.ProductNameLinkLabel.Size = New System.Drawing.Size(171, 26)
 		Me.ProductNameLinkLabel.TabIndex = 1
 		Me.ProductNameLinkLabel.TabStop = True
 		Me.ProductNameLinkLabel.Text = "Product Name"
 		Me.ProductNameLinkLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter
 		Me.ProductNameLinkLabel.VisitedLinkColor = System.Drawing.Color.Green
 		'
+		'Panel1
+		'
+		Me.Panel1.Controls.Add(Me.ProductDescriptionTextBox)
+		Me.Panel1.Controls.Add(Me.ProductLogoButton)
+		Me.Panel1.Controls.Add(Me.AuthorIconButton)
+		Me.Panel1.Controls.Add(Me.CreditsTextBox)
+		Me.Panel1.Controls.Add(Me.AuthorLinkLabel)
+		Me.Panel1.Controls.Add(Me.ProductNameLinkLabel)
+		Me.Panel1.Controls.Add(Me.ProductInfoTextBox)
+		Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
+		Me.Panel1.Location = New System.Drawing.Point(0, 0)
+		Me.Panel1.Name = "Panel1"
+		Me.Panel1.Size = New System.Drawing.Size(832, 526)
+		Me.Panel1.TabIndex = 7
+		'
 		'AboutUserControl
 		'
-		Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+		Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
 		Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-		Me.Controls.Add(Me.ProductInfoTextBox)
-		Me.Controls.Add(Me.ProductNameLinkLabel)
-		Me.Controls.Add(Me.AuthorLinkLabel)
-		Me.Controls.Add(Me.CreditsTextBox)
-		Me.Controls.Add(Me.AuthorIconButton)
-		Me.Controls.Add(Me.ProductLogoButton)
-		Me.Controls.Add(Me.ProductDescriptionTextBox)
+		Me.Controls.Add(Me.Panel1)
+		Me.Margin = New System.Windows.Forms.Padding(4)
 		Me.Name = "AboutUserControl"
-		Me.Size = New System.Drawing.Size(624, 427)
+		Me.Size = New System.Drawing.Size(832, 526)
+		Me.Panel1.ResumeLayout(False)
+		Me.Panel1.PerformLayout()
 		Me.ResumeLayout(False)
-		Me.PerformLayout()
 
 	End Sub
 	Friend WithEvents ProductInfoTextBox As System.Windows.Forms.TextBox
@@ -145,5 +161,6 @@ Partial Class AboutUserControl
 	Friend WithEvents CreditsTextBox As System.Windows.Forms.TextBox
 	Friend WithEvents AuthorLinkLabel As System.Windows.Forms.LinkLabel
 	Friend WithEvents ProductNameLinkLabel As System.Windows.Forms.LinkLabel
+	Friend WithEvents Panel1 As System.Windows.Forms.Panel
 
 End Class

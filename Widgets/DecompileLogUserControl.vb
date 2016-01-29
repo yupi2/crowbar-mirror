@@ -27,10 +27,6 @@ Public Class DecompileLogUserControl
 		RemoveHandler TheApp.Decompiler.RunWorkerCompleted, AddressOf Me.DecompilerBackgroundWorker_RunWorkerCompleted
 	End Sub
 
-	Private Sub CancelDecompileButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CancelDecompileButton.Click
-		TheApp.Decompiler.CancelAsync()
-	End Sub
-
 #End Region
 
 #Region "Properties"
@@ -43,6 +39,14 @@ Public Class DecompileLogUserControl
 
 #Region "Child Widget Event Handlers"
 
+	Private Sub SkipCurrentModelButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SkipCurrentModelButton.Click
+		TheApp.Decompiler.SkipCurrentModel()
+	End Sub
+
+	Private Sub CancelDecompileButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CancelDecompileButton.Click
+		TheApp.Decompiler.CancelAsync()
+	End Sub
+
 #End Region
 
 #Region "Core Event Handlers"
@@ -53,19 +57,12 @@ Public Class DecompileLogUserControl
 
 		If e.ProgressPercentage = 0 Then
 			Me.DecompilerLogTextBox.Text = ""
+			Me.DecompilerLogTextBox.AppendText(line + vbCr)
 			Me.UpdateDecompileTab(True)
 		ElseIf e.ProgressPercentage = 1 Then
-			Me.DecompilerLogTextBox.AppendText(line + vbCr + vbCr)
-		ElseIf e.ProgressPercentage = 2 Then
 			Me.DecompilerLogTextBox.AppendText(line + vbCr)
-		ElseIf e.ProgressPercentage = 3 Then
-			Me.DecompilerLogTextBox.AppendText(vbCr + line + vbCr)
-		ElseIf e.ProgressPercentage = 4 Then
-			Me.DecompilerLogTextBox.AppendText(line)
-		ElseIf e.ProgressPercentage = 5 Then
-			Me.DecompilerLogTextBox.AppendText(line + vbCr + vbCr)
 		ElseIf e.ProgressPercentage = 100 Then
-			Me.DecompilerLogTextBox.AppendText(vbCr + line)
+			Me.DecompilerLogTextBox.AppendText(line + vbCr)
 		End If
 	End Sub
 
@@ -88,6 +85,7 @@ Public Class DecompileLogUserControl
 #Region "Private Methods"
 
 	Private Sub UpdateDecompileTab(ByVal decompilerIsRunning As Boolean)
+		Me.SkipCurrentModelButton.Enabled = decompilerIsRunning
 		Me.CancelDecompileButton.Enabled = decompilerIsRunning
 	End Sub
 

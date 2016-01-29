@@ -5,17 +5,12 @@ Public Class AppLog2File
 
 #Region "Write Log File Methods"
 
-	Public Sub WriteFile(ByVal pathFileName As String, ByVal aSourceEngineModel As SourceModel)
-		If aSourceEngineModel.theMdlFileHeader Is Nothing Then
-			Return
-		End If
-
+	Public Sub WriteFile(ByVal pathFileName As String, ByVal name As String, ByVal aFileSeekLog As FileSeekLog)
 		Try
 			Me.theOutputFileStream = File.CreateText(pathFileName)
 
 			Me.WriteHeaderComment()
-
-			Me.WriteFileSeekLog("MDL", aSourceEngineModel.theMdlFileHeader.theFileSeekLog)
+			Me.WriteFileSeekLog(name, aFileSeekLog)
 		Catch
 		Finally
 			Me.theOutputFileStream.Flush()
@@ -128,8 +123,18 @@ Public Class AppLog2File
 		line = "--- Each Section or Loop ---"
 		Me.WriteLogLine(0, line)
 
+		offsetEnd = -1
 		For i As Integer = 0 To aFileSeekLog.theFileSeekList.Count - 1
-			Me.WriteLogLine(1, aFileSeekLog.theFileSeekList.Keys(i).ToString("N0") + " - " + aFileSeekLog.theFileSeekList.Values(i).ToString("N0") + " " + aFileSeekLog.theFileSeekDescriptionList.Values(i))
+			offsetStart = aFileSeekLog.theFileSeekList.Keys(i)
+
+			If offsetEnd <> offsetStart - 1 Then
+				Me.theOutputFileStream.WriteLine()
+				Me.theOutputFileStream.Flush()
+			End If
+
+			offsetEnd = aFileSeekLog.theFileSeekList.Values(i)
+
+			Me.WriteLogLine(1, offsetStart.ToString("N0") + " - " + offsetEnd.ToString("N0") + " " + aFileSeekLog.theFileSeekDescriptionList.Values(i))
 		Next
 
 		line = "========================"

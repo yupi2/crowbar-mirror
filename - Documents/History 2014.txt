@@ -158,9 +158,171 @@ X Change from using "*_hlmv.qc" to using "*_hlmv.crowbarqc".
 
 [26-Feb-2014]
 / BUG: Anim frames above 30 in some models are not decompiled correctly.
-	* CAUSE: Crowbar did not handle "aniamtion sections".
+	* CAUSE: Crowbar did not handle "animation sections".
 
 === Crowbar 0.17
 ========================================
 
 
+
+[28-Feb-2014]
+
+=== Crowbar 0.18
+========================================
+
+=== Crowbar 0.19 (public release with source code)
+========================================
+
+
+
+[01-Mar-2014]
+/ Change default Source Filmmaker GamePathFileName
+	FROM: C:\Program Files (x86)\Steam\steamapps\common\SourceFilmmaker\game\hl2\gameinfo.txt
+	TO: C:\Program Files (x86)\Steam\steamapps\common\SourceFilmmaker\game\usermod\gameinfo.txt
+/ Fixed some syntax with decompile log.
+/ BUG: Decompile log showed checking of extra files when decompiling an animation-only mdl.
+	* SOLUTION: Move code to determine "if animation-only mdl" from SourceMdlFile.ReadFileHeader() to SourceMdlFile.ReadMdlHeader01().
+/ BUG: [01-Mar-2014 6000 ANGRY BEES] "Dark Messiah of Might and Magic" npc_leanna.mdl not decompiling all files.
+	* CAUSE: Aniamtions with SourceMdlAnimationDesc.STUDIO_ALLZEROS flag are not handled correctly.
+/ BUG: Dota 2 models don't decompile with texture paths, so the $cdmaterials lines are missing from the qc file.
+
+
+
+[02-Mar-2014]
+- Decompile mdl version 10 models.
+
+
+
+[03-Mar-2014]
+/ BUG: When phy checksum does not match mdl checksum, the physics commands are not written to qc file.
+	/ Write out the commands, leaving the comment about mismatched checksums.
+- Decompile ANI file.
+
+
+
+[04-Mar-2014]
+- Decompile ANI file.
+
+
+
+[05-Mar-2014]
+- Decompile ANI file.
+
+
+
+[06-Mar-2014]
+/ Decompile ANI file.
+
+=== Crowbar 0.20
+========================================
+
+
+
+[09-Mar-2014]
+/ BUG: The $jigglebone angle_constraint option decompiles to radians instead of degrees.
+
+
+
+[10-Mar-2014]
+/ BUG: Uncheck verbose compiler option, close then reopen the program. The box will be unchecked but the command will reappear in the text field.
+
+
+
+[11-Mar-2014]
+/ batch decompiling -- on error, jump to the next mdl in the list
+	SOLUTION: Wrap code in Decompiler.DecompileOneModel() with "try".
+/ batch compiling -- on error, jump to the next qc in the list
+	SOLUTION: Wrap code in Compiler.CompileOneModel() with "try".
+/ "Skip current model decompile" button for batch decompiling.
+
+
+
+[12-Mar-2014]
+/ Redo Decompile Output Folder Full Path browse window to use file browse window 
+	for selecting a folder. Do in similar way as WinMerge.
+	* The folder browse window is awkward and the file browse window is better.
+
+
+
+[01-Apr-2014]
+
+=== Crowbar 0.21
+========================================
+
+
+
+[17-Apr-2014]
+/ In Compiler tab, change the button text 
+	From: "Compile to Different Subfolder:"
+	To  : "Compile to different subfolder (of "models" folder):"
+/ In Compiler tab, change the custom output folder 
+	From: custom
+	To  : for_model_viewer
+
+
+
+[19-Apr-2014]
+/ BUG: Reported that Decompile buttons were not showing at bottom of window. 
+	* The screenshot seems to indicate that Windows is not resizing the widgets properly. Unknown why.
+	* After some searching, saw something about using a Panel with "Dock = Fill" setting inside a UserControl, 
+		to make widgets inside UserControl use their Anchor property correctly.
+	* Also saw this article about Windows non-default text sizes causing the same visual problem:
+		http://blog.davidegrayson.com/2013/04/unusable-ui-caused-by-windows-forms.html
+	SOLUTION: Inserted a Panel (with "Dock = Fill" setting) in all UserControls, 
+		placing all widgets of the UserControl inside the Panel.
+
+
+
+[25-Apr-2014]
+- Decompile MDL from "Vampire the Masquerade - Bloodlines".
+
+
+[26-Apr-2014]
+- Decompile MDL from "Vampire the Masquerade - Bloodlines".
+/ Improve text of Decompile log.
+
+
+
+[03-Jun-2014]
+/ BUG: http://steamcommunity.com/groups/CrowbarTool/discussions/0/558749190834921362/#c540743213144819304
+
+
+
+[14-Jun-2014]
+/ BUG: http://steamcommunity.com/groups/CrowbarTool/discussions/0/558749190834921362/#c540744474765632508
+	Change in SourceMdlFile.ReadMdlAnimation()...
+		FROM:
+			boneIndex = Me.theInputFileReader.ReadByte()
+			If boneIndex = 255 Then
+				Continue For
+			End If
+		TO:
+			boneIndex = Me.theInputFileReader.ReadByte()
+			If boneIndex = 255 Then
+				Me.theInputFileReader.ReadByte()
+				Me.theInputFileReader.ReadInt16()
+				Continue For
+			End If
+
+
+
+[15-Jul-2014]
+/ Change default Counter-Strike Global Offensive CompilerPathFileName
+	FROM: C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\bin\studiomdl.exe
+	TO: C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\bin\studiomdl.exe
+/ For models decompiled from CSGO, added in roll, pitch, yaw values to end of $hbox QC command.
+	* NOTE that Valve did not change model version number of CSGO model even though version 49 models for other games do NOT compile with the extra roll, pitch, yaw values.
+		Crowbar handles this by adding the extra values only when model version >= 49 and the $hboxset is "cstrike".
+- Need to test the change to $hbox on various models in CSGO and other games.
+
+
+
+[04-Aug-2014]
+- Add in $animblocksize QC command.
+
+
+
+[07-Sep-2014]
+
+=== Crowbar 0.22
+========================================

@@ -88,7 +88,8 @@ Public Class SourcePhyFile
 		Dim tempInt As Integer
 		Dim nextSolidDataStreamPosition As Long
 		Dim faceDataStreamPosition As Long
-		Dim faceDataOffset As Long
+		Dim vertexDataStreamPosition As Long
+		Dim vertexDataOffset As Long
 		'Dim boneIndexIsSet As Boolean
 		Dim faceSection As SourcePhyFaceSection
 
@@ -159,26 +160,27 @@ Public Class SourcePhyFile
 			ivpsId = Me.theInputFileReader.ReadChars(4)
 
 			vertices = New List(Of Integer)()
-			faceDataStreamPosition = Me.theInputFileReader.BaseStream.Position + collisionData.size
-			While Me.theInputFileReader.BaseStream.Position < faceDataStreamPosition
+			'faceDataStreamPosition = Me.theInputFileReader.BaseStream.Position + collisionData.size
+			vertexDataStreamPosition = Me.theInputFileReader.BaseStream.Position + collisionData.size
+			While Me.theInputFileReader.BaseStream.Position < vertexDataStreamPosition
 				faceSection = New SourcePhyFaceSection()
+
+				faceDataStreamPosition = Me.theInputFileReader.BaseStream.Position
 
 				'd0 00 00 00 
 				'29 00 00 00 
 				'04 15 00 00 
-				faceDataOffset = Me.theInputFileReader.ReadInt32()
-				faceDataStreamPosition = Me.theInputFileReader.BaseStream.Position + faceDataOffset - 4
+				vertexDataOffset = Me.theInputFileReader.ReadInt32()
+				'vertexDataStreamPosition = Me.theInputFileReader.BaseStream.Position + faceDataOffset - 4
+				vertexDataStreamPosition = faceDataStreamPosition + vertexDataOffset
 
-				'TODO: Verify why this is using "- 1".
-				'If boneIndexIsSet Then
-				'	Me.theInputFileReader.ReadInt32()
-				'Else
+				'faceSection.theBoneIndex = Me.theInputFileReader.ReadInt32()
+				'TODO: Verify why this is using "- 1". Needed for L4D2 survivor_teenangst.
 				faceSection.theBoneIndex = Me.theInputFileReader.ReadInt32() - 1
 				If faceSection.theBoneIndex < 0 Then
 					faceSection.theBoneIndex = 0
+					Me.theSourceEngineModel.thePhyFileHeader.theSourcePhyIsCollisionModel = True
 				End If
-				'	boneIndexIsSet = True
-				'End If
 
 				Me.theInputFileReader.ReadInt32()
 
@@ -256,7 +258,7 @@ Public Class SourcePhyFile
 				collisionData.theFaceSections.Add(faceSection)
 			End While
 
-			Me.theInputFileReader.BaseStream.Seek(faceDataStreamPosition, SeekOrigin.Begin)
+			Me.theInputFileReader.BaseStream.Seek(vertexDataStreamPosition, SeekOrigin.Begin)
 
 			' Vertex data section.
 			'	' 8 distinct vertices

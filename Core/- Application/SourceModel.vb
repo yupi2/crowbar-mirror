@@ -31,6 +31,13 @@ Public Class SourceModel
 			aModel = aBodyPart.theModels(modelIndex)
 
 			modelFileName = Path.GetFileName(CStr(aModel.name).Trim(Chr(0))).ToLower(TheApp.InternalCultureInfo)
+			If FileManager.FilePathHasInvalidChars(modelFileName) Then
+				modelFileName = "body"
+				modelFileName += CStr(bodyPartIndex)
+				modelFileName += "_model"
+				modelFileName += CStr(modelIndex)
+			End If
+
 			modelFileNameWithoutExtension = Path.GetFileNameWithoutExtension(modelFileName)
 			'modelFileExtension = Path.GetExtension(modelFileName)
 			bodyGroupSmdFileNamePrefix = Me.theModelName + "_"

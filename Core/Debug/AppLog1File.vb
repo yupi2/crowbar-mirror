@@ -297,12 +297,13 @@ Public Class AppLog1File
 				Me.WriteLogLine(1, DebugFormatModule.FormatIntegerWithHexLine("proceduralRuleOffset", aBone.proceduralRuleOffset))
 
 				Me.WriteLogLine(1, DebugFormatModule.FormatVectorLine("position", aBone.position.x, aBone.position.y, aBone.position.z))
-				Me.WriteLogLine(1, DebugFormatModule.FormatVectorLine("rotation", aBone.rotation.x, aBone.rotation.y, aBone.rotation.z))
-
 				Me.WriteLogLine(1, DebugFormatModule.FormatQuaternionLine("quat", aBone.quat))
 
-				Me.WriteLogLine(1, DebugFormatModule.FormatVectorLine("positionScale", aBone.positionScale.x, aBone.positionScale.y, aBone.positionScale.z))
-				Me.WriteLogLine(1, DebugFormatModule.FormatVectorLine("rotationScale", aBone.rotationScale.x, aBone.rotationScale.y, aBone.rotationScale.z))
+				If aMdlFileHeader.version <> 2531 Then
+					Me.WriteLogLine(1, DebugFormatModule.FormatVectorLine("rotation", aBone.rotation.x, aBone.rotation.y, aBone.rotation.z))
+					Me.WriteLogLine(1, DebugFormatModule.FormatVectorLine("positionScale", aBone.positionScale.x, aBone.positionScale.y, aBone.positionScale.z))
+					Me.WriteLogLine(1, DebugFormatModule.FormatVectorLine("rotationScale", aBone.rotationScale.x, aBone.rotationScale.y, aBone.rotationScale.z))
+				End If
 
 				Me.WriteLogLine(1, DebugFormatModule.FormatVectorLine("poseToBoneColumn0", aBone.poseToBoneColumn0))
 				Me.WriteLogLine(1, DebugFormatModule.FormatVectorLine("poseToBoneColumn1", aBone.poseToBoneColumn1))
@@ -362,9 +363,11 @@ Public Class AppLog1File
 				'	Me.WriteLogLine(1, DebugFormatModule.FormatIntegerWithHexLine("unknown(" + x.ToString() + ")", anAnimationDesc.unknown(x)))
 				'Next
 
-				Me.WriteMdlAnimation(aMdlFileHeader, anAnimationDesc)
-				Me.WriteMdlIkRules(aMdlFileHeader, anAnimationDesc)
-				'Me.WriteMdlAnimationSections(aMdlFileHeader, anAnimationDesc)
+				If anAnimationDesc.animBlock = 0 AndAlso ((anAnimationDesc.flags And SourceMdlAnimationDesc.STUDIO_ALLZEROS) = 0) Then
+					Me.WriteMdlAnimation(aMdlFileHeader, anAnimationDesc)
+					Me.WriteMdlIkRules(aMdlFileHeader, anAnimationDesc)
+					'Me.WriteMdlAnimationSections(aMdlFileHeader, anAnimationDesc)
+				End If
 
 				line = "--------------------"
 				Me.WriteLogLine(1, line)
@@ -1220,12 +1223,12 @@ Public Class AppLog1File
 
 				Me.WriteLogLine(2, DebugFormatModule.FormatIntegerLine("boneIndex", aHitbox.boneIndex))
 				Me.WriteLogLine(2, DebugFormatModule.FormatIntegerLine("groupIndex", aHitbox.groupIndex))
-				Me.WriteLogLine(2, DebugFormatModule.FormatDoubleFloatLine("boundingBoxMinX", aHitbox.boundingBoxMinX))
-				Me.WriteLogLine(2, DebugFormatModule.FormatDoubleFloatLine("boundingBoxMinY", aHitbox.boundingBoxMinY))
-				Me.WriteLogLine(2, DebugFormatModule.FormatDoubleFloatLine("boundingBoxMinZ", aHitbox.boundingBoxMinZ))
-				Me.WriteLogLine(2, DebugFormatModule.FormatDoubleFloatLine("boundingBoxMaxX", aHitbox.boundingBoxMaxX))
-				Me.WriteLogLine(2, DebugFormatModule.FormatDoubleFloatLine("boundingBoxMaxY", aHitbox.boundingBoxMaxY))
-				Me.WriteLogLine(2, DebugFormatModule.FormatDoubleFloatLine("boundingBoxMaxZ", aHitbox.boundingBoxMaxZ))
+				Me.WriteLogLine(2, DebugFormatModule.FormatDoubleFloatLine("boundingBoxMinX", aHitbox.boundingBoxMin.x))
+				Me.WriteLogLine(2, DebugFormatModule.FormatDoubleFloatLine("boundingBoxMinY", aHitbox.boundingBoxMin.y))
+				Me.WriteLogLine(2, DebugFormatModule.FormatDoubleFloatLine("boundingBoxMinZ", aHitbox.boundingBoxMin.z))
+				Me.WriteLogLine(2, DebugFormatModule.FormatDoubleFloatLine("boundingBoxMaxX", aHitbox.boundingBoxMax.x))
+				Me.WriteLogLine(2, DebugFormatModule.FormatDoubleFloatLine("boundingBoxMaxY", aHitbox.boundingBoxMax.y))
+				Me.WriteLogLine(2, DebugFormatModule.FormatDoubleFloatLine("boundingBoxMaxZ", aHitbox.boundingBoxMax.z))
 				Me.WriteLogLine(2, DebugFormatModule.FormatIntegerWithHexLine("nameOffset", aHitbox.nameOffset))
 				Me.WriteLogLine(3, DebugFormatModule.FormatStringLine("name", aHitbox.theName))
 

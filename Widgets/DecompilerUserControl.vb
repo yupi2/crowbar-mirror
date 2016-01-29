@@ -111,14 +111,31 @@ Public Class DecompilerUserControl
 	End Sub
 
 	Private Sub BrowseForOutputPathNameButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BrowseForOutputPathNameButton.Click
-		'TODO: Use File selection dialog instead, using "<Folder selction>" as the default file name.
-		'      The file selection dialog would function similarly to one in WinMerge.
-		Dim outputFolderWdw As New FolderBrowserDialog()
-		outputFolderWdw.SelectedPath = Me.OutputPathNameTextBox.Text
+		'Dim outputFolderWdw As New FolderBrowserDialog()
+		'outputFolderWdw.SelectedPath = Me.OutputPathNameTextBox.Text
+		'If outputFolderWdw.ShowDialog() = Windows.Forms.DialogResult.OK Then
+		'	' Allow dialog window to completely disappear.
+		'	Application.DoEvents()
+		'	Me.OutputPathNameTextBox.Text = outputFolderWdw.SelectedPath
+		'End If
+		'======
+		'NOTE: Using "open file dialog" instead of "open folder dialog" because the "open folder dialog" 
+		'      does not show the path name bar nor does it scroll to the selected folder in the folder tree view.
+		Dim outputFolderWdw As New OpenFileDialog()
+		outputFolderWdw.Title = "Open the folder you want as Output Folder"
+		outputFolderWdw.InitialDirectory = FileManager.GetPath(TheApp.Settings.DecompileMdlPathFileName)
+		outputFolderWdw.FileName = "Open the folder."
+		outputFolderWdw.AddExtension = False
+		outputFolderWdw.CheckFileExists = False
+		outputFolderWdw.CheckPathExists = False
+		'outputFolderWdw.Filter = "All Files (*.*) | *.*"
+		outputFolderWdw.Multiselect = False
+		outputFolderWdw.ValidateNames = False
 		If outputFolderWdw.ShowDialog() = Windows.Forms.DialogResult.OK Then
 			' Allow dialog window to completely disappear.
 			Application.DoEvents()
-			Me.OutputPathNameTextBox.Text = outputFolderWdw.SelectedPath
+
+			Me.OutputPathNameTextBox.Text = FileManager.GetPath(outputFolderWdw.FileName)
 		End If
 	End Sub
 

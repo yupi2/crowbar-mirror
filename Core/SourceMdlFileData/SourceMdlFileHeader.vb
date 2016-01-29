@@ -5,6 +5,8 @@ Public Class SourceMdlFileHeader
 		Me.theSectionFrameMinFrameCount = 2000000
 
 		Me.theMdlFileOnlyHasAnimations = False
+		Me.theFirstAnimationDesc = Nothing
+		Me.theFirstAnimationDescFrameLines = New SortedList(Of Integer, AnimationFrameLine)()
 	End Sub
 
 	'FROM: SourceEngine2006_source\public\studio.h
@@ -567,6 +569,8 @@ Public Class SourceMdlFileHeader
 	Public checksum As Integer
 	' 0C  64 bytes
 	Public name(63) As Char
+	'FROM: VERSION 2531 (VtMB)
+	Public nameForVtmb(128) As Char
 	' 4C  length of mdl file in bytes
 	Public fileSize As Integer
 
@@ -608,9 +612,13 @@ Public Class SourceMdlFileHeader
 	'A8  int					bonecontrollerindex;
 	Public boneControllerOffset As Integer
 
+	'FROM: VERSION 10
+	'int					numhitboxes;			// complex bounding boxes
+	'int					hitboxindex;			
+	'======
 	'AC  int					numhitboxsets;
-	Public hitboxSetCount As Integer
 	'B0  int					hitboxsetindex;
+	Public hitboxSetCount As Integer
 	Public hitboxSetOffset As Integer
 
 	'B4 	int					numlocalanim;			// animations/poses
@@ -624,6 +632,12 @@ Public Class SourceMdlFileHeader
 	'C0 	int					localseqindex;
 	Public localSequenceOffset As Integer
 	'  	inline mstudioseqdesc_t *pLocalSeqdesc( int i ) const { if (i < 0 || i >= numlocalseq) i = 0; return (mstudioseqdesc_t *)(((byte *)this) + localseqindex) + i; };
+
+	'FROM: VERSION 10
+	'int					numseqgroups;		// demand loaded sequences
+	'int					seqgroupindex;
+	Public sequenceGroupCount As Integer
+	Public sequenceGroupOffset As Integer
 
 	'C4 	mutable int			activitylistversion;	// initialization flag - have the sequences been indexed?
 	Public activityListVersion As Integer
@@ -817,7 +831,10 @@ Public Class SourceMdlFileHeader
 	'Public studiohdr2(63) As Integer
 
 
+	Public theID As String
+
 	Public theAnimationDescs As List(Of SourceMdlAnimationDesc)
+	Public theAnimBlocks As List(Of SourceMdlAnimBlock)
 	Public theAnimBlockRelativePathFileName As String
 	Public theAttachments As List(Of SourceMdlAttachment)
 	Public theBodyParts As List(Of SourceMdlBodyPart)
@@ -851,8 +868,10 @@ Public Class SourceMdlFileHeader
 	Public theModelCommandIsUsed As Boolean
 	Public theFlexFrames As List(Of FlexFrame)
 	Public theEyelidFlexFrameIndexes As List(Of Integer)
-	Public theUpperEyelidFlexFrameIndexes As List(Of Integer)
+	'Public theUpperEyelidFlexFrameIndexes As List(Of Integer)
 
+	Public theFirstAnimationDesc As SourceMdlAnimationDesc
+	Public theFirstAnimationDescFrameLines As SortedList(Of Integer, AnimationFrameLine)
 	Public theMdlFileOnlyHasAnimations As Boolean
 	Public theProceduralBonesCommandIsUsed As Boolean
 

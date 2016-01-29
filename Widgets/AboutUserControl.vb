@@ -54,6 +54,7 @@ Public Class AboutUserControl
 		Me.CreditsTextBox.Text += vbTab + "mrlanky" + vbCrLf
 		Me.CreditsTextBox.Text += vbTab + "Pajama" + vbCrLf
 		Me.CreditsTextBox.Text += vbTab + "pappaskurtz" + vbCrLf
+		Me.CreditsTextBox.Text += vbTab + "Rantis" + vbCrLf
 		Me.CreditsTextBox.Text += vbTab + "Seraphim" + vbCrLf
 		Me.CreditsTextBox.Text += vbTab + "Splinks" + vbCrLf
 		Me.CreditsTextBox.Text += vbTab + "Stiffy360" + vbCrLf

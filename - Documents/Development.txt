@@ -221,7 +221,7 @@ $animation:
 		else if (strnicmp("startloop", token, 5 ) == 0)
 		else if (stricmp("fudgeloop", token ) == 0)
 		else if (strnicmp("snap", token, 4 ) == 0)
-		else if (strnicmp("frame", token, 5 ) == 0)
+X		else if (strnicmp("frame", token, 5 ) == 0)     // baked-in and decompiles as separate anim smd files
 		else if (stricmp("post", token) == 0)
 		else if (stricmp("noautoik", token) == 0)
 		else if (stricmp("autoik", token) == 0)
@@ -234,7 +234,7 @@ $animation:
 		if (stricmp("fixuploop", token ) == 0)
 		else if (strnicmp("weightlist", token, 6 ) == 0)
 		else if (stricmp("subtract", token ) == 0)
-		else if (stricmp("presubtract", token ) == 0) // FIXME: rename this to something better
+		else if (stricmp("presubtract", token ) == 0)
 		else if (stricmp( "alignto", token ) == 0)
 		else if (stricmp( "align", token ) == 0)
 		else if (stricmp( "alignboneto", token ) == 0)
@@ -335,7 +335,7 @@ X		else if (stricmp("post", token) == 0)             // option handled elsewhere
 		if (stricmp("fixuploop", token ) == 0)
 		else if (strnicmp("weightlist", token, 6 ) == 0)
 		else if (stricmp("subtract", token ) == 0)
-		else if (stricmp("presubtract", token ) == 0) // FIXME: rename this to something better
+		else if (stricmp("presubtract", token ) == 0)
 		else if (stricmp( "alignto", token ) == 0)
 		else if (stricmp( "align", token ) == 0)
 		else if (stricmp( "alignboneto", token ) == 0)

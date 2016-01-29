@@ -84,7 +84,7 @@ Module MathModule
 	'      Z = fCosRoll * fCosPitch * fSinYaw - fSinRoll * fSinPitch * fCosYaw;
 	'      W = fCosRoll * fCosPitchCosYaw     + fSinRoll * fSinPitchSinYaw;
 	'   }
-	Public Function AnglesPyrToQuaternion(ByVal angleVector As SourceVector) As SourceQuaternion
+	Public Function EulerAnglesToQuaternion(ByVal angleVector As SourceVector) As SourceQuaternion
 		Dim fPitch As Double
 		Dim fYaw As Double
 		Dim fRoll As Double
@@ -204,6 +204,60 @@ Module MathModule
 	'	matrixColumn2.y = (cr * sp * sy + -sr * cy)
 	'	matrixColumn2.z = cr * cp
 	'End Sub
+
+
+
+	'FROM: SourceEngine2003_source HL2 Beta 2003\src_main\public\mathlib.h
+	'FORCEINLINE vec_t DotProduct(const vec_t *v1, const vec_t *v2)
+	'{
+	'	return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
+	'}
+	Public Function DotProduct(ByVal vector1 As SourceVector, ByVal vector2 As SourceVector) As Double
+		Return vector1.x * vector2.x + vector1.y * vector2.y + vector1.z * vector2.z
+	End Function
+
+
+
+	'FROM: SourceEngine2003_source HL2 Beta 2003\src_main\public\mathlib.cpp
+	'void VectorTransform (const float *in1, const matrix3x4_t& in2, float *out)
+	'{
+	'	Assert( s_bMathlibInitialized );
+	'	Assert( in1 != out );
+	'	out[0] = DotProduct(in1, in2[0]) + in2[0][3];
+	'	out[1] = DotProduct(in1, in2[1]) + in2[1][3];
+	'	out[2] = DotProduct(in1, in2[2]) + in2[2][3];
+	'}
+	Public Function VectorTransform(ByVal input As SourceVector, ByVal matrixColumn0 As SourceVector, ByVal matrixColumn1 As SourceVector, ByVal matrixColumn2 As SourceVector, ByVal matrixColumn3 As SourceVector) As SourceVector
+		Dim output As SourceVector
+		Dim matrixRow0 As SourceVector
+		Dim matrixRow1 As SourceVector
+		Dim matrixRow2 As SourceVector
+
+		output = New SourceVector()
+		matrixRow0 = New SourceVector()
+		matrixRow1 = New SourceVector()
+		matrixRow2 = New SourceVector()
+
+		matrixRow0.x = matrixColumn0.x
+		matrixRow0.y = matrixColumn1.x
+		matrixRow0.x = matrixColumn2.x
+
+		matrixRow1.x = matrixColumn0.y
+		matrixRow1.y = matrixColumn1.y
+		matrixRow1.x = matrixColumn2.y
+
+		matrixRow2.x = matrixColumn0.z
+		matrixRow2.y = matrixColumn1.z
+		matrixRow2.x = matrixColumn2.z
+
+		output.x = DotProduct(input, matrixRow0) + matrixColumn3.x
+		output.y = DotProduct(input, matrixRow1) + matrixColumn3.y
+		output.z = DotProduct(input, matrixRow2) + matrixColumn3.z
+
+		Return output
+	End Function
+
+
 
 	'FROM: http://code.google.com/p/hl2sources/source/browse/trunk/public/mathlib.cpp
 	'void VectorITransform (const float *in1, const matrix3x4_t& in2, float *out)

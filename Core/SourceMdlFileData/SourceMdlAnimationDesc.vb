@@ -1,5 +1,9 @@
 Public Class SourceMdlAnimationDesc
 
+	Public Sub New()
+		Me.theLinkedSequences = New List(Of SourceMdlSequenceDesc)()
+	End Sub
+
 	'FROM: SourceEngine2006_source\public\studio.h
 	'struct mstudioanimdesc_t
 	'{
@@ -130,8 +134,10 @@ Public Class SourceMdlAnimationDesc
 	Public theSectionsOfAnimations As List(Of List(Of SourceMdlAnimation))
 	Public theIkRules As List(Of SourceMdlIkRule)
 	Public theSections As List(Of SourceMdlAnimationSection)
+	Public theMovements As List(Of SourceMdlMovement)
 
 	Public theAnimIsLinkedToSequence As Boolean
+	Public theLinkedSequences As List(Of SourceMdlSequenceDesc)
 
 
 
@@ -153,6 +159,10 @@ Public Class SourceMdlAnimationDesc
 	'#define STUDIO_ACTIVITY	0x1000		// Has been updated at runtime to activity index
 	'#define STUDIO_EVENT	0x2000		// Has been updated at runtime to event index
 	'#define STUDIO_WORLD	0x4000		// sequence blends in worldspace
+	'FROM: AlienSwarm_source\src\public\studio.h
+	'#define STUDIO_NOFORCELOOP 0x8000	// do not force the animation loop
+	'#define STUDIO_EVENT_CLIENT 0x10000	// Has been updated at runtime to event index on client
+
 	Public Const STUDIO_LOOPING As Integer = &H1
 	Public Const STUDIO_SNAP As Integer = &H2
 	Public Const STUDIO_DELTA As Integer = &H4
@@ -163,5 +173,7 @@ Public Class SourceMdlAnimationDesc
 	Public Const STUDIO_HIDDEN As Integer = &H400
 	Public Const STUDIO_OVERRIDE As Integer = &H800
 	Public Const STUDIO_WORLD As Integer = &H4000
+	Public Const STUDIO_NOFORCELOOP As Integer = &H8000
+	Public Const STUDIO_EVENT_CLIENT As Integer = &H10000
 
 End Class

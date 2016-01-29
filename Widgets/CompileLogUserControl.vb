@@ -76,6 +76,10 @@ Public Class CompileLogUserControl
 		TheApp.Compiler.Run()
 	End Sub
 
+	Private Sub SkipCurrentModelButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SkipCurrentModelButton.Click
+		TheApp.Compiler.SkipCurrentModel()
+	End Sub
+
 	Private Sub CancelCompileButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CancelCompileButton.Click
 		TheApp.Compiler.CancelAsync()
 	End Sub
@@ -97,6 +101,10 @@ Public Class CompileLogUserControl
 			Me.CompileLogRichTextBox.AppendText(line + vbCr)
 		ElseIf e.ProgressPercentage = 3 Then
 			Me.CompileLogRichTextBox.AppendText(vbCr + line + vbCr)
+		ElseIf e.ProgressPercentage = 4 Then
+			Me.CompileLogRichTextBox.AppendText(vbCr + vbCr + vbCr + line + vbCr)
+		ElseIf e.ProgressPercentage = 5 Then
+			Me.CompileLogRichTextBox.AppendText(vbCr + vbCr + vbCr)
 		End If
 	End Sub
 
@@ -112,6 +120,7 @@ Public Class CompileLogUserControl
 		Me.ViewCompiledModelInModelViewerButton.Enabled = Me.CompileLogRichTextBox.Text <> ""
 		Me.GoToCompiledModelFileButton.Enabled = Me.CompileLogRichTextBox.Text <> ""
 		Me.RecompileButton.Enabled = Me.CompileLogRichTextBox.Text <> ""
+		Me.SkipCurrentModelButton.Enabled = compilerIsRunning
 		Me.CancelCompileButton.Enabled = compilerIsRunning
 	End Sub
 

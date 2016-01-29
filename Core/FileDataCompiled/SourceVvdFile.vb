@@ -90,6 +90,10 @@ Public Class SourceVvdFile
 	End Sub
 
 	Private Sub ReadVertexes()
+		'Dim boneWeightingIsIncorrect As Boolean
+		Dim weight As Single
+		Dim boneIndex As Byte
+
 		Dim vertexCount As Integer
 		vertexCount = Me.theSourceEngineModel.theVvdFileHeader.lodVertexCount(0)
 		Me.theSourceEngineModel.theVvdFileHeader.theVertexes = New List(Of SourceVertex)(vertexCount)
@@ -97,13 +101,29 @@ Public Class SourceVvdFile
 			Dim aStudioVertex As New SourceVertex()
 
 			Dim boneWeight As New SourceBoneWeight()
+			'boneWeightingIsIncorrect = False
 			For x As Integer = 0 To MAX_NUM_BONES_PER_VERT - 1
-				boneWeight.weight(x) = Me.theInputFileReader.ReadSingle()
+				weight = Me.theInputFileReader.ReadSingle()
+				boneWeight.weight(x) = weight
+				'If weight > 1 Then
+				'	boneWeightingIsIncorrect = True
+				'End If
 			Next
 			For x As Integer = 0 To MAX_NUM_BONES_PER_VERT - 1
-				boneWeight.bone(x) = Me.theInputFileReader.ReadByte()
+				boneIndex = Me.theInputFileReader.ReadByte()
+				boneWeight.bone(x) = boneIndex
+				'If boneIndex > 127 Then
+				'	boneWeightingIsIncorrect = True
+				'End If
 			Next
 			boneWeight.boneCount = Me.theInputFileReader.ReadByte()
+			''TODO: ReadVertexes() -- boneWeight.boneCount > MAX_NUM_BONES_PER_VERT, which seems like incorrect vvd format 
+			'If boneWeight.boneCount > MAX_NUM_BONES_PER_VERT Then
+			'	boneWeight.boneCount = CByte(MAX_NUM_BONES_PER_VERT)
+			'End If
+			'If boneWeightingIsIncorrect Then
+			'	boneWeight.boneCount = 0
+			'End If
 			aStudioVertex.boneWeight = boneWeight
 
 			aStudioVertex.positionX = Me.theInputFileReader.ReadSingle()

@@ -45,16 +45,11 @@
 - Round floating point values to nearest 5th decimal place, such as in this example:
 	{ event 5004 60.000002682209 "Taunt.Engineer01FootStompLight" }
 	That 60.000002682209 could be changed to 60.
-- Have option to decompile with certain formatting so that existing smd importer will work correctly with them.
+- Have option to decompile with certain formatting so that existing smd importers will work correctly with them.
 	- Do not have spaces at the start of "time" lines. [Reported that this affects Milkshape and MESA.]
 	- Fill-in VTA file's "skeleton time" sections with bone data, 
 		so that it matches example VTA files found in sourcesdk.
 - Warn user if exiting while decompile is in progress.
-- batch decompiling -- on error, jump to the next mdl in the list
-- "Skip current model decompile" button for batch decompiling.
-- Redo Decompile Output Folder Full Path browse window to use file browse window 
-	for selecting a folder. Do in similar way as WinMerge.
-	* The folder browse window is awkward and the file browse window is better.
 - Option to decompile each model to its own folder with same name as the model.
 	* Especially useful for batch decompiling.
 - Option to (not) use subfolders for the logs and anims.
@@ -83,8 +78,18 @@
 	- Change the buttons to use "Selected Model"
 	- Change "Recompile" button to "Recompile Selected".
 	- Add "Recompile All" button enabled when more than one compiled.
-- batch compiling -- on error, jump to the next qc in the list
 - "Skip current model compile" button for batch compiling.
+- Provide some way of viewing and deleting compiled models, so it's easier to remove unneeded ones.
+- Provide options for compiling model to different folder.
+	* Crowbar would simply move compiled model files to the user-given folder.
+	- Add a new option in Set Up Games window: 
+		- Label: "Compile Folder (folder where compiled model files are moved to)"
+		- Textbox: full path
+		- Button: "Use Default" (to left of Browse button)
+		- Button: "Browse..." (rightmost button)
+	- Provide an example game setup that uses a custom compile folder.
+		* Example: "Counter-Strike Source (Fallout compile folder)" where folder is "C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Source\fallout"
+
 
 
 === Error reporting ===
@@ -99,8 +104,11 @@
 ################################################################################
 
 - Tab for "Decompiled Model Info" or "Model Info" (for those who don't want to decompile, but want info).
+	- mdl version number
+	- material paths and file names
+	- sequence and anim names with their equivalent numbers as shown in HLMV
 - Have way to use vpk to package the model files.
-	- "Package" tab
+	- "Pack" tab
 	- Model mdl file name field auto-set to compiled model mdl file name
 		OR
 		"Select compiled model" button
@@ -109,8 +117,8 @@
 		- Author
 		- Steam account
 		- Steam group
-	- "Package" button
-	- "Package" creates addon folders and files, calls vpk.exe
+	- "Pack" button
+	- "Pack" creates addon folders and files, calls vpk.exe
 - Use crate as background image for Compile tab.
 - Use intermodal container image for vpk process tab.
 - "produce sharedbones option"
@@ -134,4 +142,30 @@
 	12:42 - Stiffy360: like what I'm doing :p
 	12:43 - ZeqMacaw: it seems like the feature would be more appropriate for a 3d tool, such as 3ds max, maybe using a script for it
 	12:44 - Stiffy360: yeah
-	12:44 - ZeqMacaw: I will put the feature request on my todo list for consideration
+- For Help tabpage:
+	* Modding a Source Engine Model
+		* Ultimately, use as an addon.
+		- Unpack from existing vpk to folder:
+			- model files
+			- texture files
+			- sound files
+			- script files
+			- included anim files
+		- View an existing compiled model
+			- 3D view of mesh
+			- info about textures and animations
+		- Decompile model and anim files
+		* Edit files with internal tools:
+			- Edit bones in all frames of an anim
+			- Scale an anim or all anims
+		* [Edit model and anim files with Model and Text tools]
+		* [Edit texture files with Image tools]
+		- Compile model and anims
+		- View the compiled model
+			- 3D view of mesh
+			- info about textures and animations
+		- Pack into vpk
+			- Verify addon image present
+			- Create and edit addon info file
+			- Set up folders automatically
+			

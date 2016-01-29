@@ -231,4 +231,7 @@ Public Class SourceMdlSequenceDesc
 	Public theAnimDescIndexes As List(Of Short)
 	Public theKeyValues As String
 
+
+	Public theBoneWeightsAreDefault As Boolean
+
 End Class
