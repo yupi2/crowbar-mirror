@@ -894,7 +894,7 @@ Public Class SourceMdlFile48
 				inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 
 				If aHitbox.nameOffset <> 0 Then
-					Me.theInputFileReader.BaseStream.Seek(hitboxInputFileStreamPosition + aHitbox.nameOffset, SeekOrigin.Begin)
+					Me.theInputFileReader.BaseStream.Seek(aHitbox.nameOffset, SeekOrigin.Begin)
 					fileOffsetStart2 = Me.theInputFileReader.BaseStream.Position
 
 					aHitbox.theName = FileManager.ReadNullTerminatedString(Me.theInputFileReader)
@@ -2942,11 +2942,13 @@ Public Class SourceMdlFile48
 			For i As Integer = 0 To Me.theMdlFileData.mouthCount - 1
 				'mouthInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 				Dim aMouth As New SourceMdlMouth()
+
 				aMouth.boneIndex = Me.theInputFileReader.ReadInt32()
-				aMouth.forwardX = Me.theInputFileReader.ReadSingle()
-				aMouth.forwardY = Me.theInputFileReader.ReadSingle()
-				aMouth.forwardZ = Me.theInputFileReader.ReadSingle()
+				aMouth.forward.x = Me.theInputFileReader.ReadSingle()
+				aMouth.forward.y = Me.theInputFileReader.ReadSingle()
+				aMouth.forward.z = Me.theInputFileReader.ReadSingle()
 				aMouth.flexDescIndex = Me.theInputFileReader.ReadInt32()
+
 				Me.theMdlFileData.theMouths.Add(aMouth)
 
 				'inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
@@ -3890,15 +3892,29 @@ Public Class SourceMdlFile48
 	Public Sub WriteInternalAniFileName(ByVal internalAniFileName As String)
 		If Me.theMdlFileData.animBlockCount > 0 Then
 			If Me.theMdlFileData.animBlockNameOffset > 0 Then
-				Me.theOutputFileWriter.BaseStream.Seek(0, SeekOrigin.End)
-				Dim offset As Long
-				offset = Me.theOutputFileWriter.BaseStream.Position
+				' Set a new offset for the file name at end-of-file's second null byte.
+				Me.theOutputFileWriter.BaseStream.Seek(-2, SeekOrigin.End)
+				'NOTE: Important that offset be an Integer (4 bytes) rather than a Long (8 bytes).
+				Dim offset As Integer
+				offset = CInt(Me.theOutputFileWriter.BaseStream.Position)
 				Me.theOutputFileWriter.BaseStream.Seek(&H15C, SeekOrigin.Begin)
 				Me.theOutputFileWriter.Write(offset)
+
+				' Write the new file name.
 				Me.theOutputFileWriter.BaseStream.Seek(offset, SeekOrigin.Begin)
 				Me.theOutputFileWriter.Write(internalAniFileName.ToCharArray())
 				'NOTE: Write the ending null byte.
 				Me.theOutputFileWriter.Write(Convert.ToByte(0))
+
+				' Write the new end-of-file's null bytes.
+				Me.theOutputFileWriter.Write(Convert.ToByte(0))
+				Me.theOutputFileWriter.Write(Convert.ToByte(0))
+
+				' Write the new file size.
+				Me.theOutputFileWriter.BaseStream.Seek(0, SeekOrigin.End)
+				offset = CInt(Me.theOutputFileWriter.BaseStream.Position)
+				Me.theOutputFileWriter.BaseStream.Seek(&H4C, SeekOrigin.Begin)
+				Me.theOutputFileWriter.Write(offset)
 			End If
 		End If
 	End Sub

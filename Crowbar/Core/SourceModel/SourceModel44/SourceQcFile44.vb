@@ -1,12 +1,12 @@
 Imports System.IO
 Imports System.Text
 
-Public Class SourceQcFile49
+Public Class SourceQcFile44
 	Inherits SourceQcFile
 
 #Region "Creation and Destruction"
 
-	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal outputPathFileName As String, ByVal mdlFileData As SourceMdlFileData49, ByVal vtxFileData As SourceVtxFileData49, ByVal phyFileData As SourcePhyFileData49, ByVal aniFileData As SourceAniFileData49, ByVal modelName As String)
+	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal outputPathFileName As String, ByVal mdlFileData As SourceMdlFileData44, ByVal vtxFileData As SourceVtxFileData44, ByVal phyFileData As SourcePhyFileData44, ByVal aniFileData As SourceAniFileData44, ByVal modelName As String)
 		Me.theOutputFileStreamWriter = outputFileStream
 		Me.theMdlFileData = mdlFileData
 		Me.thePhyFileData = phyFileData
@@ -824,7 +824,7 @@ Public Class SourceQcFile49
 
 		Dim cVal As Double
 		cVal = (val - A) / (B - A)
-		cVal = clamp(cVal, 0.0F, 1.0F)
+		cVal = Clamp(cVal, 0.0F, 1.0F)
 
 		Return C + (D - C) * cVal
 	End Function
@@ -1497,7 +1497,7 @@ Public Class SourceQcFile49
 		'$attachment "melee" "ValveBiped.Bip01_Spine4" 2.64 -3.12 4.45 rotate 24.08 175.37 97.14
 		'$attachment "molotov" "ValveBiped.Bip01_Spine" -3.19 -2.44 7.01 rotate -63.44 -74.67 -101.41
 		'$attachment "grenade" "ValveBiped.Bip01_Spine" -0.68 1.17 6.97 rotate -90.00 -175.23 0.00
-		'$attachment "pills" "ValveBiped.Bip01_Spine" -2.63 0.63 -7.56 rotate -41.18 -88.49 -87.05
+		'$attachment "pills" "ValveBiped.Bip01_Spine" -2.63 0.63 -7.56 rotate -41.18 -88.48 -87.05
 		'$attachment "lfoot" "ValveBiped.Bip01_L_Foot" 0.00 4.44 0.00 rotate -0.00 -0.00 -0.00
 		'$attachment "rfoot" "ValveBiped.Bip01_R_Foot" 0.00 4.44 0.00 rotate -0.00 0.00 -0.00
 		'$attachment "muzzle_flash" "ValveBiped.Bip01_L_Hand" 0.00 0.00 0.00 rotate -0.00 0.00 0.00
@@ -1533,47 +1533,40 @@ Public Class SourceQcFile49
 				line += """"
 				line += " "
 
-				If Me.theMdlFileData.version = 10 Then
-					line += anAttachment.attachmentPoint.x.ToString("0.######", TheApp.InternalNumberFormat)
-					line += " "
-					line += anAttachment.attachmentPoint.y.ToString("0.######", TheApp.InternalNumberFormat)
-					line += " "
-					line += anAttachment.attachmentPoint.z.ToString("0.######", TheApp.InternalNumberFormat)
-				Else
-					'TheApp.ConvertRotationMatrixToDegrees(anAttachment.localM11, anAttachment.localM12, anAttachment.localM13, anAttachment.localM21, anAttachment.localM22, anAttachment.localM23, anAttachment.localM33, angleX, angleY, angleZ)
-					'NOTE: This one works with the strange order below.
-					MathModule.ConvertRotationMatrixToDegrees(anAttachment.localM11, anAttachment.localM21, anAttachment.localM31, anAttachment.localM12, anAttachment.localM22, anAttachment.localM32, anAttachment.localM33, angleX, angleY, angleZ)
-					offsetX = Math.Round(anAttachment.localM14, 2)
-					offsetY = Math.Round(anAttachment.localM24, 2)
-					offsetZ = Math.Round(anAttachment.localM34, 2)
-					angleX = Math.Round(angleX, 2)
-					angleY = Math.Round(angleY, 2)
-					angleZ = Math.Round(angleZ, 2)
-					line += offsetX.ToString("0.######", TheApp.InternalNumberFormat)
-					line += " "
-					line += offsetY.ToString("0.######", TheApp.InternalNumberFormat)
-					line += " "
-					line += offsetZ.ToString("0.######", TheApp.InternalNumberFormat)
-					line += " rotate "
-					''NOTE: Intentionally z,y,x order.
-					'line += angleZ.ToString()
-					'line += " "
-					'line += angleY.ToString()
-					'line += " "
-					'line += angleX.ToString()
-					'NOTE: Intentionally in strange order.
-					line += angleY.ToString("0.######", TheApp.InternalNumberFormat)
-					line += " "
-					line += (-angleZ).ToString("0.######", TheApp.InternalNumberFormat)
-					line += " "
-					line += (-angleX).ToString("0.######", TheApp.InternalNumberFormat)
-				End If
+				'TheApp.ConvertRotationMatrixToDegrees(anAttachment.localM11, anAttachment.localM12, anAttachment.localM13, anAttachment.localM21, anAttachment.localM22, anAttachment.localM23, anAttachment.localM33, angleX, angleY, angleZ)
+				'NOTE: This one works with the strange order below.
+				MathModule.ConvertRotationMatrixToDegrees(anAttachment.localM11, anAttachment.localM21, anAttachment.localM31, anAttachment.localM12, anAttachment.localM22, anAttachment.localM32, anAttachment.localM33, angleX, angleY, angleZ)
+				offsetX = Math.Round(anAttachment.localM14, 2)
+				offsetY = Math.Round(anAttachment.localM24, 2)
+				offsetZ = Math.Round(anAttachment.localM34, 2)
+				angleX = Math.Round(angleX, 2)
+				angleY = Math.Round(angleY, 2)
+				angleZ = Math.Round(angleZ, 2)
+				line += offsetX.ToString("0.######", TheApp.InternalNumberFormat)
+				line += " "
+				line += offsetY.ToString("0.######", TheApp.InternalNumberFormat)
+				line += " "
+				line += offsetZ.ToString("0.######", TheApp.InternalNumberFormat)
+				line += " rotate "
+				''NOTE: Intentionally z,y,x order.
+				'line += angleZ.ToString()
+				'line += " "
+				'line += angleY.ToString()
+				'line += " "
+				'line += angleX.ToString()
+				'NOTE: Intentionally in strange order.
+				line += angleY.ToString("0.######", TheApp.InternalNumberFormat)
+				line += " "
+				line += (-angleZ).ToString("0.######", TheApp.InternalNumberFormat)
+				line += " "
+				line += (-angleX).ToString("0.######", TheApp.InternalNumberFormat)
+
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			Next
 		End If
 	End Sub
 
-	Public Sub WriteIncludeModelCommand()
+	Public Sub WriteIncludeModelCommands()
 		Dim line As String = ""
 
 		'$includemodel "survivors/anim_producer.mdl"
@@ -1770,9 +1763,9 @@ Public Class SourceQcFile49
 		Dim offsetY As Double
 		Dim offsetZ As Double
 
-		offsetX = Math.Round(Me.theMdlFileData.eyePositionY, 3)
-		offsetY = -Math.Round(Me.theMdlFileData.eyePositionX, 3)
-		offsetZ = Math.Round(Me.theMdlFileData.eyePositionZ, 3)
+		offsetX = Math.Round(Me.theMdlFileData.eyePosition.y, 3)
+		offsetY = -Math.Round(Me.theMdlFileData.eyePosition.x, 3)
+		offsetZ = Math.Round(Me.theMdlFileData.eyePosition.z, 3)
 
 		If offsetX = 0 AndAlso offsetY = 0 AndAlso offsetZ = 0 Then
 			Exit Sub
@@ -1796,27 +1789,6 @@ Public Class SourceQcFile49
 		Me.theOutputFileStreamWriter.WriteLine(line)
 	End Sub
 
-	Public Sub WriteMaxEyeDeflectionCommand()
-		Dim line As String = ""
-		Dim deflection As Double
-
-		'FROM: SourceEngine2007_source\src_main\utils\studiomdl\studiomdl.cpp
-		'	g_flMaxEyeDeflection = cosf( verify_atof( token ) * M_PI / 180.0f );
-		deflection = Math.Acos(Me.theMdlFileData.maxEyeDeflection)
-		deflection = MathModule.RadiansToDegrees(deflection)
-		deflection = Math.Round(deflection, 3)
-
-		line = ""
-		Me.theOutputFileStreamWriter.WriteLine(line)
-
-		' Found in L4D2 file: "survivors\Biker\biker.qc".
-		'// Eyes can look this many degrees up/down/to the sides
-		'$maxeyedeflection 30
-		line = "$MaxEyeDeflection "
-		line += deflection.ToString("0.######", TheApp.InternalNumberFormat)
-		Me.theOutputFileStreamWriter.WriteLine(line)
-	End Sub
-
 	Public Sub WriteIllumPositionCommand()
 		Dim line As String = ""
 		Dim offsetX As Double
@@ -1831,15 +1803,15 @@ Public Class SourceQcFile49
 		line += "Only set this if you know what it does, and need it for special circumstances, such as with gibs."
 		Me.theOutputFileStreamWriter.WriteLine(line)
 
-		'$illumposition -2.533 -0.555 32.497
+		'$illumposition -2.533 -0.555 32.487
 		'NOTE: These are stored in different order in MDL file.
 		'FROM: utils\studiomdl\studiomdl.cpp Cmd_Illumposition()
 		'illumposition[1] = verify_atof (token);
 		'illumposition[0] = -verify_atof (token);
 		'illumposition[2] = verify_atof (token);
-		offsetX = Math.Round(Me.theMdlFileData.illuminationPositionY, 3)
-		offsetY = -Math.Round(Me.theMdlFileData.illuminationPositionX, 3)
-		offsetZ = Math.Round(Me.theMdlFileData.illuminationPositionZ, 3)
+		offsetX = Math.Round(Me.theMdlFileData.illuminationPosition.y, 3)
+		offsetY = -Math.Round(Me.theMdlFileData.illuminationPosition.x, 3)
+		offsetZ = Math.Round(Me.theMdlFileData.illuminationPosition.z, 3)
 		line = ""
 		line += "// "
 		line += "$IllumPosition "
@@ -1862,14 +1834,12 @@ Public Class SourceQcFile49
 		Try
 			Me.WriteAnimationOrDeclareAnimationCommand()
 		Catch ex As Exception
-			Dim debug As Integer = 4242
 		End Try
 		Try
 			Me.WriteSequenceOrDeclareSequenceCommand()
 		Catch ex As Exception
-			Dim debug As Integer = 4242
 		End Try
-		Me.WriteIncludeModelCommand()
+		Me.WriteIncludeModelCommands()
 		Me.WriteIkChainCommand()
 		Me.WriteIkAutoPlayLockCommand()
 		Me.WriteBoneSaveFrameCommand()
@@ -2028,7 +1998,7 @@ Public Class SourceQcFile49
 	Private Sub WriteAnimationOrDeclareAnimationCommand()
 		If Me.theMdlFileData.theAnimationDescs IsNot Nothing Then
 			For i As Integer = 0 To Me.theMdlFileData.theAnimationDescs.Count - 1
-				Dim anAnimationDesc As SourceMdlAnimationDesc49
+				Dim anAnimationDesc As SourceMdlAnimationDesc44
 				anAnimationDesc = Me.theMdlFileData.theAnimationDescs(i)
 
 				If anAnimationDesc.theName(0) <> "@" Then
@@ -2038,7 +2008,7 @@ Public Class SourceQcFile49
 		End If
 	End Sub
 
-	Private Sub WriteAnimationLine(ByVal anAnimationDesc As SourceMdlAnimationDesc49)
+	Private Sub WriteAnimationLine(ByVal anAnimationDesc As SourceMdlAnimationDesc44)
 		Dim line As String = ""
 
 		Me.theOutputFileStreamWriter.WriteLine()
@@ -2136,7 +2106,7 @@ Public Class SourceQcFile49
 	'iklock             // done
 	'keyvalues          // done
 	'node               // done
-	'posecycle          // v49; done
+	'posecycle          // v48; done
 	'post               // baked-in
 	'predelta           // done
 	'realtime           // done
@@ -2149,9 +2119,9 @@ Public Class SourceQcFile49
 	Private Sub WriteSequenceOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc)
 		Dim line As String = ""
 		Dim valueString As String
-		Dim impliedAnimDesc As SourceMdlAnimationDesc49 = Nothing
+		Dim impliedAnimDesc As SourceMdlAnimationDesc44 = Nothing
 
-		Dim anAnimationDesc As SourceMdlAnimationDesc49
+		Dim anAnimationDesc As SourceMdlAnimationDesc44
 		Dim name As String
 		For j As Integer = 0 To aSequenceDesc.theAnimDescIndexes.Count - 1
 			anAnimationDesc = Me.theMdlFileData.theAnimationDescs(aSequenceDesc.theAnimDescIndexes(j))
@@ -2311,7 +2281,7 @@ Public Class SourceQcFile49
 		'	Me.theOutputFileStreamWriter.WriteLine(line)
 		'End If
 
-		Dim firstAnimDesc As SourceMdlAnimationDesc49
+		Dim firstAnimDesc As SourceMdlAnimationDesc44
 		firstAnimDesc = Me.theMdlFileData.theAnimationDescs(aSequenceDesc.theAnimDescIndexes(0))
 		Me.WriteAnimationOptions(aSequenceDesc, firstAnimDesc, impliedAnimDesc)
 	End Sub
@@ -2338,7 +2308,7 @@ Public Class SourceQcFile49
 	'ParseCmdlistToken( panim->numcmds, panim->cmds )
 	'TODO: All these options (LX, LY, etc.) seem to be baked-in, but might need to be calculated for anims that have movement.
 	'lookupControl( token )       
-	Private Sub WriteAnimationOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc, ByVal anAnimationDesc As SourceMdlAnimationDesc49, ByVal impliedAnimDesc As SourceMdlAnimationDesc49)
+	Private Sub WriteAnimationOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc, ByVal anAnimationDesc As SourceMdlAnimationDesc44, ByVal impliedAnimDesc As SourceMdlAnimationDesc44)
 		Dim line As String = ""
 
 		line = vbTab
@@ -2390,7 +2360,7 @@ Public Class SourceQcFile49
 	'weightlist         // done
 	'worldspaceblend       //
 	'worldspaceblendloop   // 
-	Private Sub WriteCmdListOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc, ByVal anAnimationDesc As SourceMdlAnimationDesc49, ByVal impliedAnimDesc As SourceMdlAnimationDesc49)
+	Private Sub WriteCmdListOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc, ByVal anAnimationDesc As SourceMdlAnimationDesc44, ByVal impliedAnimDesc As SourceMdlAnimationDesc44)
 		Dim line As String = ""
 
 		'$sequence taunt01 "taunt01.dmx" fps 30 localhierarchy "weapon_bone" "bip_hand_L" range 0 5 80 90 {
@@ -2425,11 +2395,7 @@ Public Class SourceQcFile49
 		'      Unsure how to determine which option is intended or if both are intended.
 		If (anAnimationDesc.flags And SourceMdlAnimationDesc.STUDIO_DELTA) > 0 Then
 			line = vbTab
-			If Me.theMdlFileData.theFirstAnimationDesc IsNot Nothing Then
-				line += "// This subtract line is a guess of the animation name and frame index. There is no way to determine which $animation and which frame were used, so Crowbar uses the name of the first $animation. Change as needed."
-			Else
-				line += "// This subtract line is a guess of the animation name and frame index. There is no way to determine which $animation or $sequence and which frame were used, so Crowbar uses the name of the first $sequence. Change as needed."
-			End If
+			line += "// This subtract line guesses the animation name and frame index. There is no way to determine which $animation and which frame was used. Change as needed."
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
 			line = vbTab
@@ -2441,11 +2407,7 @@ Public Class SourceQcFile49
 			' For now, do what MDL Decompiler seems to do; use the first animation name.
 			'line += "[anim_name]"
 			'line += Me.theFirstAnimationDescName
-			If Me.theMdlFileData.theFirstAnimationDesc IsNot Nothing Then
-				line += Me.theMdlFileData.theFirstAnimationDesc.theName
-			Else
-				line += Me.theMdlFileData.theSequenceDescs(0).theName
-			End If
+			line += Me.theMdlFileData.theFirstAnimationDesc.theName
 			line += """ "
 			'TODO: Change to writing frameIndex.
 			' Doesn't seem to be direct way to get this value.
@@ -2627,45 +2589,44 @@ Public Class SourceQcFile49
 		End If
 	End Sub
 
-	Private Sub WriteCmdListLocalHierarchyOption(ByVal anAnimationDesc As SourceMdlAnimationDesc49)
+	Private Sub WriteCmdListLocalHierarchyOption(ByVal anAnimationDesc As SourceMdlAnimationDesc44)
 		Dim line As String = ""
 
-		If anAnimationDesc.theLocalHierarchies IsNot Nothing Then
-			For hierarchyIndex As Integer = 0 To anAnimationDesc.theLocalHierarchies.Count - 1
-				Dim aLocalHierarchy As SourceMdlLocalHierarchy
-				Dim frameCount As Integer
-				Dim startInfluence As Double
-				Dim peakInfluence As Double
-				Dim tailInfluence As Double
-				Dim endInfluence As Double
+		If anAnimationDesc.theLocalHierarchies IsNot Nothing AndAlso anAnimationDesc.theLocalHierarchies.Count > 0 Then
+			Dim aLocalHierarchy As SourceMdlLocalHierarchy
+			Dim frameCount As Integer
+			Dim startInfluence As Double
+			Dim peakInfluence As Double
+			Dim tailInfluence As Double
+			Dim endInfluence As Double
 
-				aLocalHierarchy = anAnimationDesc.theLocalHierarchies(0)
-				frameCount = anAnimationDesc.frameCount
-				startInfluence = aLocalHierarchy.startInfluence * (frameCount - 1)
-				peakInfluence = aLocalHierarchy.peakInfluence * (frameCount - 1)
-				tailInfluence = aLocalHierarchy.tailInfluence * (frameCount - 1)
-				endInfluence = aLocalHierarchy.endInfluence * (frameCount - 1)
+			aLocalHierarchy = anAnimationDesc.theLocalHierarchies(0)
+			frameCount = anAnimationDesc.frameCount
+			startInfluence = aLocalHierarchy.startInfluence * (frameCount - 1)
+			peakInfluence = aLocalHierarchy.peakInfluence * (frameCount - 1)
+			tailInfluence = aLocalHierarchy.tailInfluence * (frameCount - 1)
+			endInfluence = aLocalHierarchy.endInfluence * (frameCount - 1)
 
-				line = vbTab
-				line += "localhierarchy"
-				line += " """
-				line += Me.theMdlFileData.theBones(aLocalHierarchy.boneIndex).theName
-				line += """"
-				line += " """
-				If aLocalHierarchy.boneNewParentIndex >= 0 AndAlso aLocalHierarchy.boneNewParentIndex < Me.theMdlFileData.theBones.Count Then
-					line += Me.theMdlFileData.theBones(aLocalHierarchy.boneNewParentIndex).theName
-				End If
-				line += """"
-				line += " range "
-				line += startInfluence.ToString("0.######", TheApp.InternalNumberFormat)
-				line += " "
-				line += peakInfluence.ToString("0.######", TheApp.InternalNumberFormat)
-				line += " "
-				line += tailInfluence.ToString("0.######", TheApp.InternalNumberFormat)
-				line += " "
-				line += endInfluence.ToString("0.######", TheApp.InternalNumberFormat)
-				Me.theOutputFileStreamWriter.WriteLine(line)
-			Next
+			line = vbTab
+			line += "localhierarchy"
+			line += " """
+			line += Me.theMdlFileData.theBones(aLocalHierarchy.boneIndex).theName
+			line += """"
+			line += " """
+			If aLocalHierarchy.boneNewParentIndex >= 0 AndAlso aLocalHierarchy.boneNewParentIndex < Me.theMdlFileData.theBones.Count Then
+				line += Me.theMdlFileData.theBones(aLocalHierarchy.boneNewParentIndex).theName
+			End If
+			line += """"
+			line += " range "
+			line += startInfluence.ToString("0.######", TheApp.InternalNumberFormat)
+			line += " "
+			line += peakInfluence.ToString("0.######", TheApp.InternalNumberFormat)
+			line += " "
+			line += tailInfluence.ToString("0.######", TheApp.InternalNumberFormat)
+			line += " "
+			line += endInfluence.ToString("0.######", TheApp.InternalNumberFormat)
+			'line += aLocalHierarchy.boneIndex.ToString("0.######", TheApp.InternalNumberFormat)
+			Me.theOutputFileStreamWriter.WriteLine(line)
 		End If
 	End Sub
 
@@ -3535,7 +3496,7 @@ Public Class SourceQcFile49
 			If Me.theMdlFileData.version <= 10 Then
 				Dim skipBoneInBBoxCommandWasUsed As Boolean = False
 				Me.theOutputFileStreamWriter.WriteLine()
-				Me.WriteHboxCommands(Me.theMdlFileData.theHitboxSets(0).theHitboxes, "", "", skipBoneInBBoxCommandWasUsed)
+				Me.WriteHBoxCommands(Me.theMdlFileData.theHitboxSets(0).theHitboxes, "", "", skipBoneInBBoxCommandWasUsed)
 			Else
 				Me.WriteHBoxRelatedCommands()
 			End If
@@ -3561,12 +3522,12 @@ Public Class SourceQcFile49
 
 		'FROM: VDC wiki: 
 		'$cbox <float|minx> <float|miny> <float|minz> <float|maxx> <float|maxy> <float|maxz> 
-		minX = Math.Round(Me.theMdlFileData.viewBoundingBoxMinPositionX, 3)
-		minY = Math.Round(Me.theMdlFileData.viewBoundingBoxMinPositionY, 3)
-		minZ = Math.Round(Me.theMdlFileData.viewBoundingBoxMinPositionZ, 3)
-		maxX = Math.Round(Me.theMdlFileData.viewBoundingBoxMaxPositionX, 3)
-		maxY = Math.Round(Me.theMdlFileData.viewBoundingBoxMaxPositionY, 3)
-		maxZ = Math.Round(Me.theMdlFileData.viewBoundingBoxMaxPositionZ, 3)
+		minX = Math.Round(Me.theMdlFileData.viewBoundingBoxMinPosition.x, 3)
+		minY = Math.Round(Me.theMdlFileData.viewBoundingBoxMinPosition.y, 3)
+		minZ = Math.Round(Me.theMdlFileData.viewBoundingBoxMinPosition.z, 3)
+		maxX = Math.Round(Me.theMdlFileData.viewBoundingBoxMaxPosition.x, 3)
+		maxY = Math.Round(Me.theMdlFileData.viewBoundingBoxMaxPosition.y, 3)
+		maxZ = Math.Round(Me.theMdlFileData.viewBoundingBoxMaxPosition.z, 3)
 		line = "$CBox "
 		line += minX.ToString("0.######", TheApp.InternalNumberFormat)
 		line += " "
@@ -3602,12 +3563,12 @@ Public Class SourceQcFile49
 		'$bbox -16.0 -16.0 -13.0 16.0 16.0 75.0
 		'FROM: VDC wiki: 
 		'$bbox (min x) (min y) (min z) (max x) (max y) (max z)
-		minX = Math.Round(Me.theMdlFileData.hullMinPositionX, 3)
-		minY = Math.Round(Me.theMdlFileData.hullMinPositionY, 3)
-		minZ = Math.Round(Me.theMdlFileData.hullMinPositionZ, 3)
-		maxX = Math.Round(Me.theMdlFileData.hullMaxPositionX, 3)
-		maxY = Math.Round(Me.theMdlFileData.hullMaxPositionY, 3)
-		maxZ = Math.Round(Me.theMdlFileData.hullMaxPositionZ, 3)
+		minX = Math.Round(Me.theMdlFileData.hullMinPosition.x, 3)
+		minY = Math.Round(Me.theMdlFileData.hullMinPosition.y, 3)
+		minZ = Math.Round(Me.theMdlFileData.hullMinPosition.z, 3)
+		maxX = Math.Round(Me.theMdlFileData.hullMaxPosition.x, 3)
+		maxY = Math.Round(Me.theMdlFileData.hullMaxPosition.y, 3)
+		maxZ = Math.Round(Me.theMdlFileData.hullMaxPosition.z, 3)
 		line = ""
 		line += "$BBox "
 		line += minX.ToString("0.######", TheApp.InternalNumberFormat)
@@ -3691,7 +3652,7 @@ Public Class SourceQcFile49
 				Continue For
 			End If
 
-			Me.WriteHboxCommands(aHitboxSet.theHitboxes, commentTag, aHitboxSet.theName, skipBoneInBBoxCommandWasUsed)
+			Me.WriteHBoxCommands(aHitboxSet.theHitboxes, commentTag, aHitboxSet.theName, skipBoneInBBoxCommandWasUsed)
 		Next
 
 		If skipBoneInBBoxCommandWasUsed Then
@@ -3700,7 +3661,7 @@ Public Class SourceQcFile49
 		End If
 	End Sub
 
-	Private Sub WriteHboxCommands(ByVal theHitboxes As List(Of SourceMdlHitbox), ByVal commentTag As String, ByVal hitboxSetName As String, ByRef theSkipBoneInBBoxCommandWasUsed As Boolean)
+	Private Sub WriteHBoxCommands(ByVal theHitboxes As List(Of SourceMdlHitbox), ByVal commentTag As String, ByVal hitboxSetName As String, ByRef theSkipBoneInBBoxCommandWasUsed As Boolean)
 		Dim line As String = ""
 		Dim aHitbox As SourceMdlHitbox
 
@@ -3807,7 +3768,7 @@ Public Class SourceQcFile49
 						Else
 							line += "studio "
 							line += """"
-							line += SourceFileNamesModule.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, 0, Me.theMdlFileData.theModelCommandIsUsed, Me.theModelName, aModel.name, Me.theMdlFileData.theBodyParts.Count, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels.Count)
+							line += SourceFileNamesModule.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, 0, Me.theMdlFileData.theModelCommandIsUsed, Me.theModelName, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).name, Me.theMdlFileData.theBodyParts.Count, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels.Count)
 							line += """"
 						End If
 						Me.theOutputFileStreamWriter.WriteLine(line)
@@ -4090,10 +4051,10 @@ Public Class SourceQcFile49
 
 	'Private theModel As SourceModel
 	Private theOutputFileStreamWriter As StreamWriter
-	Private theAniFileData As SourceAniFileData49
-	Private theMdlFileData As SourceMdlFileData49
-	Private thePhyFileData As SourcePhyFileData49
-	Private theVtxFileData As SourceVtxFileData49
+	Private theAniFileData As SourceAniFileData44
+	Private theMdlFileData As SourceMdlFileData44
+	Private thePhyFileData As SourcePhyFileData44
+	Private theVtxFileData As SourceVtxFileData44
 	Private theModelName As String
 
 	Private theOutputPath As String

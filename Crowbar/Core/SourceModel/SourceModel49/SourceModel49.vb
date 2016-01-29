@@ -13,21 +13,21 @@ Public Class SourceModel49
 
 #Region "Properties"
 
-	Public Overrides ReadOnly Property AniFileIsUsed As Boolean
+	Public Overrides ReadOnly Property VtxFileIsUsed As Boolean
 		Get
-			Return Me.theMdlFileData.animBlockCount > 0
+			Return Not String.IsNullOrEmpty(Me.theVtxPathFileName) AndAlso File.Exists(Me.theVtxPathFileName)
 		End Get
 	End Property
 
-	Public Overrides ReadOnly Property VtxFileIsUsed As Boolean
+	Public Overrides ReadOnly Property AniFileIsUsed As Boolean
 		Get
-			Return Not Me.theMdlFileData.theMdlFileOnlyHasAnimations
+			Return Not String.IsNullOrEmpty(Me.theAniPathFileName) AndAlso File.Exists(Me.theAniPathFileName)
 		End Get
 	End Property
 
 	Public Overrides ReadOnly Property VvdFileIsUsed As Boolean
 		Get
-			Return Not Me.theMdlFileData.theMdlFileOnlyHasAnimations
+			Return Not String.IsNullOrEmpty(Me.theVvdPathFileName) AndAlso File.Exists(Me.theVvdPathFileName)
 		End Get
 	End Property
 
@@ -119,38 +119,46 @@ Public Class SourceModel49
 
 #Region "Methods"
 
-	'Public Overrides Function CheckForRequiredFiles(ByVal mdlPathFileName As String) As StatusMessage
-	'	Dim status As AppEnums.StatusMessage = StatusMessage.Success
+	Public Overrides Function CheckForRequiredFiles() As StatusMessage
+		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
-	'	If Me.theMdlFileData49.theMdlFileOnlyHasAnimations Then
-	'		Me.theAniPathFileName = Path.ChangeExtension(mdlPathFileName, ".ani")
-	'	Else
-	'		Me.thePhyPathFileName = Path.ChangeExtension(mdlPathFileName, ".phy")
+		If Me.theMdlFileData.animBlockCount > 0 Then
+			Me.theAniPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".ani")
+			If Not File.Exists(Me.theAniPathFileName) Then
+				status = StatusMessage.ErrorRequiredAniFileNotFound
+			End If
+		End If
 
-	'		Me.theVtxPathFileName = Path.ChangeExtension(mdlPathFileName, ".dx11.vtx")
-	'		If Not File.Exists(Me.theVtxPathFileName) Then
-	'			Me.theVtxPathFileName = Path.ChangeExtension(mdlPathFileName, ".dx90.vtx")
-	'			If Not File.Exists(Me.theVtxPathFileName) Then
-	'				Me.theVtxPathFileName = Path.ChangeExtension(mdlPathFileName, ".dx80.vtx")
-	'				If Not File.Exists(Me.theVtxPathFileName) Then
-	'					Me.theVtxPathFileName = Path.ChangeExtension(mdlPathFileName, ".sw.vtx")
-	'					If Not File.Exists(Me.theVtxPathFileName) Then
-	'						Me.theVtxPathFileName = Path.ChangeExtension(mdlPathFileName, ".vtx")
-	'						If Not File.Exists(Me.theVtxPathFileName) Then
-	'							status = StatusMessage.ErrorRequiredVtxFileNotFound
-	'						End If
-	'					End If
-	'				End If
-	'			End If
-	'		End If
+		If Not Me.theMdlFileDataGeneric.theMdlFileOnlyHasAnimations Then
+			Me.thePhyPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".phy")
 
-	'		Me.theVvdPathFileName = Path.ChangeExtension(mdlPathFileName, ".vvd")
-	'	End If
+			Me.theVtxPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".dx11.vtx")
+			If Not File.Exists(Me.theVtxPathFileName) Then
+				Me.theVtxPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".dx90.vtx")
+				If Not File.Exists(Me.theVtxPathFileName) Then
+					Me.theVtxPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".dx80.vtx")
+					If Not File.Exists(Me.theVtxPathFileName) Then
+						Me.theVtxPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".sw.vtx")
+						If Not File.Exists(Me.theVtxPathFileName) Then
+							Me.theVtxPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".vtx")
+							If Not File.Exists(Me.theVtxPathFileName) Then
+								status = StatusMessage.ErrorRequiredVtxFileNotFound
+							End If
+						End If
+					End If
+				End If
+			End If
 
-	'	Return status
-	'End Function
+			Me.theVvdPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".vvd")
+			If Not File.Exists(Me.theVvdPathFileName) Then
+				status = StatusMessage.ErrorRequiredVvdFileNotFound
+			End If
+		End If
 
-	Public Overrides Function ReadPhyFile(ByVal mdlPathFileName As String) As AppEnums.StatusMessage
+		Return status
+	End Function
+
+	Public Overrides Function ReadPhyFile() As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
 		If String.IsNullOrEmpty(Me.thePhyPathFileName) Then
@@ -159,7 +167,7 @@ Public Class SourceModel49
 
 		If status = StatusMessage.Success Then
 			Try
-				Me.ReadFile(Me.thePhyPathFileName, AddressOf Me.ReadPhyFile)
+				Me.ReadFile(Me.thePhyPathFileName, AddressOf Me.ReadPhyFile_Internal)
 				If Me.thePhyFileData49.checksum <> Me.theMdlFileData.checksum Then
 					'status = StatusMessage.WarningPhyChecksumDoesNotMatchMdl
 					Me.NotifySourceModelProgress(ProgressOptions.WarningPhyFileChecksumDoesNotMatchMdlFileChecksum, "")
@@ -266,7 +274,7 @@ Public Class SourceModel49
 
 #Region "Private Methods"
 
-	Protected Overrides Sub ReadAniFile()
+	Protected Overrides Sub ReadAniFile_Internal()
 		If Me.theAniFileData49 Is Nothing Then
 			Me.theAniFileData49 = New SourceAniFileData49()
 			Me.theAniFileDataGeneric = Me.theAniFileData49
@@ -285,7 +293,7 @@ Public Class SourceModel49
 		aniFile.ReadAniBlocks()
 	End Sub
 
-	Protected Overrides Sub ReadMdlFile()
+	Protected Overrides Sub ReadMdlFile_Internal()
 		If Me.theMdlFileData Is Nothing Then
 			Me.theMdlFileData = New SourceMdlFileData49()
 			Me.theMdlFileDataGeneric = Me.theMdlFileData
@@ -297,7 +305,11 @@ Public Class SourceModel49
 		Me.theMdlFileData.theModelCommandIsUsed = False
 		Me.theMdlFileData.theProceduralBonesCommandIsUsed = False
 
-		Me.ReadMdlFileHeader_Internal(mdlFile)
+		mdlFile.ReadMdlHeader00("MDL File Header 00")
+		mdlFile.ReadMdlHeader01("MDL File Header 01")
+		If Me.theMdlFileData.studioHeader2Offset > 0 Then
+			mdlFile.ReadMdlHeader02("MDL File Header 02")
+		End If
 
 		' Read what WriteBoneInfo() writes.
 		mdlFile.ReadBones()
@@ -365,7 +377,7 @@ Public Class SourceModel49
 		mdlFile.CreateFlexFrameList()
 	End Sub
 
-	Protected Overrides Sub ReadPhyFile()
+	Protected Overrides Sub ReadPhyFile_Internal()
 		If Me.thePhyFileData49 Is Nothing Then
 			Me.thePhyFileData49 = New SourcePhyFileData49()
 		End If
@@ -384,7 +396,7 @@ Public Class SourceModel49
 		End If
 	End Sub
 
-	Protected Overrides Sub ReadVtxFile()
+	Protected Overrides Sub ReadVtxFile_Internal()
 		If Me.theVtxFileData49 Is Nothing Then
 			Me.theVtxFileData49 = New SourceVtxFileData49()
 		End If
@@ -397,7 +409,7 @@ Public Class SourceModel49
 		End If
 	End Sub
 
-	Protected Overrides Sub ReadVvdFile()
+	Protected Overrides Sub ReadVvdFile_Internal()
 		If Me.theVvdFileData49 Is Nothing Then
 			Me.theVvdFileData49 = New SourceVvdFileData49()
 		End If
@@ -470,7 +482,7 @@ Public Class SourceModel49
 		End Try
 	End Sub
 
-	Protected Overrides Sub ReadMdlFileHeader()
+	Protected Overrides Sub ReadMdlFileHeader_Internal()
 		If Me.theMdlFileData Is Nothing Then
 			Me.theMdlFileData = New SourceMdlFileData49()
 			Me.theMdlFileDataGeneric = Me.theMdlFileData
@@ -478,14 +490,18 @@ Public Class SourceModel49
 
 		Dim mdlFile As New SourceMdlFile49(Me.theInputFileReader, Me.theMdlFileData)
 
-		Me.ReadMdlFileHeader_Internal(mdlFile)
+		mdlFile.ReadMdlHeader00("MDL File Header 00")
+		mdlFile.ReadMdlHeader01("MDL File Header 01")
+		If Me.theMdlFileData.studioHeader2Offset > 0 Then
+			mdlFile.ReadMdlHeader02("MDL File Header 02")
+		End If
 
 		'If Me.theMdlFileData.fileSize <> Me.theMdlFileData.theActualFileSize Then
 		'	status = StatusMessage.ErrorInvalidInternalMdlFileSize
 		'End If
 	End Sub
 
-	Protected Overrides Sub ReadMdlFileForViewer()
+	Protected Overrides Sub ReadMdlFileForViewer_Internal()
 		If Me.theMdlFileData Is Nothing Then
 			Me.theMdlFileData = New SourceMdlFileData49()
 			Me.theMdlFileDataGeneric = Me.theMdlFileData
@@ -493,7 +509,11 @@ Public Class SourceModel49
 
 		Dim mdlFile As New SourceMdlFile49(Me.theInputFileReader, Me.theMdlFileData)
 
-		Me.ReadMdlFileHeader_Internal(mdlFile)
+		mdlFile.ReadMdlHeader00("MDL File Header 00")
+		mdlFile.ReadMdlHeader01("MDL File Header 01")
+		If Me.theMdlFileData.studioHeader2Offset > 0 Then
+			mdlFile.ReadMdlHeader02("MDL File Header 02")
+		End If
 
 		mdlFile.ReadTexturePaths()
 		mdlFile.ReadTextures()
@@ -648,14 +668,6 @@ Public Class SourceModel49
 		Dim mdlFile As New SourceMdlFile49(Me.theOutputFileBinaryWriter, Me.theMdlFileData)
 
 		mdlFile.WriteInternalAniFileName(internalAniFileName)
-	End Sub
-
-	Private Sub ReadMdlFileHeader_Internal(ByVal mdlFile As SourceMdlFile49)
-		mdlFile.ReadMdlHeader00("MDL File Header 00")
-		mdlFile.ReadMdlHeader01("MDL File Header 01")
-		If Me.theMdlFileData.studioHeader2Offset > 0 Then
-			mdlFile.ReadMdlHeader02("MDL File Header 02")
-		End If
 	End Sub
 
 #End Region

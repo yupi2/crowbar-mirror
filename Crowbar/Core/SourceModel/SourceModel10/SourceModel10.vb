@@ -16,13 +16,13 @@ Public Class SourceModel10
 
 	Public Overrides ReadOnly Property SequenceGroupMdlFilesAreUsed As Boolean
 		Get
-			Return True
+			Return Me.theMdlFileData IsNot Nothing AndAlso Me.theMdlFileData.sequenceGroupCount > 1 AndAlso Me.theMdlFileData.sequenceGroupCount = Me.theSequenceGroupMdlPathFileNames.Count
 		End Get
 	End Property
 
 	Public Overrides ReadOnly Property TextureMdlFileIsUsed As Boolean
 		Get
-			Return True
+			Return Me.theMdlFileData.textureCount = 0 AndAlso Not String.IsNullOrEmpty(Me.theTextureMdlPathFileName)
 		End Get
 	End Property
 
@@ -56,7 +56,7 @@ Public Class SourceModel10
 
 	Public Overrides ReadOnly Property HasTextureFileData As Boolean
 		Get
-			Return Me.theMdlFileData.textureCount > 0 OrElse Me.theTextureMdlFileData10 IsNot Nothing
+			Return Me.theMdlFileData.textureCount = 0 AndAlso Me.theTextureMdlFileData10 IsNot Nothing
 		End Get
 	End Property
 
@@ -76,6 +76,23 @@ Public Class SourceModel10
 			mdlPath = FileManager.GetPath(Me.theMdlPathFileName)
 			mdlFileNameWithoutExtension = Path.GetFileNameWithoutExtension(Me.theMdlPathFileName)
 			mdlExtension = Path.GetExtension(Me.theMdlPathFileName)
+
+			'TODO: Fill theSequenceGroupMdlPathFileNames with actual names stored as is done in ReadSequenceGroupMdlFiles().
+			'      Requires reading in the SequenceGroup data.
+			Me.theSequenceGroupMdlPathFileNames = New List(Of String)(Me.theMdlFileData.sequenceGroupCount)
+			For sequenceGroupIndex As Integer = 0 To Me.theMdlFileData.sequenceGroupCount - 1
+				Dim aSequenceGroupMdlFileName As String
+				Dim aSequenceGroupMdlPathFileName As String
+				'sequenceGroupMdlFileName = Path.GetFileName(aSequenceGroup.theFileName)
+				'sequenceGroupMdlPathFileName = Path.Combine(mdlPath, sequenceGroupMdlFileName)
+				aSequenceGroupMdlFileName = mdlFileNameWithoutExtension + sequenceGroupIndex.ToString("00") + mdlExtension
+				aSequenceGroupMdlPathFileName = Path.Combine(mdlPath, aSequenceGroupMdlFileName)
+				'If Not File.Exists(aSequenceGroupMdlPathFileName) Then
+				'	status = StatusMessage.Error
+				'End If
+				Me.theSequenceGroupMdlPathFileNames.Add(aSequenceGroupMdlPathFileName)
+			Next
+
 			textureMdlFileName = mdlFileNameWithoutExtension + "T" + mdlExtension
 			Me.theTextureMdlPathFileName = Path.Combine(mdlPath, textureMdlFileName)
 			'If Not File.Exists(Me.theTextureMdlPathFileName) Then
@@ -88,7 +105,7 @@ Public Class SourceModel10
 		Return status
 	End Function
 
-	Public Overrides Function ReadSequenceGroupMdlFiles(ByVal mdlPathFileName As String) As AppEnums.StatusMessage
+	Public Overrides Function ReadSequenceGroupMdlFiles() As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
 		Dim aSequenceGroup As SourceMdlSequenceGroup10
@@ -99,7 +116,7 @@ Public Class SourceModel10
 		'NOTE: Start at index 1 because sequence group 0 is in the main MDL file.
 		For sequenceGroupIndex As Integer = 1 To Me.theMdlFileData.sequenceGroupCount - 1
 			aSequenceGroup = Me.theMdlFileData.theSequenceGroups(sequenceGroupIndex)
-			mdlPath = FileManager.GetPath(mdlPathFileName)
+			mdlPath = FileManager.GetPath(Me.theMdlPathFileName)
 			sequenceGroupMdlFileName = Path.GetFileName(aSequenceGroup.theFileName)
 			sequenceGroupMdlPathFileName = Path.Combine(mdlPath, sequenceGroupMdlFileName)
 			status = Me.ReadSequenceGroupMdlFile(sequenceGroupMdlPathFileName, sequenceGroupIndex)
@@ -108,7 +125,7 @@ Public Class SourceModel10
 		Return status
 	End Function
 
-	Public Overrides Function ReadTextureMdlFile(ByVal mdlPathFileName As String) As AppEnums.StatusMessage
+	Public Overrides Function ReadTextureMdlFile() As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
 		If String.IsNullOrEmpty(Me.theTextureMdlPathFileName) Then
@@ -117,7 +134,7 @@ Public Class SourceModel10
 
 		If status = StatusMessage.Success Then
 			Try
-				Me.ReadFile(Me.theTextureMdlPathFileName, AddressOf Me.ReadTextureMdlFile)
+				Me.ReadFile(Me.theTextureMdlPathFileName, AddressOf Me.ReadTextureMdlFile_Internal)
 			Catch ex As Exception
 				status = StatusMessage.Error
 			End Try
@@ -424,7 +441,7 @@ Public Class SourceModel10
 
 #Region "Private Methods"
 
-	Protected Overrides Sub ReadMdlFileHeader()
+	Protected Overrides Sub ReadMdlFileHeader_Internal()
 		If Me.theMdlFileData Is Nothing Then
 			Me.theMdlFileData = New SourceMdlFileData10()
 			Me.theMdlFileDataGeneric = Me.theMdlFileData
@@ -433,13 +450,9 @@ Public Class SourceModel10
 		Dim mdlFile As New SourceMdlFile10(Me.theInputFileReader, Me.theMdlFileData)
 
 		mdlFile.ReadMdlHeader()
-
-		'If Me.theMdlFileData.fileSize <> Me.theMdlFileData.theActualFileSize Then
-		'	status = StatusMessage.ErrorInvalidInternalMdlFileSize
-		'End If
 	End Sub
 
-	Protected Overrides Sub ReadMdlFileForViewer()
+	Protected Overrides Sub ReadMdlFileForViewer_Internal()
 		If Me.theMdlFileData Is Nothing Then
 			Me.theMdlFileData = New SourceMdlFileData10()
 			Me.theMdlFileDataGeneric = Me.theMdlFileData
@@ -453,7 +466,7 @@ Public Class SourceModel10
 		mdlFile.ReadTextures()
 	End Sub
 
-	Protected Overrides Sub ReadMdlFile()
+	Protected Overrides Sub ReadMdlFile_Internal()
 		If Me.theMdlFileData Is Nothing Then
 			Me.theMdlFileData = New SourceMdlFileData10()
 			Me.theMdlFileDataGeneric = Me.theMdlFileData
@@ -507,7 +520,7 @@ Public Class SourceModel10
 		Me.theSequenceGroupMdlFileDatas10.Add(aSequenceGroupMdlFileData10)
 	End Sub
 
-	Protected Overrides Sub ReadTextureMdlFile()
+	Protected Overrides Sub ReadTextureMdlFile_Internal()
 		If Me.theTextureMdlFileData10 Is Nothing Then
 			Me.theTextureMdlFileData10 = New SourceMdlFileData10()
 		End If

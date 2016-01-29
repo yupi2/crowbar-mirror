@@ -5,7 +5,7 @@ Public Class SourceVvdFile44
 
 #Region "Creation and Destruction"
 
-	Public Sub New(ByVal vvdFileReader As BinaryReader, ByVal vvdFileData As SourceVvdFileData48)
+	Public Sub New(ByVal vvdFileReader As BinaryReader, ByVal vvdFileData As SourceVvdFileData44)
 		Me.theInputFileReader = vvdFileReader
 		Me.theVvdFileData = vvdFileData
 	End Sub
@@ -133,7 +133,7 @@ Public Class SourceVvdFile44
 #Region "Data"
 
 	Private theInputFileReader As BinaryReader
-	Private theVvdFileData As SourceVvdFileData48
+	Private theVvdFileData As SourceVvdFileData44
 
 #End Region
 

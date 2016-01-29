@@ -23,7 +23,7 @@ Public Class SourceMdlFlexController
 	'	float				max;
 	Public max As Single
 
-	Public theType As String
 	Public theName As String
+	Public theType As String
 
 End Class

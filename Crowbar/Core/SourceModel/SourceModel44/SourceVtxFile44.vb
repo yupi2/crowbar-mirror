@@ -5,7 +5,7 @@ Public Class SourceVtxFile44
 
 #Region "Creation and Destruction"
 
-	Public Sub New(ByVal vtxFileReader As BinaryReader, ByVal vtxFileData As SourceVtxFileData48)
+	Public Sub New(ByVal vtxFileReader As BinaryReader, ByVal vtxFileData As SourceVtxFileData44)
 		Me.theInputFileReader = vtxFileReader
 		Me.theVtxFileData = vtxFileData
 	End Sub
@@ -355,7 +355,7 @@ Public Class SourceVtxFile44
 #Region "Data"
 
 	Private theInputFileReader As BinaryReader
-	Private theVtxFileData As SourceVtxFileData48
+	Private theVtxFileData As SourceVtxFileData44
 
 	Private theFirstMeshWithStripGroups As SourceVtxMesh
 	Private theFirstMeshWithStripGroupsInputFileStreamPosition As Long

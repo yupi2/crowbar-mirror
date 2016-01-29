@@ -266,26 +266,32 @@ Public Class SourceMdlFileData44
 	Public name(63) As Char
 	'Public fileSize As Integer
 
-	Public eyePositionX As Single
-	Public eyePositionY As Single
-	Public eyePositionZ As Single
-	Public illuminationPositionX As Single
-	Public illuminationPositionY As Single
-	Public illuminationPositionZ As Single
+	'Public eyePositionX As Single
+	'Public eyePositionY As Single
+	'Public eyePositionZ As Single
+	Public eyePosition As SourceVector
+	'Public illuminationPositionX As Single
+	'Public illuminationPositionY As Single
+	'Public illuminationPositionZ As Single
+	Public illuminationPosition As SourceVector
 
-	Public hullMinPositionX As Single
-	Public hullMinPositionY As Single
-	Public hullMinPositionZ As Single
-	Public hullMaxPositionX As Single
-	Public hullMaxPositionY As Single
-	Public hullMaxPositionZ As Single
+	'Public hullMinPositionX As Single
+	'Public hullMinPositionY As Single
+	'Public hullMinPositionZ As Single
+	'Public hullMaxPositionX As Single
+	'Public hullMaxPositionY As Single
+	'Public hullMaxPositionZ As Single
+	Public hullMinPosition As SourceVector
+	Public hullMaxPosition As SourceVector
 
-	Public viewBoundingBoxMinPositionX As Single
-	Public viewBoundingBoxMinPositionY As Single
-	Public viewBoundingBoxMinPositionZ As Single
-	Public viewBoundingBoxMaxPositionX As Single
-	Public viewBoundingBoxMaxPositionY As Single
-	Public viewBoundingBoxMaxPositionZ As Single
+	'Public viewBoundingBoxMinPositionX As Single
+	'Public viewBoundingBoxMinPositionY As Single
+	'Public viewBoundingBoxMinPositionZ As Single
+	'Public viewBoundingBoxMaxPositionX As Single
+	'Public viewBoundingBoxMaxPositionY As Single
+	'Public viewBoundingBoxMaxPositionZ As Single
+	Public viewBoundingBoxMinPosition As SourceVector
+	Public viewBoundingBoxMaxPosition As SourceVector
 
 	Public flags As Integer
 
@@ -346,7 +352,7 @@ Public Class SourceMdlFileData44
 	Public localIkAutoPlayLockCount As Integer
 	Public localIkAutoPlayLockOffset As Integer
 
-	Public mass As Single
+	Public mass As Double
 	Public contents As Integer
 
 	Public includeModelCount As Integer
@@ -382,11 +388,11 @@ Public Class SourceMdlFileData44
 	Public theAnimBlockRelativePathFileName As String
 	Public theAttachments As List(Of SourceMdlAttachment)
 	Public theBodyParts As List(Of SourceMdlBodyPart)
-	Public theBones As List(Of SourceMdlBone)
 	Public theBoneControllers As List(Of SourceMdlBoneController)
+	Public theBones As List(Of SourceMdlBone)
 	Public theBoneTableByName As List(Of Integer)
-	Public theFlexDescs As List(Of SourceMdlFlexDesc)
 	Public theFlexControllers As List(Of SourceMdlFlexController)
+	Public theFlexDescs As List(Of SourceMdlFlexDesc)
 	Public theFlexRules As List(Of SourceMdlFlexRule)
 	Public theHitboxSets As List(Of SourceMdlHitboxSet)
 	Public theIkChains As List(Of SourceMdlIkChain)

@@ -13,21 +13,21 @@ Public Class SourceModel44
 
 #Region "Properties"
 
-	Public Overrides ReadOnly Property AniFileIsUsed As Boolean
+	Public Overrides ReadOnly Property VtxFileIsUsed As Boolean
 		Get
-			Return Me.theMdlFileData.animBlockCount > 0
+			Return Not String.IsNullOrEmpty(Me.theVtxPathFileName) AndAlso File.Exists(Me.theVtxPathFileName)
 		End Get
 	End Property
 
-	Public Overrides ReadOnly Property VtxFileIsUsed As Boolean
+	Public Overrides ReadOnly Property AniFileIsUsed As Boolean
 		Get
-			Return Not Me.theMdlFileData.theMdlFileOnlyHasAnimations
+			Return Not String.IsNullOrEmpty(Me.theAniPathFileName) AndAlso File.Exists(Me.theAniPathFileName)
 		End Get
 	End Property
 
 	Public Overrides ReadOnly Property VvdFileIsUsed As Boolean
 		Get
-			Return Not Me.theMdlFileData.theMdlFileOnlyHasAnimations
+			Return Not String.IsNullOrEmpty(Me.theVvdPathFileName) AndAlso File.Exists(Me.theVvdPathFileName)
 		End Get
 	End Property
 
@@ -122,7 +122,7 @@ Public Class SourceModel44
 	Public Overrides Function CheckForRequiredFiles() As StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
-		If Me.theMdlFileDataGeneric.theMdlFileOnlyHasAnimations OrElse Me.AniFileIsUsed Then
+		If Me.theMdlFileData.animBlockCount > 0 Then
 			Me.theAniPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".ani")
 			If Not File.Exists(Me.theAniPathFileName) Then
 				status = StatusMessage.ErrorRequiredAniFileNotFound
@@ -158,7 +158,7 @@ Public Class SourceModel44
 		Return status
 	End Function
 
-	Public Overrides Function ReadPhyFile(ByVal mdlPathFileName As String) As AppEnums.StatusMessage
+	Public Overrides Function ReadPhyFile() As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
 		If String.IsNullOrEmpty(Me.thePhyPathFileName) Then
@@ -168,7 +168,7 @@ Public Class SourceModel44
 		If Not String.IsNullOrEmpty(Me.thePhyPathFileName) Then
 			If status = StatusMessage.Success Then
 				Try
-					Me.ReadFile(Me.thePhyPathFileName, AddressOf Me.ReadPhyFile)
+					Me.ReadFile(Me.thePhyPathFileName, AddressOf Me.ReadPhyFile_Internal)
 					If Me.thePhyFileData.checksum <> Me.theMdlFileData.checksum Then
 						'status = StatusMessage.WarningPhyChecksumDoesNotMatchMdl
 						Me.NotifySourceModelProgress(ProgressOptions.WarningPhyFileChecksumDoesNotMatchMdlFileChecksum, "")
@@ -182,7 +182,7 @@ Public Class SourceModel44
 		Return status
 	End Function
 
-	Public Overrides Function ReadAniFile(ByVal mdlPathFileName As String) As AppEnums.StatusMessage
+	Public Overrides Function ReadAniFile() As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
 		If String.IsNullOrEmpty(Me.theAniPathFileName) Then
@@ -192,7 +192,7 @@ Public Class SourceModel44
 		If Not String.IsNullOrEmpty(Me.theAniPathFileName) Then
 			If status = StatusMessage.Success Then
 				Try
-					Me.ReadFile(Me.theAniPathFileName, AddressOf Me.ReadAniFile)
+					Me.ReadFile(Me.theAniPathFileName, AddressOf Me.ReadAniFile_Internal)
 				Catch ex As Exception
 					status = StatusMessage.Error
 				End Try
@@ -269,14 +269,14 @@ Public Class SourceModel44
 
 		Dim debugPathFileName As String
 
-		If Me.theMdlFileData IsNot Nothing Then
+		If Me.theMdlFileDataGeneric IsNot Nothing Then
 			debugPathFileName = Path.Combine(debugPath, Me.theName + " " + My.Resources.Decompile_DebugMdlFileNameSuffix)
-			Me.WriteAccessedBytesDebugFile(debugPathFileName, Me.theMdlFileData.theFileSeekLog)
+			Me.WriteAccessedBytesDebugFile(debugPathFileName, Me.theMdlFileDataGeneric.theFileSeekLog)
 		End If
 
-		If Me.theAniFileData IsNot Nothing Then
+		If Me.theAniFileDataGeneric IsNot Nothing Then
 			debugPathFileName = Path.Combine(debugPath, Me.theName + " " + My.Resources.Decompile_DebugAniFileNameSuffix)
-			Me.WriteAccessedBytesDebugFile(debugPathFileName, Me.theAniFileData.theFileSeekLog)
+			Me.WriteAccessedBytesDebugFile(debugPathFileName, Me.theAniFileDataGeneric.theFileSeekLog)
 		End If
 
 		Return status
@@ -312,40 +312,7 @@ Public Class SourceModel44
 
 #Region "Private Methods"
 
-	Protected Overrides Sub ReadMdlFileForViewer()
-		If Me.theMdlFileData Is Nothing Then
-			Me.theMdlFileData = New SourceMdlFileData44()
-			Me.theMdlFileDataGeneric = Me.theMdlFileData
-		End If
-
-		Dim mdlFile As New SourceMdlFile44(Me.theInputFileReader, Me.theMdlFileData)
-
-		Me.ReadMdlFileHeader_Internal(mdlFile)
-
-		mdlFile.ReadTexturePaths()
-		mdlFile.ReadTextures()
-	End Sub
-
-	Protected Overrides Sub ReadPhyFile()
-		If Me.thePhyFileData Is Nothing Then
-			Me.thePhyFileData = New SourcePhyFileData44()
-		End If
-
-		Dim phyFile As New SourcePhyFile44(Me.theInputFileReader, Me.thePhyFileData)
-
-		phyFile.ReadSourcePhyHeader()
-		If Me.thePhyFileData.solidCount > 0 Then
-			phyFile.ReadSourceCollisionData()
-			phyFile.CalculateVertexNormals()
-			phyFile.ReadSourcePhysCollisionModels()
-			phyFile.ReadSourcePhyRagdollConstraintDescs()
-			phyFile.ReadSourcePhyCollisionRules()
-			phyFile.ReadSourcePhyEditParamsSection()
-			phyFile.ReadCollisionTextSection()
-		End If
-	End Sub
-
-	Protected Overrides Sub ReadAniFile()
+	Protected Overrides Sub ReadAniFile_Internal()
 		If Me.theAniFileData Is Nothing Then
 			Me.theAniFileData = New SourceAniFileData44()
 			Me.theAniFileDataGeneric = Me.theAniFileData
@@ -364,16 +331,302 @@ Public Class SourceModel44
 		aniFile.ReadAniBlocks()
 	End Sub
 
-	Protected Overrides Sub WriteVertexAnimationVtaFile()
-		Dim vertexAnimationVtaFile As New SourceVtaFile44(Me.theOutputFileTextWriter, Me.theMdlFileData, Me.theVvdFileData)
+	Protected Overrides Sub ReadMdlFile_Internal()
+		If Me.theMdlFileData Is Nothing Then
+			Me.theMdlFileData = New SourceMdlFileData44()
+			Me.theMdlFileDataGeneric = Me.theMdlFileData
+		End If
+
+		Dim mdlFile As New SourceMdlFile44(Me.theInputFileReader, Me.theMdlFileData)
+
+		Me.theMdlFileData.theSectionFrameCount = 0
+		Me.theMdlFileData.theModelCommandIsUsed = False
+		Me.theMdlFileData.theProceduralBonesCommandIsUsed = False
+
+		mdlFile.ReadMdlHeader00("MDL File Header 00")
+		mdlFile.ReadMdlHeader01("MDL File Header 01")
+
+		' Read what WriteBoneInfo() writes.
+		mdlFile.ReadBones()
+		mdlFile.ReadBoneControllers()
+		mdlFile.ReadAttachments()
+
+		mdlFile.ReadHitboxSets()
+
+		mdlFile.ReadBoneTableByName()
+
+		' Read what WriteAnimations() writes.
+		If Me.theMdlFileData.localAnimationCount > 0 Then
+			Try
+				mdlFile.ReadLocalAnimationDescs()
+			Catch
+			End Try
+		End If
+
+		' Read what WriteSequenceInfo() writes.
+		If Me.theMdlFileData.localSequenceCount > 0 Then
+			Try
+				mdlFile.ReadSequenceDescs()
+			Catch
+			End Try
+		End If
+		mdlFile.ReadLocalNodeNames()
+		mdlFile.ReadLocalNodes()
+
+		' Read what WriteModel() writes.
+		'Me.theCurrentFrameIndex = 0
+		'NOTE: Read flex descs before body parts so that flexes (within body parts) can add info to flex descs.
+		mdlFile.ReadFlexDescs()
+		mdlFile.ReadBodyParts()
+		mdlFile.ReadFlexControllers()
+		'NOTE: This must be after flex descs are read so that flex desc usage can be saved in flex desc.
+		mdlFile.ReadFlexRules()
+		mdlFile.ReadIkChains()
+		mdlFile.ReadIkLocks()
+		mdlFile.ReadMouths()
+		mdlFile.ReadPoseParamDescs()
+		mdlFile.ReadModelGroups()
+		'TODO: Me.ReadAnimBlocks()
+		'TODO: Me.ReadAnimBlockName()
+
+		' Read what WriteTextures() writes.
+		mdlFile.ReadTexturePaths()
+		'NOTE: ReadTextures must be after ReadTexturePaths(), so it can compare with the texture paths.
+		mdlFile.ReadTextures()
+		mdlFile.ReadSkinFamilies()
+
+		' Read what WriteKeyValues() writes.
+		mdlFile.ReadKeyValues()
+
+		'' Read what WriteBoneTransforms() writes.
+		'mdlFile.ReadBoneTransforms()
+		'mdlFile.ReadLinearBoneTable()
+
+		''TODO: ReadLocalIkAutoPlayLocks()
+		'mdlFile.ReadFlexControllerUis()
+
+		mdlFile.ReadFinalBytesAlignment()
+		mdlFile.ReadUnknownValues(Me.theMdlFileData.theFileSeekLog)
+
+		' Post-processing.
+		mdlFile.CreateFlexFrameList()
+	End Sub
+
+	Protected Overrides Sub ReadMdlFileHeader_Internal()
+		If Me.theMdlFileData Is Nothing Then
+			Me.theMdlFileData = New SourceMdlFileData44()
+			Me.theMdlFileDataGeneric = Me.theMdlFileData
+		End If
+
+		Dim mdlFile As New SourceMdlFile44(Me.theInputFileReader, Me.theMdlFileData)
+
+		mdlFile.ReadMdlHeader00("MDL File Header 00")
+		mdlFile.ReadMdlHeader01("MDL File Header 01")
+	End Sub
+
+	Protected Overrides Sub ReadMdlFileForViewer_Internal()
+		If Me.theMdlFileData Is Nothing Then
+			Me.theMdlFileData = New SourceMdlFileData44()
+			Me.theMdlFileDataGeneric = Me.theMdlFileData
+		End If
+
+		Dim mdlFile As New SourceMdlFile44(Me.theInputFileReader, Me.theMdlFileData)
+
+		mdlFile.ReadMdlHeader00("MDL File Header 00")
+		mdlFile.ReadMdlHeader01("MDL File Header 01")
+
+		mdlFile.ReadTexturePaths()
+		mdlFile.ReadTextures()
+	End Sub
+
+	Protected Overrides Sub ReadPhyFile_Internal()
+		If Me.thePhyFileData Is Nothing Then
+			Me.thePhyFileData = New SourcePhyFileData44()
+		End If
+
+		Dim phyFile As New SourcePhyFile44(Me.theInputFileReader, Me.thePhyFileData)
+
+		phyFile.ReadSourcePhyHeader()
+		If Me.thePhyFileData.solidCount > 0 Then
+			phyFile.ReadSourceCollisionData()
+			phyFile.CalculateVertexNormals()
+			phyFile.ReadSourcePhysCollisionModels()
+			phyFile.ReadSourcePhyRagdollConstraintDescs()
+			phyFile.ReadSourcePhyCollisionRules()
+			phyFile.ReadSourcePhyEditParamsSection()
+			phyFile.ReadCollisionTextSection()
+		End If
+	End Sub
+
+	Protected Overrides Sub ReadVtxFile_Internal()
+		If Me.theVtxFileData Is Nothing Then
+			Me.theVtxFileData = New SourceVtxFileData44()
+		End If
+
+		Dim vtxFile As New SourceVtxFile44(Me.theInputFileReader, Me.theVtxFileData)
+
+		vtxFile.ReadSourceVtxHeader()
+		If Me.theVtxFileData.lodCount > 0 Then
+			vtxFile.ReadSourceVtxBodyParts()
+		End If
+	End Sub
+
+	Protected Overrides Sub ReadVvdFile_Internal()
+		If Me.theVvdFileData Is Nothing Then
+			Me.theVvdFileData = New SourceVvdFileData44()
+		End If
+
+		Dim vvdFile As New SourceVvdFile44(Me.theInputFileReader, Me.theVvdFileData)
+
+		vvdFile.ReadSourceVvdHeader()
+		vvdFile.ReadVertexes()
+		vvdFile.ReadFixups()
+	End Sub
+
+	Protected Overrides Sub WriteQcFile()
+		Dim qcFile As New SourceQcFile44(Me.theOutputFileTextWriter, Me.theQcPathFileName, Me.theMdlFileData, Me.theVtxFileData, Me.thePhyFileData, Me.theAniFileData, Me.theName)
 
 		Try
-			vertexAnimationVtaFile.WriteHeaderComment()
+			qcFile.WriteHeaderComment()
 
-			vertexAnimationVtaFile.WriteHeaderSection()
-			vertexAnimationVtaFile.WriteNodesSection()
-			vertexAnimationVtaFile.WriteSkeletonSectionForVertexAnimation()
-			vertexAnimationVtaFile.WriteVertexAnimationSection()
+			qcFile.WriteModelNameCommand()
+
+			qcFile.WriteStaticPropCommand()
+			qcFile.WriteConstDirectionalLightCommand()
+
+			If Me.theMdlFileData.theModelCommandIsUsed Then
+				qcFile.WriteModelCommand()
+				qcFile.WriteBodyGroupCommand(1)
+			Else
+				qcFile.WriteBodyGroupCommand(0)
+			End If
+			qcFile.WriteGroup("lod", AddressOf qcFile.WriteGroupLod, False, False)
+
+			qcFile.WriteSurfacePropCommand()
+			qcFile.WriteJointSurfacePropCommand()
+			qcFile.WriteContentsCommand()
+			qcFile.WriteJointContentsCommand()
+			If TheApp.Settings.DecompileDebugInfoFilesIsChecked Then
+				qcFile.WriteIllumPositionCommand()
+			End If
+
+			qcFile.WriteEyePositionCommand()
+			qcFile.WriteNoForcedFadeCommand()
+			qcFile.WriteForcePhonemeCrossfadeCommand()
+
+			qcFile.WriteAmbientBoostCommand()
+			qcFile.WriteOpaqueCommand()
+			qcFile.WriteObsoleteCommand()
+			qcFile.WriteCdMaterialsCommand()
+			qcFile.WriteTextureGroupCommand()
+			If TheApp.Settings.DecompileDebugInfoFilesIsChecked Then
+				qcFile.WriteTextureFileNameComments()
+			End If
+
+			qcFile.WriteAttachmentCommand()
+
+			qcFile.WriteGroup("box", AddressOf qcFile.WriteGroupBox, True, False)
+
+			qcFile.WriteControllerCommand()
+			qcFile.WriteScreenAlignCommand()
+
+			qcFile.WriteGroup("bone", AddressOf qcFile.WriteGroupBone, False, False)
+
+			qcFile.WriteGroup("animation", AddressOf qcFile.WriteGroupAnimation, False, False)
+
+			qcFile.WriteGroup("collision", AddressOf qcFile.WriteGroupCollision, False, False)
+
+			qcFile.WriteKeyValues(Me.theMdlFileData.theKeyValuesText, "$KeyValues")
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		Finally
+		End Try
+	End Sub
+
+	Protected Overrides Function WriteMeshSmdFiles(ByVal modelOutputPath As String, ByVal lodStartIndex As Integer, ByVal lodStopIndex As Integer) As AppEnums.StatusMessage
+		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+
+		Dim smdFileName As String
+		Dim smdPathFileName As String
+		Dim aBodyPart As SourceVtxBodyPart
+		Dim aVtxModel As SourceVtxModel
+		Dim aModel As SourceMdlModel
+		Dim bodyPartVertexIndexStart As Integer
+
+		bodyPartVertexIndexStart = 0
+		If Me.theVtxFileData.theVtxBodyParts IsNot Nothing AndAlso Me.theMdlFileData.theBodyParts IsNot Nothing Then
+			For bodyPartIndex As Integer = 0 To Me.theVtxFileData.theVtxBodyParts.Count - 1
+				aBodyPart = Me.theVtxFileData.theVtxBodyParts(bodyPartIndex)
+
+				If aBodyPart.theVtxModels IsNot Nothing Then
+					For modelIndex As Integer = 0 To aBodyPart.theVtxModels.Count - 1
+						aVtxModel = aBodyPart.theVtxModels(modelIndex)
+
+						If aVtxModel.theVtxModelLods IsNot Nothing Then
+							aModel = Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex)
+							If aModel.name(0) = ChrW(0) AndAlso aVtxModel.theVtxModelLods(0).theVtxMeshes Is Nothing Then
+								Continue For
+							End If
+
+							For lodIndex As Integer = lodStartIndex To lodStopIndex
+								'TODO: Why would this count be different than the file header count?
+								If lodIndex >= aVtxModel.theVtxModelLods.Count Then
+									Exit For
+								End If
+
+								smdFileName = SourceFileNamesModule.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, lodIndex, Me.theMdlFileData.theModelCommandIsUsed, Me.theName, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).name, Me.theMdlFileData.theBodyParts.Count, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels.Count)
+								smdPathFileName = Path.Combine(modelOutputPath, smdFileName)
+
+								Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileStarted, smdPathFileName)
+								'NOTE: Check here in case writing is canceled in the above event.
+								If Me.theWritingIsCanceled Then
+									status = StatusMessage.Canceled
+									Return status
+								ElseIf Me.theWritingSingleFileIsCanceled Then
+									Me.theWritingSingleFileIsCanceled = False
+									Continue For
+								End If
+
+								Me.WriteMeshSmdFile(smdPathFileName, lodIndex, aVtxModel, aModel, bodyPartVertexIndexStart)
+
+								Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileFinished, smdPathFileName)
+							Next
+
+							bodyPartVertexIndexStart += aModel.vertexCount
+						End If
+					Next
+				End If
+			Next
+		End If
+
+		Return status
+	End Function
+
+	Protected Overrides Sub WriteMeshSmdFile(ByVal lodIndex As Integer, ByVal aVtxModel As SourceVtxModel, ByVal aModel As SourceMdlModel, ByVal bodyPartVertexIndexStart As Integer)
+		Dim smdFile As New SourceSmdFile44(Me.theOutputFileTextWriter, Me.theMdlFileData, Me.theVvdFileData)
+
+		Try
+			smdFile.WriteHeaderComment()
+
+			smdFile.WriteHeaderSection()
+			smdFile.WriteNodesSection(lodIndex)
+			smdFile.WriteSkeletonSection(lodIndex)
+			smdFile.WriteTrianglesSection(aVtxModel, lodIndex, aModel, bodyPartVertexIndexStart)
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		End Try
+	End Sub
+
+	Protected Overrides Sub WritePhysicsMeshSmdFile()
+		Dim physicsMeshSmdFile As New SourceSmdFile44(Me.theOutputFileTextWriter, Me.theMdlFileData, Me.thePhyFileData)
+
+		Try
+			physicsMeshSmdFile.WriteHeaderComment()
+
+			physicsMeshSmdFile.WriteHeaderSection()
+			physicsMeshSmdFile.WriteNodesSection(-1)
+			physicsMeshSmdFile.WriteSkeletonSection(-1)
+			physicsMeshSmdFile.WriteTrianglesSectionForPhysics()
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		Finally
@@ -392,9 +645,41 @@ Public Class SourceModel44
 		End Try
 	End Sub
 
-	Private Sub ReadMdlFileHeader_Internal(ByVal mdlFile As SourceMdlFile44)
-		mdlFile.ReadMdlHeader00("MDL File Header 00")
-		mdlFile.ReadMdlHeader01("MDL File Header 01")
+	Protected Overrides Sub WriteBoneAnimationSmdFile(ByVal aSequenceDesc As SourceMdlSequenceDescBase, ByVal anAnimationDesc As SourceMdlAnimationDescBase)
+		Dim smdFile As New SourceSmdFile44(Me.theOutputFileTextWriter, Me.theMdlFileData)
+
+		Try
+			smdFile.WriteHeaderComment()
+
+			smdFile.WriteHeaderSection()
+			smdFile.WriteNodesSection(-1)
+			If Me.theMdlFileData.theFirstAnimationDesc IsNot Nothing AndAlso Me.theMdlFileData.theFirstAnimationDescFrameLines.Count = 0 Then
+				smdFile.CalculateFirstAnimDescFrameLinesForSubtract()
+			End If
+			'If anAnimationDesc.animBlock > 0 AndAlso Me.theSourceEngineModel.MdlFileHeader.version >= 49 AndAlso Me.theSourceEngineModel.MdlFileHeader.version <> 2531 Then
+			'	smdFile.WriteSkeletonSectionForAnimationAni_VERSION49(aSequenceDesc, anAnimationDesc)
+			'Else
+			'End If
+			smdFile.WriteSkeletonSectionForAnimation(aSequenceDesc, anAnimationDesc)
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		End Try
+	End Sub
+
+	Protected Overrides Sub WriteVertexAnimationVtaFile()
+		Dim vertexAnimationVtaFile As New SourceVtaFile44(Me.theOutputFileTextWriter, Me.theMdlFileData, Me.theVvdFileData)
+
+		Try
+			vertexAnimationVtaFile.WriteHeaderComment()
+
+			vertexAnimationVtaFile.WriteHeaderSection()
+			vertexAnimationVtaFile.WriteNodesSection()
+			vertexAnimationVtaFile.WriteSkeletonSectionForVertexAnimation()
+			vertexAnimationVtaFile.WriteVertexAnimationSection()
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		Finally
+		End Try
 	End Sub
 
 	Protected Overrides Sub WriteMdlFileNameToMdlFile(ByVal internalMdlFileName As String)

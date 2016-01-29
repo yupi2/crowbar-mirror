@@ -279,7 +279,7 @@ Public Class Decompiler
 			End Try
 
 			Me.UpdateProgress(2, "Reading MDL file header ...")
-			status = model.ReadMdlFileHeader(mdlPathFileName)
+			status = model.ReadMdlFileHeader()
 			'If status = StatusMessage.ErrorInvalidMdlFileId Then
 			'	Me.UpdateProgress(2, "ERROR: File does not have expected MDL header ID (first 4 bytes of file) of 'IDST' (without quotes). MDL file is not a GoldSource- or Source-engine MDL file.")
 			'	Return status
@@ -408,7 +408,7 @@ Public Class Decompiler
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
 		Me.UpdateProgress(3, "Reading MDL file ...")
-		status = model.ReadMdlFile(mdlPathFileName)
+		status = model.ReadMdlFile()
 		If status = StatusMessage.Success Then
 			Me.UpdateProgress(3, "... Reading MDL file finished.")
 		ElseIf status = StatusMessage.Error Then
@@ -418,7 +418,7 @@ Public Class Decompiler
 
 		If model.SequenceGroupMdlFilesAreUsed Then
 			Me.UpdateProgress(3, "Reading sequence group MDL files ...")
-			status = model.ReadSequenceGroupMdlFiles(mdlPathFileName)
+			status = model.ReadSequenceGroupMdlFiles()
 			If status = StatusMessage.Success Then
 				Me.UpdateProgress(3, "... Reading sequence group MDL files finished.")
 			ElseIf status = StatusMessage.Error Then
@@ -428,7 +428,7 @@ Public Class Decompiler
 
 		If model.TextureMdlFileIsUsed Then
 			Me.UpdateProgress(3, "Reading texture MDL file ...")
-			status = model.ReadTextureMdlFile(mdlPathFileName)
+			status = model.ReadTextureMdlFile()
 			If status = StatusMessage.Success Then
 				Me.UpdateProgress(3, "... Reading texture MDL file finished.")
 			ElseIf status = StatusMessage.Error Then
@@ -436,22 +436,10 @@ Public Class Decompiler
 			End If
 		End If
 
-		If model.VtxFileIsUsed Then
-			Me.UpdateProgress(3, "Reading VTX file ...")
-			status = model.ReadVtxFile(mdlPathFileName)
-			If status = StatusMessage.Success Then
-				Me.UpdateProgress(3, "... Reading VTX file finished.")
-			ElseIf status = StatusMessage.Error Then
-				Me.UpdateProgress(3, "... Reading VTX file FAILED. (Probably unexpected format.)")
-			End If
-		End If
-
 		If model.PhyFileIsUsed Then
 			Me.UpdateProgress(3, "Reading PHY file ...")
 			AddHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
-
-			status = model.ReadPhyFile(mdlPathFileName)
-
+			status = model.ReadPhyFile()
 			RemoveHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
 			If status = StatusMessage.Success Then
 				Me.UpdateProgress(3, "... Reading PHY file finished.")
@@ -460,23 +448,33 @@ Public Class Decompiler
 			End If
 		End If
 
-		If model.VvdFileIsUsed Then
-			Me.UpdateProgress(3, "Reading VVD file ...")
-			status = model.ReadVvdFile(mdlPathFileName)
+		If model.VtxFileIsUsed Then
+			Me.UpdateProgress(3, "Reading VTX file ...")
+			status = model.ReadVtxFile()
 			If status = StatusMessage.Success Then
-				Me.UpdateProgress(3, "... Reading VVD file finished.")
+				Me.UpdateProgress(3, "... Reading VTX file finished.")
 			ElseIf status = StatusMessage.Error Then
-				Me.UpdateProgress(3, "... Reading VVD file FAILED. (Probably unexpected format.)")
+				Me.UpdateProgress(3, "... Reading VTX file FAILED. (Probably unexpected format.)")
 			End If
 		End If
 
 		If model.AniFileIsUsed Then
 			Me.UpdateProgress(3, "Reading ANI file ...")
-			status = model.ReadAniFile(mdlPathFileName)
+			status = model.ReadAniFile()
 			If status = StatusMessage.Success Then
 				Me.UpdateProgress(3, "... Reading ANI file finished.")
 			ElseIf status = StatusMessage.Error Then
 				Me.UpdateProgress(3, "... Reading ANI file FAILED. (Probably unexpected format.)")
+			End If
+		End If
+
+		If model.VvdFileIsUsed Then
+			Me.UpdateProgress(3, "Reading VVD file ...")
+			status = model.ReadVvdFile()
+			If status = StatusMessage.Success Then
+				Me.UpdateProgress(3, "... Reading VVD file finished.")
+			ElseIf status = StatusMessage.Error Then
+				Me.UpdateProgress(3, "... Reading VVD file FAILED. (Probably unexpected format.)")
 			End If
 		End If
 

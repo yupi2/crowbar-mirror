@@ -58,34 +58,34 @@ Public Class SourceMdlFile44
 		fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
 		' Offsets: 0x50, 0x54, 0x58
-		Me.theMdlFileData.eyePositionX = Me.theInputFileReader.ReadSingle()
-		Me.theMdlFileData.eyePositionY = Me.theInputFileReader.ReadSingle()
-		Me.theMdlFileData.eyePositionZ = Me.theInputFileReader.ReadSingle()
+		Me.theMdlFileData.eyePosition.x = Me.theInputFileReader.ReadSingle()
+		Me.theMdlFileData.eyePosition.y = Me.theInputFileReader.ReadSingle()
+		Me.theMdlFileData.eyePosition.z = Me.theInputFileReader.ReadSingle()
 
 		' Offsets: 0x5C, 0x60, 0x64
-		Me.theMdlFileData.illuminationPositionX = Me.theInputFileReader.ReadSingle()
-		Me.theMdlFileData.illuminationPositionY = Me.theInputFileReader.ReadSingle()
-		Me.theMdlFileData.illuminationPositionZ = Me.theInputFileReader.ReadSingle()
+		Me.theMdlFileData.illuminationPosition.x = Me.theInputFileReader.ReadSingle()
+		Me.theMdlFileData.illuminationPosition.y = Me.theInputFileReader.ReadSingle()
+		Me.theMdlFileData.illuminationPosition.z = Me.theInputFileReader.ReadSingle()
 
 		' Offsets: 0x68, 0x6C, 0x70
-		Me.theMdlFileData.hullMinPositionX = Me.theInputFileReader.ReadSingle()
-		Me.theMdlFileData.hullMinPositionY = Me.theInputFileReader.ReadSingle()
-		Me.theMdlFileData.hullMinPositionZ = Me.theInputFileReader.ReadSingle()
+		Me.theMdlFileData.hullMinPosition.x = Me.theInputFileReader.ReadSingle()
+		Me.theMdlFileData.hullMinPosition.y = Me.theInputFileReader.ReadSingle()
+		Me.theMdlFileData.hullMinPosition.z = Me.theInputFileReader.ReadSingle()
 
 		' Offsets: 0x74, 0x78, 0x7C
-		Me.theMdlFileData.hullMaxPositionX = Me.theInputFileReader.ReadSingle()
-		Me.theMdlFileData.hullMaxPositionY = Me.theInputFileReader.ReadSingle()
-		Me.theMdlFileData.hullMaxPositionZ = Me.theInputFileReader.ReadSingle()
+		Me.theMdlFileData.hullMaxPosition.x = Me.theInputFileReader.ReadSingle()
+		Me.theMdlFileData.hullMaxPosition.y = Me.theInputFileReader.ReadSingle()
+		Me.theMdlFileData.hullMaxPosition.z = Me.theInputFileReader.ReadSingle()
 
 		' Offsets: 0x80, 0x84, 0x88
-		Me.theMdlFileData.viewBoundingBoxMinPositionX = Me.theInputFileReader.ReadSingle()
-		Me.theMdlFileData.viewBoundingBoxMinPositionY = Me.theInputFileReader.ReadSingle()
-		Me.theMdlFileData.viewBoundingBoxMinPositionZ = Me.theInputFileReader.ReadSingle()
+		Me.theMdlFileData.viewBoundingBoxMinPosition.x = Me.theInputFileReader.ReadSingle()
+		Me.theMdlFileData.viewBoundingBoxMinPosition.y = Me.theInputFileReader.ReadSingle()
+		Me.theMdlFileData.viewBoundingBoxMinPosition.z = Me.theInputFileReader.ReadSingle()
 
 		' Offsets: 0x8C, 0x90, 0x94
-		Me.theMdlFileData.viewBoundingBoxMaxPositionX = Me.theInputFileReader.ReadSingle()
-		Me.theMdlFileData.viewBoundingBoxMaxPositionY = Me.theInputFileReader.ReadSingle()
-		Me.theMdlFileData.viewBoundingBoxMaxPositionZ = Me.theInputFileReader.ReadSingle()
+		Me.theMdlFileData.viewBoundingBoxMaxPosition.x = Me.theInputFileReader.ReadSingle()
+		Me.theMdlFileData.viewBoundingBoxMaxPosition.y = Me.theInputFileReader.ReadSingle()
+		Me.theMdlFileData.viewBoundingBoxMaxPosition.z = Me.theInputFileReader.ReadSingle()
 
 		' Offsets: 0x98
 		Me.theMdlFileData.flags = Me.theInputFileReader.ReadInt32()
@@ -290,125 +290,108 @@ Public Class SourceMdlFile44
 					boneInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 					Dim aBone As New SourceMdlBone()
 
-					If Me.theMdlFileData.version = 10 Then
-						aBone.name = Me.theInputFileReader.ReadChars(32)
-						aBone.theName = aBone.name
-						aBone.theName = StringClass.ConvertFromNullTerminatedString(aBone.theName)
-						aBone.parentBoneIndex = Me.theInputFileReader.ReadInt32()
-						aBone.flags = Me.theInputFileReader.ReadInt32()
-						For j As Integer = 0 To 5
-							aBone.boneControllerIndex(j) = Me.theInputFileReader.ReadInt32()
-						Next
-						For j As Integer = 0 To 5
-							aBone.value(j) = Me.theInputFileReader.ReadInt32()
-						Next
-						For j As Integer = 0 To 5
-							aBone.scale(j) = Me.theInputFileReader.ReadInt32()
+					aBone.nameOffset = Me.theInputFileReader.ReadInt32()
+
+					aBone.parentBoneIndex = Me.theInputFileReader.ReadInt32()
+
+					'' Skip some fields.
+					'Me.theInputFileReader.ReadBytes(208)
+					'------
+					For j As Integer = 0 To aBone.boneControllerIndex.Length - 1
+						aBone.boneControllerIndex(j) = Me.theInputFileReader.ReadInt32()
+					Next
+					aBone.position = New SourceVector()
+					aBone.position.x = Me.theInputFileReader.ReadSingle()
+					aBone.position.y = Me.theInputFileReader.ReadSingle()
+					aBone.position.z = Me.theInputFileReader.ReadSingle()
+
+					aBone.quat = New SourceQuaternion()
+					aBone.quat.x = Me.theInputFileReader.ReadSingle()
+					aBone.quat.y = Me.theInputFileReader.ReadSingle()
+					aBone.quat.z = Me.theInputFileReader.ReadSingle()
+					aBone.quat.w = Me.theInputFileReader.ReadSingle()
+
+					If Me.theMdlFileData.version = 2531 Then
+						For j As Integer = 0 To aBone.animChannels.Length - 1
+							aBone.animChannels(j) = Me.theInputFileReader.ReadSingle()
 						Next
 					Else
-						aBone.nameOffset = Me.theInputFileReader.ReadInt32()
+						aBone.rotation = New SourceVector()
+						aBone.rotation.x = Me.theInputFileReader.ReadSingle()
+						aBone.rotation.y = Me.theInputFileReader.ReadSingle()
+						aBone.rotation.z = Me.theInputFileReader.ReadSingle()
+						aBone.positionScale = New SourceVector()
+						aBone.positionScale.x = Me.theInputFileReader.ReadSingle()
+						aBone.positionScale.y = Me.theInputFileReader.ReadSingle()
+						aBone.positionScale.z = Me.theInputFileReader.ReadSingle()
+						aBone.rotationScale = New SourceVector()
+						aBone.rotationScale.x = Me.theInputFileReader.ReadSingle()
+						aBone.rotationScale.y = Me.theInputFileReader.ReadSingle()
+						aBone.rotationScale.z = Me.theInputFileReader.ReadSingle()
+						'aBone.poseToBone00 = Me.theInputFileReader.ReadSingle()
+						'aBone.poseToBone01 = Me.theInputFileReader.ReadSingle()
+						'aBone.poseToBone02 = Me.theInputFileReader.ReadSingle()
+						'aBone.poseToBone03 = Me.theInputFileReader.ReadSingle()
+						'aBone.poseToBone10 = Me.theInputFileReader.ReadSingle()
+						'aBone.poseToBone11 = Me.theInputFileReader.ReadSingle()
+						'aBone.poseToBone12 = Me.theInputFileReader.ReadSingle()
+						'aBone.poseToBone13 = Me.theInputFileReader.ReadSingle()
+						'aBone.poseToBone20 = Me.theInputFileReader.ReadSingle()
+						'aBone.poseToBone21 = Me.theInputFileReader.ReadSingle()
+						'aBone.poseToBone22 = Me.theInputFileReader.ReadSingle()
+						'aBone.poseToBone23 = Me.theInputFileReader.ReadSingle()
+					End If
 
-						aBone.parentBoneIndex = Me.theInputFileReader.ReadInt32()
+					aBone.poseToBoneColumn0 = New SourceVector()
+					aBone.poseToBoneColumn1 = New SourceVector()
+					aBone.poseToBoneColumn2 = New SourceVector()
+					aBone.poseToBoneColumn3 = New SourceVector()
+					aBone.poseToBoneColumn0.x = Me.theInputFileReader.ReadSingle()
+					aBone.poseToBoneColumn1.x = Me.theInputFileReader.ReadSingle()
+					aBone.poseToBoneColumn2.x = Me.theInputFileReader.ReadSingle()
+					aBone.poseToBoneColumn3.x = Me.theInputFileReader.ReadSingle()
+					aBone.poseToBoneColumn0.y = Me.theInputFileReader.ReadSingle()
+					aBone.poseToBoneColumn1.y = Me.theInputFileReader.ReadSingle()
+					aBone.poseToBoneColumn2.y = Me.theInputFileReader.ReadSingle()
+					aBone.poseToBoneColumn3.y = Me.theInputFileReader.ReadSingle()
+					aBone.poseToBoneColumn0.z = Me.theInputFileReader.ReadSingle()
+					aBone.poseToBoneColumn1.z = Me.theInputFileReader.ReadSingle()
+					aBone.poseToBoneColumn2.z = Me.theInputFileReader.ReadSingle()
+					aBone.poseToBoneColumn3.z = Me.theInputFileReader.ReadSingle()
+					'------
+					'aBone.poseToBoneColumn0.x = Me.theInputFileReader.ReadSingle()
+					'aBone.poseToBoneColumn0.y = Me.theInputFileReader.ReadSingle()
+					'aBone.poseToBoneColumn0.z = Me.theInputFileReader.ReadSingle()
+					'aBone.poseToBoneColumn1.x = Me.theInputFileReader.ReadSingle()
+					'aBone.poseToBoneColumn1.y = Me.theInputFileReader.ReadSingle()
+					'aBone.poseToBoneColumn1.z = Me.theInputFileReader.ReadSingle()
+					'aBone.poseToBoneColumn2.x = Me.theInputFileReader.ReadSingle()
+					'aBone.poseToBoneColumn2.y = Me.theInputFileReader.ReadSingle()
+					'aBone.poseToBoneColumn2.z = Me.theInputFileReader.ReadSingle()
+					'aBone.poseToBoneColumn3.x = Me.theInputFileReader.ReadSingle()
+					'aBone.poseToBoneColumn3.y = Me.theInputFileReader.ReadSingle()
+					'aBone.poseToBoneColumn3.z = Me.theInputFileReader.ReadSingle()
 
-						'' Skip some fields.
-						'Me.theInputFileReader.ReadBytes(208)
-						'------
-						For j As Integer = 0 To aBone.boneControllerIndex.Length - 1
-							aBone.boneControllerIndex(j) = Me.theInputFileReader.ReadInt32()
+					If Me.theMdlFileData.version <> 2531 Then
+						aBone.qAlignment = New SourceQuaternion()
+						aBone.qAlignment.x = Me.theInputFileReader.ReadSingle()
+						aBone.qAlignment.y = Me.theInputFileReader.ReadSingle()
+						aBone.qAlignment.z = Me.theInputFileReader.ReadSingle()
+						aBone.qAlignment.w = Me.theInputFileReader.ReadSingle()
+					End If
+
+					aBone.flags = Me.theInputFileReader.ReadInt32()
+
+					aBone.proceduralRuleType = Me.theInputFileReader.ReadInt32()
+					aBone.proceduralRuleOffset = Me.theInputFileReader.ReadInt32()
+					aBone.physicsBoneIndex = Me.theInputFileReader.ReadInt32()
+					aBone.surfacePropNameOffset = Me.theInputFileReader.ReadInt32()
+					aBone.contents = Me.theInputFileReader.ReadInt32()
+
+					If Me.theMdlFileData.version <> 2531 Then
+						For k As Integer = 0 To 7
+							aBone.unused(k) = Me.theInputFileReader.ReadInt32()
 						Next
-						aBone.position = New SourceVector()
-						aBone.position.x = Me.theInputFileReader.ReadSingle()
-						aBone.position.y = Me.theInputFileReader.ReadSingle()
-						aBone.position.z = Me.theInputFileReader.ReadSingle()
-
-						aBone.quat = New SourceQuaternion()
-						aBone.quat.x = Me.theInputFileReader.ReadSingle()
-						aBone.quat.y = Me.theInputFileReader.ReadSingle()
-						aBone.quat.z = Me.theInputFileReader.ReadSingle()
-						aBone.quat.w = Me.theInputFileReader.ReadSingle()
-
-						If Me.theMdlFileData.version = 2531 Then
-							For j As Integer = 0 To aBone.animChannels.Length - 1
-								aBone.animChannels(j) = Me.theInputFileReader.ReadSingle()
-							Next
-						Else
-							aBone.rotation = New SourceVector()
-							aBone.rotation.x = Me.theInputFileReader.ReadSingle()
-							aBone.rotation.y = Me.theInputFileReader.ReadSingle()
-							aBone.rotation.z = Me.theInputFileReader.ReadSingle()
-							aBone.positionScale = New SourceVector()
-							aBone.positionScale.x = Me.theInputFileReader.ReadSingle()
-							aBone.positionScale.y = Me.theInputFileReader.ReadSingle()
-							aBone.positionScale.z = Me.theInputFileReader.ReadSingle()
-							aBone.rotationScale = New SourceVector()
-							aBone.rotationScale.x = Me.theInputFileReader.ReadSingle()
-							aBone.rotationScale.y = Me.theInputFileReader.ReadSingle()
-							aBone.rotationScale.z = Me.theInputFileReader.ReadSingle()
-							'aBone.poseToBone00 = Me.theInputFileReader.ReadSingle()
-							'aBone.poseToBone01 = Me.theInputFileReader.ReadSingle()
-							'aBone.poseToBone02 = Me.theInputFileReader.ReadSingle()
-							'aBone.poseToBone03 = Me.theInputFileReader.ReadSingle()
-							'aBone.poseToBone10 = Me.theInputFileReader.ReadSingle()
-							'aBone.poseToBone11 = Me.theInputFileReader.ReadSingle()
-							'aBone.poseToBone12 = Me.theInputFileReader.ReadSingle()
-							'aBone.poseToBone13 = Me.theInputFileReader.ReadSingle()
-							'aBone.poseToBone20 = Me.theInputFileReader.ReadSingle()
-							'aBone.poseToBone21 = Me.theInputFileReader.ReadSingle()
-							'aBone.poseToBone22 = Me.theInputFileReader.ReadSingle()
-							'aBone.poseToBone23 = Me.theInputFileReader.ReadSingle()
-						End If
-
-						aBone.poseToBoneColumn0 = New SourceVector()
-						aBone.poseToBoneColumn1 = New SourceVector()
-						aBone.poseToBoneColumn2 = New SourceVector()
-						aBone.poseToBoneColumn3 = New SourceVector()
-						aBone.poseToBoneColumn0.x = Me.theInputFileReader.ReadSingle()
-						aBone.poseToBoneColumn1.x = Me.theInputFileReader.ReadSingle()
-						aBone.poseToBoneColumn2.x = Me.theInputFileReader.ReadSingle()
-						aBone.poseToBoneColumn3.x = Me.theInputFileReader.ReadSingle()
-						aBone.poseToBoneColumn0.y = Me.theInputFileReader.ReadSingle()
-						aBone.poseToBoneColumn1.y = Me.theInputFileReader.ReadSingle()
-						aBone.poseToBoneColumn2.y = Me.theInputFileReader.ReadSingle()
-						aBone.poseToBoneColumn3.y = Me.theInputFileReader.ReadSingle()
-						aBone.poseToBoneColumn0.z = Me.theInputFileReader.ReadSingle()
-						aBone.poseToBoneColumn1.z = Me.theInputFileReader.ReadSingle()
-						aBone.poseToBoneColumn2.z = Me.theInputFileReader.ReadSingle()
-						aBone.poseToBoneColumn3.z = Me.theInputFileReader.ReadSingle()
-						'------
-						'aBone.poseToBoneColumn0.x = Me.theInputFileReader.ReadSingle()
-						'aBone.poseToBoneColumn0.y = Me.theInputFileReader.ReadSingle()
-						'aBone.poseToBoneColumn0.z = Me.theInputFileReader.ReadSingle()
-						'aBone.poseToBoneColumn1.x = Me.theInputFileReader.ReadSingle()
-						'aBone.poseToBoneColumn1.y = Me.theInputFileReader.ReadSingle()
-						'aBone.poseToBoneColumn1.z = Me.theInputFileReader.ReadSingle()
-						'aBone.poseToBoneColumn2.x = Me.theInputFileReader.ReadSingle()
-						'aBone.poseToBoneColumn2.y = Me.theInputFileReader.ReadSingle()
-						'aBone.poseToBoneColumn2.z = Me.theInputFileReader.ReadSingle()
-						'aBone.poseToBoneColumn3.x = Me.theInputFileReader.ReadSingle()
-						'aBone.poseToBoneColumn3.y = Me.theInputFileReader.ReadSingle()
-						'aBone.poseToBoneColumn3.z = Me.theInputFileReader.ReadSingle()
-
-						If Me.theMdlFileData.version <> 2531 Then
-							aBone.qAlignment = New SourceQuaternion()
-							aBone.qAlignment.x = Me.theInputFileReader.ReadSingle()
-							aBone.qAlignment.y = Me.theInputFileReader.ReadSingle()
-							aBone.qAlignment.z = Me.theInputFileReader.ReadSingle()
-							aBone.qAlignment.w = Me.theInputFileReader.ReadSingle()
-						End If
-
-						aBone.flags = Me.theInputFileReader.ReadInt32()
-
-						aBone.proceduralRuleType = Me.theInputFileReader.ReadInt32()
-						aBone.proceduralRuleOffset = Me.theInputFileReader.ReadInt32()
-						aBone.physicsBoneIndex = Me.theInputFileReader.ReadInt32()
-						aBone.surfacePropNameOffset = Me.theInputFileReader.ReadInt32()
-						aBone.contents = Me.theInputFileReader.ReadInt32()
-
-						If Me.theMdlFileData.version <> 2531 Then
-							For k As Integer = 0 To 7
-								aBone.unused(k) = Me.theInputFileReader.ReadInt32()
-							Next
-						End If
 					End If
 
 					Me.theMdlFileData.theBones.Add(aBone)
@@ -857,7 +840,7 @@ Public Class SourceMdlFile44
 				inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 
 				If aHitbox.nameOffset <> 0 Then
-					Me.theInputFileReader.BaseStream.Seek(hitboxInputFileStreamPosition + aHitbox.nameOffset, SeekOrigin.Begin)
+					Me.theInputFileReader.BaseStream.Seek(aHitbox.nameOffset, SeekOrigin.Begin)
 					fileOffsetStart2 = Me.theInputFileReader.BaseStream.Position
 
 					aHitbox.theName = FileManager.ReadNullTerminatedString(Me.theInputFileReader)
@@ -2906,9 +2889,9 @@ Public Class SourceMdlFile44
 				'mouthInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 				Dim aMouth As New SourceMdlMouth()
 				aMouth.boneIndex = Me.theInputFileReader.ReadInt32()
-				aMouth.forwardX = Me.theInputFileReader.ReadSingle()
-				aMouth.forwardY = Me.theInputFileReader.ReadSingle()
-				aMouth.forwardZ = Me.theInputFileReader.ReadSingle()
+				aMouth.forward.x = Me.theInputFileReader.ReadSingle()
+				aMouth.forward.y = Me.theInputFileReader.ReadSingle()
+				aMouth.forward.z = Me.theInputFileReader.ReadSingle()
 				aMouth.flexDescIndex = Me.theInputFileReader.ReadInt32()
 				Me.theMdlFileData.theMouths.Add(aMouth)
 

@@ -16,9 +16,7 @@ Public Class SourceMdlMouth
 	'	int					bone;
 	Public boneIndex As Integer
 	'	Vector				forward;
-	Public forwardX As Single
-	Public forwardY As Single
-	Public forwardZ As Single
+	Public forward As New SourceVector()
 	'	int					flexdesc;
 	Public flexDescIndex As Integer
 

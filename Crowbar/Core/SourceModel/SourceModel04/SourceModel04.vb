@@ -39,7 +39,7 @@ Public Class SourceModel04
 
 #Region "Private Methods"
 
-	Protected Overrides Sub ReadMdlFileHeader()
+	Protected Overrides Sub ReadMdlFileHeader_Internal()
 		If Me.theMdlFileData Is Nothing Then
 			Me.theMdlFileData = New SourceMdlFileData04()
 			Me.theMdlFileDataGeneric = Me.theMdlFileData
@@ -50,7 +50,7 @@ Public Class SourceModel04
 		mdlFile.ReadMdlHeader()
 	End Sub
 
-	Protected Overrides Sub ReadMdlFileForViewer()
+	Protected Overrides Sub ReadMdlFileForViewer_Internal()
 		If Me.theMdlFileData Is Nothing Then
 			Me.theMdlFileData = New SourceMdlFileData04()
 			Me.theMdlFileDataGeneric = Me.theMdlFileData

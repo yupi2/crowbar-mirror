@@ -3,12 +3,7 @@ Imports System.ComponentModel
 
 Public MustInherit Class SourceModel
 
-#Region "Creation and Destruction"
-
-	Protected Sub New(ByVal mdlPathFileName As String)
-		Me.theMdlPathFileName = mdlPathFileName
-		Me.theName = Path.GetFileNameWithoutExtension(mdlPathFileName)
-	End Sub
+#Region "Shared"
 
 	Public Shared Function Create(ByVal mdlPathFileName As String) As SourceModel
 		Dim model As SourceModel = Nothing
@@ -18,9 +13,10 @@ Public MustInherit Class SourceModel
 			version = SourceModel.GetVersion(mdlPathFileName)
 
 			'TODO: Insert ranges of versions when some are not implemented.
-			If version = 4 Then
-				'model = New SourceModel04(mdlPathFileName)
-			ElseIf version = 6 Then
+			'If version = 4 Then
+			'	model = New SourceModel04(mdlPathFileName)
+			'ElseIf version = 6 Then
+			If version = 6 Then
 				model = New SourceModel06(mdlPathFileName)
 			ElseIf version = 10 Then
 				model = New SourceModel10(mdlPathFileName)
@@ -57,43 +53,85 @@ Public MustInherit Class SourceModel
 	End Function
 
 	Public Shared Function GetVersion() As Integer
-		Return SourceModel.sharedVersion
+		Return SourceModel.version_shared
 	End Function
+
+	Private Shared Function GetVersion(mdlPathFileName As String) As Integer
+		Dim inputFileStream As FileStream
+		Dim inputFileReader As BinaryReader
+
+		SourceModel.version_shared = -1
+		inputFileStream = Nothing
+		inputFileReader = Nothing
+		Try
+			inputFileStream = New FileStream(mdlPathFileName, FileMode.Open)
+			If inputFileStream IsNot Nothing Then
+				Try
+					'NOTE: Important to set System.Text.Encoding.ASCII so that ReadChars() only reads in one byte per Char.
+					inputFileReader = New BinaryReader(inputFileStream, System.Text.Encoding.ASCII)
+
+					Dim id As String
+					id = inputFileReader.ReadChars(4)
+					If id = "IDST" Then
+						SourceModel.version_shared = inputFileReader.ReadInt32()
+					Else
+						Throw New FormatException("File does not have expected MDL header ID (first 4 bytes of file) of 'IDST' (without quotes). MDL file is not a GoldSource- or Source-engine MDL file.")
+					End If
+				Catch ex As Exception
+					Dim debug As Integer = 4242
+				Finally
+					If inputFileReader IsNot Nothing Then
+						inputFileReader.Close()
+					End If
+				End Try
+			End If
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		Finally
+			If inputFileStream IsNot Nothing Then
+				inputFileStream.Close()
+			End If
+		End Try
+
+		Return SourceModel.version_shared
+	End Function
+
+	Private Shared version_shared As Integer
+
+#End Region
+
+#Region "Creation and Destruction"
+
+	Protected Sub New(ByVal mdlPathFileName As String)
+		Me.theMdlPathFileName = mdlPathFileName
+		Me.theName = Path.GetFileNameWithoutExtension(mdlPathFileName)
+	End Sub
 
 #End Region
 
 #Region "Properties - Model Data"
 
-	Public Property Name() As String
-		Get
-			Return Me.theName
-		End Get
-		Set(ByVal value As String)
-			Me.theName = value
-		End Set
-	End Property
-
-	Public Overridable ReadOnly Property ID() As String
+	Public ReadOnly Property ID() As String
 		Get
 			Return Me.theMdlFileDataGeneric.theID
 		End Get
+	End Property
+
+	Public ReadOnly Property Name() As String
+		Get
+			Return Me.theName
+		End Get
+		'Set(ByVal value As String)
+		'	Me.theName = value
+		'End Set
 	End Property
 
 #End Region
 
 #Region "Properties - File-Related"
 
-	Public Overridable ReadOnly Property AniFileIsUsed As Boolean
-		Get
-			Return False
-		End Get
-	End Property
-
-	Public Overridable ReadOnly Property PhyFileIsUsed As Boolean
-		Get
-			Return False
-		End Get
-	End Property
+	' The *Used properties should return whether the files are actually referred to by the MDL file.
+	' For the PHY file and others that have no reference in the MDL file, simply return whether each file exists.
 
 	Public Overridable ReadOnly Property SequenceGroupMdlFilesAreUsed As Boolean
 		Get
@@ -107,7 +145,19 @@ Public MustInherit Class SourceModel
 		End Get
 	End Property
 
+	Public Overridable ReadOnly Property PhyFileIsUsed As Boolean
+		Get
+			Return False
+		End Get
+	End Property
+
 	Public Overridable ReadOnly Property VtxFileIsUsed As Boolean
+		Get
+			Return False
+		End Get
+	End Property
+
+	Public Overridable ReadOnly Property AniFileIsUsed As Boolean
 		Get
 			Return False
 		End Get
@@ -193,6 +243,20 @@ Public MustInherit Class SourceModel
 
 #Region "Methods"
 
+	Public Overridable Function ReadMdlFileHeader() As AppEnums.StatusMessage
+		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+
+		If Not File.Exists(Me.theMdlPathFileName) Then
+			status = StatusMessage.ErrorRequiredMdlFileNotFound
+		End If
+
+		If status = StatusMessage.Success Then
+			Me.ReadFile(Me.theMdlPathFileName, AddressOf Me.ReadMdlFileHeader_Internal)
+		End If
+
+		Return status
+	End Function
+
 	Public Overridable Function CheckForRequiredFiles() As StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
@@ -201,7 +265,7 @@ Public MustInherit Class SourceModel
 		Return status
 	End Function
 
-	Public Overridable Function ReadAniFile(ByVal mdlPathFileName As String) As AppEnums.StatusMessage
+	Public Overridable Function ReadAniFile() As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
 		status = StatusMessage.Error
@@ -209,7 +273,7 @@ Public MustInherit Class SourceModel
 		Return status
 	End Function
 
-	Public Overridable Function ReadSequenceGroupMdlFiles(ByVal mdlPathFileName As String) As AppEnums.StatusMessage
+	Public Overridable Function ReadSequenceGroupMdlFiles() As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
 		status = StatusMessage.Error
@@ -217,7 +281,7 @@ Public MustInherit Class SourceModel
 		Return status
 	End Function
 
-	Public Overridable Function ReadTextureMdlFile(ByVal mdlPathFileName As String) As AppEnums.StatusMessage
+	Public Overridable Function ReadTextureMdlFile() As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
 		status = StatusMessage.Error
@@ -225,7 +289,7 @@ Public MustInherit Class SourceModel
 		Return status
 	End Function
 
-	Public Overridable Function ReadPhyFile(ByVal mdlPathFileName As String) As AppEnums.StatusMessage
+	Public Overridable Function ReadPhyFile() As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
 		status = StatusMessage.Error
@@ -233,11 +297,11 @@ Public MustInherit Class SourceModel
 		Return status
 	End Function
 
-	Public Overridable Function ReadMdlFile(ByVal mdlPathFileName As String) As AppEnums.StatusMessage
+	Public Overridable Function ReadMdlFile() As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
 		Try
-			Me.ReadFile(mdlPathFileName, AddressOf Me.ReadMdlFile)
+			Me.ReadFile(Me.theMdlPathFileName, AddressOf Me.ReadMdlFile_Internal)
 		Catch ex As Exception
 			status = StatusMessage.Error
 		End Try
@@ -245,7 +309,7 @@ Public MustInherit Class SourceModel
 		Return status
 	End Function
 
-	Public Overridable Function ReadVtxFile(ByVal mdlPathFileName As String) As AppEnums.StatusMessage
+	Public Overridable Function ReadVtxFile() As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
 		If String.IsNullOrEmpty(Me.theVtxPathFileName) Then
@@ -253,13 +317,13 @@ Public MustInherit Class SourceModel
 		End If
 
 		If status = StatusMessage.Success Then
-			Me.ReadFile(Me.theVtxPathFileName, AddressOf Me.ReadVtxFile)
+			Me.ReadFile(Me.theVtxPathFileName, AddressOf Me.ReadVtxFile_Internal)
 		End If
 
 		Return status
 	End Function
 
-	Public Overridable Function ReadVvdFile(ByVal mdlPathFileName As String) As AppEnums.StatusMessage
+	Public Overridable Function ReadVvdFile() As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
 		If String.IsNullOrEmpty(Me.theVvdPathFileName) Then
@@ -267,39 +331,25 @@ Public MustInherit Class SourceModel
 		End If
 
 		If status = StatusMessage.Success Then
-			Me.ReadFile(Me.theVvdPathFileName, AddressOf Me.ReadVvdFile)
+			Me.ReadFile(Me.theVvdPathFileName, AddressOf Me.ReadVvdFile_Internal)
 		End If
 
 		Return status
 	End Function
 
-	Public Overridable Function ReadMdlFileHeader(ByVal mdlPathFileName As String) As AppEnums.StatusMessage
-		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+	'Public Overridable Function ReadMdlFileForViewer() As AppEnums.StatusMessage
+	'	Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
-		If Not File.Exists(mdlPathFileName) Then
-			status = StatusMessage.ErrorRequiredMdlFileNotFound
-		End If
+	'	If Not File.Exists(Me.theMdlPathFileName) Then
+	'		status = StatusMessage.ErrorRequiredMdlFileNotFound
+	'	End If
 
-		If status = StatusMessage.Success Then
-			Me.ReadFile(mdlPathFileName, AddressOf Me.ReadMdlFileHeader)
-		End If
+	'	If status = StatusMessage.Success Then
+	'		Me.ReadFile(Me.theMdlPathFileName, AddressOf Me.ReadMdlFileForViewer_Internal)
+	'	End If
 
-		Return status
-	End Function
-
-	Public Overridable Function ReadMdlFileForViewer(ByVal mdlPathFileName As String) As AppEnums.StatusMessage
-		Dim status As AppEnums.StatusMessage = StatusMessage.Success
-
-		If Not File.Exists(mdlPathFileName) Then
-			status = StatusMessage.ErrorRequiredMdlFileNotFound
-		End If
-
-		If status = StatusMessage.Success Then
-			Me.ReadFile(mdlPathFileName, AddressOf Me.ReadMdlFileForViewer)
-		End If
-
-		Return status
-	End Function
+	'	Return status
+	'End Function
 
 	Public Overridable Function WriteQcFile(ByVal qcPathFileName As String) As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
@@ -396,12 +446,12 @@ Public MustInherit Class SourceModel
 	End Function
 
 	Public Overridable Sub WriteMdlFileNameToMdlFile(ByVal mdlPathFileName As String, ByVal internalMdlFileName As String)
-		Me.ReadFile(mdlPathFileName, AddressOf Me.ReadMdlFileHeader)
+		Me.ReadFile(mdlPathFileName, AddressOf Me.ReadMdlFileHeader_Internal)
 		Me.WriteFile(mdlPathFileName, AddressOf Me.WriteMdlFileNameToMdlFile, internalMdlFileName, Me.theMdlFileDataGeneric)
 	End Sub
 
 	Public Overridable Sub WriteAniFileNameToMdlFile(ByVal mdlPathFileName As String, ByVal internalMdlFileName As String)
-		Me.ReadFile(mdlPathFileName, AddressOf Me.ReadMdlFileHeader)
+		Me.ReadFile(mdlPathFileName, AddressOf Me.ReadMdlFileHeader_Internal)
 		Dim internalAniFileName As String
 		internalAniFileName = Path.Combine("models", Path.ChangeExtension(internalMdlFileName, ".ani"))
 		Me.WriteFile(mdlPathFileName, AddressOf Me.WriteAniFileNameToMdlFile, internalAniFileName, Me.theMdlFileDataGeneric)
@@ -419,7 +469,7 @@ Public MustInherit Class SourceModel
 		Dim textLines As New List(Of String)()
 
 		Try
-			Me.ReadFile(mdlPathFileName, AddressOf Me.ReadMdlFileForViewer)
+			Me.ReadFile(mdlPathFileName, AddressOf Me.ReadMdlFileForViewer_Internal)
 
 			Me.GetHeaderDataFromMdlFile(textLines)
 			textLines.Add("")
@@ -451,15 +501,15 @@ Public MustInherit Class SourceModel
 
 #Region "Protected Methods"
 
-	Protected Overridable Sub ReadAniFile()
+	Protected Overridable Sub ReadAniFile_Internal()
 
 	End Sub
 
-	Protected Overridable Sub ReadMdlFile()
+	Protected Overridable Sub ReadMdlFile_Internal()
 
 	End Sub
 
-	Protected Overridable Sub ReadPhyFile()
+	Protected Overridable Sub ReadPhyFile_Internal()
 
 	End Sub
 
@@ -498,15 +548,15 @@ Public MustInherit Class SourceModel
 
 	End Sub
 
-	Protected Overridable Sub ReadTextureMdlFile()
+	Protected Overridable Sub ReadTextureMdlFile_Internal()
 
 	End Sub
 
-	Protected Overridable Sub ReadVtxFile()
+	Protected Overridable Sub ReadVtxFile_Internal()
 
 	End Sub
 
-	Protected Overridable Sub ReadVvdFile()
+	Protected Overridable Sub ReadVvdFile_Internal()
 
 	End Sub
 
@@ -538,11 +588,11 @@ Public MustInherit Class SourceModel
 
 	End Sub
 
-	Protected Overridable Sub ReadMdlFileHeader()
+	Protected Overridable Sub ReadMdlFileHeader_Internal()
 
 	End Sub
 
-	Protected Overridable Sub ReadMdlFileForViewer()
+	Protected Overridable Sub ReadMdlFileForViewer_Internal()
 
 	End Sub
 
@@ -660,46 +710,6 @@ Public MustInherit Class SourceModel
 #End Region
 
 #Region "Private Methods"
-
-	Private Shared Function GetVersion(mdlPathFileName As String) As Integer
-		Dim inputFileStream As FileStream
-		Dim inputFileReader As BinaryReader
-
-		SourceModel.sharedVersion = -1
-		inputFileStream = Nothing
-		inputFileReader = Nothing
-		Try
-			inputFileStream = New FileStream(mdlPathFileName, FileMode.Open)
-			If inputFileStream IsNot Nothing Then
-				Try
-					'NOTE: Important to set System.Text.Encoding.ASCII so that ReadChars() only reads in one byte per Char.
-					inputFileReader = New BinaryReader(inputFileStream, System.Text.Encoding.ASCII)
-
-					Dim id As String
-					id = inputFileReader.ReadChars(4)
-					If id = "IDST" Then
-						SourceModel.sharedVersion = inputFileReader.ReadInt32()
-					Else
-						Throw New FormatException("File does not have expected MDL header ID (first 4 bytes of file) of 'IDST' (without quotes). MDL file is not a GoldSource- or Source-engine MDL file.")
-					End If
-				Catch ex As Exception
-					Dim debug As Integer = 4242
-				Finally
-					If inputFileReader IsNot Nothing Then
-						inputFileReader.Close()
-					End If
-				End Try
-			End If
-		Catch ex As Exception
-			Dim debug As Integer = 4242
-		Finally
-			If inputFileStream IsNot Nothing Then
-				inputFileStream.Close()
-			End If
-		End Try
-
-		Return SourceModel.sharedVersion
-	End Function
 
 	Private Sub GetHeaderDataFromMdlFile(ByVal ioTextLines As List(Of String))
 		ioTextLines.Add("=== General Info ===")
@@ -839,8 +849,6 @@ Public MustInherit Class SourceModel
 
 #Region "Data"
 
-	Private Shared sharedVersion As Integer
-
 	Protected theName As String
 
 	Protected theMdlFileDataGeneric As SourceMdlFileDataBase
@@ -856,6 +864,7 @@ Public MustInherit Class SourceModel
 	Protected theAniPathFileName As String
 	Protected thePhyPathFileName As String
 	Protected theMdlPathFileName As String
+	Protected theSequenceGroupMdlPathFileNames As List(Of String)
 	Protected theTextureMdlPathFileName As String
 	Protected theVtxPathFileName As String
 	Protected theVvdPathFileName As String

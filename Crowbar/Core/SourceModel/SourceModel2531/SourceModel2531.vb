@@ -13,18 +13,6 @@ Public Class SourceModel2531
 
 #Region "Properties"
 
-	Public Overrides ReadOnly Property PhyFileIsUsed As Boolean
-		Get
-			Return True
-		End Get
-	End Property
-
-	Public Overrides ReadOnly Property VtxFileIsUsed As Boolean
-		Get
-			Return True
-		End Get
-	End Property
-
 	Public Overrides ReadOnly Property SequenceGroupMdlFilesAreUsed As Boolean
 		Get
 			Return False
@@ -34,6 +22,18 @@ Public Class SourceModel2531
 	Public Overrides ReadOnly Property TextureMdlFileIsUsed As Boolean
 		Get
 			Return False
+		End Get
+	End Property
+
+	Public Overrides ReadOnly Property PhyFileIsUsed As Boolean
+		Get
+			Return Not String.IsNullOrEmpty(Me.thePhyPathFileName) AndAlso File.Exists(Me.thePhyPathFileName)
+		End Get
+	End Property
+
+	Public Overrides ReadOnly Property VtxFileIsUsed As Boolean
+		Get
+			Return Not String.IsNullOrEmpty(Me.theVtxPathFileName) AndAlso File.Exists(Me.theVtxPathFileName)
 		End Get
 	End Property
 
@@ -141,7 +141,7 @@ Public Class SourceModel2531
 		Return status
 	End Function
 
-	Public Overrides Function ReadPhyFile(ByVal mdlPathFileName As String) As AppEnums.StatusMessage
+	Public Overrides Function ReadPhyFile() As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
 		If String.IsNullOrEmpty(Me.thePhyPathFileName) Then
@@ -150,7 +150,7 @@ Public Class SourceModel2531
 
 		If status = StatusMessage.Success Then
 			Try
-				Me.ReadFile(Me.thePhyPathFileName, AddressOf Me.ReadPhyFile)
+				Me.ReadFile(Me.thePhyPathFileName, AddressOf Me.ReadPhyFile_Internal)
 				If Me.thePhyFileData.checksum <> Me.theMdlFileData.checksum Then
 					'status = StatusMessage.WarningPhyChecksumDoesNotMatchMdl
 					Me.NotifySourceModelProgress(ProgressOptions.WarningPhyFileChecksumDoesNotMatchMdlFileChecksum, "")
@@ -306,7 +306,7 @@ Public Class SourceModel2531
 
 #Region "Private Methods"
 
-	Protected Overrides Sub ReadMdlFileHeader()
+	Protected Overrides Sub ReadMdlFileHeader_Internal()
 		If Me.theMdlFileData Is Nothing Then
 			Me.theMdlFileData = New SourceMdlFileData2531()
 			Me.theMdlFileDataGeneric = Me.theMdlFileData
@@ -321,7 +321,7 @@ Public Class SourceModel2531
 		'End If
 	End Sub
 
-	Protected Overrides Sub ReadMdlFileForViewer()
+	Protected Overrides Sub ReadMdlFileForViewer_Internal()
 		If Me.theMdlFileData Is Nothing Then
 			Me.theMdlFileData = New SourceMdlFileData2531()
 			Me.theMdlFileDataGeneric = Me.theMdlFileData
@@ -335,7 +335,7 @@ Public Class SourceModel2531
 		mdlFile.ReadTextures()
 	End Sub
 
-	Protected Overrides Sub ReadMdlFile()
+	Protected Overrides Sub ReadMdlFile_Internal()
 		If Me.theMdlFileData Is Nothing Then
 			Me.theMdlFileData = New SourceMdlFileData2531()
 			Me.theMdlFileDataGeneric = Me.theMdlFileData
@@ -376,7 +376,7 @@ Public Class SourceModel2531
 		mdlFile.CreateFlexFrameList()
 	End Sub
 
-	Protected Overrides Sub ReadPhyFile()
+	Protected Overrides Sub ReadPhyFile_Internal()
 		If Me.thePhyFileData Is Nothing Then
 			Me.thePhyFileData = New SourcePhyFileData2531()
 		End If
@@ -395,7 +395,7 @@ Public Class SourceModel2531
 		End If
 	End Sub
 
-	Protected Overrides Sub ReadVtxFile()
+	Protected Overrides Sub ReadVtxFile_Internal()
 		If Me.theVtxFileData Is Nothing Then
 			Me.theVtxFileData = New SourceVtxFileData107()
 		End If

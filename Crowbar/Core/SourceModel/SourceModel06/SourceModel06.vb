@@ -201,7 +201,7 @@ Public Class SourceModel06
 
 #Region "Private Methods"
 
-	Protected Overrides Sub ReadMdlFileHeader()
+	Protected Overrides Sub ReadMdlFileHeader_Internal()
 		If Me.theMdlFileData Is Nothing Then
 			Me.theMdlFileData = New SourceMdlFileData06()
 			Me.theMdlFileDataGeneric = Me.theMdlFileData
@@ -210,13 +210,9 @@ Public Class SourceModel06
 		Dim mdlFile As New SourceMdlFile06(Me.theInputFileReader, Me.theMdlFileData)
 
 		mdlFile.ReadMdlHeader()
-
-		'If Me.theMdlFileData.fileSize <> Me.theMdlFileData.theActualFileSize Then
-		'	status = StatusMessage.ErrorInvalidInternalMdlFileSize
-		'End If
 	End Sub
 
-	Protected Overrides Sub ReadMdlFileForViewer()
+	Protected Overrides Sub ReadMdlFileForViewer_Internal()
 		If Me.theMdlFileData Is Nothing Then
 			Me.theMdlFileData = New SourceMdlFileData06()
 			Me.theMdlFileDataGeneric = Me.theMdlFileData
@@ -230,7 +226,7 @@ Public Class SourceModel06
 		mdlFile.ReadTextures()
 	End Sub
 
-	Protected Overrides Sub ReadMdlFile()
+	Protected Overrides Sub ReadMdlFile_Internal()
 		If Me.theMdlFileData Is Nothing Then
 			Me.theMdlFileData = New SourceMdlFileData06()
 			Me.theMdlFileDataGeneric = Me.theMdlFileData

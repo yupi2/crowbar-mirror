@@ -572,9 +572,9 @@ Public Class SourceQcFile48
 			For i As Integer = 0 To Me.theMdlFileData.theMouths.Count - 1
 				Dim aMouth As SourceMdlMouth
 				aMouth = Me.theMdlFileData.theMouths(i)
-				offsetX = Math.Round(aMouth.forwardX, 3)
-				offsetY = Math.Round(aMouth.forwardY, 3)
-				offsetZ = Math.Round(aMouth.forwardZ, 3)
+				offsetX = Math.Round(aMouth.forward.x, 3)
+				offsetY = Math.Round(aMouth.forward.y, 3)
+				offsetZ = Math.Round(aMouth.forward.z, 3)
 
 				line = vbTab
 				line += "mouth "

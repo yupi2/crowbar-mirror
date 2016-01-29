@@ -1142,9 +1142,9 @@ Public Class AppDebug1File
 				Me.WriteLogLine(1, DebugFormatModule.FormatIndexLine("Mouth", i))
 
 				Me.WriteLogLine(1, DebugFormatModule.FormatIntegerLine("00 boneIndex", aMouth.boneIndex) + " (" + aMdlFileHeader.theBones(aMouth.boneIndex).theName + ")")
-				Me.WriteLogLine(1, DebugFormatModule.FormatSingleFloatLine("04 forwardX", aMouth.forwardX))
-				Me.WriteLogLine(1, DebugFormatModule.FormatSingleFloatLine("08 forwardY", aMouth.forwardY))
-				Me.WriteLogLine(1, DebugFormatModule.FormatSingleFloatLine("0C forwardZ", aMouth.forwardZ))
+				Me.WriteLogLine(1, DebugFormatModule.FormatDoubleFloatLine("04 forwardX", aMouth.forward.x))
+				Me.WriteLogLine(1, DebugFormatModule.FormatDoubleFloatLine("08 forwardY", aMouth.forward.y))
+				Me.WriteLogLine(1, DebugFormatModule.FormatDoubleFloatLine("0C forwardZ", aMouth.forward.z))
 				Me.WriteLogLine(1, DebugFormatModule.FormatIntegerLine("10 flexDescIndex", aMouth.flexDescIndex) + " (" + aMdlFileHeader.theFlexDescs(aMouth.flexDescIndex).theName + ")")
 				line = "--------------------"
 				Me.WriteLogLine(1, line)

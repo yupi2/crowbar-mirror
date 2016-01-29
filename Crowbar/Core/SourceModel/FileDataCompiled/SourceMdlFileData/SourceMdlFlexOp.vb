@@ -62,6 +62,7 @@ Public Class SourceMdlFlexOp
 	Public op As Integer
 
 	Public index As Integer
+	'------
 	Public value As Double
 
 End Class

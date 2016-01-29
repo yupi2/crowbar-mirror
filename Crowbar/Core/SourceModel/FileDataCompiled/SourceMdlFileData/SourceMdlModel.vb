@@ -71,11 +71,6 @@ Public Class SourceMdlModel
 	'	int					unused[8];		// remove as appropriate
 	Public unused(7) As Integer
 
-	'FROM: MDLConverter for VtMB
-	'// - BKH - Sep 9, 2012 - Added access functions to get at the embedded vertices
-	'int VertexListType;
-	Public vertexListType As Integer
-
 
 	Public theMeshes As List(Of SourceMdlMesh)
 	Public theEyeballs As List(Of SourceMdlEyeball)
