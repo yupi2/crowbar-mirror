@@ -82,7 +82,6 @@ Public Class SourcePhyFile
 	Private Sub ReadSourceCollisionData()
 		'Me.thePhyCollisionDataList = New List(Of SourcePhyCollisionData)()
 
-		Dim vphyId(3) As Char
 		Dim ivpsId(3) As Char
 		Dim triangleCount As Integer
 		Dim triangleIndex As Integer
@@ -115,9 +114,9 @@ Public Class SourcePhyFile
 
 			phyDataStreamPosition = Me.theInputFileReader.BaseStream.Position
 			'56 50 48 59   VPHY
+			Dim vphyId(3) As Char
 			vphyId = Me.theInputFileReader.ReadChars(4)
 			Me.theInputFileReader.BaseStream.Seek(phyDataStreamPosition, SeekOrigin.Begin)
-
 			If vphyId <> "VPHY" Then
 				Me.ReadPhyData_VERSION37()
 			Else
@@ -425,6 +424,10 @@ Public Class SourcePhyFile
 
 	Private Sub ReadPhyData_VERSION48()
 		Dim tempInt As Integer
+
+		'56 50 48 59   VPHY
+		Dim vphyId(3) As Char
+		vphyId = Me.theInputFileReader.ReadChars(4)
 
 		'00 01         version?
 		'00 00         model type?
