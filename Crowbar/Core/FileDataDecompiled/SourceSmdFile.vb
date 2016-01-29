@@ -66,6 +66,7 @@ Public Class SourceSmdFile
 		End If
 		TheApp.SmdFilesWritten.Add(pathFileName)
 
+		Me.theOutputFileStream = Nothing
 		Try
 			Me.theOutputFileStream = File.CreateText(pathFileName)
 
@@ -82,9 +83,13 @@ Public Class SourceSmdFile
 				Me.WriteSkeletonSectionForAnimation(aSequenceDesc, anAnimationDesc)
 			End If
 		Catch ex As Exception
+			Dim debug As Integer = 4242
 		Finally
-			Me.theOutputFileStream.Flush()
-			Me.theOutputFileStream.Close()
+			If Me.theOutputFileStream IsNot Nothing Then
+				Me.theOutputFileStream.Flush()
+				Me.theOutputFileStream.Close()
+				Me.theOutputFileStream = Nothing
+			End If
 		End Try
 
 		Return True

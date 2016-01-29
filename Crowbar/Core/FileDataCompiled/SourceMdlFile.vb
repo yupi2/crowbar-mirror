@@ -1628,13 +1628,19 @@ Public Class SourceMdlFile
                 '	anAnimDesc.theName = anAnimDesc.theName.Remove(0, 1)
                 'End If
 
-                fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
-                If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-                    Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "anAnimationDesc.theName")
-                End If
-            Else
-                anAnimationDesc.theName = ""
-            End If
+				'NOTE: This naming is found in Garry's Mod garrysmod_dir.vpk "\models\m_anm.mdl":  "a_../combine_soldier_xsi/Hold_AR2_base.smd"
+				If anAnimationDesc.theName.StartsWith("a_../") OrElse anAnimationDesc.theName.StartsWith("a_..\") Then
+					anAnimationDesc.theName = anAnimationDesc.theName.Remove(0, 5)
+					anAnimationDesc.theName = Path.Combine(FileManager.GetPath(anAnimationDesc.theName), "a_" + Path.GetFileName(anAnimationDesc.theName))
+				End If
+
+					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
+					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
+						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "anAnimationDesc.theName")
+					End If
+				Else
+					anAnimationDesc.theName = ""
+				End If
 
             If Me.theMdlFileData.theFirstAnimationDesc Is Nothing AndAlso anAnimationDesc.theName(0) <> "@" Then
                 Me.theMdlFileData.theFirstAnimationDesc = anAnimationDesc

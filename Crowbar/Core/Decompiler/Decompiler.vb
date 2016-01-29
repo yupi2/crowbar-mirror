@@ -402,11 +402,13 @@ Public Class Decompiler
 					End If
 				End If
 
-				vvdPathFileName = Path.ChangeExtension(mdlPathFileName, ".vvd")
-				If Not File.Exists(vvdPathFileName) Then
-					Me.UpdateProgress(4, "ERROR: VVD file not found.")
-					status = StatusMessage.ErrorRequiredFileNotFound
-					Return status
+				If TheSourceEngineModel.MdlFileHeader.version > 37 Then
+					vvdPathFileName = Path.ChangeExtension(mdlPathFileName, ".vvd")
+					If Not File.Exists(vvdPathFileName) Then
+						Me.UpdateProgress(4, "ERROR: VVD file not found.")
+						status = StatusMessage.ErrorRequiredFileNotFound
+						Return status
+					End If
 				End If
 				'End If
 			End If
@@ -425,8 +427,15 @@ Public Class Decompiler
 				Me.UpdateProgress(3, "Reading PHY file ...")
 				Dim phyFile As SourcePhyFile
 				phyFile = New SourcePhyFile()
-				phyFile.ReadFile(phyPathFileName, TheSourceEngineModel)
-				Me.UpdateProgress(3, "... Reading PHY file finished.")
+				Try
+					phyFile.ReadFile(phyPathFileName, TheSourceEngineModel)
+					If TheSourceEngineModel.PhyFileHeader.checksum <> TheSourceEngineModel.MdlFileHeader.checksum Then
+						Me.UpdateProgress(4, "WARNING: The PHY file's checksum value is not the same as the MDL file's checksum value.")
+					End If
+					Me.UpdateProgress(3, "... Reading PHY file finished.")
+				Catch ex As Exception
+					Me.UpdateProgress(3, "... Reading PHY file FAILED. (Probably unexpected format.)")
+				End Try
 			End If
 		End If
 
@@ -466,11 +475,13 @@ Public Class Decompiler
 				vtxFile.ReadFile(vtxPathFileName, TheSourceEngineModel)
 				Me.UpdateProgress(3, "... Reading VTX file finished.")
 
-				Me.UpdateProgress(3, "Reading VVD file ...")
-				Dim vvdFile As SourceVvdFile
-				vvdFile = New SourceVvdFile()
-				vvdFile.ReadFile(vvdPathFileName, TheSourceEngineModel)
-				Me.UpdateProgress(3, "... Reading VVD file finished.")
+				If TheSourceEngineModel.MdlFileHeader.version > 37 Then
+					Me.UpdateProgress(3, "Reading VVD file ...")
+					Dim vvdFile As SourceVvdFile
+					vvdFile = New SourceVvdFile()
+					vvdFile.ReadFile(vvdPathFileName, TheSourceEngineModel)
+					Me.UpdateProgress(3, "... Reading VVD file finished.")
+				End If
 			End If
 		End If
 
@@ -823,35 +834,43 @@ Public Class Decompiler
 			If TheSourceEngineModel.MdlFileHeader.theAnimationDescs IsNot Nothing Then
 				If FileManager.OutputPathIsUsable(outputPathName) Then
 					Dim anAnimationDesc As SourceMdlAnimationDesc
+					Dim smdPath As String
 					Dim smdFileName As String
 					Dim smdPathFileName As String
 					Dim smdFile As SourceSmdFile
 
 					Me.UpdateProgress(3, "Writing bone animation SMD files ...")
-					For anAnimDescIndex As Integer = 0 To TheSourceEngineModel.MdlFileHeader.theAnimationDescs.Count - 1
-						anAnimationDesc = TheSourceEngineModel.MdlFileHeader.theAnimationDescs(anAnimDescIndex)
+					Try
+						For anAnimDescIndex As Integer = 0 To TheSourceEngineModel.MdlFileHeader.theAnimationDescs.Count - 1
+							anAnimationDesc = TheSourceEngineModel.MdlFileHeader.theAnimationDescs(anAnimDescIndex)
 
-						smdFileName = TheSourceEngineModel.GetAnimationSmdRelativePathFileName(anAnimationDesc)
-						Me.UpdateProgress(4, "Writing """ + smdFileName + """ file ...")
-						smdPathFileName = Path.Combine(Me.theModelOutputPath, smdFileName)
-						smdFile = New SourceSmdFile()
+							smdFileName = TheSourceEngineModel.GetAnimationSmdRelativePathFileName(anAnimationDesc)
+							Me.UpdateProgress(4, "Writing """ + smdFileName + """ file ...")
+							smdPathFileName = Path.Combine(Me.theModelOutputPath, smdFileName)
+							smdPath = FileManager.GetPath(smdPathFileName)
+							If FileManager.OutputPathIsUsable(smdPath) Then
+								smdFile = New SourceSmdFile()
 
-						smdFileWasWritten = smdFile.WriteAnimationSmdFile(smdPathFileName, TheSourceEngineModel, Nothing, anAnimationDesc)
+								smdFileWasWritten = smdFile.WriteAnimationSmdFile(smdPathFileName, TheSourceEngineModel, Nothing, anAnimationDesc)
 
-						If Not firstBoneAnimSmdFileHasBeenAdded AndAlso smdFileWasWritten AndAlso File.Exists(smdPathFileName) Then
-							Me.theDecompiledFirstBoneAnimSmdFiles.Add(FileManager.GetRelativePath(Me.theOutputPath, smdPathFileName))
-							firstBoneAnimSmdFileHasBeenAdded = True
-						End If
-						Me.UpdateProgress(4, "... Writing """ + smdFileName + """ file finished.")
+								If Not firstBoneAnimSmdFileHasBeenAdded AndAlso smdFileWasWritten AndAlso File.Exists(smdPathFileName) Then
+									Me.theDecompiledFirstBoneAnimSmdFiles.Add(FileManager.GetRelativePath(Me.theOutputPath, smdPathFileName))
+									firstBoneAnimSmdFileHasBeenAdded = True
+								End If
+								Me.UpdateProgress(4, "... Writing """ + smdFileName + """ file finished.")
 
-						If Me.CancellationPending Then
-							status = StatusMessage.Cancelled
-							Exit For
-						ElseIf Me.theSkipCurrentModelIsActive Then
-							status = StatusMessage.Skipped
-							Exit For
-						End If
-					Next
+								If Me.CancellationPending Then
+									status = StatusMessage.Cancelled
+									Exit For
+								ElseIf Me.theSkipCurrentModelIsActive Then
+									status = StatusMessage.Skipped
+									Exit For
+								End If
+							End If
+						Next
+					Catch ex As Exception
+						Dim debug As Integer = 4242
+					End Try
 					Me.UpdateProgress(3, "... Writing bone animation SMD files finished.")
 				Else
 					Me.UpdateProgress(3, "WARNING: Unable to create """ + outputPathName + """ where animation SMD files would be written.")

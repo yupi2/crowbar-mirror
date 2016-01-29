@@ -2916,10 +2916,10 @@ Public Class SourceQcFile
 		If theSourceEngineModel.PhyFileHeader IsNot Nothing AndAlso Me.theSourceEngineModel.PhyFileHeader.solidCount > 0 Then
 			Me.theOutputFileStream.WriteLine(line)
 
-			If Me.theSourceEngineModel.PhyFileHeader.checksum <> Me.theSourceEngineModel.MdlFileHeader.checksum Then
-				line = "// The PHY file's checksum value is not the same as the MDL file's checksum value."
-				Me.theOutputFileStream.WriteLine(line)
-			End If
+			'If Me.theSourceEngineModel.PhyFileHeader.checksum <> Me.theSourceEngineModel.MdlFileHeader.checksum Then
+			'	line = "// The PHY file's checksum value is not the same as the MDL file's checksum value."
+			'	Me.theOutputFileStream.WriteLine(line)
+			'End If
 
 			'NOTE: The smd file name for $collisionjoints is not stored in the mdl file, 
 			'      so use the same name that MDL Decompiler uses.

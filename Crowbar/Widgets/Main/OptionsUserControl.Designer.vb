@@ -66,6 +66,10 @@ Partial Class OptionsUserControl
 		Me.DragAndDropQcFileForCompilingRadioButton = New System.Windows.Forms.RadioButton()
 		Me.DragAndDropQcFileForEditingRadioButton = New System.Windows.Forms.RadioButton()
 		Me.DragAndDropVpkFileForUnpackingCheckBox = New System.Windows.Forms.CheckBox()
+		Me.Label2 = New System.Windows.Forms.Label()
+		Me.Label3 = New System.Windows.Forms.Label()
+		Me.Label4 = New System.Windows.Forms.Label()
+		Me.Label5 = New System.Windows.Forms.Label()
 		Me.GroupBox1.SuspendLayout()
 		Me.Panel7.SuspendLayout()
 		Me.GroupBox2.SuspendLayout()
@@ -240,7 +244,7 @@ Partial Class OptionsUserControl
 		'AutoOpenMdlFileCheckBox
 		'
 		Me.AutoOpenMdlFileCheckBox.AutoSize = True
-		Me.AutoOpenMdlFileCheckBox.Location = New System.Drawing.Point(6, 19)
+		Me.AutoOpenMdlFileCheckBox.Location = New System.Drawing.Point(6, 80)
 		Me.AutoOpenMdlFileCheckBox.Name = "AutoOpenMdlFileCheckBox"
 		Me.AutoOpenMdlFileCheckBox.Size = New System.Drawing.Size(65, 17)
 		Me.AutoOpenMdlFileCheckBox.TabIndex = 7
@@ -250,7 +254,7 @@ Partial Class OptionsUserControl
 		'AutoOpenQcFileCheckBox
 		'
 		Me.AutoOpenQcFileCheckBox.AutoSize = True
-		Me.AutoOpenQcFileCheckBox.Location = New System.Drawing.Point(6, 80)
+		Me.AutoOpenQcFileCheckBox.Location = New System.Drawing.Point(6, 141)
 		Me.AutoOpenQcFileCheckBox.Name = "AutoOpenQcFileCheckBox"
 		Me.AutoOpenQcFileCheckBox.Size = New System.Drawing.Size(57, 17)
 		Me.AutoOpenQcFileCheckBox.TabIndex = 8
@@ -259,6 +263,8 @@ Partial Class OptionsUserControl
 		'
 		'GroupBox2
 		'
+		Me.GroupBox2.Controls.Add(Me.Label4)
+		Me.GroupBox2.Controls.Add(Me.Label2)
 		Me.GroupBox2.Controls.Add(Me.AutoOpenUseDefaultsButton)
 		Me.GroupBox2.Controls.Add(Me.Panel1)
 		Me.GroupBox2.Controls.Add(Me.AutoOpenMdlFileCheckBox)
@@ -286,7 +292,7 @@ Partial Class OptionsUserControl
 		Me.Panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
 		Me.Panel1.Controls.Add(Me.AutoOpenMdlFileForDecompilingRadioButton)
 		Me.Panel1.Controls.Add(Me.AutoOpenMdlFileForViewingRadioButton)
-		Me.Panel1.Location = New System.Drawing.Point(25, 36)
+		Me.Panel1.Location = New System.Drawing.Point(25, 97)
 		Me.Panel1.Name = "Panel1"
 		Me.Panel1.Size = New System.Drawing.Size(107, 38)
 		Me.Panel1.TabIndex = 12
@@ -296,10 +302,10 @@ Partial Class OptionsUserControl
 		Me.AutoOpenMdlFileForDecompilingRadioButton.AutoSize = True
 		Me.AutoOpenMdlFileForDecompilingRadioButton.Location = New System.Drawing.Point(3, 16)
 		Me.AutoOpenMdlFileForDecompilingRadioButton.Name = "AutoOpenMdlFileForDecompilingRadioButton"
-		Me.AutoOpenMdlFileForDecompilingRadioButton.Size = New System.Drawing.Size(96, 17)
+		Me.AutoOpenMdlFileForDecompilingRadioButton.Size = New System.Drawing.Size(75, 17)
 		Me.AutoOpenMdlFileForDecompilingRadioButton.TabIndex = 13
 		Me.AutoOpenMdlFileForDecompilingRadioButton.TabStop = True
-		Me.AutoOpenMdlFileForDecompilingRadioButton.Text = "for decompiling"
+		Me.AutoOpenMdlFileForDecompilingRadioButton.Text = "Decompile"
 		Me.AutoOpenMdlFileForDecompilingRadioButton.UseVisualStyleBackColor = True
 		'
 		'AutoOpenMdlFileForViewingRadioButton
@@ -307,10 +313,10 @@ Partial Class OptionsUserControl
 		Me.AutoOpenMdlFileForViewingRadioButton.AutoSize = True
 		Me.AutoOpenMdlFileForViewingRadioButton.Location = New System.Drawing.Point(3, 1)
 		Me.AutoOpenMdlFileForViewingRadioButton.Name = "AutoOpenMdlFileForViewingRadioButton"
-		Me.AutoOpenMdlFileForViewingRadioButton.Size = New System.Drawing.Size(76, 17)
+		Me.AutoOpenMdlFileForViewingRadioButton.Size = New System.Drawing.Size(48, 17)
 		Me.AutoOpenMdlFileForViewingRadioButton.TabIndex = 12
 		Me.AutoOpenMdlFileForViewingRadioButton.TabStop = True
-		Me.AutoOpenMdlFileForViewingRadioButton.Text = "for viewing"
+		Me.AutoOpenMdlFileForViewingRadioButton.Text = "View"
 		Me.AutoOpenMdlFileForViewingRadioButton.UseVisualStyleBackColor = True
 		'
 		'Panel2
@@ -370,6 +376,8 @@ Partial Class OptionsUserControl
 		'
 		'GroupBox3
 		'
+		Me.GroupBox3.Controls.Add(Me.Label5)
+		Me.GroupBox3.Controls.Add(Me.Label3)
 		Me.GroupBox3.Controls.Add(Me.DragAndDropUseDefaultsButton)
 		Me.GroupBox3.Controls.Add(Me.Panel4)
 		Me.GroupBox3.Controls.Add(Me.DragAndDropFolderCheckBox)
@@ -398,7 +406,7 @@ Partial Class OptionsUserControl
 		Me.Panel4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
 		Me.Panel4.Controls.Add(Me.DragAndDropFolderForCompilingRadioButton)
 		Me.Panel4.Controls.Add(Me.DragAndDropFolderForDecompilingRadioButton)
-		Me.Panel4.Location = New System.Drawing.Point(25, 120)
+		Me.Panel4.Location = New System.Drawing.Point(25, 181)
 		Me.Panel4.Name = "Panel4"
 		Me.Panel4.Size = New System.Drawing.Size(107, 38)
 		Me.Panel4.TabIndex = 16
@@ -408,10 +416,10 @@ Partial Class OptionsUserControl
 		Me.DragAndDropFolderForCompilingRadioButton.AutoSize = True
 		Me.DragAndDropFolderForCompilingRadioButton.Location = New System.Drawing.Point(3, 16)
 		Me.DragAndDropFolderForCompilingRadioButton.Name = "DragAndDropFolderForCompilingRadioButton"
-		Me.DragAndDropFolderForCompilingRadioButton.Size = New System.Drawing.Size(84, 17)
+		Me.DragAndDropFolderForCompilingRadioButton.Size = New System.Drawing.Size(62, 17)
 		Me.DragAndDropFolderForCompilingRadioButton.TabIndex = 14
 		Me.DragAndDropFolderForCompilingRadioButton.TabStop = True
-		Me.DragAndDropFolderForCompilingRadioButton.Text = "for compiling"
+		Me.DragAndDropFolderForCompilingRadioButton.Text = "Compile"
 		Me.DragAndDropFolderForCompilingRadioButton.UseVisualStyleBackColor = True
 		'
 		'DragAndDropFolderForDecompilingRadioButton
@@ -419,16 +427,16 @@ Partial Class OptionsUserControl
 		Me.DragAndDropFolderForDecompilingRadioButton.AutoSize = True
 		Me.DragAndDropFolderForDecompilingRadioButton.Location = New System.Drawing.Point(3, 1)
 		Me.DragAndDropFolderForDecompilingRadioButton.Name = "DragAndDropFolderForDecompilingRadioButton"
-		Me.DragAndDropFolderForDecompilingRadioButton.Size = New System.Drawing.Size(96, 17)
+		Me.DragAndDropFolderForDecompilingRadioButton.Size = New System.Drawing.Size(75, 17)
 		Me.DragAndDropFolderForDecompilingRadioButton.TabIndex = 13
 		Me.DragAndDropFolderForDecompilingRadioButton.TabStop = True
-		Me.DragAndDropFolderForDecompilingRadioButton.Text = "for decompiling"
+		Me.DragAndDropFolderForDecompilingRadioButton.Text = "Decompile"
 		Me.DragAndDropFolderForDecompilingRadioButton.UseVisualStyleBackColor = True
 		'
 		'DragAndDropFolderCheckBox
 		'
 		Me.DragAndDropFolderCheckBox.AutoSize = True
-		Me.DragAndDropFolderCheckBox.Location = New System.Drawing.Point(6, 103)
+		Me.DragAndDropFolderCheckBox.Location = New System.Drawing.Point(6, 164)
 		Me.DragAndDropFolderCheckBox.Name = "DragAndDropFolderCheckBox"
 		Me.DragAndDropFolderCheckBox.Size = New System.Drawing.Size(55, 17)
 		Me.DragAndDropFolderCheckBox.TabIndex = 15
@@ -441,7 +449,7 @@ Partial Class OptionsUserControl
 		Me.Panel6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
 		Me.Panel6.Controls.Add(Me.DragAndDropMdlFileForDecompilingRadioButton)
 		Me.Panel6.Controls.Add(Me.DragAndDropMdlFileForViewingRadioButton)
-		Me.Panel6.Location = New System.Drawing.Point(25, 36)
+		Me.Panel6.Location = New System.Drawing.Point(25, 97)
 		Me.Panel6.Name = "Panel6"
 		Me.Panel6.Size = New System.Drawing.Size(107, 38)
 		Me.Panel6.TabIndex = 12
@@ -451,10 +459,10 @@ Partial Class OptionsUserControl
 		Me.DragAndDropMdlFileForDecompilingRadioButton.AutoSize = True
 		Me.DragAndDropMdlFileForDecompilingRadioButton.Location = New System.Drawing.Point(3, 16)
 		Me.DragAndDropMdlFileForDecompilingRadioButton.Name = "DragAndDropMdlFileForDecompilingRadioButton"
-		Me.DragAndDropMdlFileForDecompilingRadioButton.Size = New System.Drawing.Size(96, 17)
+		Me.DragAndDropMdlFileForDecompilingRadioButton.Size = New System.Drawing.Size(75, 17)
 		Me.DragAndDropMdlFileForDecompilingRadioButton.TabIndex = 13
 		Me.DragAndDropMdlFileForDecompilingRadioButton.TabStop = True
-		Me.DragAndDropMdlFileForDecompilingRadioButton.Text = "for decompiling"
+		Me.DragAndDropMdlFileForDecompilingRadioButton.Text = "Decompile"
 		Me.DragAndDropMdlFileForDecompilingRadioButton.UseVisualStyleBackColor = True
 		'
 		'DragAndDropMdlFileForViewingRadioButton
@@ -462,16 +470,16 @@ Partial Class OptionsUserControl
 		Me.DragAndDropMdlFileForViewingRadioButton.AutoSize = True
 		Me.DragAndDropMdlFileForViewingRadioButton.Location = New System.Drawing.Point(3, 1)
 		Me.DragAndDropMdlFileForViewingRadioButton.Name = "DragAndDropMdlFileForViewingRadioButton"
-		Me.DragAndDropMdlFileForViewingRadioButton.Size = New System.Drawing.Size(76, 17)
+		Me.DragAndDropMdlFileForViewingRadioButton.Size = New System.Drawing.Size(48, 17)
 		Me.DragAndDropMdlFileForViewingRadioButton.TabIndex = 12
 		Me.DragAndDropMdlFileForViewingRadioButton.TabStop = True
-		Me.DragAndDropMdlFileForViewingRadioButton.Text = "for viewing"
+		Me.DragAndDropMdlFileForViewingRadioButton.Text = "View"
 		Me.DragAndDropMdlFileForViewingRadioButton.UseVisualStyleBackColor = True
 		'
 		'DragAndDropMdlFileCheckBox
 		'
 		Me.DragAndDropMdlFileCheckBox.AutoSize = True
-		Me.DragAndDropMdlFileCheckBox.Location = New System.Drawing.Point(6, 19)
+		Me.DragAndDropMdlFileCheckBox.Location = New System.Drawing.Point(6, 80)
 		Me.DragAndDropMdlFileCheckBox.Name = "DragAndDropMdlFileCheckBox"
 		Me.DragAndDropMdlFileCheckBox.Size = New System.Drawing.Size(65, 17)
 		Me.DragAndDropMdlFileCheckBox.TabIndex = 7
@@ -481,7 +489,7 @@ Partial Class OptionsUserControl
 		'DragAndDropQcFileCheckBox
 		'
 		Me.DragAndDropQcFileCheckBox.AutoSize = True
-		Me.DragAndDropQcFileCheckBox.Location = New System.Drawing.Point(6, 80)
+		Me.DragAndDropQcFileCheckBox.Location = New System.Drawing.Point(6, 141)
 		Me.DragAndDropQcFileCheckBox.Name = "DragAndDropQcFileCheckBox"
 		Me.DragAndDropQcFileCheckBox.Size = New System.Drawing.Size(57, 17)
 		Me.DragAndDropQcFileCheckBox.TabIndex = 8
@@ -556,6 +564,47 @@ Partial Class OptionsUserControl
 		Me.DragAndDropVpkFileForUnpackingCheckBox.Text = "VPK file for unpacking"
 		Me.DragAndDropVpkFileForUnpackingCheckBox.UseVisualStyleBackColor = True
 		Me.DragAndDropVpkFileForUnpackingCheckBox.Visible = False
+		'
+		'Label2
+		'
+		Me.Label2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+		Me.Label2.Location = New System.Drawing.Point(6, 20)
+		Me.Label2.Name = "Label2"
+		Me.Label2.Size = New System.Drawing.Size(173, 57)
+		Me.Label2.TabIndex = 14
+		Me.Label2.Text = "Change the default program to Crowbar for the following file extensions and which" & _
+	" tab to set up."
+		'
+		'Label3
+		'
+		Me.Label3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+		Me.Label3.Location = New System.Drawing.Point(6, 20)
+		Me.Label3.Name = "Label3"
+		Me.Label3.Size = New System.Drawing.Size(173, 57)
+		Me.Label3.TabIndex = 19
+		Me.Label3.Text = "Change whether Crowbar sets up a tab when a file or folder is dragged onto it. "
+		'
+		'Label4
+		'
+		Me.Label4.AutoSize = True
+		Me.Label4.BackColor = System.Drawing.SystemColors.Window
+		Me.Label4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+		Me.Label4.Location = New System.Drawing.Point(69, 142)
+		Me.Label4.Name = "Label4"
+		Me.Label4.Size = New System.Drawing.Size(46, 15)
+		Me.Label4.TabIndex = 18
+		Me.Label4.Text = "Compile"
+		'
+		'Label5
+		'
+		Me.Label5.AutoSize = True
+		Me.Label5.BackColor = System.Drawing.SystemColors.Window
+		Me.Label5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+		Me.Label5.Location = New System.Drawing.Point(69, 142)
+		Me.Label5.Name = "Label5"
+		Me.Label5.Size = New System.Drawing.Size(46, 15)
+		Me.Label5.TabIndex = 20
+		Me.Label5.Text = "Compile"
 		'
 		'OptionsUserControl
 		'
@@ -640,5 +689,9 @@ Partial Class OptionsUserControl
 	Friend WithEvents OptionsContextMenuDecompileMdlFileCheckBox As System.Windows.Forms.CheckBox
 	Friend WithEvents OptionsContextMenuViewMdlFileCheckBox As System.Windows.Forms.CheckBox
 	Friend WithEvents OptionsContextMenuOpenWithCrowbarCheckBox As System.Windows.Forms.CheckBox
+	Friend WithEvents Label4 As System.Windows.Forms.Label
+	Friend WithEvents Label2 As System.Windows.Forms.Label
+	Friend WithEvents Label5 As System.Windows.Forms.Label
+	Friend WithEvents Label3 As System.Windows.Forms.Label
 
 End Class

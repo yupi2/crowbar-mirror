@@ -55,8 +55,6 @@ Public Class Compiler
 		Me.ReportProgress(0, "")
 
 		Me.theOutputPath = Me.GetOutputPath()
-		'This will change a relative path to an absolute path.
-		Me.theOutputPath = Path.GetFullPath(Me.theOutputPath)
 
 		Dim status As AppEnums.StatusMessage
 		If Me.CompilerInputsAreValid() Then
@@ -71,23 +69,57 @@ Public Class Compiler
 		End If
 	End Sub
 
-    Private Function GetOutputPath() As String
-        Dim outputPath As String
+	Private Function GetGameCompilerPathFileName() As String
+		Dim gameCompilerPathFileName As String
 
-        If TheApp.Settings.CompileOutputFolderOption = OutputFolderOptions.SubfolderName Then
-            If File.Exists(TheApp.Settings.CompileQcPathFileName) Then
-                outputPath = Path.Combine(FileManager.GetPath(TheApp.Settings.CompileQcPathFileName), TheApp.Settings.CompileOutputSubfolderName)
-            ElseIf Directory.Exists(TheApp.Settings.CompileQcPathFileName) Then
-                outputPath = Path.Combine(TheApp.Settings.CompileQcPathFileName, TheApp.Settings.CompileOutputSubfolderName)
-            Else
-                outputPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
-            End If
-        Else
-            outputPath = TheApp.Settings.CompileOutputFullPath
-        End If
+		Dim gameSetup As GameSetup
+		gameSetup = TheApp.Settings.GameSetups(TheApp.Settings.CompileGameSetupSelectedIndex)
+		gameCompilerPathFileName = gameSetup.CompilerPathFileName
 
-        Return outputPath
-    End Function
+		Return gameCompilerPathFileName
+	End Function
+
+	Private Function GetGamePath() As String
+		Dim gamePath As String
+
+		Dim gameSetup As GameSetup
+		gameSetup = TheApp.Settings.GameSetups(TheApp.Settings.CompileGameSetupSelectedIndex)
+		gamePath = FileManager.GetPath(gameSetup.GamePathFileName)
+
+		Return gamePath
+	End Function
+
+	Private Function GetGameModelsPath() As String
+		Dim gameModelsPath As String
+
+		gameModelsPath = Path.Combine(Me.GetGamePath(), "models")
+
+		Return gameModelsPath
+	End Function
+
+	Private Function GetOutputPath() As String
+		Dim outputPath As String
+
+		If TheApp.Settings.CompileOutputFolderIsChecked Then
+			If TheApp.Settings.CompileOutputFolderOption = OutputFolderOptions.SubfolderName Then
+				If File.Exists(TheApp.Settings.CompileQcPathFileName) Then
+					outputPath = Path.Combine(FileManager.GetPath(TheApp.Settings.CompileQcPathFileName), TheApp.Settings.CompileOutputSubfolderName)
+				ElseIf Directory.Exists(TheApp.Settings.CompileQcPathFileName) Then
+					outputPath = Path.Combine(TheApp.Settings.CompileQcPathFileName, TheApp.Settings.CompileOutputSubfolderName)
+				Else
+					outputPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+				End If
+			Else
+				outputPath = TheApp.Settings.CompileOutputFullPath
+			End If
+		Else
+			outputPath = Me.GetGameModelsPath()
+		End If
+
+		'This will change a relative path to an absolute path.
+		outputPath = Path.GetFullPath(outputPath)
+		Return outputPath
+	End Function
 
 	Private Function CompilerInputsAreValid() As Boolean
 		Dim inputsAreValid As Boolean = True
@@ -119,7 +151,7 @@ Public Class Compiler
 					Me.WriteErrorMessage("The DefineBones file, """ + Me.GetDefineBonesPathFileName() + """, already exists.")
 				End If
 			End If
-		Else
+		ElseIf TheApp.Settings.CompileOutputFolderIsChecked Then
 			If Not FileManager.OutputPathIsUsable(Me.theOutputPath) Then
 				inputsAreValid = False
 				Me.WriteErrorMessage("The Output Folder, """ + Me.theOutputPath + """ could not be created.")
@@ -244,15 +276,18 @@ Public Class Compiler
 			qcRelativePathName = FileManager.GetRelativePath(Me.theInputQcPath, FileManager.GetPath(qcPathFileName))
 			qcRelativePathFileName = Path.Combine(qcRelativePathName, qcFileName)
 
-			Dim gameSetup As GameSetup
-			Dim gamePath As String
+			'Dim gameSetup As GameSetup
+			'Dim gamePath As String
+			'Dim gameModelsPath As String
+			'gameSetup = TheApp.Settings.GameSetups(TheApp.Settings.CompileGameSetupSelectedIndex)
+			'gamePath = FileManager.GetPath(gameSetup.GamePathFileName)
+			'gameModelsPath = Path.Combine(gamePath, "models")
 			Dim gameModelsPath As String
+			gameModelsPath = Me.GetGameModelsPath()
+
 			Dim qcFile As SourceQcFile
 			Dim modelRelativePathFileName As String
 			Dim compiledMdlPathFileName As String
-			gameSetup = TheApp.Settings.GameSetups(TheApp.Settings.CompileGameSetupSelectedIndex)
-			gamePath = FileManager.GetPath(gameSetup.GamePathFileName)
-			gameModelsPath = Path.Combine(gamePath, "models")
 			qcFile = New SourceQcFile()
 			modelRelativePathFileName = qcFile.GetMdlRelativePathFileName(qcPathFileName)
 			compiledMdlPathFileName = Path.Combine(gameModelsPath, modelRelativePathFileName)
@@ -278,7 +313,7 @@ Public Class Compiler
 				Me.OpenDefineBonesFile()
 			End If
 
-			Me.RunStudioMdlApp(qcPathName, qcFileName, gamePath, gameSetup.CompilerPathFileName)
+			Me.RunStudioMdlApp(qcPathName, qcFileName)
 
 			If TheApp.Settings.CompileOptionDefineBonesIsChecked Then
 				If Me.theDefineBonesFileStream IsNot Nothing Then
@@ -303,16 +338,19 @@ Public Class Compiler
 		End Try
 	End Sub
 
-	Private Sub RunStudioMdlApp(ByVal qcPathName As String, ByVal qcFileName As String, ByVal gamePath As String, ByVal compilerPathFileName As String)
+	Private Sub RunStudioMdlApp(ByVal qcPathName As String, ByVal qcFileName As String)
 		Dim currentFolder As String
 		currentFolder = Directory.GetCurrentDirectory()
 		Directory.SetCurrentDirectory(qcPathName)
+
+		Dim gameCompilerPath As String
+		gameCompilerPath = Me.GetGameCompilerPathFileName()
 
 		Dim arguments As String = ""
 		arguments += "-game"
 		arguments += " "
 		arguments += """"
-		arguments += gamePath
+		arguments += Me.GetGamePath()
 		arguments += """"
 		arguments += " "
 		arguments += TheApp.Settings.CompileOptionsText
@@ -322,7 +360,7 @@ Public Class Compiler
 		arguments += """"
 
 		Dim myProcess As New Process()
-		Dim myProcessStartInfo As New ProcessStartInfo(compilerPathFileName, arguments)
+		Dim myProcessStartInfo As New ProcessStartInfo(gameCompilerPath, arguments)
 		myProcessStartInfo.UseShellExecute = False
 		myProcessStartInfo.RedirectStandardOutput = True
 		myProcessStartInfo.RedirectStandardError = True
@@ -358,24 +396,30 @@ Public Class Compiler
 		Dim sourceFileNameWithoutExtension As String
 		Dim targetPathFileName As String
 
-		Me.theModelOutputPath = Path.Combine(Me.theOutputPath, qcRelativePathName)
-		Me.theModelOutputPath = Path.GetFullPath(Me.theModelOutputPath)
-		If TheApp.Settings.CompileFolderForEachModelIsChecked Then
-			Dim modelName As String
-			modelName = Path.GetFileNameWithoutExtension(modelRelativePathFileName)
-			Me.theModelOutputPath = Path.Combine(Me.theModelOutputPath, modelName)
+		If TheApp.Settings.CompileOutputFolderIsChecked Then
+			Me.theModelOutputPath = Path.Combine(Me.theOutputPath, qcRelativePathName)
+			Me.theModelOutputPath = Path.GetFullPath(Me.theModelOutputPath)
+			If TheApp.Settings.CompileFolderForEachModelIsChecked Then
+				Dim modelName As String
+				modelName = Path.GetFileNameWithoutExtension(modelRelativePathFileName)
+				Me.theModelOutputPath = Path.Combine(Me.theModelOutputPath, modelName)
+			End If
+			FileManager.CreatePath(Me.theModelOutputPath)
 		End If
-		FileManager.CreatePath(Me.theModelOutputPath)
 
 		sourcePathName = FileManager.GetPath(compiledMdlPathFileName)
 		sourceFileNameWithoutExtension = Path.GetFileNameWithoutExtension(compiledMdlPathFileName)
 		For Each sourcePathFileName As String In Directory.GetFiles(sourcePathName, sourceFileNameWithoutExtension + ".*")
 			Try
-				targetPathFileName = Path.Combine(Me.theModelOutputPath, Path.GetFileName(sourcePathFileName))
-				If File.Exists(targetPathFileName) Then
-					File.Delete(targetPathFileName)
+				If TheApp.Settings.CompileOutputFolderIsChecked Then
+					targetPathFileName = Path.Combine(Me.theModelOutputPath, Path.GetFileName(sourcePathFileName))
+					If File.Exists(targetPathFileName) Then
+						File.Delete(targetPathFileName)
+					End If
+					File.Move(sourcePathFileName, targetPathFileName)
+				Else
+					targetPathFileName = sourcePathFileName
 				End If
-				File.Move(sourcePathFileName, targetPathFileName)
 
 				If Path.GetExtension(targetPathFileName) = ".mdl" Then
 					Me.theCompiledMdlFiles.Add(FileManager.GetRelativePath(Me.theOutputPath, targetPathFileName))

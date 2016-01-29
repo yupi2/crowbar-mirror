@@ -29,7 +29,7 @@ Partial Class ViewUserControl
 		Me.Panel2 = New System.Windows.Forms.Panel()
 		Me.GotoMdlFileButton = New System.Windows.Forms.Button()
 		Me.GroupBox1 = New System.Windows.Forms.GroupBox()
-		Me.InfoRichTextBox = New System.Windows.Forms.RichTextBox()
+		Me.InfoRichTextBox = New Crowbar.RichTextBoxEx()
 		Me.Label3 = New System.Windows.Forms.Label()
 		Me.GameSetupComboBox = New System.Windows.Forms.ComboBox()
 		Me.EditGameSetupButton = New System.Windows.Forms.Button()
@@ -209,7 +209,7 @@ Partial Class ViewUserControl
 	Friend WithEvents GotoMdlFileButton As System.Windows.Forms.Button
 	Friend WithEvents ViewAsReplacementButton As System.Windows.Forms.Button
 	Friend WithEvents GroupBox1 As System.Windows.Forms.GroupBox
-	Friend WithEvents InfoRichTextBox As System.Windows.Forms.RichTextBox
+	Friend WithEvents InfoRichTextBox As Crowbar.RichTextBoxEx
 	Friend WithEvents UseInDecompileButton As System.Windows.Forms.Button
 
 End Class

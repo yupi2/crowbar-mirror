@@ -23,11 +23,13 @@ Public Class CompileUserControl
 	Private Sub Init()
 		Me.QcPathFileNameTextBox.DataBindings.Add("Text", TheApp.Settings, "CompileQcPathFileName", False, DataSourceUpdateMode.OnValidation)
 
+		Me.OutputFolderCheckBox.DataBindings.Add("Checked", TheApp.Settings, "CompileOutputFolderIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.OutputSubfolderNameRadioButton.Checked = (TheApp.Settings.CompileOutputFolderOption = OutputFolderOptions.SubfolderName)
 		Me.OutputSubfolderNameTextBox.DataBindings.Add("Text", TheApp.Settings, "CompileOutputSubfolderName", False, DataSourceUpdateMode.OnValidation)
 		Me.OutputFullPathRadioButton.Checked = (TheApp.Settings.CompileOutputFolderOption = OutputFolderOptions.PathName)
 		Me.OutputFullPathTextBox.DataBindings.Add("Text", TheApp.Settings, "CompileOutputFullPath", False, DataSourceUpdateMode.OnValidation)
 		Me.UpdateOutputFullPathTextBox()
+		Me.UpdateOutputFolderWidgets()
 
 		'NOTE: The DataSource, DisplayMember, and ValueMember need to be set before DataBindings, or else an exception is raised.
 		Me.GameSetupComboBox.DataSource = TheApp.Settings.GameSetups
@@ -86,6 +88,8 @@ Public Class CompileUserControl
 		RemoveHandler GameSetupComboBox.SelectedValueChanged, AddressOf Me.GameSetupComboBox_SelectedValueChanged
 
 		Me.QcPathFileNameTextBox.DataBindings.Clear()
+
+		Me.OutputFolderCheckBox.DataBindings.Clear()
 		Me.OutputSubfolderNameTextBox.DataBindings.Clear()
         Me.OutputFullPathTextBox.DataBindings.Clear()
 
@@ -149,6 +153,7 @@ Public Class CompileUserControl
 		openFileWdw.AddExtension = True
 		openFileWdw.CheckFileExists = False
 		openFileWdw.Multiselect = False
+		'openFileWdw.Multiselect = True
 		openFileWdw.ValidateNames = True
 
 		If openFileWdw.ShowDialog() = Windows.Forms.DialogResult.OK Then
@@ -165,6 +170,10 @@ Public Class CompileUserControl
 
 	Private Sub GotoQcButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles GotoQcButton.Click
 		FileManager.OpenWindowsExplorer(TheApp.Settings.CompileQcPathFileName)
+	End Sub
+
+	Private Sub OutputFolderCheckBox_CheckedChanged(sender As Object, e As EventArgs) Handles OutputFolderCheckBox.CheckedChanged
+		Me.UpdateOutputFolderWidgets()
 	End Sub
 
 	Private Sub OutputSubfolderNameRadioButton_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OutputSubfolderNameRadioButton.CheckedChanged
@@ -295,6 +304,7 @@ Public Class CompileUserControl
 
 	Private Sub UseInViewButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles UseInViewButton.Click
 		TheApp.Settings.ViewMdlPathFileName = TheApp.Compiler.GetOutputPathFileName(Me.theCompiledRelativePathFileNames(Me.CompiledFilesComboBox.SelectedIndex))
+		TheApp.Settings.ViewGameSetupSelectedIndex = TheApp.Settings.CompileGameSetupSelectedIndex
 	End Sub
 
 	Private Sub RecompileButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RecompileButton.Click
@@ -375,11 +385,12 @@ Public Class CompileUserControl
 
 #Region "Private Methods"
 
-    Private Sub UpdateOutputFolderWidgets()
-        Me.OutputSubfolderNameTextBox.ReadOnly = Not Me.OutputSubfolderNameRadioButton.Checked
-        Me.OutputFullPathTextBox.ReadOnly = Me.OutputSubfolderNameRadioButton.Checked
-        Me.BrowseForOutputPathNameButton.Enabled = Not Me.OutputSubfolderNameRadioButton.Checked
-    End Sub
+	Private Sub UpdateOutputFolderWidgets()
+		Me.CompileOutputFolderGroupBox.Enabled = Me.OutputFolderCheckBox.Checked
+		Me.OutputSubfolderNameTextBox.ReadOnly = Not Me.OutputSubfolderNameRadioButton.Checked
+		Me.OutputFullPathTextBox.ReadOnly = Me.OutputSubfolderNameRadioButton.Checked
+		Me.BrowseForOutputPathNameButton.Enabled = Not Me.OutputSubfolderNameRadioButton.Checked
+	End Sub
 
     Private Sub UpdateOutputFullPathTextBox()
         If String.IsNullOrEmpty(Me.OutputFullPathTextBox.Text) Then
@@ -421,8 +432,8 @@ Public Class CompileUserControl
         Me.CompiledFilesComboBox.Enabled = Not compilerIsRunning AndAlso Me.theCompiledRelativePathFileNames.Count > 0
 		'Me.ViewButton.Enabled = Not compilerIsRunning AndAlso Me.theCompiledRelativePathFileNames.Count > 0
 		'Me.ViewAsReplacementButton.Enabled = Not compilerIsRunning AndAlso Me.theCompiledRelativePathFileNames.Count > 0
-		'Me.UseInViewButton.Enabled = Not compilerIsRunning AndAlso Me.theCompiledRelativePathFileNames.Count > 0
-        Me.RecompileButton.Enabled = Not compilerIsRunning AndAlso Me.theCompiledRelativePathFileNames.Count > 0
+		Me.UseInViewButton.Enabled = Not compilerIsRunning AndAlso Me.theCompiledRelativePathFileNames.Count > 0 AndAlso (Path.GetExtension(Me.theCompiledRelativePathFileNames(Me.CompiledFilesComboBox.SelectedIndex)) = ".mdl")
+		Me.RecompileButton.Enabled = Not compilerIsRunning AndAlso Me.theCompiledRelativePathFileNames.Count > 0
         Me.UseInPackButton.Enabled = Not compilerIsRunning AndAlso Me.theCompiledRelativePathFileNames.Count > 0
         Me.GotoCompiledMdlButton.Enabled = Not compilerIsRunning AndAlso Me.theCompiledRelativePathFileNames.Count > 0
     End Sub
@@ -434,12 +445,6 @@ Public Class CompileUserControl
                 Me.theCompiledRelativePathFileNames.Add(pathFileName)
             Next
 		End If
-
-		Me.UpdateUseInViewButton()
-	End Sub
-
-	Private Sub UpdateUseInViewButton()
-		Me.UseInViewButton.Enabled = Me.theCompiledRelativePathFileNames.Count > 0 AndAlso (Path.GetExtension(Me.theCompiledRelativePathFileNames(Me.CompiledFilesComboBox.SelectedIndex)) = ".mdl")
 	End Sub
 
     Private Sub UpdateCompileMode()

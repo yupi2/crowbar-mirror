@@ -52,6 +52,8 @@ Public Class AppSettings
 		Me.theCompileGameSetupSelectedIndex = 0
 
 		Me.theCompileQcPathFileName = ""
+
+		Me.theCompileOutputFolderIsChecked = True
 		Me.theCompileOutputFolderOption = OutputFolderOptions.SubfolderName
 		Me.SetDefaultCompileOutputSubfolderName()
 		Me.theCompileOutputFullPath = ""
@@ -393,6 +395,16 @@ Public Class AppSettings
 		Set(ByVal value As String)
 			Me.theCompileQcPathFileName = value
 			NotifyPropertyChanged("CompileQcPathFileName")
+		End Set
+	End Property
+
+	Public Property CompileOutputFolderIsChecked() As Boolean
+		Get
+			Return Me.theCompileOutputFolderIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theCompileOutputFolderIsChecked = value
+			NotifyPropertyChanged("CompileOutputFolderIsChecked")
 		End Set
 	End Property
 
@@ -788,9 +800,9 @@ Public Class AppSettings
 
 	Public Sub SetDefaultOptionsAutoOpenOptions()
 		'NOTE: Call the properties so the NotifyPropertyChanged events are raised.
-		Me.OptionsAutoOpenMdlFileIsChecked = True
+		Me.OptionsAutoOpenMdlFileIsChecked = False
 		Me.OptionsAutoOpenMdlFileOption = ActionType.Decompile
-		Me.OptionsAutoOpenQcFileIsChecked = True
+		Me.OptionsAutoOpenQcFileIsChecked = False
 	End Sub
 
 	Public Sub SetDefaultOptionsDragAndDropOptions()
@@ -882,6 +894,8 @@ Public Class AppSettings
 	' Compile tab
 
 	Private theCompileQcPathFileName As String
+
+	Private theCompileOutputFolderIsChecked As Boolean
 	Private theCompileOutputFolderOption As OutputFolderOptions
 	Private theCompileOutputSubfolderName As String
 	Private theCompileOutputFullPath As String

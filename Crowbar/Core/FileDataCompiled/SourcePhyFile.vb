@@ -38,7 +38,8 @@ Public Class SourcePhyFile
 						'	Me.ReadStudioVertexes(Me.theInputFileReader)
 						'End If
 					End If
-				Catch
+				Catch ex As Exception
+					Me.theSourceEngineModel.PhyFileHeader = Nothing
 					Throw
 				Finally
 					If Me.theInputFileReader IsNot Nothing Then
@@ -46,7 +47,8 @@ Public Class SourcePhyFile
 					End If
 				End Try
 			End If
-		Catch
+		Catch ex As Exception
+			Me.theSourceEngineModel.PhyFileHeader = Nothing
 			Throw
 		Finally
 			If inputFileStream IsNot Nothing Then
@@ -85,8 +87,8 @@ Public Class SourcePhyFile
 		Dim triangleCount As Integer
 		Dim triangleIndex As Integer
 		Dim vertices As List(Of Integer)
-		Dim tempInt As Integer
 		Dim nextSolidDataStreamPosition As Long
+		Dim phyDataStreamPosition As Long
 		Dim faceDataStreamPosition As Long
 		Dim vertexDataStreamPosition As Long
 		Dim vertexDataOffset As Long
@@ -111,50 +113,16 @@ Public Class SourcePhyFile
 
 			'======
 
+			phyDataStreamPosition = Me.theInputFileReader.BaseStream.Position
 			'56 50 48 59   VPHY
 			vphyId = Me.theInputFileReader.ReadChars(4)
+			Me.theInputFileReader.BaseStream.Seek(phyDataStreamPosition, SeekOrigin.Begin)
 
-			'00 01         version?
-			'00 00         model type?
-			tempInt = Me.theInputFileReader.ReadUInt16()
-			tempInt = Me.theInputFileReader.ReadUInt16()
-
-			'9c 01 00 00   surface size? might be size of remaining solid struct after "axisMapSize?" field
-			'              Seems to be size of data struct from VPHY field to last section of CollisionData.
-			Me.theInputFileReader.ReadInt32()
-
-
-			'00 00 30 3f   dragAxisAreas x?
-			'00 00 80 3f   dragAxisAreas y?
-			'00 00 80 3f   dragAxisAreas z?
-			'00 00 00 00   axisMapSize?
-			Me.theInputFileReader.ReadInt32()
-			Me.theInputFileReader.ReadInt32()
-			Me.theInputFileReader.ReadInt32()
-			Me.theInputFileReader.ReadInt32()
-
-			'2c fe 80 3d 
-			'a5 85 83 39 
-			'27 ab 91 3a 
-			'52 06 3c 3a 
-			'28 a7 a9 3a 
-			'c8 2a bb 3a 
-			'5e 08 a8 3d 
-			'ec 9c 01 00 
-			'80 01 00 00   size of something? add this to address right after it = address right after the next VPHY
-			'00 00 00 00 
-			'00 00 00 00 
-			Me.theInputFileReader.ReadInt32()
-			Me.theInputFileReader.ReadInt32()
-			Me.theInputFileReader.ReadInt32()
-			Me.theInputFileReader.ReadInt32()
-			Me.theInputFileReader.ReadInt32()
-			Me.theInputFileReader.ReadInt32()
-			Me.theInputFileReader.ReadInt32()
-			Me.theInputFileReader.ReadInt32()
-			Me.theInputFileReader.ReadInt32()
-			Me.theInputFileReader.ReadInt32()
-			Me.theInputFileReader.ReadInt32()
+			If vphyId <> "VPHY" Then
+				Me.ReadPhyData_VERSION37()
+			Else
+				Me.ReadPhyData_VERSION48()
+			End If
 
 			'49 56 50 53   IVPS
 			ivpsId = Me.theInputFileReader.ReadChars(4)
@@ -427,6 +395,78 @@ Public Class SourcePhyFile
 			Me.theInputFileReader.BaseStream.Seek(nextSolidDataStreamPosition, SeekOrigin.Begin)
 		Next
 		Me.theSourceEngineModel.PhyFileHeader.theSourcePhyKeyValueDataOffset = Me.theInputFileReader.BaseStream.Position
+	End Sub
+
+	Private Sub ReadPhyData_VERSION37()
+		'FROM: HL2 leak - bullsquid.phy
+		'66 c5 36 bc 
+		'd8 ac 31 bd 
+		'd9 14 dd bd 
+		'19 bd 01 3d 
+		'ae 4f 31 3d 
+		'52 d0 4a 3d 
+		'e1 01 0b 3f 
+		'd8 1c 03 00 
+		'00 03 00 00 
+		'00 00 00 00 
+		'00 00 00 00
+		Me.theInputFileReader.ReadInt32()
+		Me.theInputFileReader.ReadInt32()
+		Me.theInputFileReader.ReadInt32()
+		Me.theInputFileReader.ReadInt32()
+		Me.theInputFileReader.ReadInt32()
+		Me.theInputFileReader.ReadInt32()
+		Me.theInputFileReader.ReadInt32()
+		Me.theInputFileReader.ReadInt32()
+		Me.theInputFileReader.ReadInt32()
+		Me.theInputFileReader.ReadInt32()
+		Me.theInputFileReader.ReadInt32()
+	End Sub
+
+	Private Sub ReadPhyData_VERSION48()
+		Dim tempInt As Integer
+
+		'00 01         version?
+		'00 00         model type?
+		tempInt = Me.theInputFileReader.ReadUInt16()
+		tempInt = Me.theInputFileReader.ReadUInt16()
+
+		'9c 01 00 00   surface size? might be size of remaining solid struct after "axisMapSize?" field
+		'              Seems to be size of data struct from VPHY field to last section of CollisionData.
+		Me.theInputFileReader.ReadInt32()
+
+
+		'00 00 30 3f   dragAxisAreas x?
+		'00 00 80 3f   dragAxisAreas y?
+		'00 00 80 3f   dragAxisAreas z?
+		'00 00 00 00   axisMapSize?
+		Me.theInputFileReader.ReadInt32()
+		Me.theInputFileReader.ReadInt32()
+		Me.theInputFileReader.ReadInt32()
+		Me.theInputFileReader.ReadInt32()
+
+		'2c fe 80 3d 
+		'a5 85 83 39 
+		'27 ab 91 3a 
+		'52 06 3c 3a 
+		'28 a7 a9 3a 
+		'c8 2a bb 3a 
+		'5e 08 a8 3d 
+		'ec 9c 01 00 
+		'80 01 00 00   size of something? add this to address right after it = address right after the next VPHY
+		'00 00 00 00 
+		'00 00 00 00 
+		Me.theInputFileReader.ReadInt32()
+		Me.theInputFileReader.ReadInt32()
+		Me.theInputFileReader.ReadInt32()
+		Me.theInputFileReader.ReadInt32()
+		Me.theInputFileReader.ReadInt32()
+		Me.theInputFileReader.ReadInt32()
+		Me.theInputFileReader.ReadInt32()
+		Me.theInputFileReader.ReadInt32()
+		Me.theInputFileReader.ReadInt32()
+		Me.theInputFileReader.ReadInt32()
+		Me.theInputFileReader.ReadInt32()
 	End Sub
 
 	Private Sub CalculateVertexNormals()

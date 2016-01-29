@@ -139,6 +139,7 @@ Public Class FileManager
 	'NOTE: Replacement for Path.GetDirectoryName, because GetDirectoryName returns "Nothing" when something like "C:\" is the path.
 	Public Shared Function GetPath(ByVal pathFileName As String) As String
 		Try
+			pathFileName = FileManager.GetNormalizedPathFileName(pathFileName)
 			Return pathFileName.Substring(0, pathFileName.LastIndexOf(Path.DirectorySeparatorChar))
 		Catch
 			Return String.Empty
@@ -155,14 +156,14 @@ Public Class FileManager
 		End Try
 	End Sub
 
-	Public Shared Function OutputPathIsUsable(ByVal outputPathName As String) As Boolean
+	Public Shared Function OutputPathIsUsable(ByVal outputPath As String) As Boolean
 		Dim result As Boolean
 
 		result = True
-		If Not Directory.Exists(outputPathName) Then
+		If Not Directory.Exists(outputPath) Then
 			Try
-				Directory.CreateDirectory(outputPathName)
-				If Not Directory.Exists(outputPathName) Then
+				Directory.CreateDirectory(outputPath)
+				If Not Directory.Exists(outputPath) Then
 					' Unable to create folder.
 					result = False
 				End If

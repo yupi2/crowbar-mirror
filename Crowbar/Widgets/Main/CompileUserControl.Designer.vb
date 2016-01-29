@@ -53,7 +53,8 @@ Partial Class CompileUserControl
 		Me.CompileButton = New System.Windows.Forms.Button()
 		Me.Panel1 = New System.Windows.Forms.Panel()
 		Me.GotoQcButton = New System.Windows.Forms.Button()
-		Me.GroupBox2 = New System.Windows.Forms.GroupBox()
+		Me.OutputFolderCheckBox = New System.Windows.Forms.CheckBox()
+		Me.CompileOutputFolderGroupBox = New System.Windows.Forms.GroupBox()
 		Me.GotoOutputButton = New System.Windows.Forms.Button()
 		Me.UseDefaultOutputSubfolderNameButton = New System.Windows.Forms.Button()
 		Me.OutputFullPathRadioButton = New System.Windows.Forms.RadioButton()
@@ -79,7 +80,7 @@ Partial Class CompileUserControl
 		Me.CompilerOptionsTabControl.SuspendLayout()
 		Me.OrangeBoxOptionsTabPage.SuspendLayout()
 		Me.Panel1.SuspendLayout()
-		Me.GroupBox2.SuspendLayout()
+		Me.CompileOutputFolderGroupBox.SuspendLayout()
 		Me.SplitContainer2.Panel1.SuspendLayout()
 		Me.SplitContainer2.Panel2.SuspendLayout()
 		Me.SplitContainer2.SuspendLayout()
@@ -392,7 +393,8 @@ Partial Class CompileUserControl
 		Me.Panel1.Controls.Add(Me.Label6)
 		Me.Panel1.Controls.Add(Me.QcPathFileNameTextBox)
 		Me.Panel1.Controls.Add(Me.BrowseForQcPathFolderOrFileNameButton)
-		Me.Panel1.Controls.Add(Me.GroupBox2)
+		Me.Panel1.Controls.Add(Me.OutputFolderCheckBox)
+		Me.Panel1.Controls.Add(Me.CompileOutputFolderGroupBox)
 		Me.Panel1.Controls.Add(Me.SplitContainer2)
 		Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
 		Me.Panel1.Location = New System.Drawing.Point(0, 0)
@@ -411,23 +413,34 @@ Partial Class CompileUserControl
 		Me.GotoQcButton.Text = "Goto"
 		Me.GotoQcButton.UseVisualStyleBackColor = True
 		'
-		'GroupBox2
+		'OutputFolderCheckBox
 		'
-		Me.GroupBox2.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+		Me.OutputFolderCheckBox.AutoSize = True
+		Me.OutputFolderCheckBox.Location = New System.Drawing.Point(9, 31)
+		Me.OutputFolderCheckBox.Name = "OutputFolderCheckBox"
+		Me.OutputFolderCheckBox.Size = New System.Drawing.Size(90, 17)
+		Me.OutputFolderCheckBox.TabIndex = 37
+		Me.OutputFolderCheckBox.Text = "Output Folder"
+		Me.ToolTip1.SetToolTip(Me.OutputFolderCheckBox, "Check to use an option below. Uncheck to use folder chosen by the game's compiler" & _
+		".")
+		Me.OutputFolderCheckBox.UseVisualStyleBackColor = True
+		'
+		'CompileOutputFolderGroupBox
+		'
+		Me.CompileOutputFolderGroupBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.GroupBox2.Controls.Add(Me.GotoOutputButton)
-		Me.GroupBox2.Controls.Add(Me.UseDefaultOutputSubfolderNameButton)
-		Me.GroupBox2.Controls.Add(Me.OutputFullPathRadioButton)
-		Me.GroupBox2.Controls.Add(Me.OutputSubfolderNameRadioButton)
-		Me.GroupBox2.Controls.Add(Me.OutputSubfolderNameTextBox)
-		Me.GroupBox2.Controls.Add(Me.OutputFullPathTextBox)
-		Me.GroupBox2.Controls.Add(Me.BrowseForOutputPathNameButton)
-		Me.GroupBox2.Location = New System.Drawing.Point(3, 32)
-		Me.GroupBox2.Name = "GroupBox2"
-		Me.GroupBox2.Size = New System.Drawing.Size(778, 80)
-		Me.GroupBox2.TabIndex = 4
-		Me.GroupBox2.TabStop = False
-		Me.GroupBox2.Text = "Output Folder"
+		Me.CompileOutputFolderGroupBox.Controls.Add(Me.GotoOutputButton)
+		Me.CompileOutputFolderGroupBox.Controls.Add(Me.UseDefaultOutputSubfolderNameButton)
+		Me.CompileOutputFolderGroupBox.Controls.Add(Me.OutputFullPathRadioButton)
+		Me.CompileOutputFolderGroupBox.Controls.Add(Me.OutputSubfolderNameRadioButton)
+		Me.CompileOutputFolderGroupBox.Controls.Add(Me.OutputSubfolderNameTextBox)
+		Me.CompileOutputFolderGroupBox.Controls.Add(Me.OutputFullPathTextBox)
+		Me.CompileOutputFolderGroupBox.Controls.Add(Me.BrowseForOutputPathNameButton)
+		Me.CompileOutputFolderGroupBox.Location = New System.Drawing.Point(3, 32)
+		Me.CompileOutputFolderGroupBox.Name = "CompileOutputFolderGroupBox"
+		Me.CompileOutputFolderGroupBox.Size = New System.Drawing.Size(778, 80)
+		Me.CompileOutputFolderGroupBox.TabIndex = 4
+		Me.CompileOutputFolderGroupBox.TabStop = False
 		'
 		'GotoOutputButton
 		'
@@ -708,8 +721,8 @@ Partial Class CompileUserControl
 		Me.OrangeBoxOptionsTabPage.PerformLayout()
 		Me.Panel1.ResumeLayout(False)
 		Me.Panel1.PerformLayout()
-		Me.GroupBox2.ResumeLayout(False)
-		Me.GroupBox2.PerformLayout()
+		Me.CompileOutputFolderGroupBox.ResumeLayout(False)
+		Me.CompileOutputFolderGroupBox.PerformLayout()
 		Me.SplitContainer2.Panel1.ResumeLayout(False)
 		Me.SplitContainer2.Panel2.ResumeLayout(False)
 		Me.SplitContainer2.ResumeLayout(False)
@@ -739,7 +752,7 @@ Partial Class CompileUserControl
 	Friend WithEvents CompilerOptionVerboseCheckBox As System.Windows.Forms.CheckBox
 	Friend WithEvents Label4 As System.Windows.Forms.Label
 	Friend WithEvents DirectCompilerOptionsTextBox As System.Windows.Forms.TextBox
-	Friend WithEvents GroupBox2 As System.Windows.Forms.GroupBox
+	Friend WithEvents CompileOutputFolderGroupBox As System.Windows.Forms.GroupBox
 	Friend WithEvents UseDefaultOutputSubfolderNameButton As System.Windows.Forms.Button
 	Friend WithEvents OutputFullPathRadioButton As System.Windows.Forms.RadioButton
 	Friend WithEvents OutputSubfolderNameRadioButton As System.Windows.Forms.RadioButton
@@ -772,5 +785,6 @@ Partial Class CompileUserControl
 	Friend WithEvents CompilerOptionDefineBonesModifyQcFileCheckBox As System.Windows.Forms.CheckBox
 	Friend WithEvents ToolTip1 As System.Windows.Forms.ToolTip
 	Friend WithEvents CompileOptionsUseDefaultsButton As System.Windows.Forms.Button
+	Friend WithEvents OutputFolderCheckBox As System.Windows.Forms.CheckBox
 
 End Class

@@ -277,20 +277,26 @@ Public Class Viewer
 	End Sub
 
 	Private Sub GetTextureDataFromMdlFile(ByVal mdlFileHeader As SourceMdlFileHeader)
-		Me.UpdateProgress()
-		Me.UpdateProgress(1, "=== Texture Info ===")
+		If mdlFileHeader.animBlockCount = 0 Then
+			Me.UpdateProgress()
+			Me.UpdateProgress(1, "=== Texture Info ===")
 
-		Me.UpdateProgress()
-		Me.UpdateProgress(2, "Texture Folders ($CDMaterials lines in QC file -- folders where VMT files should be): ")
-		For Each aTexturePath As String In mdlFileHeader.theTexturePaths
-			Me.UpdateProgress(3, """" + aTexturePath + """")
-		Next
+			Me.UpdateProgress()
+			Me.UpdateProgress(2, "Texture Folders ($CDMaterials lines in QC file -- folders where VMT files should be): ")
+			If mdlFileHeader.theTexturePaths IsNot Nothing Then
+				For Each aTexturePath As String In mdlFileHeader.theTexturePaths
+					Me.UpdateProgress(3, """" + aTexturePath + """")
+				Next
+			End If
 
-		Me.UpdateProgress()
-		Me.UpdateProgress(2, "Texture File Names (VMT file names in mesh SMD files): ")
-		For Each anMdlTexture As SourceMdlTexture In mdlFileHeader.theTextures
-			Me.UpdateProgress(3, """" + anMdlTexture.theName + ".vmt""")
-		Next
+			Me.UpdateProgress()
+			Me.UpdateProgress(2, "Texture File Names (VMT file names in mesh SMD files): ")
+			If mdlFileHeader.theTextures IsNot Nothing Then
+				For Each anMdlTexture As SourceMdlTexture In mdlFileHeader.theTextures
+					Me.UpdateProgress(3, """" + anMdlTexture.theName + ".vmt""")
+				Next
+			End If
+		End If
 	End Sub
 
     Private Sub ViewMesh()

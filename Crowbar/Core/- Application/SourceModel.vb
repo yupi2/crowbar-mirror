@@ -127,7 +127,7 @@ Public Class SourceModel
 		If Not TheApp.Settings.DecompileBoneAnimationPlaceInSubfolderIsChecked Then
 			animationName = Me.theModelName + "_anim_" + animationName
 		End If
-		animationSmdRelativePathFileName = Path.Combine(Me.GetAnimationSmdRelativePathName, animationName)
+		animationSmdRelativePathFileName = Path.Combine(Me.GetAnimationSmdRelativePathName(), animationName)
 
 		If Path.GetExtension(animationSmdRelativePathFileName) <> ".smd" Then
 			'animationSmdRelativePathFileName = Path.ChangeExtension(animationSmdRelativePathFileName, ".smd")
