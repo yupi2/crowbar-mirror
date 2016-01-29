@@ -1,0 +1,435 @@
+
+
+
+### DEV ToDo
+################################################################################
+
+* Options for studiomdl compiler found in L4D2's studiomdl.exe
+	usage: studiomdl [options] <file.qc>
+	options:
+	[-a <normal_blend_angle>]
+	[-checklengths]
+	[-d] - dump glview files
+	[-definebones]
+	[-f] - flip all triangles
+	- [-fullcollide] - don't truncate really big collisionmodels
+	/ [-game <gamedir>]
+	[-h] - dump hboxes
+	[-i] - ignore warnings
+	[-minlod <lod>] - truncate to highest detail <lod>
+	[-n] - tag bad normals
+	[-perf] report perf info upon compiling model
+	[-printbones]
+	[-printgraph]
+	[-quiet] - operate silently
+	[-r] - tag reversed
+	[-t <texture>]
+	[-x360] - generate xbox360 output
+	[-nox360] - disable xbox360 output(default)
+	[-fastbuild] - write a single vertex windings file
+	[-nowarnings] - disable warnings
+	[-dumpmaterials] - dump out material names
+	[-mdlreport] model.mdl - report perf info
+	[-mdlreportspreadsheet] - report perf info as a comma-delimited spreadsheet
+	[-striplods] - use only lod0
+	[-overridedefinebones] - equivalent to specifying $unlockdefinebones in .qc file
+	[-stripmodel] - process binary model files and strip extra lod data
+	[-stripvhv] - strip hardware verts to match the stripped model
+	[-vsi] - generate stripping information .vsi file - can be used on .mdl files too
+	[-allowdebug]
+	[-ihvtest]
+	[-overridedefinebones]
+	/ [-verbose]
+	[-makefile]
+	[-verify]
+	[-fastbuild]
+	[-maxwarnings]
+	[-preview]
+	[-dumpmaterials]
+	[-basedir]
+	[-tempcontent]
+	/ [-nop4]
+	[-dontremoveduplicates]
+* Options for studiomdl compiler found in Cannonfodder's StudioCompiler
+	- FullCollide [-fullcollide]?
+	- Check Lengths [-checklengths]?
+	- Print Bones [-printbones]?
+	- Perf [-perf]?
+	- Print Graph [-printgraph]?
+	- Define Bones [-definebones]?
+	- Reverse Normals [-r]?
+	- Tag Normals [-n]?
+	- Flip Triangles [-f]?
+	- Dump Hit Boxes [-h]?
+* Options for studiomdl compiler found in wunderboy's GUIStudioMDL
+	* Common
+		- Quiet Mode [-quiet]?
+		- Verbose Mode [-verbose]?
+		- Verify Only [-verify]?
+		- Ignore Warnings [-i]?
+		- No Warnings [-nowarnings]?
+		- Xbox Processing [-x360]?
+		- Create Makefile [-makefile]?
+		- Tag Reversed [-r]?
+		- Tag Bad Normals [-n]?
+		- Flip All Triangles [-f]?
+		- Dump Hitboxes [-h]?
+		- Dump GLView Files [-d]?
+		- Full Collide [-fullcollide]?
+		- Check Lengths [-checklengths]?
+		- Performance Info [-perf]?
+		- Print Bones [-printbones]?
+		- Print Graph [-printgraph]?
+		- Define Bones [-definebones]?
+		- Default Texture __null.tga__ [-t <texture>]?
+		- Normal Blend Angle ___30___ [1 - 180] [-a <normal_blend_angle>]?
+		- Truncate LoD Level ___0___ [0 - 30] [-minlod <lod>]?
+	* Orange Box
+		- No Perforce [checkmarked] [-nop4]?
+		- Dump Materials [-dumpmaterials]?
+		- Overide $defbone [-overridedefinebones]?
+		- Strip LODs [-striplods]?
+		- Dump Stripping Info [-vsi]?
+
+
+
+### QC commands to implement
+
+X	{ "$cd", Cmd_CD },
+/	{ "$modelname", Cmd_Modelname },
+/	{ "$cdmaterials", Cmd_CDMaterials },
+X	{ "$pushd", Cmd_Pushd },
+X	{ "$popd", Cmd_Popd },
+X	{ "$scale", Cmd_ScaleUp },           // possibly baked in with no way to decompile it
+X	{ "$root", Cmd_Root },               // probably baked in, so no way to decompile it
+/	{ "$controller", Cmd_Controller },
+/	{ "$screenalign", Cmd_ScreenAlign },
+/	{ "$model", Cmd_Model },
+/	{ "$collisionmodel", Cmd_CollisionModel },
+/	{ "$collisionjoints", Cmd_CollisionJoints },
+/	{ "$collisiontext", Cmd_CollisionText },
+X	{ "$body", Cmd_Body },                             // $bodygroup can be used instead of this
+/	{ "$bodygroup", Cmd_Bodygroup },
+-	{ "$animation", Cmd_Animation },
+X	{ "$autocenter", Cmd_Autocenter },                 // baked-in
+-	{ "$sequence", Cmd_Sequence },
+X	{ "$append", Cmd_Append },
+X	{ "$prepend", Cmd_Prepend  },
+X	{ "$continue", Cmd_Continue  },
+/	{ "$declaresequence", Cmd_DeclareSequence  },
+/	{ "$declareanimation", Cmd_DeclareAnimation },
+X	{ "$cmdlist", Cmd_Cmdlist },                       // baked-in
+X	{ "$animblocksize", Cmd_AnimBlockSize },           // baked-in
+X	{ "$weightlist", Cmd_Weightlist },                 // baked-in
+X	{ "$defaultweightlist", Cmd_DefaultWeightlist },   // baked-in
+/	{ "$ikchain", Cmd_IKChain },
+/	{ "$ikautoplaylock", Cmd_IKAutoplayLock },
+/	{ "$eyeposition", Cmd_Eyeposition },
+/	{ "$illumposition", Cmd_Illumposition },
+X	{ "$origin", Cmd_Origin },
+		* This might not be decompilable.
+		* It seems to only affect animations, so maybe checking idle anim smd info could determine values for the $origin command.
+X	{ "$upaxis", Cmd_UpAxis },           // possibly baked in with no way to decompile it
+/	{ "$bbox", Cmd_BBox },
+/	{ "$cbox", Cmd_CBox },
+X	{ "$gamma", Cmd_Gamma },             // Used in GoldSrc engine; not used in Source engine.
+/	{ "$texturegroup", Cmd_TextureGroup },
+X	{ "$hgroup", Cmd_Hitgroup },         // Does not seem to be needed because hbox also has the group index info.
+/	{ "$hbox", Cmd_Hitbox },
+/	{ "$hboxset", Cmd_HitboxSet },
+/	{ "$surfaceprop", Cmd_SurfaceProp },
+/	{ "$jointsurfaceprop", Cmd_JointSurfaceProp },
+/	{ "$contents", Cmd_Contents },
+/	{ "$jointcontents", Cmd_JointContents },
+/	{ "$attachment", Cmd_Attachment },
+/	{ "$bonemerge", Cmd_BoneMerge },
+X	{ "$externaltextures", Cmd_ExternalTextures },   // obsolete command
+X	{ "$cliptotextures", Cmd_ClipToTextures },       // looks like obsolete command
+X	{ "$renamebone", Cmd_Renamebone },
+X	{ "$collapsebones", Cmd_CollapseBones },      // seems to be baked in
+X	{ "$alwayscollapse", Cmd_AlwaysCollapse },      // seems to be baked in
+-	{ "$proceduralbones", Load_ProceduralBones },
+X	{ "$skiptransition", Cmd_Skiptransition },     // baked-in
+X	{ "$calctransitions", Cmd_CalcTransitions },   // baked-in
+/	{ "$staticprop", Cmd_StaticProp },
+X	{ "$zbrush", Cmd_ZBrush },                     // baked-in
+X	{ "$realignbones", Cmd_RealignBones },         // baked-in
+X	{ "$forcerealign", Cmd_ForceRealign },         // baked-in
+/	{ "$lod", Cmd_BaseLOD },
+/	{ "$shadowlod", Cmd_ShadowLOD },
+/	{ "$poseparameter", Cmd_PoseParameter },
+X	{ "$heirarchy", Cmd_ForcedHierarchy },
+X	{ "$hierarchy", Cmd_ForcedHierarchy },         // baked-in
+X	{ "$insertbone", Cmd_InsertHierarchy },        // baked-in
+X	{ "$limitrotation", Cmd_LimitRotation },       // baked-in
+X	{ "$definebone", Cmd_DefineBone },             // baked-in
+/	{ "$includemodel", Cmd_IncludeModel },
+/	{ "$opaque", Cmd_Opaque },
+/	{ "$mostlyopaque", Cmd_TranslucentTwoPass },
+//	{ "$platform", Cmd_Platform },
+/	{ "$keyvalues", Cmd_KeyValues },
+/	{ "$obsolete", Cmd_Obsolete },
+X	{ "$renamematerial", Cmd_RenameMaterial },
+X	{ "$fakevta", Cmd_FakeVTA },                   // baked-in
+/	{ "$noforcedfade", Cmd_NoForcedFade },
+/	{ "$skipboneinbbox", Cmd_SkipBoneInBBox },
+/	{ "$forcephonemecrossfade", Cmd_ForcePhonemeCrossfade },
+X	{ "$lockbonelengths", Cmd_LockBoneLengths },                   // baked-in
+X	{ "$lockdefinebones", Cmd_LockDefineBones },                   // baked-in
+/	{ "$constantdirectionallight", Cmd_ConstDirectionalLight },
+X	{ "$minlod", Cmd_MinLOD },                                     // baked-in
+/	{ "$bonesaveframe", Cmd_BoneSaveFrame },
+/	{ "$ambientboost", Cmd_AmbientBoost }
+
+
+
+$collisionmodel and $collisionjoints:
+	/ Maybe detect which to use based on animation count.
+		if ( !stricmp( command, "$mass" ) )
+		else if ( !stricmp( command, "$automass" ) )
+		else if ( !stricmp( command, "$inertia" ) )
+		else if ( !stricmp( command, "$damping" ) )
+		else if ( !stricmp( command, "$rotdamping" ) )
+		else if ( !stricmp( command, "$drag" ) )
+		else if ( !stricmp( command, "$rollingDrag" ) )
+		else if ( !stricmp( command, "$concave" ) )
+		else if ( !stricmp( command, "$masscenter" ) )
+		else if ( !stricmp( command, "$jointskip" ) )
+		else if ( !stricmp( command, "$jointmerge" ) )
+		else if ( !stricmp( command, "$rootbone" ) )
+		else if ( !stricmp( command, "$jointconstrain" ) )
+		else if ( !stricmp( command, "$jointinertia" ) )
+		else if ( !stricmp( command, "$jointdamping" ) )
+		else if ( !stricmp( command, "$jointrotdamping" ) )
+		else if ( !stricmp( command, "$jointmassbias" ) )
+		else if ( !stricmp( command, "$noselfcollisions" ) )
+		else if ( !stricmp( command, "$jointcollide" ) )
+		else if ( !stricmp( command, "$animatedfriction" ) )
+
+	
+	
+$animation:
+	int ParseAnimationToken( s_animation_t *panim )
+	{
+		if (stricmp("if", token ) == 0)
+/		else if (stricmp("fps", token ) == 0)
+		else if (stricmp("origin", token ) == 0)
+		else if (stricmp("rotate", token ) == 0)
+		else if (stricmp("angles", token ) == 0)
+		else if (stricmp("scale", token ) == 0)
+/		else if (strnicmp("loop", token, 4 ) == 0)
+		else if (strnicmp("startloop", token, 5 ) == 0)
+		else if (stricmp("fudgeloop", token ) == 0)
+		else if (strnicmp("snap", token, 4 ) == 0)
+		else if (strnicmp("frame", token, 5 ) == 0)
+		else if (stricmp("post", token) == 0)
+		else if (stricmp("noautoik", token) == 0)
+		else if (stricmp("autoik", token) == 0)
+		else if (ParseCmdlistToken( panim->numcmds, panim->cmds ))
+		else if (stricmp("cmdlist", token) == 0)
+		else if (lookupControl( token ) != -1)
+	}
+	int ParseCmdlistToken( int &numcmds, s_animcmd_t *cmds )
+	{
+		if (stricmp("fixuploop", token ) == 0)
+		else if (strnicmp("weightlist", token, 6 ) == 0)
+		else if (stricmp("subtract", token ) == 0)
+		else if (stricmp("presubtract", token ) == 0) // FIXME: rename this to something better
+		else if (stricmp( "alignto", token ) == 0)
+		else if (stricmp( "align", token ) == 0)
+		else if (stricmp( "alignboneto", token ) == 0)
+		else if (stricmp( "match", token ) == 0)
+		else if (stricmp( "matchblend", token ) == 0)
+		else if (stricmp( "worldspaceblend", token ) == 0)
+		else if (stricmp( "worldspaceblendloop", token ) == 0)
+		else if (stricmp( "rotateto", token ) == 0)
+		else if (stricmp( "ikrule", token ) == 0)
+		else if (stricmp( "ikfixup", token ) == 0)
+		else if (stricmp( "walkframe", token ) == 0)
+		else if (stricmp( "walkalignto", token ) == 0)
+		else if (stricmp( "walkalign", token ) == 0)
+		else if (stricmp("derivative", token ) == 0)
+		else if (stricmp("noanimation", token ) == 0)
+		else if (stricmp("lineardelta", token ) == 0)
+		else if (stricmp("splinedelta", token ) == 0)
+		else if (stricmp("compress", token ) == 0)
+		else if (stricmp("numframes", token ) == 0)
+		else if (stricmp("counterrotate", token ) == 0)
+		else if (stricmp("counterrotateto", token ) == 0)
+	}
+	int lookupControl( char *string )
+	{
+		if (stricmp(string,"X")==0) return STUDIO_X;
+		if (stricmp(string,"Y")==0) return STUDIO_Y;
+		if (stricmp(string,"Z")==0) return STUDIO_Z;
+		if (stricmp(string,"XR")==0) return STUDIO_XR;
+		if (stricmp(string,"YR")==0) return STUDIO_YR;
+		if (stricmp(string,"ZR")==0) return STUDIO_ZR;
+
+		if (stricmp(string,"LX")==0) return STUDIO_LX;
+		if (stricmp(string,"LY")==0) return STUDIO_LY;
+		if (stricmp(string,"LZ")==0) return STUDIO_LZ;
+		if (stricmp(string,"LXR")==0) return STUDIO_LXR;
+		if (stricmp(string,"LYR")==0) return STUDIO_LYR;
+		if (stricmp(string,"LZR")==0) return STUDIO_LZR;
+
+		if (stricmp(string,"LM")==0) return STUDIO_LINEAR;
+		if (stricmp(string,"LQ")==0) return STUDIO_QUADRATIC_MOTION;
+
+		return -1;
+	}
+$sequence:
+	int ParseSequence( s_sequence_t *pseq, bool isAppend )
+	{
+/			else if (stricmp("event", token ) == 0)
+/			else if (stricmp("activity", token ) == 0)
+/			else if (strnicmp( token, "ACT_", 4 ) == 0)
+/			else if (stricmp("snap", token ) == 0)
+/			else if (stricmp("blendwidth", token ) == 0)
+/			else if (stricmp("blend", token ) == 0)
+X			else if (stricmp("calcblend", token ) == 0)       // baked-in
+X			else if (stricmp("blendref", token ) == 0)        // baked-in
+X			else if (stricmp("blendcomp", token ) == 0)       // baked-in
+X			else if (stricmp("blendcenter", token ) == 0)     // baked-in
+/			else if (stricmp("node", token ) == 0)
+/			else if (stricmp("transition", token ) == 0)
+/			else if (stricmp("rtransition", token ) == 0)
+X			else if (stricmp("exitphase", token ) == 0)       // not used
+/			else if (stricmp("delta", token) == 0)
+/			else if (stricmp("worldspace", token) == 0)       
+X			else if (stricmp("post", token) == 0) // remove   // baked-in
+/			else if (stricmp("predelta", token) == 0)
+/			else if (stricmp("autoplay", token) == 0)
+/			else if (stricmp( "fadein", token ) == 0)
+/			else if (stricmp( "fadeout", token ) == 0)
+/			else if (stricmp( "realtime", token ) == 0)
+/			else if (stricmp( "hidden", token ) == 0)
+/			else if (stricmp( "addlayer", token ) == 0)
+/			else if (stricmp( "iklock", token ) == 0)
+/			else if (stricmp( "keyvalues", token ) == 0)
+/			else if (stricmp( "blendlayer", token ) == 0)
+			else if ((numblends || isAppend) && ParseAnimationToken( animations[0] ))
+	}
+	int ParseAnimationToken( s_animation_t *panim )
+	{
+		if (stricmp("if", token ) == 0)
+/		else if (stricmp("fps", token ) == 0)
+		else if (stricmp("origin", token ) == 0)
+		else if (stricmp("rotate", token ) == 0)
+		else if (stricmp("angles", token ) == 0)
+		else if (stricmp("scale", token ) == 0)
+/		else if (strnicmp("loop", token, 4 ) == 0)
+		else if (strnicmp("startloop", token, 5 ) == 0)
+		else if (stricmp("fudgeloop", token ) == 0)
+X		else if (strnicmp("snap", token, 4 ) == 0)        // option handled elsewhere
+		else if (strnicmp("frame", token, 5 ) == 0)
+X		else if (stricmp("post", token) == 0)             // option handled elsewhere
+		else if (stricmp("noautoik", token) == 0)
+		else if (stricmp("autoik", token) == 0)
+		else if (ParseCmdlistToken( panim->numcmds, panim->cmds ))
+		else if (stricmp("cmdlist", token) == 0)
+		else if (lookupControl( token ) != -1)
+	}
+	int ParseCmdlistToken( int &numcmds, s_animcmd_t *cmds )
+	{
+		if (stricmp("fixuploop", token ) == 0)
+		else if (strnicmp("weightlist", token, 6 ) == 0)
+		else if (stricmp("subtract", token ) == 0)
+		else if (stricmp("presubtract", token ) == 0) // FIXME: rename this to something better
+		else if (stricmp( "alignto", token ) == 0)
+		else if (stricmp( "align", token ) == 0)
+		else if (stricmp( "alignboneto", token ) == 0)
+		else if (stricmp( "match", token ) == 0)
+		else if (stricmp( "matchblend", token ) == 0)
+		else if (stricmp( "worldspaceblend", token ) == 0)
+		else if (stricmp( "worldspaceblendloop", token ) == 0)
+		else if (stricmp( "rotateto", token ) == 0)
+		else if (stricmp( "ikrule", token ) == 0)
+		else if (stricmp( "ikfixup", token ) == 0)
+		else if (stricmp( "walkframe", token ) == 0)
+		else if (stricmp( "walkalignto", token ) == 0)
+		else if (stricmp( "walkalign", token ) == 0)
+		else if (stricmp("derivative", token ) == 0)
+		else if (stricmp("noanimation", token ) == 0)
+		else if (stricmp("lineardelta", token ) == 0)
+		else if (stricmp("splinedelta", token ) == 0)
+		else if (stricmp("compress", token ) == 0)
+		else if (stricmp("numframes", token ) == 0)
+		else if (stricmp("counterrotate", token ) == 0)
+		else if (stricmp("counterrotateto", token ) == 0)
+	}
+	int lookupControl( char *string )
+	{
+		if (stricmp(string,"X")==0) return STUDIO_X;
+		if (stricmp(string,"Y")==0) return STUDIO_Y;
+		if (stricmp(string,"Z")==0) return STUDIO_Z;
+		if (stricmp(string,"XR")==0) return STUDIO_XR;
+		if (stricmp(string,"YR")==0) return STUDIO_YR;
+		if (stricmp(string,"ZR")==0) return STUDIO_ZR;
+
+		if (stricmp(string,"LX")==0) return STUDIO_LX;
+		if (stricmp(string,"LY")==0) return STUDIO_LY;
+		if (stricmp(string,"LZ")==0) return STUDIO_LZ;
+		if (stricmp(string,"LXR")==0) return STUDIO_LXR;
+		if (stricmp(string,"LYR")==0) return STUDIO_LYR;
+		if (stricmp(string,"LZR")==0) return STUDIO_LZR;
+
+		if (stricmp(string,"LM")==0) return STUDIO_LINEAR;
+		if (stricmp(string,"LQ")==0) return STUDIO_QUADRATIC_MOTION;
+
+		return -1;
+	}
+
+
+
+### Widget Class Template
+################################################################################
+
+#Region "Creation and Destruction"
+
+#End Region
+
+#Region "Init and Free"
+
+#End Region
+
+#Region "Properties"
+
+#End Region
+
+#Region "Widget Event Handlers"
+
+#End Region
+
+#Region "Child Widget Event Handlers"
+
+#End Region
+
+#Region "Core Event Handlers"
+
+#End Region
+
+#Region "Private Methods"
+
+#End Region
+
+#Region "Data"
+
+#End Region
+
+
+
+
+### Info
+################################################################################
+
+* Built using Visual Studio 2005 Professional Edition
+* Programmed in Visual Basic .NET
+* Targetted to .NET Framework 2.0
+* Only uses "Release" Solution Configuration
+* Uses a special "My Project\app1.config" file that has the following lines 
+	so that tool will work when later versions of the Framework are installed:
+    <startup useLegacyV2RuntimeActivationPolicy="true">
+       <supportedRuntime version="v2.0"/>
+       <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.0"/>
+    </startup>
