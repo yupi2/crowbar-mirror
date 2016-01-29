@@ -1,0 +1,59 @@
+
+
+
+Would you link me to or send me documentation or source code on the Source engine model ANI file format (version 49 and above)?
+
+I have been developing Crowbar [http://steamcommunity.com/groups/CrowbarTool] with the main purpose of converting MDL and ANI files into QC and SMD files to help us modders. Combined with good documentation (when we can find it), examples from Source engine games are the best way to understand Source engine models.
+
+The most recent source code for studiomdl.exe I could find is from 2007 and handles version 48 models. L4D2 (and other recent Source engine games) use version 49 ANI format and it seems to be completely different than version 48.
+
+Thank you for your help on this.
+
+======
+
+Ken Birdwell <kenb@valvesoftware.com>
+	
+May 9
+		
+to me
+
+Not sure where this went to, but I thought I’d follow up anyway. 
+
+ 
+
+The changes are mostly with how the quaternions are compressed.   There’s been a very long standing bug with compressing rotations around certain angles.  It would causing a small interpolation pop, and got fixed in Portal 2 and pushed to the more recent projects.   
+
+ 
+
+I’m not up on the SDKs so I’m not sure what’s been released, it’s just a few header files and some code in studiomdl and bonesetup. 
+
+======
+
+Splinks (Zander, who was an intern at Valve last summer) helped modders a lot by finding original Valve files used to build many of the L4D2 models and packaged them in an L4D2 update. However, most of the animation files were not included for the survivors, and we modders still have very few examples (if any) of animated players for the latest model versions. By using Crowbar to decompile models, we could get examples of any model we wanted to mod or replace, but sadly, animations, particularly those in ANI format, are not yet decompilable.
+
+I have looked through all the source code and documentation I could find in the various Source SDKs and on the Internet about the ANI file format, and I could not find any info about the major changes to the version 49 format.
+
+For the version 48 format, I found code relating to it in these files and functions in the Source SDK for 2007:
+src\public\bone_setup.cpp - ExtractAnimValue()   [2 versions of this]
+src\public\bone_setup.cpp - CalcBoneQuaternion()   [several versions of this]
+src\public\bone_setup.cpp - CalcBonePosition()   [several versions of this]
+src\utils\studiomdl\simplify.cpp - CompressAnimations()
+src\utils\studiomdl\write.cpp - WriteAnimationData()
+
+If it's allowable, would someone send me copies of the equivalent files as above for version 49 models? Or, even better a copy of the source code that builds studiomdl.exe (which should include the above files)?
+
+If it's not possible to send source code, is there another way I could get more technical info about the changes made in version 49?
+
+Thank you.
+
+:) ZeqMacaw
+http://steamcommunity.com/id/zeqmacaw
+
+======
+
+- Try emailing Kerry Davis
+- Can export animation SMD files via Maya plugins provided by Valve.
+
+
+
+

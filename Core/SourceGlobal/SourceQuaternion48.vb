@@ -51,7 +51,8 @@ Public Class SourceQuaternion48
 		Get
 			Dim result As Double
 
-			result = (Me.theXInput - 32768) * (1 / 32768)
+			'result = (Me.theXInput - 32768) * (1 / 32768)
+			result = (CInt(Me.theXInput) - 32768) * (1 / 32768)
 			Return result
 		End Get
 	End Property
@@ -60,7 +61,8 @@ Public Class SourceQuaternion48
 		Get
 			Dim result As Double
 
-			result = (Me.theYInput - 32768) * (1 / 32768)
+			'result = (Me.theYInput - 32768) * (1 / 32768)
+			result = (CInt(Me.theYInput) - 32768) * (1 / 32768)
 			Return result
 		End Get
 	End Property

@@ -551,7 +551,8 @@ Public Class SourceQcFile
 						If anEyeball.theTextureIndex = -1 Then
 							eyeballTextureName = "[unknown_texture]"
 						Else
-							eyeballTextureName = Path.GetFileName(theSourceEngineModel.theMdlFileHeader.theTextures(anEyeball.theTextureIndex).theName)
+							eyeballTextureName = theSourceEngineModel.theMdlFileHeader.theTextures(anEyeball.theTextureIndex).theName
+							'eyeballTextureName = Path.GetFileName(theSourceEngineModel.theMdlFileHeader.theTextures(anEyeball.theTextureIndex).theName)
 						End If
 
 						line = vbTab
@@ -1243,8 +1244,8 @@ Public Class SourceQcFile
 		'  replacemodel "producer_model_merged.dmx" "lod3_producer_model_merged.dmx"
 		'}
 		If theSourceEngineModel.theVtxFileHeader IsNot Nothing AndAlso Me.theSourceEngineModel.theMdlFileHeader.theBodyParts IsNot Nothing Then
-			Dim referenceSmdFileName As String
-			Dim lodSmdFileName As String
+			'Dim referenceSmdFileName As String
+			'Dim lodSmdFileName As String
 
 			If theSourceEngineModel.theVtxFileHeader.theVtxBodyParts Is Nothing Then
 				Return
@@ -1256,55 +1257,175 @@ Public Class SourceQcFile
 				Return
 			End If
 
-			'referenceSmdFileName = Me.GetModelPathFileName(Me.theSourceEngineModel.theMdlFileHeader.theBodyParts(0).theModels(0))
-			''modelLodFileName = Path.GetFileName(CStr(Me.theSourceEngineModel.theMdlFileHeader.theBodyParts(0).theModels(0).name).Trim(Chr(0)))
-			'referenceSmdFileName = theSourceEngineModel.GetLodSmdFileName(0)
-			referenceSmdFileName = theSourceEngineModel.GetBodyGroupSmdFileName(0, 0, 0)
+			'referenceSmdFileName = theSourceEngineModel.GetBodyGroupSmdFileName(0, 0, 0)
+
+			'line = ""
+			'theOutputFileStream.WriteLine(line)
+
+			''NOTE: Start loop at 1 to skip first LOD, which isn't needed for the $lod command.
+			'For lodIndex As Integer = 1 To theSourceEngineModel.theVtxFileHeader.lodCount - 1
+			'	Dim switchPoint As Single
+			'	'TODO: Need to check that each of these objects exist first before using them.
+			'	If lodIndex >= theSourceEngineModel.theVtxFileHeader.theVtxBodyParts(0).theVtxModels(0).theVtxModelLods.Count Then
+			'		Return
+			'	End If
+
+			'	switchPoint = theSourceEngineModel.theVtxFileHeader.theVtxBodyParts(0).theVtxModels(0).theVtxModelLods(lodIndex).switchPoint
+
+			'	lodSmdFileName = theSourceEngineModel.GetBodyGroupSmdFileName(0, 0, lodIndex)
+
+			'	line = ""
+			'	If switchPoint = -1 Then
+			'		'// Shadow lod reserves -1 as switch value
+			'		'// which uniquely identifies a shadow lod
+			'		'newLOD.switchValue = -1.0f;
+			'		line += "$shadowlod"
+			'	Else
+			'		line += "$lod "
+			'		line += switchPoint.ToString("0.######", TheApp.InternalNumberFormat)
+			'	End If
+			'	theOutputFileStream.WriteLine(line)
+
+			'	line = "{"
+			'	theOutputFileStream.WriteLine(line)
+
+			'	line = vbTab
+			'	line += "replacemodel "
+			'	line += """"
+			'	line += referenceSmdFileName
+			'	line += """ """
+			'	line += lodSmdFileName
+			'	line += """"
+			'	theOutputFileStream.WriteLine(line)
+
+			'	line = "}"
+			'	theOutputFileStream.WriteLine(line)
+			'Next
+			'======
+			Dim aBodyPart As SourceVtxBodyPart
+			Dim aVtxModel As SourceVtxModel
+			Dim aModel As SourceMdlModel
+			Dim aLodQcInfo As LodQcInfo
+			Dim aLodQcInfoList As List(Of LodQcInfo)
+			Dim aLodList As SortedList(Of Single, List(Of LodQcInfo))
+			Dim switchPoint As Single
+
+			aLodList = New SortedList(Of Single, List(Of LodQcInfo))()
+			For bodyPartIndex As Integer = 0 To Me.theSourceEngineModel.theVtxFileHeader.theVtxBodyParts.Count - 1
+				aBodyPart = Me.theSourceEngineModel.theVtxFileHeader.theVtxBodyParts(bodyPartIndex)
+
+				If aBodyPart.theVtxModels IsNot Nothing Then
+					For modelIndex As Integer = 0 To aBodyPart.theVtxModels.Count - 1
+						aVtxModel = aBodyPart.theVtxModels(modelIndex)
+
+						If aVtxModel.theVtxModelLods IsNot Nothing Then
+							aModel = Me.theSourceEngineModel.theMdlFileHeader.theBodyParts(bodyPartIndex).theModels(modelIndex)
+							If aModel.name(0) = ChrW(0) Then
+								Continue For
+							End If
+
+							'NOTE: Start loop at 1 to skip first LOD, which isn't needed for the $lod command.
+							For lodIndex As Integer = 1 To theSourceEngineModel.theVtxFileHeader.lodCount - 1
+								'TODO: Why would this count be different than the file header count?
+								If lodIndex >= aVtxModel.theVtxModelLods.Count Then
+									Exit For
+								End If
+
+								If lodIndex = 0 Then
+									If Not TheApp.Settings.DecompileReferenceMeshSmdFileIsChecked Then
+										Continue For
+									End If
+								ElseIf lodIndex > 0 Then
+									If Not TheApp.Settings.DecompileLodMeshSmdFilesIsChecked Then
+										Exit For
+									End If
+								End If
+
+								switchPoint = aVtxModel.theVtxModelLods(lodIndex).switchPoint
+								If Not aLodList.ContainsKey(switchPoint) Then
+									aLodQcInfoList = New List(Of LodQcInfo)()
+									aLodList.Add(switchPoint, aLodQcInfoList)
+								Else
+									aLodQcInfoList = aLodList(switchPoint)
+								End If
+
+								aLodQcInfo = New LodQcInfo()
+								aLodQcInfo.referenceFileName = theSourceEngineModel.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, 0)
+								aLodQcInfo.lodFileName = theSourceEngineModel.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, lodIndex)
+								aLodQcInfoList.Add(aLodQcInfo)
+							Next
+						End If
+					Next
+				End If
+			Next
 
 			line = ""
 			theOutputFileStream.WriteLine(line)
 
-			'NOTE: Start loop at 1 to skip first LOD, which isn't needed for the $lod command.
-			For lodIndex As Integer = 1 To theSourceEngineModel.theVtxFileHeader.lodCount - 1
-				Dim switchPoint As Single
-				'TODO: Need to check that each of these objects exist first before using them.
-				If lodIndex >= theSourceEngineModel.theVtxFileHeader.theVtxBodyParts(0).theVtxModels(0).theVtxModelLods.Count Then
-					Return
-				End If
+			Dim lodQcInfoListOfShadowLod As List(Of LodQcInfo)
+			lodQcInfoListOfShadowLod = Nothing
 
-				switchPoint = theSourceEngineModel.theVtxFileHeader.theVtxBodyParts(0).theVtxModels(0).theVtxModelLods(lodIndex).switchPoint
-
-				'lodSmdFileName = TheApp.GetModelLodFileName(TheApp.ModelName, lodIndex)
-				'lodSmdFileName = theSourceEngineModel.GetLodSmdFileName(lodIndex)
-				lodSmdFileName = theSourceEngineModel.GetBodyGroupSmdFileName(0, 0, lodIndex)
-
-				line = ""
+			For lodListIndex As Integer = 0 To aLodList.Count - 1
+				switchPoint = aLodList.Keys(lodListIndex)
 				If switchPoint = -1 Then
-					'// Shadow lod reserves -1 as switch value
-					'// which uniquely identifies a shadow lod
-					'newLOD.switchValue = -1.0f;
-					line += "$shadowlod"
-				Else
-					line += "$lod "
-					line += switchPoint.ToString("0.######", TheApp.InternalNumberFormat)
+					' Skip writing $shadowlod. Write it last after this loop.
+					lodQcInfoListOfShadowLod = aLodList.Values(lodListIndex)
+					Continue For
 				End If
+
+				aLodQcInfoList = aLodList.Values(lodListIndex)
+
+				line = "$lod "
+				line += switchPoint.ToString("0.######", TheApp.InternalNumberFormat)
 				theOutputFileStream.WriteLine(line)
 
 				line = "{"
 				theOutputFileStream.WriteLine(line)
 
-				line = vbTab
-				line += "replacemodel "
-				line += """"
-				line += referenceSmdFileName
-				line += """ """
-				line += lodSmdFileName
-				line += """"
-				theOutputFileStream.WriteLine(line)
+				For i As Integer = 0 To aLodQcInfoList.Count - 1
+					aLodQcInfo = aLodQcInfoList(i)
+
+					line = vbTab
+					line += "replacemodel "
+					line += """"
+					line += aLodQcInfo.referenceFileName
+					line += """ """
+					line += aLodQcInfo.lodFileName
+					line += """"
+					theOutputFileStream.WriteLine(line)
+				Next
 
 				line = "}"
 				theOutputFileStream.WriteLine(line)
 			Next
+
+			'NOTE: As a requirement fothe compiler, write $shadowlod last.
+			If lodQcInfoListOfShadowLod IsNot Nothing Then
+				'// Shadow lod reserves -1 as switch value
+				'// which uniquely identifies a shadow lod
+				'newLOD.switchValue = -1.0f;
+				line = "$shadowlod"
+				theOutputFileStream.WriteLine(line)
+
+				line = "{"
+				theOutputFileStream.WriteLine(line)
+
+				For i As Integer = 0 To lodQcInfoListOfShadowLod.Count - 1
+					aLodQcInfo = lodQcInfoListOfShadowLod(i)
+
+					line = vbTab
+					line += "replacemodel "
+					line += """"
+					line += aLodQcInfo.referenceFileName
+					line += """ """
+					line += aLodQcInfo.lodFileName
+					line += """"
+					theOutputFileStream.WriteLine(line)
+				Next
+
+				line = "}"
+				theOutputFileStream.WriteLine(line)
+			End If
 		End If
 	End Sub
 
@@ -1496,10 +1617,13 @@ Public Class SourceQcFile
 			line = ""
 			theOutputFileStream.WriteLine(line)
 
+			line = "// This list shows the VMT files used in the SMD files."
+			theOutputFileStream.WriteLine(line)
+
 			For j As Integer = 0 To theSourceEngineModel.theMdlFileHeader.theTextures.Count - 1
 				Dim aTexture As SourceMdlTexture
 				aTexture = theSourceEngineModel.theMdlFileHeader.theTextures(j)
-				line = "// Model uses material """
+				line = "// """
 				line += aTexture.theName
 				line += ".vmt"""
 				theOutputFileStream.WriteLine(line)
@@ -2183,14 +2307,14 @@ Public Class SourceQcFile
 				End If
 
 				If aSeqDesc.theEvents IsNot Nothing Then
-					Dim frameIndex As Double
+					Dim frameIndex As Integer
 					Dim frameCount As Integer
 					frameCount = theSourceEngineModel.theMdlFileHeader.theAnimationDescs(aSeqDesc.theAnimDescIndexes(0)).frameCount
 					For j As Integer = 0 To aSeqDesc.theEvents.Count - 1
 						If frameCount <= 1 Then
 							frameIndex = 0
 						Else
-							frameIndex = aSeqDesc.theEvents(j).cycle * (frameCount - 1)
+							frameIndex = CInt(aSeqDesc.theEvents(j).cycle * (frameCount - 1))
 						End If
 						line = vbTab
 						line += "{ "
@@ -3129,9 +3253,12 @@ Public Class SourceQcFile
 					line = vbTab
 					line += vbTab
 					line += "left_constraint "
-					line += MathModule.RadiansToDegrees(aBone.theJiggleBone.baseMinLeft).ToString("0.######", TheApp.InternalNumberFormat)
+					'line += MathModule.RadiansToDegrees(aBone.theJiggleBone.baseMinLeft).ToString("0.######", TheApp.InternalNumberFormat)
+					'line += " "
+					'line += MathModule.RadiansToDegrees(aBone.theJiggleBone.baseMaxLeft).ToString("0.######", TheApp.InternalNumberFormat)
+					line += aBone.theJiggleBone.baseMinLeft.ToString("0.######", TheApp.InternalNumberFormat)
 					line += " "
-					line += MathModule.RadiansToDegrees(aBone.theJiggleBone.baseMaxLeft).ToString("0.######", TheApp.InternalNumberFormat)
+					line += aBone.theJiggleBone.baseMaxLeft.ToString("0.######", TheApp.InternalNumberFormat)
 					theOutputFileStream.WriteLine(line)
 					line = vbTab
 					line += vbTab
@@ -3142,9 +3269,12 @@ Public Class SourceQcFile
 					line = vbTab
 					line += vbTab
 					line += "up_constraint "
-					line += MathModule.RadiansToDegrees(aBone.theJiggleBone.baseMinUp).ToString("0.######", TheApp.InternalNumberFormat)
+					'line += MathModule.RadiansToDegrees(aBone.theJiggleBone.baseMinUp).ToString("0.######", TheApp.InternalNumberFormat)
+					'line += " "
+					'line += MathModule.RadiansToDegrees(aBone.theJiggleBone.baseMaxUp).ToString("0.######", TheApp.InternalNumberFormat)
+					line += aBone.theJiggleBone.baseMinUp.ToString("0.######", TheApp.InternalNumberFormat)
 					line += " "
-					line += MathModule.RadiansToDegrees(aBone.theJiggleBone.baseMaxUp).ToString("0.######", TheApp.InternalNumberFormat)
+					line += aBone.theJiggleBone.baseMaxUp.ToString("0.######", TheApp.InternalNumberFormat)
 					theOutputFileStream.WriteLine(line)
 					line = vbTab
 					line += vbTab
@@ -3155,9 +3285,12 @@ Public Class SourceQcFile
 					line = vbTab
 					line += vbTab
 					line += "forward_constraint "
-					line += MathModule.RadiansToDegrees(aBone.theJiggleBone.baseMinForward).ToString("0.######", TheApp.InternalNumberFormat)
+					'line += MathModule.RadiansToDegrees(aBone.theJiggleBone.baseMinForward).ToString("0.######", TheApp.InternalNumberFormat)
+					'line += " "
+					'line += MathModule.RadiansToDegrees(aBone.theJiggleBone.baseMaxForward).ToString("0.######", TheApp.InternalNumberFormat)
+					line += aBone.theJiggleBone.baseMinForward.ToString("0.######", TheApp.InternalNumberFormat)
 					line += " "
-					line += MathModule.RadiansToDegrees(aBone.theJiggleBone.baseMaxForward).ToString("0.######", TheApp.InternalNumberFormat)
+					line += aBone.theJiggleBone.baseMaxForward.ToString("0.######", TheApp.InternalNumberFormat)
 					theOutputFileStream.WriteLine(line)
 					line = vbTab
 					line += vbTab

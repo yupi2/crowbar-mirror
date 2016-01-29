@@ -100,6 +100,7 @@
     <Compile Include="Core\SourceGlobal\SourceQuaternion64.vb" />
     <Compile Include="Core\SourceGlobal\SourceVector48.vb" />
     <Compile Include="Core\SourceMdlFileData\AnimationFrameLine.vb" />
+    <Compile Include="Core\SourceMdlFileData\LodQcInfo.vb" />
     <Compile Include="Core\SourceMdlFileData\SourceMdlAnimBlock.vb" />
     <Compile Include="Core\SourceMdlFileData\FlexFrame.vb" />
     <Compile Include="Core\SourceMdlFileData\SourceMdlAutoLayer.vb" />

@@ -1,0 +1,16 @@
+
+
+
+Versions of studiomdl.exe source code that I have
+
+
+Based on utils\studiomdl\studiomdl.h:
+#define STUDIO_VERSION	10
+
+
+Based on public\studio.h:
+#define STUDIO_VERSION		36		// READ ABOVE!!!
+#define STUDIO_VERSION		44
+#define STUDIO_VERSION		48
+
+

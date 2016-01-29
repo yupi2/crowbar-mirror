@@ -14,8 +14,6 @@ Public Class SourceModel
 	Public Function GetBodyGroupSmdFileName(ByVal bodyPartIndex As Integer, ByVal modelIndex As Integer, ByVal lodIndex As Integer) As String
 		Dim modelFileName As String
 		Dim modelFileNameWithoutExtension As String
-		'Dim modelFileExtension As String
-		Dim bodyGroupSmdFileNamePrefix As String
 		Dim bodyGroupSmdFileName As String = ""
 		Dim aBodyPart As SourceMdlBodyPart
 		Dim aModel As SourceMdlModel
@@ -37,13 +35,10 @@ Public Class SourceModel
 				modelFileName += "_model"
 				modelFileName += CStr(modelIndex)
 			End If
-
 			modelFileNameWithoutExtension = Path.GetFileNameWithoutExtension(modelFileName)
-			'modelFileExtension = Path.GetExtension(modelFileName)
-			bodyGroupSmdFileNamePrefix = Me.theModelName + "_"
 
-			If Not modelFileName.StartsWith(bodyGroupSmdFileNamePrefix) Then
-				bodyGroupSmdFileName += bodyGroupSmdFileNamePrefix
+			If Not modelFileName.StartsWith(Me.theModelName) Then
+				bodyGroupSmdFileName += Me.theModelName + "_"
 			End If
 			bodyGroupSmdFileName += modelFileNameWithoutExtension
 			If lodIndex > 0 Then

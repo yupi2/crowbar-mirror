@@ -1685,7 +1685,9 @@ Public Class SourceSmdFile
 				For meshIndex As Integer = 0 To aVtxLod.theVtxMeshes.Count - 1
 					aVtxMesh = aVtxLod.theVtxMeshes(meshIndex)
 					materialIndex = aModel.theMeshes(meshIndex).materialIndex
-					materialName = Path.GetFileName(Me.theSourceEngineModel.theMdlFileHeader.theTextures(materialIndex).theName)
+					materialName = Me.theSourceEngineModel.theMdlFileHeader.theTextures(materialIndex).theName
+					'TODO: This was used in previous versions, but maybe should leave as above.
+					'materialName = Path.GetFileName(Me.theSourceEngineModel.theMdlFileHeader.theTextures(materialIndex).theName)
 
 					meshVertexIndexStart = aModel.theMeshes(meshIndex).vertexIndexStart
 
