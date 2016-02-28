@@ -40,12 +40,28 @@ Public Module AppEnums
 		'<Description("Options")> Options
 	End Enum
 
+	Public Enum ViewerType
+		<Description("Preview")> Preview
+		<Description("View")> View
+	End Enum
+
 	Public Enum DecompiledFileType
+		QC
 		ReferenceMesh
 		LodMesh
 		BoneAnimation
 		PhysicsMesh
+		VertexAnimation
+		ProceduralBones
 		TextureBmp
+		Debug
+	End Enum
+
+	Public Enum ProgressOptions
+		WarningPhyFileChecksumDoesNotMatchMdlFileChecksum
+
+		WritingFileStarted
+		WritingFileFinished
 	End Enum
 
 End Module

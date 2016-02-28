@@ -109,6 +109,24 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized string similar to http://steamcommunity.com/id/zeqmacaw.
+        '''</summary>
+        Friend ReadOnly Property AboutAuthorLink() As String
+            Get
+                Return ResourceManager.GetString("AboutAuthorLink", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to http://steamcommunity.com/groups/CrowbarTool.
+        '''</summary>
+        Friend ReadOnly Property AboutProductLink() As String
+            Get
+                Return ResourceManager.GetString("AboutProductLink", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         '''</summary>
         Friend ReadOnly Property crowbar_icon() As System.Drawing.Icon
@@ -199,6 +217,15 @@ Namespace My.Resources
                 Return ResourceManager.GetString("Decompile_LogFileNameSuffix", resourceCulture)
             End Get
         End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to Possible causes: The game&apos;s SDK or Authoring Tools has not been installed (usually via Steam Library Tools) or the path given to Crowbar (via Set Up Games button) is incorrect..
+        '''</summary>
+		Friend ReadOnly Property ErrorMessageSDKMissingCause() As String
+			Get
+				Return ResourceManager.GetString("ErrorMessageSDKMissingCause", resourceCulture)
+			End Get
+		End Property
         
         '''<summary>
         '''  Looks up a localized resource of type System.Drawing.Bitmap.

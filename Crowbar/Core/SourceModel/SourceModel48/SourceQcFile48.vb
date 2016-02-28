@@ -1139,9 +1139,9 @@ Public Class SourceQcFile48
 
 						If aVtxModel.theVtxModelLods IsNot Nothing Then
 							aModel = Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex)
-							'If aModel.name(0) = ChrW(0) Then
-							'	Continue For
-							'End If
+							If aModel.name(0) = ChrW(0) AndAlso aVtxModel.theVtxModelLods(0).theVtxMeshes Is Nothing Then
+								Continue For
+							End If
 
 							'NOTE: Start loop at 1 to skip first LOD, which isn't needed for the $lod command.
 							For lodIndex As Integer = 1 To Me.theVtxFileData.lodCount - 1
@@ -3720,6 +3720,10 @@ Public Class SourceQcFile48
 				line += " "
 				line += aHitbox.boundingBoxPitchYawRoll.y.ToString("0.######", TheApp.InternalNumberFormat)
 			End If
+			line += " "
+			line += """"
+			line += aHitbox.theName
+			line += """"
 			Me.theOutputFileStreamWriter.WriteLine(commentTag + line)
 
 			If Not theSkipBoneInBBoxCommandWasUsed Then

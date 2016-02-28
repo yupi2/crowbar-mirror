@@ -56,7 +56,7 @@ Public Class SourceModel10
 
 	Public Overrides ReadOnly Property HasTextureFileData As Boolean
 		Get
-			Return Me.theMdlFileData.textureCount = 0 AndAlso Me.theTextureMdlFileData10 IsNot Nothing
+			Return Me.theMdlFileData.textureCount > 0 OrElse Me.theTextureMdlFileData10 IsNot Nothing
 		End Get
 	End Property
 
@@ -212,7 +212,7 @@ Public Class SourceModel10
 						smdFileName = SourceFileNamesModule.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, 0, False, Me.theName, aBodyModel.theName, Me.theMdlFileData.theBodyParts.Count, aBodyPart.theModels.Count)
 						smdPathFileName = Path.Combine(modelOutputPath, smdFileName)
 
-						Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileStarted, smdPathFileName)
+						Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
 						'NOTE: Check here in case writing is canceled in the above event.
 						If Me.theWritingIsCanceled Then
 							status = StatusMessage.Canceled
@@ -224,7 +224,7 @@ Public Class SourceModel10
 
 						Me.WriteMeshSmdFile(smdPathFileName, aBodyModel)
 
-						Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileFinished, smdPathFileName)
+						Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, smdPathFileName)
 						'If aBodyModel.theVertexes IsNot Nothing Then
 						'	For vertexIndex As Integer = 0 To aBodyModel.theVertexes.Count - 1
 						'		aVertex = aBodyModel.theVertexes(vertexIndex)
@@ -261,7 +261,7 @@ Public Class SourceModel10
 					smdPathFileName = Path.Combine(modelOutputPath, smdFileName)
 					smdPath = FileManager.GetPath(smdPathFileName)
 					If FileManager.OutputPathIsUsable(smdPath) Then
-						Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileStarted, smdPathFileName)
+						Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
 						'NOTE: Check here in case writing is canceled in the above event.
 						If Me.theWritingIsCanceled Then
 							status = StatusMessage.Canceled
@@ -273,7 +273,7 @@ Public Class SourceModel10
 
 						Me.WriteBoneAnimationSmdFile(smdPathFileName, aSequence, blendIndex)
 
-						Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileFinished, smdPathFileName)
+						Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, smdPathFileName)
 					End If
 				Next
 			Next
@@ -305,7 +305,7 @@ Public Class SourceModel10
 				texturePathFileName = Path.Combine(modelOutputPath, aTexture.theFileName)
 				texturePath = FileManager.GetPath(texturePathFileName)
 				If FileManager.OutputPathIsUsable(texturePath) Then
-					Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileStarted, texturePathFileName)
+					Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, texturePathFileName)
 					'NOTE: Check here in case writing is canceled in the above event.
 					If Me.theWritingIsCanceled Then
 						status = StatusMessage.Canceled
@@ -318,7 +318,7 @@ Public Class SourceModel10
 					Dim aBitmap As New BitmapFile(texturePathFileName, aTexture.width, aTexture.height, aTexture.theData)
 					aBitmap.Write()
 
-					Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileFinished, texturePathFileName)
+					Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, texturePathFileName)
 				End If
 			Catch ex As Exception
 				status = StatusMessage.Error
@@ -400,7 +400,9 @@ Public Class SourceModel10
 
 		If Me.theMdlFileData IsNot Nothing Then
 			debugPathFileName = Path.Combine(debugPath, Me.theName + " " + My.Resources.Decompile_DebugMdlFileNameSuffix)
+			Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, debugPathFileName)
 			Me.WriteAccessedBytesDebugFile(debugPathFileName, Me.theMdlFileData.theFileSeekLog)
+			Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, debugPathFileName)
 		End If
 
 		If Me.theSequenceGroupMdlFileDatas10 IsNot Nothing Then
@@ -412,13 +414,17 @@ Public Class SourceModel10
 				fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName)
 				fileExtension = Path.GetExtension(fileName)
 				debugPathFileName = Path.Combine(debugPath, fileNameWithoutExtension + (i + 1).ToString("00") + fileExtension)
+				Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, debugPathFileName)
 				Me.WriteAccessedBytesDebugFile(debugPathFileName, Me.theSequenceGroupMdlFileDatas10(i).theFileSeekLog)
+				Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, debugPathFileName)
 			Next
 		End If
 
 		If Me.theTextureMdlFileData10 IsNot Nothing Then
 			debugPathFileName = Path.Combine(debugPath, Me.theName + " " + My.Resources.Decompile_DebugTextureMDLFileNameSuffix)
+			Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, debugPathFileName)
 			Me.WriteAccessedBytesDebugFile(debugPathFileName, Me.theTextureMdlFileData10.theFileSeekLog)
+			Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, debugPathFileName)
 		End If
 
 		Return status

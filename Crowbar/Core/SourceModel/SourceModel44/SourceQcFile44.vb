@@ -3699,6 +3699,10 @@ Public Class SourceQcFile44
 				line += " "
 				line += aHitbox.boundingBoxPitchYawRoll.y.ToString("0.######", TheApp.InternalNumberFormat)
 			End If
+			line += " "
+			line += """"
+			line += aHitbox.theName
+			line += """"
 			Me.theOutputFileStreamWriter.WriteLine(commentTag + line)
 
 			If Not theSkipBoneInBBoxCommandWasUsed Then

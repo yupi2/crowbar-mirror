@@ -168,7 +168,9 @@ Public Class SourceModel2531
 
 		Dim physicsMeshPathFileName As String
 		physicsMeshPathFileName = Path.Combine(modelOutputPath, SourceFileNamesModule.GetPhysicsSmdFileName(Me.theName))
+		Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, physicsMeshPathFileName)
 		Me.WriteTextFile(physicsMeshPathFileName, AddressOf Me.WritePhysicsMeshSmdFile)
+		Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, physicsMeshPathFileName)
 
 		Return status
 	End Function
@@ -229,7 +231,7 @@ Public Class SourceModel2531
 				smdFileName = SourceFileNamesModule.GetAnimationSmdRelativePathFileName(Me.Name, anAnimationDesc.theName)
 				smdPathFileName = Path.Combine(modelOutputPath, smdFileName)
 				smdPath = FileManager.GetPath(smdPathFileName)
-				Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileStarted, smdPathFileName)
+				Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
 				'NOTE: Check here in case writing is canceled in the above event.
 				If Me.theWritingIsCanceled Then
 					status = StatusMessage.Canceled
@@ -241,7 +243,7 @@ Public Class SourceModel2531
 
 				Me.WriteBoneAnimationSmdFile(smdPathFileName, Nothing, anAnimationDesc)
 
-				Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileFinished, smdPathFileName)
+				Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, smdPathFileName)
 			Catch ex As Exception
 				Dim debug As Integer = 4242
 			End Try
@@ -253,7 +255,9 @@ Public Class SourceModel2531
 	Public Overrides Function WriteVertexAnimationVtaFile(ByVal vtaPathFileName As String) As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
+		Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, vtaPathFileName)
 		Me.WriteTextFile(vtaPathFileName, AddressOf Me.WriteVertexAnimationVtaFile)
+		Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, vtaPathFileName)
 
 		Return status
 	End Function
@@ -265,12 +269,16 @@ Public Class SourceModel2531
 
 		If Me.theMdlFileData IsNot Nothing Then
 			debugPathFileName = Path.Combine(debugPath, Me.theName + " " + My.Resources.Decompile_DebugMdlFileNameSuffix)
+			Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, debugPathFileName)
 			Me.WriteAccessedBytesDebugFile(debugPathFileName, Me.theMdlFileData.theFileSeekLog)
+			Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, debugPathFileName)
 		End If
 
 		If Me.theVtxFileData IsNot Nothing Then
 			debugPathFileName = Path.Combine(debugPath, Me.theName + " " + My.Resources.Decompile_DebugVtxFileNameSuffix)
+			Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, debugPathFileName)
 			Me.WriteAccessedBytesDebugFile(debugPathFileName, Me.theVtxFileData.theFileSeekLog)
+			Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, debugPathFileName)
 		End If
 
 		Return status
@@ -496,7 +504,7 @@ Public Class SourceModel2531
 									smdFileName = SourceModule2531.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, lodIndex, Me.theMdlFileData.theModelCommandIsUsed, Me.theName, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).name, Me.theMdlFileData.theBodyParts.Count, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels.Count, Me.theMdlFileData.theSequenceGroups(0).theFileName)
 									smdPathFileName = Path.Combine(modelOutputPath, smdFileName)
 
-									Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileStarted, smdPathFileName)
+									Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
 									'NOTE: Check here in case writing is canceled in the above event.
 									If Me.theWritingIsCanceled Then
 										status = StatusMessage.Canceled
@@ -508,7 +516,7 @@ Public Class SourceModel2531
 
 									Me.WriteMeshSmdFile(smdPathFileName, lodIndex, aVtxModel, aModel, bodyPartVertexIndexStart)
 
-									Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileFinished, smdPathFileName)
+									Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, smdPathFileName)
 								Catch ex As Exception
 									Dim debug As Integer = 4242
 								End Try

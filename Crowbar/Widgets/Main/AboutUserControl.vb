@@ -22,14 +22,14 @@ Public Class AboutUserControl
 		'    properties dialog (under the "Project" menu).
 
 		Me.ProductNameLinkLabel.Text = My.Application.Info.ProductName
-		Me.ProductNameLinkLabel.Links.Add(0, My.Application.Info.ProductName.Length(), AboutProductLink)
+		Me.ProductNameLinkLabel.Links.Add(0, My.Application.Info.ProductName.Length(), My.Resources.AboutProductLink)
 
 		Me.ProductInfoTextBox.Text = String.Format("Version {0}", My.Application.Info.Version.ToString) + vbCrLf
 		Me.ProductInfoTextBox.Text += My.Application.Info.Copyright + vbCrLf
 		Me.ProductInfoTextBox.Text += My.Application.Info.CompanyName
 
 		Me.AuthorLinkLabel.Text = My.Application.Info.CompanyName
-		Me.AuthorLinkLabel.Links.Add(0, My.Application.Info.CompanyName.Length(), AboutAuthorLink)
+		Me.AuthorLinkLabel.Links.Add(0, My.Application.Info.CompanyName.Length(), My.Resources.AboutAuthorLink)
 
 		Me.ProductDescriptionTextBox.Text = My.Resources.About_ProductDescription
 
@@ -53,11 +53,11 @@ Public Class AboutUserControl
 #Region "Child Widget Event Handlers"
 
 	Private Sub ProductLogoButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ProductLogoButton.Click
-		System.Diagnostics.Process.Start(AboutProductLink)
+		System.Diagnostics.Process.Start(My.Resources.AboutProductLink)
 	End Sub
 
 	Private Sub AuthorIconButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AuthorIconButton.Click
-		System.Diagnostics.Process.Start(AboutAuthorLink)
+		System.Diagnostics.Process.Start(My.Resources.AboutAuthorLink)
 	End Sub
 
     Private Sub LinkLabel_LinkClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles ProductNameLinkLabel.LinkClicked, AuthorLinkLabel.LinkClicked

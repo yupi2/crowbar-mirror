@@ -204,7 +204,7 @@ Public Class SourceModel49
 				smdPathFileName = Path.Combine(modelOutputPath, smdFileName)
 				smdPath = FileManager.GetPath(smdPathFileName)
 				If FileManager.OutputPathIsUsable(smdPath) Then
-					Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileStarted, smdPathFileName)
+					Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
 					'NOTE: Check here in case writing is canceled in the above event.
 					If Me.theWritingIsCanceled Then
 						status = StatusMessage.Canceled
@@ -216,7 +216,7 @@ Public Class SourceModel49
 
 					Me.WriteBoneAnimationSmdFile(smdPathFileName, Nothing, anAnimationDesc)
 
-					Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileFinished, smdPathFileName)
+					Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, smdPathFileName)
 				End If
 			Next
 		Catch ex As Exception
@@ -553,7 +553,7 @@ Public Class SourceModel49
 								smdFileName = SourceFileNamesModule.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, lodIndex, Me.theMdlFileData.theModelCommandIsUsed, Me.theName, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).name, Me.theMdlFileData.theBodyParts.Count, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels.Count)
 								smdPathFileName = Path.Combine(modelOutputPath, smdFileName)
 
-								Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileStarted, smdPathFileName)
+								Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
 								'NOTE: Check here in case writing is canceled in the above event.
 								If Me.theWritingIsCanceled Then
 									status = StatusMessage.Canceled
@@ -565,7 +565,7 @@ Public Class SourceModel49
 
 								Me.WriteMeshSmdFile(smdPathFileName, lodIndex, aVtxModel, aModel, bodyPartVertexIndexStart)
 
-								Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileFinished, smdPathFileName)
+								Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, smdPathFileName)
 							Next
 
 							bodyPartVertexIndexStart += aModel.vertexCount

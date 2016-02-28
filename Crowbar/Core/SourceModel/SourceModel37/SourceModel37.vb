@@ -44,11 +44,13 @@ Public Class SourceModel37
 		End Get
 	End Property
 
-	'Public Overrides ReadOnly Property HasTextureData As Boolean
-	'	Get
-	'		Return Not Me.theMdlFileDataGeneric.theMdlFileOnlyHasAnimations AndAlso Me.theMdlFileData.theTextures IsNot Nothing AndAlso Me.theMdlFileData.theTextures.Count > 0
-	'	End Get
-	'End Property
+	Public Overrides ReadOnly Property HasTextureData As Boolean
+		Get
+			'TODO: Change back to top line after reading texture info from MDL file is implemented.
+			'Return Not Me.theMdlFileDataGeneric.theMdlFileOnlyHasAnimations AndAlso Me.theMdlFileData.theTextures IsNot Nothing AndAlso Me.theMdlFileData.theTextures.Count > 0
+			Return False
+		End Get
+	End Property
 
 	Public Overrides ReadOnly Property HasMeshData As Boolean
 		Get
@@ -169,7 +171,9 @@ Public Class SourceModel37
 
 		If Me.theMdlFileData IsNot Nothing Then
 			debugPathFileName = Path.Combine(debugPath, Me.theName + " " + My.Resources.Decompile_DebugMdlFileNameSuffix)
+			Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, debugPathFileName)
 			Me.WriteAccessedBytesDebugFile(debugPathFileName, Me.theMdlFileData.theFileSeekLog)
+			Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, debugPathFileName)
 		End If
 
 		'If Me.theVtxFileData IsNot Nothing Then
@@ -250,9 +254,11 @@ Public Class SourceModel37
 		mdlFile.ReadMouths()
 		mdlFile.ReadPoseParamDescs()
 
-		'' Read what WriteTextures() writes.
-		'mdlFile.ReadTextures()
-		'mdlFile.ReadSkins()
+		' Read what WriteTextures() writes.
+		mdlFile.ReadTexturePaths()
+		'NOTE: ReadTextures must be after ReadTexturePaths(), so it can compare with the texture paths.
+		mdlFile.ReadTextures()
+		mdlFile.ReadSkinFamilies()
 
 		'' Read what WriteKeyValues() writes.
 		'mdlFile.ReadKeyValues()

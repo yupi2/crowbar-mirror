@@ -13,6 +13,12 @@ Public Class SourceModel44
 
 #Region "Properties"
 
+	Public Overrides ReadOnly Property PhyFileIsUsed As Boolean
+		Get
+			Return Not String.IsNullOrEmpty(Me.thePhyPathFileName) AndAlso File.Exists(Me.thePhyPathFileName)
+		End Get
+	End Property
+
 	Public Overrides ReadOnly Property VtxFileIsUsed As Boolean
 		Get
 			Return Not String.IsNullOrEmpty(Me.theVtxPathFileName) AndAlso File.Exists(Me.theVtxPathFileName)
@@ -234,7 +240,7 @@ Public Class SourceModel44
 				smdPathFileName = Path.Combine(modelOutputPath, smdFileName)
 				smdPath = FileManager.GetPath(smdPathFileName)
 				If FileManager.OutputPathIsUsable(smdPath) Then
-					Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileStarted, smdPathFileName)
+					Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
 					'NOTE: Check here in case writing is canceled in the above event.
 					If Me.theWritingIsCanceled Then
 						status = StatusMessage.Canceled
@@ -246,7 +252,7 @@ Public Class SourceModel44
 
 					Me.WriteBoneAnimationSmdFile(smdPathFileName, Nothing, anAnimationDesc)
 
-					Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileFinished, smdPathFileName)
+					Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, smdPathFileName)
 				End If
 			Next
 		Catch ex As Exception
@@ -259,7 +265,9 @@ Public Class SourceModel44
 	Public Overrides Function WriteVrdFile(ByVal vrdPathFileName As String) As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
+		Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, vrdPathFileName)
 		Me.WriteTextFile(vrdPathFileName, AddressOf Me.WriteVrdFile)
+		Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, vrdPathFileName)
 
 		Return status
 	End Function
@@ -271,12 +279,16 @@ Public Class SourceModel44
 
 		If Me.theMdlFileDataGeneric IsNot Nothing Then
 			debugPathFileName = Path.Combine(debugPath, Me.theName + " " + My.Resources.Decompile_DebugMdlFileNameSuffix)
+			Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, debugPathFileName)
 			Me.WriteAccessedBytesDebugFile(debugPathFileName, Me.theMdlFileDataGeneric.theFileSeekLog)
+			Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, debugPathFileName)
 		End If
 
 		If Me.theAniFileDataGeneric IsNot Nothing Then
 			debugPathFileName = Path.Combine(debugPath, Me.theName + " " + My.Resources.Decompile_DebugAniFileNameSuffix)
+			Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, debugPathFileName)
 			Me.WriteAccessedBytesDebugFile(debugPathFileName, Me.theAniFileDataGeneric.theFileSeekLog)
+			Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, debugPathFileName)
 		End If
 
 		Return status
@@ -577,7 +589,7 @@ Public Class SourceModel44
 								smdFileName = SourceFileNamesModule.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, lodIndex, Me.theMdlFileData.theModelCommandIsUsed, Me.theName, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).name, Me.theMdlFileData.theBodyParts.Count, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels.Count)
 								smdPathFileName = Path.Combine(modelOutputPath, smdFileName)
 
-								Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileStarted, smdPathFileName)
+								Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
 								'NOTE: Check here in case writing is canceled in the above event.
 								If Me.theWritingIsCanceled Then
 									status = StatusMessage.Canceled
@@ -589,7 +601,7 @@ Public Class SourceModel44
 
 								Me.WriteMeshSmdFile(smdPathFileName, lodIndex, aVtxModel, aModel, bodyPartVertexIndexStart)
 
-								Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileFinished, smdPathFileName)
+								Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, smdPathFileName)
 							Next
 
 							bodyPartVertexIndexStart += aModel.vertexCount

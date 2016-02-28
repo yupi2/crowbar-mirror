@@ -341,7 +341,7 @@ Public Class Decompiler
 
 			'NOTE: Write log files before data files, in case something goes wrong with writing data files.
 			If TheApp.Settings.DecompileDebugInfoFilesIsChecked Then
-				Me.UpdateProgress(2, "Writing debug info files ...")
+				Me.UpdateProgress(2, "Writing decompile-info files ...")
 				Me.WriteDebugFiles(model)
 				If Me.CancellationPending Then
 					Me.UpdateProgress(1, "... Decompile of """ + mdlRelativePathFileName + """ cancelled.")
@@ -352,7 +352,7 @@ Public Class Decompiler
 					status = StatusMessage.Skipped
 					Return status
 				Else
-					Me.UpdateProgress(2, "... Writing debug info files finished.")
+					Me.UpdateProgress(2, "... Writing decompile-info files finished.")
 				End If
 			End If
 
@@ -545,10 +545,15 @@ Public Class Decompiler
 
 		If TheApp.Settings.DecompileQcFileIsChecked Then
 			If TheApp.Settings.DecompileGroupIntoQciFilesIsChecked Then
-				Me.UpdateProgress(3, "Writing QC and QCI files ...")
+				'Me.UpdateProgress(3, "Writing QC and QCI files ...")
+				Me.UpdateProgress(3, "QC and QCI files: ")
 			Else
-				Me.UpdateProgress(3, "Writing QC file ...")
+				'Me.UpdateProgress(3, "Writing QC file ...")
+				Me.UpdateProgress(3, "QC file: ")
 			End If
+			Me.theDecompiledFileType = DecompiledFileType.QC
+			Me.theFirstDecompiledFileHasBeenAdded = False
+			AddHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
 
 			Dim qcPathFileName As String
 			qcPathFileName = Path.Combine(Me.theModelOutputPath, model.Name + ".qc")
@@ -559,11 +564,12 @@ Public Class Decompiler
 				Me.theDecompiledQcFiles.Add(FileManager.GetRelativePathFileName(Me.theOutputPath, qcPathFileName))
 			End If
 
-			If TheApp.Settings.DecompileGroupIntoQciFilesIsChecked Then
-				Me.UpdateProgress(3, "... Writing QC and QCI files finished.")
-			Else
-				Me.UpdateProgress(3, "... Writing QC file finished.")
-			End If
+			RemoveHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
+			'If TheApp.Settings.DecompileGroupIntoQciFilesIsChecked Then
+			'	Me.UpdateProgress(3, "... Writing QC and QCI files finished.")
+			'Else
+			'	Me.UpdateProgress(3, "... Writing QC file finished.")
+			'End If
 		End If
 
 		If Me.CancellationPending Then
@@ -580,7 +586,8 @@ Public Class Decompiler
 
 		If TheApp.Settings.DecompileReferenceMeshSmdFileIsChecked Then
 			If model.HasMeshData Then
-				Me.UpdateProgress(3, "Writing reference mesh files ...")
+				'Me.UpdateProgress(3, "Writing reference mesh files ...")
+				Me.UpdateProgress(3, "Reference mesh files: ")
 				Me.theDecompiledFileType = DecompiledFileType.ReferenceMesh
 				Me.theFirstDecompiledFileHasBeenAdded = False
 				AddHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
@@ -588,7 +595,7 @@ Public Class Decompiler
 				status = model.WriteReferenceMeshFiles(Me.theModelOutputPath)
 
 				RemoveHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
-				Me.UpdateProgress(3, "... Writing reference mesh files finished.")
+				'Me.UpdateProgress(3, "... Writing reference mesh files finished.")
 			End If
 		End If
 
@@ -600,7 +607,8 @@ Public Class Decompiler
 
 		If TheApp.Settings.DecompileLodMeshSmdFilesIsChecked Then
 			If model.HasLodMeshData Then
-				Me.UpdateProgress(3, "Writing LOD mesh files ...")
+				'Me.UpdateProgress(3, "Writing LOD mesh files ...")
+				Me.UpdateProgress(3, "LOD mesh files: ")
 				Me.theDecompiledFileType = DecompiledFileType.LodMesh
 				Me.theFirstDecompiledFileHasBeenAdded = False
 				AddHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
@@ -608,7 +616,7 @@ Public Class Decompiler
 				status = model.WriteLodMeshFiles(Me.theModelOutputPath)
 
 				RemoveHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
-				Me.UpdateProgress(3, "... Writing LOD mesh files finished.")
+				'Me.UpdateProgress(3, "... Writing LOD mesh files finished.")
 			End If
 		End If
 
@@ -620,13 +628,16 @@ Public Class Decompiler
 
 		If TheApp.Settings.DecompilePhysicsMeshSmdFileIsChecked Then
 			If model.HasPhysicsMeshData Then
-				Me.UpdateProgress(3, "Writing physics mesh file ...")
+				'Me.UpdateProgress(3, "Writing physics mesh file ...")
+				Me.UpdateProgress(3, "Physics mesh file: ")
+				Me.theDecompiledFileType = DecompiledFileType.PhysicsMesh
+				Me.theFirstDecompiledFileHasBeenAdded = False
 				AddHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
 
 				status = model.WritePhysicsMeshSmdFile(Me.theModelOutputPath)
 
 				RemoveHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
-				Me.UpdateProgress(3, "... Writing physics mesh file finished.")
+				'Me.UpdateProgress(3, "... Writing physics mesh file finished.")
 			End If
 		End If
 
@@ -644,8 +655,11 @@ Public Class Decompiler
 
 		If TheApp.Settings.DecompileVertexAnimationVtaFileIsChecked Then
 			If model.HasVertexAnimationData Then
-				Me.UpdateProgress(3, "Writing VTA file ...")
-				'AddHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
+				'Me.UpdateProgress(3, "Writing VTA file ...")
+				Me.UpdateProgress(3, "Vertex animation file: ")
+				Me.theDecompiledFileType = DecompiledFileType.VertexAnimation
+				Me.theFirstDecompiledFileHasBeenAdded = False
+				AddHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
 
 				Dim vtaPathFileName As String
 				vtaPathFileName = Path.Combine(Me.theModelOutputPath, SourceFileNamesModule.GetVtaFileName(model.Name))
@@ -656,8 +670,8 @@ Public Class Decompiler
 					Me.theDecompiledVtaFiles.Add(FileManager.GetRelativePathFileName(Me.theOutputPath, vtaPathFileName))
 				End If
 
-				'RemoveHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
-				Me.UpdateProgress(3, "... Writing VTA file finished.")
+				RemoveHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
+				'Me.UpdateProgress(3, "... Writing VTA file finished.")
 			End If
 		End If
 
@@ -678,7 +692,8 @@ Public Class Decompiler
 				Dim outputPath As String
 				outputPath = Path.Combine(Me.theModelOutputPath, SourceFileNamesModule.GetAnimationSmdRelativePath(model.Name))
 				If FileManager.OutputPathIsUsable(outputPath) Then
-					Me.UpdateProgress(3, "Writing bone animation SMD files ...")
+					'Me.UpdateProgress(3, "Writing bone animation SMD files ...")
+					Me.UpdateProgress(3, "Bone animation files: ")
 					Me.theDecompiledFileType = DecompiledFileType.BoneAnimation
 					Me.theFirstDecompiledFileHasBeenAdded = False
 					AddHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
@@ -686,7 +701,7 @@ Public Class Decompiler
 					status = model.WriteBoneAnimationSmdFiles(Me.theModelOutputPath)
 
 					RemoveHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
-					Me.UpdateProgress(3, "... Writing bone animation SMD files finished.")
+					'Me.UpdateProgress(3, "... Writing bone animation SMD files finished.")
 				Else
 					Me.UpdateProgress(3, "WARNING: Unable to create """ + outputPath + """ where bone animation SMD files would be written.")
 				End If
@@ -701,7 +716,10 @@ Public Class Decompiler
 
 		If TheApp.Settings.DecompileProceduralBonesVrdFileIsChecked Then
 			If model.HasProceduralBonesData Then
-				Me.UpdateProgress(3, "Writing VRD file ...")
+				'Me.UpdateProgress(3, "Writing VRD file ...")
+				Me.UpdateProgress(3, "Procedural bones file: ")
+				Me.theDecompiledFileType = DecompiledFileType.ProceduralBones
+				Me.theFirstDecompiledFileHasBeenAdded = False
 				AddHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
 
 				Dim vrdPathFileName As String
@@ -714,7 +732,7 @@ Public Class Decompiler
 				End If
 
 				RemoveHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
-				Me.UpdateProgress(3, "... Writing VRD file finished.")
+				'Me.UpdateProgress(3, "... Writing VRD file finished.")
 			End If
 		End If
 
@@ -732,7 +750,8 @@ Public Class Decompiler
 
 		If TheApp.Settings.DecompileTextureBmpFilesIsChecked Then
 			If model.HasTextureFileData Then
-				Me.UpdateProgress(3, "Writing texture files ...")
+				'Me.UpdateProgress(3, "Writing texture files ...")
+				Me.UpdateProgress(3, "Texture files: ")
 				Me.theDecompiledFileType = DecompiledFileType.TextureBmp
 				Me.theFirstDecompiledFileHasBeenAdded = False
 				AddHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
@@ -740,7 +759,7 @@ Public Class Decompiler
 				status = model.WriteTextureFiles(Me.theModelOutputPath)
 
 				RemoveHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
-				Me.UpdateProgress(3, "... Writing texture files finished.")
+				'Me.UpdateProgress(3, "... Writing texture files finished.")
 			End If
 		End If
 
@@ -753,12 +772,18 @@ Public Class Decompiler
 		debugPath = TheApp.GetDebugPath(Me.theModelOutputPath, model.Name)
 		FileManager.CreatePath(debugPath)
 
+		Me.theDecompiledFileType = DecompiledFileType.Debug
+		Me.theFirstDecompiledFileHasBeenAdded = False
+		AddHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
+
 		model.WriteAccessedBytesDebugFiles(debugPath)
 		If Me.CancellationPending Then
 			Return
 		ElseIf Me.theSkipCurrentModelIsActive Then
 			Return
 		End If
+
+		RemoveHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
 
 		'Dim debug3File As AppDebug3File
 		'debug3File = New AppDebug3File()
@@ -812,31 +837,32 @@ Public Class Decompiler
 		If e.Progress = ProgressOptions.WarningPhyFileChecksumDoesNotMatchMdlFileChecksum Then
 			'TODO: Test that this shows when needed.
 			Me.UpdateProgress(4, "WARNING: The PHY file's checksum value does not match the MDL file's checksum value.")
-		ElseIf e.Progress = ProgressOptions.WritingSmdFileStarted Then
-			Dim smdPathFileName As String
-			Dim smdFileName As String
-			smdPathFileName = e.Message
-			smdFileName = Path.GetFileName(smdPathFileName)
+		ElseIf e.Progress = ProgressOptions.WritingFileStarted Then
+			Dim pathFileName As String
+			Dim fileName As String
+			pathFileName = e.Message
+			fileName = Path.GetFileName(pathFileName)
 			'TODO: Figure out how to rename SMD file if already written in a previous step, which might happen if, for example, an anim is named "<modelname>_reference" or "<modelname>_physics".
 			'      Could also happen if the loop through SequenceDescs has already created the SMD file before the loop through AnimationDescs.
-			If TheApp.SmdFilesWritten.Contains(smdPathFileName) Then
+			If TheApp.SmdFilesWritten.Contains(pathFileName) Then
 				Dim model As SourceModel
 				model = CType(sender, SourceModel)
 				model.WritingSingleFileIsCanceled = True
 				'Me.UpdateProgress(4, "WARNING: The file, """ + smdFileName + """, was written already in a previous step.")
-			Else
-				Me.UpdateProgress(4, "Writing """ + smdFileName + """ file ...")
+				'Else
+				'	Me.UpdateProgress(4, "Writing """ + fileName + """ file ...")
 			End If
-		ElseIf e.Progress = ProgressOptions.WritingSmdFileFinished Then
-			Dim smdPathFileName As String
-			Dim smdFileName As String
-			smdPathFileName = e.Message
-			smdFileName = Path.GetFileName(smdPathFileName)
-			Me.UpdateProgress(4, "... Writing """ + smdFileName + """ file finished.")
+		ElseIf e.Progress = ProgressOptions.WritingFileFinished Then
+			Dim pathFileName As String
+			Dim fileName As String
+			pathFileName = e.Message
+			fileName = Path.GetFileName(pathFileName)
+			'Me.UpdateProgress(4, "... Writing """ + fileName + """ file finished.")
+			Me.UpdateProgress(4, fileName)
 
-			If Not Me.theFirstDecompiledFileHasBeenAdded AndAlso File.Exists(smdPathFileName) Then
+			If Not Me.theFirstDecompiledFileHasBeenAdded AndAlso File.Exists(pathFileName) Then
 				Dim relativePathFileName As String
-				relativePathFileName = FileManager.GetRelativePathFileName(Me.theOutputPath, smdPathFileName)
+				relativePathFileName = FileManager.GetRelativePathFileName(Me.theOutputPath, pathFileName)
 
 				If Me.theDecompiledFileType = DecompiledFileType.ReferenceMesh Then
 					Me.theDecompiledFirstRefSmdFiles.Add(relativePathFileName)
@@ -848,11 +874,13 @@ Public Class Decompiler
 					Me.theDecompiledPhysicsFiles.Add(relativePathFileName)
 				ElseIf Me.theDecompiledFileType = DecompiledFileType.TextureBmp Then
 					Me.theDecompiledFirstTextureBmpFiles.Add(relativePathFileName)
+				ElseIf Me.theDecompiledFileType = DecompiledFileType.Debug Then
+					Me.theDecompiledFirstDebugFiles.Add(relativePathFileName)
 				End If
 
 				Me.theFirstDecompiledFileHasBeenAdded = True
 			End If
-			TheApp.SmdFilesWritten.Add(smdPathFileName)
+			TheApp.SmdFilesWritten.Add(pathFileName)
 
 			Dim model As SourceModel
 			model = CType(sender, SourceModel)

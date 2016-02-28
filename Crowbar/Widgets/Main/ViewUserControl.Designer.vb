@@ -28,8 +28,8 @@ Partial Class ViewUserControl
 		Me.BrowseForMdlFileButton = New System.Windows.Forms.Button()
 		Me.Label1 = New System.Windows.Forms.Label()
 		Me.Panel2 = New System.Windows.Forms.Panel()
-		Me.OpenViewerButton = New System.Windows.Forms.Button()
 		Me.GotoMdlFileButton = New System.Windows.Forms.Button()
+		Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
 		Me.GroupBox1 = New System.Windows.Forms.GroupBox()
 		Me.InfoRichTextBox = New Crowbar.RichTextBoxEx()
 		Me.Label3 = New System.Windows.Forms.Label()
@@ -37,15 +37,20 @@ Partial Class ViewUserControl
 		Me.EditGameSetupButton = New System.Windows.Forms.Button()
 		Me.ViewAsReplacementButton = New System.Windows.Forms.Button()
 		Me.UseInDecompileButton = New System.Windows.Forms.Button()
+		Me.OpenViewerButton = New System.Windows.Forms.Button()
+		Me.MessageTextBox = New Crowbar.TextBoxEx()
 		Me.Panel2.SuspendLayout()
+		CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
+		Me.SplitContainer1.Panel1.SuspendLayout()
+		Me.SplitContainer1.Panel2.SuspendLayout()
+		Me.SplitContainer1.SuspendLayout()
 		Me.GroupBox1.SuspendLayout()
 		Me.SuspendLayout()
 		'
 		'ViewButton
 		'
-		Me.ViewButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
 		Me.ViewButton.Enabled = False
-		Me.ViewButton.Location = New System.Drawing.Point(3, 521)
+		Me.ViewButton.Location = New System.Drawing.Point(0, 32)
 		Me.ViewButton.Name = "ViewButton"
 		Me.ViewButton.Size = New System.Drawing.Size(40, 23)
 		Me.ViewButton.TabIndex = 8
@@ -82,34 +87,17 @@ Partial Class ViewUserControl
 		'
 		'Panel2
 		'
-		Me.Panel2.Controls.Add(Me.OpenViewerButton)
 		Me.Panel2.Controls.Add(Me.Label1)
 		Me.Panel2.Controls.Add(Me.MdlPathFileTextBox)
 		Me.Panel2.Controls.Add(Me.BrowseForMdlFileButton)
 		Me.Panel2.Controls.Add(Me.GotoMdlFileButton)
-		Me.Panel2.Controls.Add(Me.GroupBox1)
-		Me.Panel2.Controls.Add(Me.Label3)
-		Me.Panel2.Controls.Add(Me.GameSetupComboBox)
-		Me.Panel2.Controls.Add(Me.EditGameSetupButton)
-		Me.Panel2.Controls.Add(Me.ViewButton)
-		Me.Panel2.Controls.Add(Me.ViewAsReplacementButton)
-		Me.Panel2.Controls.Add(Me.UseInDecompileButton)
+		Me.Panel2.Controls.Add(Me.SplitContainer1)
 		Me.Panel2.Dock = System.Windows.Forms.DockStyle.Fill
 		Me.Panel2.Location = New System.Drawing.Point(0, 0)
 		Me.Panel2.Margin = New System.Windows.Forms.Padding(2)
 		Me.Panel2.Name = "Panel2"
 		Me.Panel2.Size = New System.Drawing.Size(784, 547)
 		Me.Panel2.TabIndex = 8
-		'
-		'OpenViewerButton
-		'
-		Me.OpenViewerButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.OpenViewerButton.Location = New System.Drawing.Point(691, 521)
-		Me.OpenViewerButton.Name = "OpenViewerButton"
-		Me.OpenViewerButton.Size = New System.Drawing.Size(90, 23)
-		Me.OpenViewerButton.TabIndex = 11
-		Me.OpenViewerButton.Text = "Open Viewer"
-		Me.OpenViewerButton.UseVisualStyleBackColor = True
 		'
 		'GotoMdlFileButton
 		'
@@ -121,15 +109,42 @@ Partial Class ViewUserControl
 		Me.GotoMdlFileButton.Text = "Goto"
 		Me.GotoMdlFileButton.UseVisualStyleBackColor = True
 		'
-		'GroupBox1
+		'SplitContainer1
 		'
-		Me.GroupBox1.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+		Me.SplitContainer1.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
 			Or System.Windows.Forms.AnchorStyles.Left) _
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.SplitContainer1.Location = New System.Drawing.Point(3, 32)
+		Me.SplitContainer1.Name = "SplitContainer1"
+		Me.SplitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal
+		'
+		'SplitContainer1.Panel1
+		'
+		Me.SplitContainer1.Panel1.Controls.Add(Me.GroupBox1)
+		Me.SplitContainer1.Panel1MinSize = 90
+		'
+		'SplitContainer1.Panel2
+		'
+		Me.SplitContainer1.Panel2.Controls.Add(Me.Label3)
+		Me.SplitContainer1.Panel2.Controls.Add(Me.GameSetupComboBox)
+		Me.SplitContainer1.Panel2.Controls.Add(Me.EditGameSetupButton)
+		Me.SplitContainer1.Panel2.Controls.Add(Me.ViewButton)
+		Me.SplitContainer1.Panel2.Controls.Add(Me.ViewAsReplacementButton)
+		Me.SplitContainer1.Panel2.Controls.Add(Me.UseInDecompileButton)
+		Me.SplitContainer1.Panel2.Controls.Add(Me.OpenViewerButton)
+		Me.SplitContainer1.Panel2.Controls.Add(Me.MessageTextBox)
+		Me.SplitContainer1.Panel2MinSize = 90
+		Me.SplitContainer1.Size = New System.Drawing.Size(778, 512)
+		Me.SplitContainer1.SplitterDistance = 394
+		Me.SplitContainer1.TabIndex = 13
+		'
+		'GroupBox1
+		'
 		Me.GroupBox1.Controls.Add(Me.InfoRichTextBox)
-		Me.GroupBox1.Location = New System.Drawing.Point(3, 32)
+		Me.GroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
+		Me.GroupBox1.Location = New System.Drawing.Point(0, 0)
 		Me.GroupBox1.Name = "GroupBox1"
-		Me.GroupBox1.Size = New System.Drawing.Size(778, 454)
+		Me.GroupBox1.Size = New System.Drawing.Size(778, 394)
 		Me.GroupBox1.TabIndex = 4
 		Me.GroupBox1.TabStop = False
 		Me.GroupBox1.Text = "Info"
@@ -140,16 +155,15 @@ Partial Class ViewUserControl
 		Me.InfoRichTextBox.Location = New System.Drawing.Point(3, 16)
 		Me.InfoRichTextBox.Name = "InfoRichTextBox"
 		Me.InfoRichTextBox.ReadOnly = True
-		Me.InfoRichTextBox.Size = New System.Drawing.Size(772, 435)
+		Me.InfoRichTextBox.Size = New System.Drawing.Size(772, 375)
 		Me.InfoRichTextBox.TabIndex = 0
 		Me.InfoRichTextBox.Text = ""
 		Me.InfoRichTextBox.WordWrap = False
 		'
 		'Label3
 		'
-		Me.Label3.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
 		Me.Label3.AutoSize = True
-		Me.Label3.Location = New System.Drawing.Point(3, 497)
+		Me.Label3.Location = New System.Drawing.Point(0, 8)
 		Me.Label3.Name = "Label3"
 		Me.Label3.Size = New System.Drawing.Size(240, 13)
 		Me.Label3.TabIndex = 5
@@ -157,19 +171,19 @@ Partial Class ViewUserControl
 		'
 		'GameSetupComboBox
 		'
-		Me.GameSetupComboBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
+		Me.GameSetupComboBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.GameSetupComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
 		Me.GameSetupComboBox.FormattingEnabled = True
-		Me.GameSetupComboBox.Location = New System.Drawing.Point(249, 494)
+		Me.GameSetupComboBox.Location = New System.Drawing.Point(246, 5)
 		Me.GameSetupComboBox.Name = "GameSetupComboBox"
 		Me.GameSetupComboBox.Size = New System.Drawing.Size(436, 21)
 		Me.GameSetupComboBox.TabIndex = 6
 		'
 		'EditGameSetupButton
 		'
-		Me.EditGameSetupButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.EditGameSetupButton.Location = New System.Drawing.Point(691, 492)
+		Me.EditGameSetupButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.EditGameSetupButton.Location = New System.Drawing.Point(688, 3)
 		Me.EditGameSetupButton.Name = "EditGameSetupButton"
 		Me.EditGameSetupButton.Size = New System.Drawing.Size(90, 23)
 		Me.EditGameSetupButton.TabIndex = 7
@@ -178,9 +192,8 @@ Partial Class ViewUserControl
 		'
 		'ViewAsReplacementButton
 		'
-		Me.ViewAsReplacementButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
 		Me.ViewAsReplacementButton.Enabled = False
-		Me.ViewAsReplacementButton.Location = New System.Drawing.Point(49, 521)
+		Me.ViewAsReplacementButton.Location = New System.Drawing.Point(46, 32)
 		Me.ViewAsReplacementButton.Name = "ViewAsReplacementButton"
 		Me.ViewAsReplacementButton.Size = New System.Drawing.Size(120, 23)
 		Me.ViewAsReplacementButton.TabIndex = 9
@@ -189,14 +202,35 @@ Partial Class ViewUserControl
 		'
 		'UseInDecompileButton
 		'
-		Me.UseInDecompileButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
 		Me.UseInDecompileButton.Enabled = False
-		Me.UseInDecompileButton.Location = New System.Drawing.Point(175, 521)
+		Me.UseInDecompileButton.Location = New System.Drawing.Point(172, 32)
 		Me.UseInDecompileButton.Name = "UseInDecompileButton"
 		Me.UseInDecompileButton.Size = New System.Drawing.Size(120, 23)
 		Me.UseInDecompileButton.TabIndex = 10
 		Me.UseInDecompileButton.Text = "Use in Decompile"
 		Me.UseInDecompileButton.UseVisualStyleBackColor = True
+		'
+		'OpenViewerButton
+		'
+		Me.OpenViewerButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.OpenViewerButton.Location = New System.Drawing.Point(688, 32)
+		Me.OpenViewerButton.Name = "OpenViewerButton"
+		Me.OpenViewerButton.Size = New System.Drawing.Size(90, 23)
+		Me.OpenViewerButton.TabIndex = 11
+		Me.OpenViewerButton.Text = "Open Viewer"
+		Me.OpenViewerButton.UseVisualStyleBackColor = True
+		'
+		'MessageTextBox
+		'
+		Me.MessageTextBox.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+			Or System.Windows.Forms.AnchorStyles.Left) _
+			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.MessageTextBox.Location = New System.Drawing.Point(0, 61)
+		Me.MessageTextBox.Multiline = True
+		Me.MessageTextBox.Name = "MessageTextBox"
+		Me.MessageTextBox.ReadOnly = True
+		Me.MessageTextBox.Size = New System.Drawing.Size(778, 53)
+		Me.MessageTextBox.TabIndex = 12
 		'
 		'ViewUserControl
 		'
@@ -207,6 +241,11 @@ Partial Class ViewUserControl
 		Me.Size = New System.Drawing.Size(784, 547)
 		Me.Panel2.ResumeLayout(False)
 		Me.Panel2.PerformLayout()
+		Me.SplitContainer1.Panel1.ResumeLayout(False)
+		Me.SplitContainer1.Panel2.ResumeLayout(False)
+		Me.SplitContainer1.Panel2.PerformLayout()
+		CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
+		Me.SplitContainer1.ResumeLayout(False)
 		Me.GroupBox1.ResumeLayout(False)
 		Me.ResumeLayout(False)
 
@@ -225,5 +264,7 @@ Partial Class ViewUserControl
 	Friend WithEvents InfoRichTextBox As Crowbar.RichTextBoxEx
 	Friend WithEvents UseInDecompileButton As System.Windows.Forms.Button
 	Friend WithEvents OpenViewerButton As System.Windows.Forms.Button
+	Friend WithEvents MessageTextBox As Crowbar.TextBoxEx
+	Friend WithEvents SplitContainer1 As System.Windows.Forms.SplitContainer
 
 End Class

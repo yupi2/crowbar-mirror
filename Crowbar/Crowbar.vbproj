@@ -13,7 +13,7 @@
     <MyType>WindowsFormsWithCustomSubMain</MyType>
     <OptionStrict>On</OptionStrict>
     <ApplicationIcon>resources\crowbar_icon.ico</ApplicationIcon>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
@@ -111,7 +111,6 @@
     <Compile Include="Core\SourceModel\- Base\SourceMdlFileDataBase.vb" />
     <Compile Include="Core\SourceModel\- Base\SourceMdlSequenceDescBase.vb" />
     <Compile Include="Core\SourceModel\- Debug\AccessedBytesDebugFile.vb" />
-    <Compile Include="Core\SourceModel\- Base\Enums.vb" />
     <Compile Include="Core\SourceModel\- Base\SourceModelProgressEventArgs.vb" />
     <Compile Include="Core\SourceModel\- Base\SourceModelProgressEventHandler.vb" />
     <Compile Include="Core\SourceModel\- Base\SourceFileNamesModule.vb" />
@@ -243,6 +242,7 @@
     <Compile Include="Core\SourceModel\SourceModel37\SourceMdlFileData\SourceMdlModel37.vb" />
     <Compile Include="Core\SourceModel\SourceModel37\SourceMdlFileData\SourceMdlSequenceDesc37.vb" />
     <Compile Include="Core\SourceModel\SourceModel37\SourceMdlFileData\SourceMdlSequenceGroup37.vb" />
+    <Compile Include="Core\SourceModel\SourceModel37\SourceMdlFileData\SourceMdlTexture37.vb" />
     <Compile Include="Core\SourceModel\SourceModel37\SourceMdlFileData\SourceMdlVertAnim37.vb" />
     <Compile Include="Core\SourceModel\SourceModel37\SourceModel37.vb" />
     <Compile Include="Core\SourceModel\SourceModel37\SourceVtxFileData\SourceVtxFileData37.vb" />
@@ -587,6 +587,7 @@
     <None Include="resources\crowbar_icon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Core\SourceModel\SourceModel36\" />
     <Folder Include="Core\SourceModel\SourceModel52\" />
     <Folder Include="Documents\" />
   </ItemGroup>

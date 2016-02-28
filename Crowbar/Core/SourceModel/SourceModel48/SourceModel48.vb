@@ -214,7 +214,7 @@ Public Class SourceModel48
 				smdPathFileName = Path.Combine(modelOutputPath, smdFileName)
 				smdPath = FileManager.GetPath(smdPathFileName)
 				If FileManager.OutputPathIsUsable(smdPath) Then
-					Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileStarted, smdPathFileName)
+					Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
 					'NOTE: Check here in case writing is canceled in the above event.
 					If Me.theWritingIsCanceled Then
 						status = StatusMessage.Canceled
@@ -226,7 +226,7 @@ Public Class SourceModel48
 
 					Me.WriteBoneAnimationSmdFile(smdPathFileName, Nothing, anAnimationDesc)
 
-					Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileFinished, smdPathFileName)
+					Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, smdPathFileName)
 				End If
 			Next
 		Catch ex As Exception
@@ -571,7 +571,7 @@ Public Class SourceModel48
 								smdFileName = SourceFileNamesModule.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, lodIndex, Me.theMdlFileData.theModelCommandIsUsed, Me.theName, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).name, Me.theMdlFileData.theBodyParts.Count, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels.Count)
 								smdPathFileName = Path.Combine(modelOutputPath, smdFileName)
 
-								Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileStarted, smdPathFileName)
+								Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
 								'NOTE: Check here in case writing is canceled in the above event.
 								If Me.theWritingIsCanceled Then
 									status = StatusMessage.Canceled
@@ -583,7 +583,7 @@ Public Class SourceModel48
 
 								Me.WriteMeshSmdFile(smdPathFileName, lodIndex, aVtxModel, aModel, bodyPartVertexIndexStart)
 
-								Me.NotifySourceModelProgress(ProgressOptions.WritingSmdFileFinished, smdPathFileName)
+								Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, smdPathFileName)
 							Next
 
 							bodyPartVertexIndexStart += aModel.vertexCount
@@ -647,9 +647,6 @@ Public Class SourceModel48
 
 			smdFile.WriteHeaderSection()
 			smdFile.WriteNodesSection(-1)
-			If Me.theMdlFileData.theFirstAnimationDesc IsNot Nothing AndAlso Me.theMdlFileData.theFirstAnimationDescFrameLines.Count = 0 Then
-				smdFile.CalculateFirstAnimDescFrameLinesForSubtract()
-			End If
 			'If anAnimationDesc.animBlock > 0 AndAlso Me.theSourceEngineModel.MdlFileHeader.version >= 49 AndAlso Me.theSourceEngineModel.MdlFileHeader.version <> 2531 Then
 			'	smdFile.WriteSkeletonSectionForAnimationAni_VERSION49(aSequenceDesc, anAnimationDesc)
 			'Else

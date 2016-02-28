@@ -576,15 +576,6 @@ Public Class CompileUserControl
         Me.CompilerOptionsTextBox.Text += """"
     End Sub
 
-    Private Sub RunViewer(ByVal viewAsReplacement As Boolean)
-        Dim pathFileName As String
-        pathFileName = TheApp.Compiler.GetOutputPathFileName(Me.theCompiledRelativePathFileNames(Me.CompiledFilesComboBox.SelectedIndex))
-
-        Dim modelViewer As Viewer
-        modelViewer = New Viewer()
-        modelViewer.Run(TheApp.Settings.CompileGameSetupSelectedIndex, pathFileName, viewAsReplacement)
-    End Sub
-
     Private Sub Recompile()
         'TODO: Compile the selected QC.
         Me.RunCompiler()

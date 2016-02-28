@@ -15,13 +15,15 @@ Public Class AppSettings
 		Me.theWindowState = FormWindowState.Maximized
 		Me.theMainWindowSelectedTabIndex = 0
 
-        Me.theDataViewerIsRunning = False
-        Me.theViewerIsRunning = False
-        Me.theDecompilerIsRunning = False
+		Me.thePreviewDataViewerIsRunning = False
+		'Me.thePreviewerIsRunning = False
+		Me.theDecompilerIsRunning = False
 		Me.theCompilerIsRunning = False
+		Me.theViewDataViewerIsRunning = False
+		'Me.theViewerIsRunning = False
 
-		Me.theViewMdlPathFileName = ""
-		Me.theViewGameSetupSelectedIndex = 0
+		Me.thePreviewMdlPathFileName = ""
+		Me.thePreviewGameSetupSelectedIndex = 0
 
 		Me.theDecompileMdlPathFileName = ""
 		Me.theDecompileOutputFolderOption = OutputFolderOptions.SubfolderName
@@ -70,172 +72,217 @@ Public Class AppSettings
 
 		Me.theCompileMode = ActionMode.File
 
+		Me.theViewMdlPathFileName = ""
+		Me.theViewGameSetupSelectedIndex = 0
+
 		Me.SetDefaultOptionsAutoOpenOptions()
 		Me.SetDefaultOptionsDragAndDropOptions()
 		Me.SetDefaultOptionsContextMenuOptions()
-    End Sub
+	End Sub
 
 #End Region
 
 #Region "Init and Free"
 
-    'Public Sub Init()
-    'End Sub
+	'Public Sub Init()
+	'End Sub
 
-    'Private Sub Free()
-    'End Sub
+	'Private Sub Free()
+	'End Sub
 
 #End Region
 
 #Region "Properties"
 
-    Public Property WindowLocation() As Point
-        Get
-            Return theWindowLocation
-        End Get
-        Set(ByVal value As Point)
-            theWindowLocation = value
-        End Set
-    End Property
+	Public Property WindowLocation() As Point
+		Get
+			Return theWindowLocation
+		End Get
+		Set(ByVal value As Point)
+			theWindowLocation = value
+		End Set
+	End Property
 
-    Public Property WindowSize() As Size
-        Get
-            Return theWindowSize
-        End Get
-        Set(ByVal value As Size)
-            theWindowSize = value
-        End Set
-    End Property
+	Public Property WindowSize() As Size
+		Get
+			Return theWindowSize
+		End Get
+		Set(ByVal value As Size)
+			theWindowSize = value
+		End Set
+	End Property
 
-    Public Property WindowState() As FormWindowState
-        Get
-            Return theWindowState
-        End Get
-        Set(ByVal value As FormWindowState)
-            theWindowState = value
-        End Set
-    End Property
+	Public Property WindowState() As FormWindowState
+		Get
+			Return theWindowState
+		End Get
+		Set(ByVal value As FormWindowState)
+			theWindowState = value
+		End Set
+	End Property
 
-    Public Property MainWindowSelectedTabIndex() As Integer
-        Get
-            Return Me.theMainWindowSelectedTabIndex
-        End Get
-        Set(ByVal value As Integer)
-            theMainWindowSelectedTabIndex = value
-        End Set
-    End Property
+	Public Property MainWindowSelectedTabIndex() As Integer
+		Get
+			Return Me.theMainWindowSelectedTabIndex
+		End Get
+		Set(ByVal value As Integer)
+			theMainWindowSelectedTabIndex = value
+		End Set
+	End Property
 
-    Public Property ViewMdlPathFileName() As String
-        Get
-            Return Me.theViewMdlPathFileName
-        End Get
-        Set(ByVal value As String)
-            Me.theViewMdlPathFileName = value
-            NotifyPropertyChanged("ViewMdlPathFileName")
-        End Set
-    End Property
+	Public Property ViewMdlPathFileName() As String
+		Get
+			Return Me.theViewMdlPathFileName
+		End Get
+		Set(ByVal value As String)
+			Me.theViewMdlPathFileName = value
+			NotifyPropertyChanged("ViewMdlPathFileName")
+		End Set
+	End Property
 
-    Public Property ViewGameSetupSelectedIndex() As Integer
-        Get
-            Return Me.theViewGameSetupSelectedIndex
-        End Get
-        Set(ByVal value As Integer)
-            Me.theViewGameSetupSelectedIndex = value
-            NotifyPropertyChanged("ViewGameSetupSelectedIndex")
-        End Set
-    End Property
+	Public Property ViewGameSetupSelectedIndex() As Integer
+		Get
+			Return Me.theViewGameSetupSelectedIndex
+		End Get
+		Set(ByVal value As Integer)
+			Me.theViewGameSetupSelectedIndex = value
+			NotifyPropertyChanged("ViewGameSetupSelectedIndex")
+		End Set
+	End Property
 
-    <XmlIgnore()> _
-    Public Property DataViewerIsRunning() As Boolean
-        Get
-            Return Me.theDataViewerIsRunning
-        End Get
-        Set(ByVal value As Boolean)
-            Me.theDataViewerIsRunning = value
-            NotifyPropertyChanged("DataViewerIsRunning")
-        End Set
-    End Property
+	<XmlIgnore()> _
+	Public Property ViewDataViewerIsRunning() As Boolean
+		Get
+			Return Me.theViewDataViewerIsRunning
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theViewDataViewerIsRunning = value
+			NotifyPropertyChanged("ViewDataViewerIsRunning")
+		End Set
+	End Property
 
-    <XmlIgnore()> _
-    Public Property ViewerIsRunning() As Boolean
-        Get
-            Return Me.theViewerIsRunning
-        End Get
-        Set(ByVal value As Boolean)
-            Me.theViewerIsRunning = value
-            NotifyPropertyChanged("ViewerIsRunning")
-        End Set
-    End Property
+	<XmlIgnore()> _
+	Public Property ViewViewerIsRunning() As Boolean
+		Get
+			Return Me.theViewViewerIsRunning
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theViewViewerIsRunning = value
+			NotifyPropertyChanged("ViewerIsRunning")
+		End Set
+	End Property
 
-    Public Property DecompileMdlPathFileName() As String
-        Get
-            Return Me.theDecompileMdlPathFileName
-        End Get
-        Set(ByVal value As String)
-            Me.theDecompileMdlPathFileName = value
-            NotifyPropertyChanged("DecompileMdlPathFileName")
-        End Set
-    End Property
+	Public Property PreviewMdlPathFileName() As String
+		Get
+			Return Me.thePreviewMdlPathFileName
+		End Get
+		Set(ByVal value As String)
+			Me.thePreviewMdlPathFileName = value
+			NotifyPropertyChanged("PreviewMdlPathFileName")
+		End Set
+	End Property
 
-    Public Property DecompileOutputFolderOption() As OutputFolderOptions
-        Get
-            Return Me.theDecompileOutputFolderOption
-        End Get
-        Set(ByVal value As OutputFolderOptions)
-            Me.theDecompileOutputFolderOption = value
-            NotifyPropertyChanged("DecompileOutputFolderOption")
-        End Set
-    End Property
+	Public Property PreviewGameSetupSelectedIndex() As Integer
+		Get
+			Return Me.thePreviewGameSetupSelectedIndex
+		End Get
+		Set(ByVal value As Integer)
+			Me.thePreviewGameSetupSelectedIndex = value
+			NotifyPropertyChanged("PreviewGameSetupSelectedIndex")
+		End Set
+	End Property
 
-    Public Property DecompileOutputSubfolderName() As String
-        Get
-            Return Me.theDecompileOutputSubfolderName
-        End Get
-        Set(ByVal value As String)
-            Me.theDecompileOutputSubfolderName = value
-            NotifyPropertyChanged("DecompileOutputSubfolderName")
-        End Set
-    End Property
+	<XmlIgnore()> _
+	Public Property PreviewDataViewerIsRunning() As Boolean
+		Get
+			Return Me.thePreviewDataViewerIsRunning
+		End Get
+		Set(ByVal value As Boolean)
+			Me.thePreviewDataViewerIsRunning = value
+			NotifyPropertyChanged("PreviewDataViewerIsRunning")
+		End Set
+	End Property
 
-    Public Property DecompileOutputFullPath() As String
-        Get
-            Return Me.theDecompileOutputFullPath
-        End Get
-        Set(ByVal value As String)
-            Me.theDecompileOutputFullPath = value
-            NotifyPropertyChanged("DecompileOutputFullPath")
-        End Set
-    End Property
+	<XmlIgnore()> _
+	Public Property PreviewViewerIsRunning() As Boolean
+		Get
+			Return Me.thePreviewViewerIsRunning
+		End Get
+		Set(ByVal value As Boolean)
+			Me.thePreviewViewerIsRunning = value
+			NotifyPropertyChanged("PreviewViewerIsRunning")
+		End Set
+	End Property
 
-    Public Property DecompileQcFileIsChecked() As Boolean
-        Get
-            Return Me.theDecompileQcFileIsChecked
-        End Get
-        Set(ByVal value As Boolean)
-            Me.theDecompileQcFileIsChecked = value
-            NotifyPropertyChanged("DecompileQcFileIsChecked")
-        End Set
-    End Property
+	Public Property DecompileMdlPathFileName() As String
+		Get
+			Return Me.theDecompileMdlPathFileName
+		End Get
+		Set(ByVal value As String)
+			Me.theDecompileMdlPathFileName = value
+			NotifyPropertyChanged("DecompileMdlPathFileName")
+		End Set
+	End Property
 
-    Public Property DecompileGroupIntoQciFilesIsChecked() As Boolean
-        Get
-            Return Me.theDecompileGroupIntoQciFilesIsChecked
-        End Get
-        Set(ByVal value As Boolean)
-            Me.theDecompileGroupIntoQciFilesIsChecked = value
-            NotifyPropertyChanged("DecompileGroupIntoQciFilesIsChecked")
-        End Set
-    End Property
+	Public Property DecompileOutputFolderOption() As OutputFolderOptions
+		Get
+			Return Me.theDecompileOutputFolderOption
+		End Get
+		Set(ByVal value As OutputFolderOptions)
+			Me.theDecompileOutputFolderOption = value
+			NotifyPropertyChanged("DecompileOutputFolderOption")
+		End Set
+	End Property
 
-    Public Property DecompileQcIncludeDefineBoneLinesIsChecked() As Boolean
-        Get
-            Return Me.theDecompileQcIncludeDefineBoneLinesIsChecked
-        End Get
-        Set(ByVal value As Boolean)
-            Me.theDecompileQcIncludeDefineBoneLinesIsChecked = value
-            NotifyPropertyChanged("DecompileQcIncludeDefineBoneLinesIsChecked")
-        End Set
-    End Property
+	Public Property DecompileOutputSubfolderName() As String
+		Get
+			Return Me.theDecompileOutputSubfolderName
+		End Get
+		Set(ByVal value As String)
+			Me.theDecompileOutputSubfolderName = value
+			NotifyPropertyChanged("DecompileOutputSubfolderName")
+		End Set
+	End Property
+
+	Public Property DecompileOutputFullPath() As String
+		Get
+			Return Me.theDecompileOutputFullPath
+		End Get
+		Set(ByVal value As String)
+			Me.theDecompileOutputFullPath = value
+			NotifyPropertyChanged("DecompileOutputFullPath")
+		End Set
+	End Property
+
+	Public Property DecompileQcFileIsChecked() As Boolean
+		Get
+			Return Me.theDecompileQcFileIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theDecompileQcFileIsChecked = value
+			NotifyPropertyChanged("DecompileQcFileIsChecked")
+		End Set
+	End Property
+
+	Public Property DecompileGroupIntoQciFilesIsChecked() As Boolean
+		Get
+			Return Me.theDecompileGroupIntoQciFilesIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theDecompileGroupIntoQciFilesIsChecked = value
+			NotifyPropertyChanged("DecompileGroupIntoQciFilesIsChecked")
+		End Set
+	End Property
+
+	Public Property DecompileQcIncludeDefineBoneLinesIsChecked() As Boolean
+		Get
+			Return Me.theDecompileQcIncludeDefineBoneLinesIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theDecompileQcIncludeDefineBoneLinesIsChecked = value
+			NotifyPropertyChanged("DecompileQcIncludeDefineBoneLinesIsChecked")
+		End Set
+	End Property
 
 	Public Property DecompileQcSkinFamilyOnSingleLineIsChecked() As Boolean
 		Get
@@ -247,25 +294,25 @@ Public Class AppSettings
 		End Set
 	End Property
 
-    Public Property DecompileReferenceMeshSmdFileIsChecked() As Boolean
-        Get
-            Return Me.theDecompileReferenceMeshSmdFileIsChecked
-        End Get
-        Set(ByVal value As Boolean)
-            Me.theDecompileReferenceMeshSmdFileIsChecked = value
-            NotifyPropertyChanged("DecompileReferenceMeshSmdFileIsChecked")
-        End Set
-    End Property
+	Public Property DecompileReferenceMeshSmdFileIsChecked() As Boolean
+		Get
+			Return Me.theDecompileReferenceMeshSmdFileIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theDecompileReferenceMeshSmdFileIsChecked = value
+			NotifyPropertyChanged("DecompileReferenceMeshSmdFileIsChecked")
+		End Set
+	End Property
 
-    Public Property DecompileApplyRightHandFixIsChecked() As Boolean
-        Get
-            Return Me.theDecompileApplyRightHandFixIsChecked
-        End Get
-        Set(ByVal value As Boolean)
-            Me.theDecompileApplyRightHandFixIsChecked = value
-            NotifyPropertyChanged("DecompileApplyRightHandFixIsChecked")
-        End Set
-    End Property
+	Public Property DecompileApplyRightHandFixIsChecked() As Boolean
+		Get
+			Return Me.theDecompileApplyRightHandFixIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theDecompileApplyRightHandFixIsChecked = value
+			NotifyPropertyChanged("DecompileApplyRightHandFixIsChecked")
+		End Set
+	End Property
 
 	Public Property DecompileBoneAnimationSmdFilesIsChecked() As Boolean
 		Get
@@ -878,13 +925,13 @@ Public Class AppSettings
 	Private theWindowState As FormWindowState
 	Private theMainWindowSelectedTabIndex As Integer
 
-	' View tab
+	' Preview tab
 
-	Private theViewMdlPathFileName As String
-	Private theViewGameSetupSelectedIndex As Integer
+	Private thePreviewMdlPathFileName As String
+	Private thePreviewGameSetupSelectedIndex As Integer
 
-	Private theDataViewerIsRunning As Boolean
-	Private theViewerIsRunning As Boolean
+	Private thePreviewDataViewerIsRunning As Boolean
+	Private thePreviewViewerIsRunning As Boolean
 
 	' Decompile tab
 
@@ -942,6 +989,14 @@ Public Class AppSettings
 
 	Private theCompileMode As ActionMode
 	Private theCompilerIsRunning As Boolean
+
+	' View tab
+
+	Private theViewMdlPathFileName As String
+	Private theViewGameSetupSelectedIndex As Integer
+
+	Private theViewDataViewerIsRunning As Boolean
+	Private theViewViewerIsRunning As Boolean
 
 	' Options tab
 

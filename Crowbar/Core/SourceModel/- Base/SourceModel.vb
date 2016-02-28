@@ -12,38 +12,37 @@ Public MustInherit Class SourceModel
 			Dim version As Integer
 			version = SourceModel.GetVersion(mdlPathFileName)
 
-			'TODO: Insert ranges of versions when some are not implemented.
-			'If version = 4 Then
-			'	model = New SourceModel04(mdlPathFileName)
-			'ElseIf version = 6 Then
-			If version = 6 Then
+			If version = 4 Then
+				'NOT IMPLEMENTED YET.
+				'model = New SourceModel04(mdlPathFileName)
+			ElseIf version = 6 Then
 				model = New SourceModel06(mdlPathFileName)
 			ElseIf version = 10 Then
 				model = New SourceModel10(mdlPathFileName)
-				'ElseIf version > 10 AndAlso version < 25 Then
-				'	model = New SourceModel10(mdlPathFileName)
 			ElseIf version = 2531 Then
 				model = New SourceModel2531(mdlPathFileName)
-				'ElseIf version >= 25 AndAlso version < 44 Then
-				'	model = New SourceModel44(mdlPathFileName)
-				'ElseIf version = 29 Then
-				'	model = New SourceModel29(mdlPathFileName)
-				'ElseIf version = 37 Then
-				'	model = New SourceModel37(mdlPathFileName)
-				'ElseIf version = 38 Then
-				'	model = New SourceModel38(mdlPathFileName)
+			ElseIf version = 29 Then
+				'NOT IMPLEMENTED YET.
+				'model = New SourceModel29(mdlPathFileName)
+			ElseIf version = 37 Then
+				'NOT IMPLEMENTED YET.
+				'model = New SourceModel37(mdlPathFileName)
+			ElseIf version = 38 Then
+				'NOT IMPLEMENTED YET.
+				'model = New SourceModel38(mdlPathFileName)
 			ElseIf version = 44 Then
 				model = New SourceModel44(mdlPathFileName)
 			ElseIf version = 48 Then
 				model = New SourceModel48(mdlPathFileName)
 			ElseIf version = 49 Then
 				model = New SourceModel49(mdlPathFileName)
-				'ElseIf version = 52 Then
-				'	model = New SourceModel52(mdlPathFileName)
-			Else
-				'TODO: Eventually remove this "else" or maybe replace this with a generic model format.
-				'      Or maybe replace with some type of detection of model format.
+			ElseIf version = 52 Then
+				'TODO: Properly decompile v52, but for now v52 is decompiled as v49.
+				'model = New SourceModel52(mdlPathFileName)
 				model = New SourceModel49(mdlPathFileName)
+			Else
+				' Version not implemented.
+				model = Nothing
 			End If
 		Catch ex As Exception
 			Throw
@@ -355,7 +354,9 @@ Public MustInherit Class SourceModel
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
 		Me.theQcPathFileName = qcPathFileName
+		Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, qcPathFileName)
 		Me.WriteTextFile(qcPathFileName, AddressOf Me.WriteQcFile)
+		Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, qcPathFileName)
 
 		Return status
 	End Function
@@ -477,7 +478,8 @@ Public MustInherit Class SourceModel
 			textLines.Add("")
 			Me.GetTextureDataFromMdlFile(textLines)
 		Catch ex As Exception
-			textLines.Add("ERROR: " + ex.Message)
+			'textLines.Add("ERROR: " + ex.Message)
+			Throw
 		End Try
 
 		Return textLines
@@ -608,7 +610,7 @@ Public MustInherit Class SourceModel
 		Dim inputFileStream As FileStream = Nothing
 		Me.theInputFileReader = Nothing
 		Try
-			inputFileStream = New FileStream(pathFileName, FileMode.Open)
+			inputFileStream = New FileStream(pathFileName, FileMode.Open, FileAccess.Read, FileShare.Read)
 			If inputFileStream IsNot Nothing Then
 				Try
 					Me.theInputFileReader = New BinaryReader(inputFileStream, System.Text.Encoding.ASCII)

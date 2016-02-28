@@ -14,7 +14,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyDescription("Source Engine Modding Tool")> 
 <Assembly: AssemblyCompany("ZeqMacaw")> 
 <Assembly: AssemblyProduct("Crowbar")> 
-<Assembly: AssemblyCopyright("Copyright 2015")> 
+<Assembly: AssemblyCopyright("Copyright 2016")> 
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)> 
@@ -33,7 +33,7 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
-<Assembly: AssemblyVersion("0.33.0.0")> 
-<Assembly: AssemblyFileVersion("0.33.0.0")> 
+<Assembly: AssemblyVersion("0.34.0.0")> 
+<Assembly: AssemblyFileVersion("0.34.0.0")> 
 
 <Assembly: NeutralResourcesLanguageAttribute("en-US")> 

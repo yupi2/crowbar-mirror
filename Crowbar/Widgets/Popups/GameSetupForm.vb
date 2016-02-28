@@ -127,6 +127,26 @@ Public Class GameSetupForm
 		Me.UpdateWidgets()
 	End Sub
 
+	Private Sub CloneButton_Click(sender As Object, e As EventArgs) Handles CloneButton.Click
+		Dim selectedIndex As Integer
+
+		selectedIndex = Me.GameSetupComboBox.SelectedIndex
+		If selectedIndex >= 0 AndAlso Me.theGameSetupFormInfo.GameSetups.Count > 1 Then
+			Dim selectedGameSetup As GameSetup
+			selectedGameSetup = Me.theGameSetupFormInfo.GameSetups(selectedIndex)
+
+			Dim cloneGameSetup As GameSetup
+			cloneGameSetup = CType(selectedGameSetup.Clone(), GameSetup)
+			cloneGameSetup.GameName = "Clone of " + selectedGameSetup.GameName
+			Me.theGameSetupFormInfo.GameSetups.Add(cloneGameSetup)
+
+			Me.GameSetupComboBox.SelectedIndex = Me.theGameSetupFormInfo.GameSetups.IndexOf(cloneGameSetup)
+		End If
+
+
+		Me.UpdateWidgets()
+	End Sub
+
 	Private Sub SaveButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SaveButton.Click
 		TheApp.SaveAppSettings()
 	End Sub

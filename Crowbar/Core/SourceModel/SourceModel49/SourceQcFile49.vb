@@ -1139,9 +1139,10 @@ Public Class SourceQcFile49
 
 						If aVtxModel.theVtxModelLods IsNot Nothing Then
 							aModel = Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex)
-							'If aModel.name(0) = ChrW(0) Then
-							'	Continue For
-							'End If
+							'NOTE: This check is for skipping "blank" bodygroup. Example: the third boygroup of L4D2's "infected/common_female_tshirt_skirt.mdl".
+							If aModel.name(0) = ChrW(0) AndAlso aVtxModel.theVtxModelLods(0).theVtxMeshes Is Nothing Then
+								Continue For
+							End If
 
 							'NOTE: Start loop at 1 to skip first LOD, which isn't needed for the $lod command.
 							For lodIndex As Integer = 1 To Me.theVtxFileData.lodCount - 1
@@ -3535,7 +3536,7 @@ Public Class SourceQcFile49
 			If Me.theMdlFileData.version <= 10 Then
 				Dim skipBoneInBBoxCommandWasUsed As Boolean = False
 				Me.theOutputFileStreamWriter.WriteLine()
-				Me.WriteHboxCommands(Me.theMdlFileData.theHitboxSets(0).theHitboxes, "", "", skipBoneInBBoxCommandWasUsed)
+				Me.WriteHBoxCommands(Me.theMdlFileData.theHitboxSets(0).theHitboxes, "", "", skipBoneInBBoxCommandWasUsed)
 			Else
 				Me.WriteHBoxRelatedCommands()
 			End If
@@ -3691,7 +3692,7 @@ Public Class SourceQcFile49
 				Continue For
 			End If
 
-			Me.WriteHboxCommands(aHitboxSet.theHitboxes, commentTag, aHitboxSet.theName, skipBoneInBBoxCommandWasUsed)
+			Me.WriteHBoxCommands(aHitboxSet.theHitboxes, commentTag, aHitboxSet.theName, skipBoneInBBoxCommandWasUsed)
 		Next
 
 		If skipBoneInBBoxCommandWasUsed Then
@@ -3700,7 +3701,7 @@ Public Class SourceQcFile49
 		End If
 	End Sub
 
-	Private Sub WriteHboxCommands(ByVal theHitboxes As List(Of SourceMdlHitbox), ByVal commentTag As String, ByVal hitboxSetName As String, ByRef theSkipBoneInBBoxCommandWasUsed As Boolean)
+	Private Sub WriteHBoxCommands(ByVal theHitboxes As List(Of SourceMdlHitbox), ByVal commentTag As String, ByVal hitboxSetName As String, ByRef theSkipBoneInBBoxCommandWasUsed As Boolean)
 		Dim line As String = ""
 		Dim aHitbox As SourceMdlHitbox
 
@@ -3738,6 +3739,10 @@ Public Class SourceQcFile49
 				line += " "
 				line += aHitbox.boundingBoxPitchYawRoll.y.ToString("0.######", TheApp.InternalNumberFormat)
 			End If
+			line += " "
+			line += """"
+			line += aHitbox.theName
+			line += """"
 			Me.theOutputFileStreamWriter.WriteLine(commentTag + line)
 
 			If Not theSkipBoneInBBoxCommandWasUsed Then

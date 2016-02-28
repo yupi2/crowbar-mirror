@@ -7,216 +7,280 @@
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\alien swarm\swarm\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\alien swarm\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\alien swarm\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Anarchy Arcade</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Anarchy Arcade\aarcade\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Anarchy Arcade\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Anarchy Arcade\bin\hlmv.exe</ViewerPathFileName>
+    </GameSetup>
+    <GameSetup>
+      <GameName>Aperture Tag: The Paint Gun Testing Initiative</GameName>
+      <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Aperture Tag\portal2\gameinfo.txt</GamePathFileName>
+      <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
+      <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Aperture Tag\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Aperture Tag\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Blade Symphony</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Blade Symphony\berimbau\GameInfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Blade Symphony\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Blade Symphony\bin\hlmv.exe</ViewerPathFileName>
+    </GameSetup>
+    <GameSetup>
+      <GameName>Bloody Good Time (using Source SDK Base 2013 MP)</GameName>
+      <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\hl2\gameinfo.txt</GamePathFileName>
+      <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
+      <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\bin\hlmv.exe</ViewerPathFileName>
+    </GameSetup>
+    <GameSetup>
+      <GameName>Codename CURE</GameName>
+      <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Codename CURE\cure\gameinfo.txt</GamePathFileName>
+      <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
+      <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Codename CURE\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Codename CURE\bin\hlmv.exe</ViewerPathFileName>
+    </GameSetup>
+    <GameSetup>
+      <GameName>Contagion</GameName>
+      <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Contagion\contagion\gameinfo.txt</GamePathFileName>
+      <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
+      <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Contagion\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Contagion\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Counter-Strike Global Offensive</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\csgo\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Counter-Strike Source</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Source\cstrike\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Source\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Source\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Day of Defeat Source</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Day of Defeat Source\dod\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Day of Defeat Source\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Day of Defeat Source\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Dino D-Day</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\dino d-day\dinodday\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\dino d-day\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\dino d-day\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Dota 2</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\dota 2 beta\dota\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\dota 2 beta\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\dota 2 beta\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Double Action: Boogaloo</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Double Action\dab\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Double Action\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Double Action\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Dystopia</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Dystopia\dystopia\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Dystopia\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Dystopia\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Empires</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Empires\empires\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Empires\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Empires\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Estranged: Act I</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Estranged Act I\estrangedact1\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Estranged Act I\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Estranged Act I\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Fistful of Frags</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Fistful of Frags\fof\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Fistful of Frags\sdk\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Fistful of Frags\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Garry's Mod (using Source SDK Base 2013 MP)</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\hl2\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life 2</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\hl2\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life 2 Deathmatch</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2 Deathmatch\hl2mp\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2 Deathmatch\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2 Deathmatch\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life 2: Episode 1</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\episodic\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life 2: Episode 2</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\ep2\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life Deathmatch Source</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 1 Source Deathmatch\hl1mp\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 1 Source Deathmatch\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 1 Source Deathmatch\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life: Source</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\hl1\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Insurgency</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\insurgency2\insurgency\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\insurgency2\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\insurgency2\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Insurgency: Modern Infantry Combat</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base\insurgency\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Left 4 Dead</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\left 4 dead\left4dead\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\left 4 dead\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\left 4 dead\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Left 4 Dead 2</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\left 4 dead 2\left4dead2\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\left 4 dead 2\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\left 4 dead 2\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>No More Room in Hell</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\nmrih\nmrih\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\nmrih\sdk\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\nmrih\sdk\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Pirates, Vikings and Knights II</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2007\pvkii\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2007\sdkbase_pvkii\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2007\sdkbase_pvkii\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Portal</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Portal\portal\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Portal\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Portal\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Portal 2</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\portal 2\portal2\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\portal 2\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\portal 2\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Portal Stories: Mel</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Portal Stories Mel\portal_stories\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\portal 2\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\portal 2\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Rexaura</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Rexaura\rexaura\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Rexaura\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Rexaura\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Source Filmmaker</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\SourceFilmmaker\game\usermod\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\SourceFilmmaker\game\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\SourceFilmmaker\game\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Source SDK 2013 Multiplayer</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\hl2\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Source SDK 2013 Singleplayer</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Singleplayer\hl2\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Singleplayer\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Singleplayer\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Synergy</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Synergy\synergy\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Synergy\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Synergy\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Team Fortress 2</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\tf\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>The Forgotten Ones</GameName>
       <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\tfo\tfo\gameinfo.txt</GamePathFileName>
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\tfo\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\tfo\bin\hlmv.exe</ViewerPathFileName>
     </GameSetup>
   </GameSetups>
 </AppSettings>

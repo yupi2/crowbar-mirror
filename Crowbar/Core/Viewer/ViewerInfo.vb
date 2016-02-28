@@ -4,6 +4,7 @@ Public Class ViewerInfo
     Public gameSetupSelectedIndex As Integer
 	Public mdlPathFileName As String
 	Public viewAsReplacement As Boolean
+	Public viewAsReplacementExtraSubfolder As String
 
 	Public Enum ViewerActionType
 		GetData

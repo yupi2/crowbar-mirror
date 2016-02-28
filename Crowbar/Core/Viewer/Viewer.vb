@@ -26,7 +26,7 @@ Public Class Viewer
 
 	Protected Overloads Sub Dispose(ByVal disposing As Boolean)
 		If Not Me.IsDisposed Then
-			Me.Halt()
+			Me.Halt(False)
 			'If disposing Then
 			'	Me.Free()
 			'End If
@@ -58,12 +58,13 @@ Public Class Viewer
 
 #Region "Methods"
 
-    Public Sub Run(ByVal gameSetupSelectedIndex As Integer, ByVal inputMdlPathFileName As String, ByVal viewAsReplacement As Boolean)
-        Dim info As New ViewerInfo()
+	Public Sub Run(ByVal gameSetupSelectedIndex As Integer, ByVal inputMdlPathFileName As String, ByVal viewAsReplacement As Boolean, ByVal viewAsReplacementExtraSubfolder As String)
+		Dim info As New ViewerInfo()
 		info.viewerAction = ViewerInfo.ViewerActionType.ViewModel
 		info.gameSetupSelectedIndex = gameSetupSelectedIndex
-		info.viewAsReplacement = viewAsReplacement
 		info.mdlPathFileName = inputMdlPathFileName
+		info.viewAsReplacement = viewAsReplacement
+		info.viewAsReplacementExtraSubfolder = viewAsReplacementExtraSubfolder
 		Me.RunWorkerAsync(info)
 	End Sub
 
@@ -74,23 +75,45 @@ Public Class Viewer
 		Me.RunWorkerAsync(info)
 	End Sub
 
-	Public Sub Run()
+	Public Sub Run(ByVal gameSetupSelectedIndex As Integer)
 		Dim info As New ViewerInfo()
 		info.viewerAction = ViewerInfo.ViewerActionType.OpenViewer
+		info.gameSetupSelectedIndex = gameSetupSelectedIndex
 		Me.RunWorkerAsync(info)
 	End Sub
 
 	Public Sub Halt()
+		Me.Halt(False)
+	End Sub
+
+#End Region
+
+#Region "Event Handlers"
+
+	'Private Sub HlmvApp_Exited(ByVal sender As Object, ByVal e As System.EventArgs)
+	'	Me.Halt(True)
+	'End Sub
+
+#End Region
+
+#Region "Private Methods that can be called in either the main thread or the background thread"
+
+	Private Sub Halt(ByVal calledFromBackgroundThread As Boolean)
 		If Me.theHlmvAppProcess IsNot Nothing Then
-			RemoveHandler Me.theHlmvAppProcess.Exited, AddressOf HlmvApp_Exited
+			'RemoveHandler Me.theHlmvAppProcess.Exited, AddressOf HlmvApp_Exited
 
 			Try
 				If Not Me.theHlmvAppProcess.CloseMainWindow() Then
 					Me.theHlmvAppProcess.Kill()
 				End If
 			Catch ex As Exception
+				Dim debug As Integer = 4242
 			Finally
 				Me.theHlmvAppProcess.Close()
+				'NOTE: This raises an exception when the background thread has already completed its work.
+				'If calledFromBackgroundThread Then
+				'	Me.UpdateProgressStop("Model viewer closed.")
+				'End If
 			End Try
 		End If
 
@@ -124,58 +147,85 @@ Public Class Viewer
 
 #End Region
 
-#Region "Event Handlers"
-
-	Private Sub HlmvApp_Exited(ByVal sender As Object, ByVal e As System.EventArgs)
-		Me.Halt()
-	End Sub
-
-#End Region
-
-#Region "Private Methods"
+#Region "Private Methods that are called in the background thread"
 
 	Private Sub ModelViewer_DoWork(ByVal sender As System.Object, ByVal e As System.ComponentModel.DoWorkEventArgs)
+		Me.ReportProgress(0, "")
+
 		Dim info As ViewerInfo
 
 		info = CType(e.Argument, ViewerInfo)
 		Me.theInputMdlPathName = info.mdlPathFileName
+		Me.theViewAsReplacementExtraSubfolder = info.viewAsReplacementExtraSubfolder
 		If info.viewerAction = ViewerInfo.ViewerActionType.GetData Then
-			If ViewerInputsAreOkay() Then
+			If ViewerInputsAreOkay(info.viewerAction) Then
 				Me.ViewData()
 			End If
 		ElseIf info.viewerAction = ViewerInfo.ViewerActionType.ViewModel Then
 			Me.theGameSetupSelectedIndex = info.gameSetupSelectedIndex
 			Me.theInputMdlIsViewedAsReplacement = info.viewAsReplacement
-			If Me.theInputMdlIsViewedAsReplacement Then
-				Me.theInputMdlRelativePathName = Me.CreateReplacementMdl(Me.theGameSetupSelectedIndex, info.mdlPathFileName)
-				If String.IsNullOrEmpty(Me.theInputMdlRelativePathName) Then
-					'TODO: Tell user there was a problem.
-					'Me.UpdateProgressStart("")
-					'Me.WriteErrorMessage("MDL file is blank.")
-					Exit Sub
-				End If
-			End If
 
-			If ViewerInputsAreOkay() Then
+			If ViewerInputsAreOkay(info.viewerAction) Then
+				'Me.UpdateProgress(1, "Model viewer opening ...")
+				Me.UpdateProgress(1, "Model viewer opened.")
+
+				If Me.theInputMdlIsViewedAsReplacement Then
+					Me.theInputMdlRelativePathName = Me.CreateReplacementMdl(Me.theGameSetupSelectedIndex, info.mdlPathFileName)
+					If String.IsNullOrEmpty(Me.theInputMdlRelativePathName) Then
+						Exit Sub
+					End If
+				End If
+
 				Me.ViewModel()
+
+				'Me.UpdateProgress(1, "Model viewer opened.")
 			End If
 		ElseIf info.viewerAction = ViewerInfo.ViewerActionType.OpenViewer Then
-			Me.OpenViewer()
+			Me.theGameSetupSelectedIndex = info.gameSetupSelectedIndex
+			If ViewerInputsAreOkay(info.viewerAction) Then
+				'Me.UpdateProgress(1, "Model viewer opening ...")
+				Me.UpdateProgress(1, "Model viewer opened.")
+				Me.OpenViewer()
+				'Me.UpdateProgress(1, "Model viewer opened.")
+			End If
 		End If
 	End Sub
 
-	Private Function ViewerInputsAreOkay() As Boolean
+	'TODO: Check inputs as done in Compiler.CompilerInputsAreValid().
+	Private Function ViewerInputsAreOkay(ByVal viewerAction As ViewerInfo.ViewerActionType) As Boolean
 		Dim inputsAreValid As Boolean
 
 		inputsAreValid = True
-		If String.IsNullOrEmpty(Me.theInputMdlPathName) Then
-			Me.UpdateProgressStart("")
-			Me.WriteErrorMessage("MDL file is blank.")
-			inputsAreValid = False
-		ElseIf Not File.Exists(Me.theInputMdlPathName) Then
-			Me.UpdateProgressStart("")
-			Me.WriteErrorMessage("MDL file does not exist.")
-			inputsAreValid = False
+
+		If viewerAction = ViewerInfo.ViewerActionType.GetData OrElse viewerAction = ViewerInfo.ViewerActionType.ViewModel Then
+			If String.IsNullOrEmpty(Me.theInputMdlPathName) Then
+				Me.UpdateProgressStart("")
+				Me.WriteErrorMessage("MDL file is blank.")
+				inputsAreValid = False
+			ElseIf Not File.Exists(Me.theInputMdlPathName) Then
+				Me.UpdateProgressStart("")
+				Me.WriteErrorMessage("MDL file does not exist.")
+				inputsAreValid = False
+			End If
+		End If
+
+		If viewerAction = ViewerInfo.ViewerActionType.ViewModel OrElse viewerAction = ViewerInfo.ViewerActionType.OpenViewer Then
+			Dim gameSetup As GameSetup
+			Dim gamePath As String
+			Dim modelViewerPathFileName As String
+			gameSetup = TheApp.Settings.GameSetups(Me.theGameSetupSelectedIndex)
+			gamePath = FileManager.GetPath(gameSetup.GamePathFileName)
+			modelViewerPathFileName = Path.Combine(FileManager.GetPath(gameSetup.CompilerPathFileName), "hlmv.exe")
+			'modelViewerPathFileName = gameSetup.ViewerPathFileName
+
+			If Not File.Exists(modelViewerPathFileName) Then
+				inputsAreValid = False
+				Me.WriteErrorMessage("The game's model viewer, """ + modelViewerPathFileName + """, does not exist.")
+				Me.UpdateProgress(1, My.Resources.ErrorMessageSDKMissingCause)
+			End If
+		End If
+
+		If viewerAction = ViewerInfo.ViewerActionType.OpenViewer Then
 		End If
 
 		Return inputsAreValid
@@ -231,7 +281,7 @@ Public Class Viewer
 		Dim currentFolder As String
 
 		Dim gameSetup As GameSetup
-		gameSetup = TheApp.Settings.GameSetups(TheApp.Settings.ViewGameSetupSelectedIndex)
+		gameSetup = TheApp.Settings.GameSetups(Me.theGameSetupSelectedIndex)
 		gamePath = FileManager.GetPath(gameSetup.GamePathFileName)
 		modelViewerPathFileName = Path.Combine(FileManager.GetPath(gameSetup.CompilerPathFileName), "hlmv.exe")
 		gameModelsPath = Path.Combine(gamePath, "models")
@@ -259,10 +309,15 @@ Public Class Viewer
 		myProcessStartInfo.RedirectStandardError = True
 		myProcessStartInfo.RedirectStandardOutput = True
 		myProcessStartInfo.UseShellExecute = False
+		'TODO: Instead of using asynchronous running, use synchronous and wait for process to exit, so this background thread won't complete until model viewer is closed.
+		'      This allows background thread to announce to main thread when model viewer process exits.
 		Me.theHlmvAppProcess.EnableRaisingEvents = True
-		AddHandler Me.theHlmvAppProcess.Exited, AddressOf HlmvApp_Exited
+		'AddHandler Me.theHlmvAppProcess.Exited, AddressOf HlmvApp_Exited
 		Me.theHlmvAppProcess.StartInfo = myProcessStartInfo
+
 		Me.theHlmvAppProcess.Start()
+		Me.theHlmvAppProcess.WaitForExit()
+		Me.Halt(True)
 
 		Directory.SetCurrentDirectory(currentFolder)
 	End Sub
@@ -272,27 +327,30 @@ Public Class Viewer
 		Dim replacementMdlPathFileName As String
 
 		Dim gameSetup As GameSetup
+		Dim replacementMdlRelativePath As String
 		Dim gamePath As String
 		Dim gameModelsPath As String
 		Dim gameModelsTempPath As String
-		Dim replacementMdlFileName As String
 		gameSetup = TheApp.Settings.GameSetups(gameSetupSelectedIndex)
+		replacementMdlRelativePath = Path.Combine(gameSetup.ViewAsReplacementModelsSubfolderName, Me.theViewAsReplacementExtraSubfolder)
 		gamePath = FileManager.GetPath(gameSetup.GamePathFileName)
 		gameModelsPath = Path.Combine(gamePath, "models")
-		gameModelsTempPath = Path.Combine(gameModelsPath, gameSetup.ViewAsReplacementModelsSubfolderName)
-		replacementMdlFileName = Path.GetFileName(inputMdlPathFileName)
-		replacementMdlRelativePathFileName = Path.Combine(gameSetup.ViewAsReplacementModelsSubfolderName, replacementMdlFileName)
-		Me.thePathForModelFilesForViewAsReplacement = gameModelsTempPath
+		gameModelsTempPath = Path.Combine(gameModelsPath, replacementMdlRelativePath)
+
 		If FileManager.PathExistsAfterTryToCreate(gameModelsTempPath) Then
+			Dim replacementMdlFileName As String
+			replacementMdlFileName = Path.GetFileName(inputMdlPathFileName)
+			replacementMdlRelativePathFileName = Path.Combine(replacementMdlRelativePath, replacementMdlFileName)
+			Me.thePathForModelFilesForViewAsReplacement = gameModelsTempPath
 			replacementMdlPathFileName = Path.Combine(gameModelsTempPath, replacementMdlFileName)
+
 			Try
 				If File.Exists(replacementMdlPathFileName) Then
 					File.Delete(replacementMdlPathFileName)
 				End If
 				File.Copy(inputMdlPathFileName, replacementMdlPathFileName)
 			Catch ex As Exception
-				'TODO: Write a warning message.
-				Dim debug As Integer = 4242
+				Me.WriteErrorMessage("Crowbar tried to copy the file """ + inputMdlPathFileName + """ to """ + replacementMdlPathFileName + """ but Windows gave this message: " + ex.Message)
 			End Try
 
 			If File.Exists(replacementMdlPathFileName) Then
@@ -303,13 +361,11 @@ Public Class Viewer
 						model.WriteMdlFileNameToMdlFile(replacementMdlPathFileName, replacementMdlRelativePathFileName)
 						model.WriteAniFileNameToMdlFile(replacementMdlPathFileName, replacementMdlRelativePathFileName)
 					Else
-						'Me.UpdateProgress(1, "ERROR: Model version not currently supported: " + CStr(SourceModel.GetVersion()))
-						Dim debug As Integer = 4242
+						Me.WriteErrorMessage("Model version not currently supported: " + CStr(SourceModel.GetVersion()))
 						Return ""
 					End If
 				Catch ex As Exception
-					'Me.UpdateProgress(1, "ERROR: " + ex.Message)
-					Dim debug As Integer = 4242
+					Me.WriteErrorMessage("Crowbar tried to write to the temporary replacement MDL file but Windows gave this message: " + ex.Message)
 					Return ""
 				End Try
 
@@ -317,7 +373,7 @@ Public Class Viewer
 				Dim inputMdlFileNameWithoutExtension As String
 				Dim replacementMdlPath As String
 				Dim targetFileName As String
-				Dim targetPathFileName As String
+				Dim targetPathFileName As String = ""
 				inputMdlPath = FileManager.GetPath(inputMdlPathFileName)
 				inputMdlFileNameWithoutExtension = Path.GetFileNameWithoutExtension(inputMdlPathFileName)
 				replacementMdlPath = FileManager.GetPath(replacementMdlPathFileName)
@@ -331,11 +387,13 @@ Public Class Viewer
 						End If
 						Me.theModelFilesForViewAsReplacement.Add(targetPathFileName)
 					Catch ex As Exception
-						'TODO: Write a warning message.
-						Dim debug As Integer = 4242
+						Me.WriteErrorMessage("Crowbar tried to copy the file """ + inputPathFileName + """ to """ + targetPathFileName + """ but Windows gave this message: " + ex.Message)
 					End Try
 				Next
 			End If
+		Else
+			Me.WriteErrorMessage("Crowbar tried to create """ + gameModelsTempPath + """, but it failed.")
+			replacementMdlRelativePathFileName = ""
 		End If
 
 		Return replacementMdlRelativePathFileName
@@ -388,7 +446,8 @@ Public Class Viewer
 	Private theGameSetupSelectedIndex As Integer
     Private theInputMdlPathName As String
     Private theInputMdlRelativePathName As String
-    Private theInputMdlIsViewedAsReplacement As Boolean
+	Private theInputMdlIsViewedAsReplacement As Boolean
+	Private theViewAsReplacementExtraSubfolder As String
 
 	Private theHlmvAppProcess As Process
 	Private theModelFilesForViewAsReplacement As List(Of String)

@@ -58,7 +58,7 @@ Public Class App
 
         Dim documentsPath As String
         documentsPath = Path.Combine(Me.theAppPath, "Documents")
-        AppConstants.HelpTutorialLink = Path.Combine(documentsPath, AppConstants.HelpTutorialLink)
+		AppConstants.HelpTutorialLink = Path.Combine(documentsPath, AppConstants.HelpTutorialLink)
         AppConstants.HelpContentsLink = Path.Combine(documentsPath, AppConstants.HelpContentsLink)
         AppConstants.HelpIndexLink = Path.Combine(documentsPath, AppConstants.HelpIndexLink)
         AppConstants.HelpTipsLink = Path.Combine(documentsPath, AppConstants.HelpTipsLink)

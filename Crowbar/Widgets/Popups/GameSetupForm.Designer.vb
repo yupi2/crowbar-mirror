@@ -41,6 +41,7 @@ Partial Class GameSetupForm
 		Me.SaveButton = New System.Windows.Forms.Button()
 		Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
 		Me.GameNameTextBox = New Crowbar.TextBoxEx()
+		Me.CloneButton = New System.Windows.Forms.Button()
 		Me.GroupBox1.SuspendLayout()
 		Me.SuspendLayout()
 		'
@@ -59,6 +60,7 @@ Partial Class GameSetupForm
 		'
 		Me.GroupBox1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.GroupBox1.Controls.Add(Me.CloneButton)
 		Me.GroupBox1.Controls.Add(Me.ViewAsReplacementModelsSubfolderNameTextBox)
 		Me.GroupBox1.Controls.Add(Me.Label6)
 		Me.GroupBox1.Controls.Add(Me.UseDefaultOutputSubfolderNameButton)
@@ -220,6 +222,15 @@ Partial Class GameSetupForm
 		Me.GameNameTextBox.Size = New System.Drawing.Size(511, 20)
 		Me.GameNameTextBox.TabIndex = 1
 		'
+		'CloneButton
+		'
+		Me.CloneButton.Location = New System.Drawing.Point(527, 173)
+		Me.CloneButton.Name = "CloneButton"
+		Me.CloneButton.Size = New System.Drawing.Size(75, 23)
+		Me.CloneButton.TabIndex = 12
+		Me.CloneButton.Text = "Clone"
+		Me.CloneButton.UseVisualStyleBackColor = True
+		'
 		'GameSetupForm
 		'
 		Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -262,4 +273,5 @@ Partial Class GameSetupForm
 	Friend WithEvents Label6 As System.Windows.Forms.Label
 	Friend WithEvents UseDefaultOutputSubfolderNameButton As System.Windows.Forms.Button
 	Friend WithEvents ToolTip1 As System.Windows.Forms.ToolTip
+	Friend WithEvents CloneButton As System.Windows.Forms.Button
 End Class

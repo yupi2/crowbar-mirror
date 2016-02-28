@@ -141,17 +141,41 @@ Public Class Compiler
 		'	Return
 		'End If
 
+		Dim gameCompilerPathFileName As String
+		gameCompilerPathFileName = Me.GetGameCompilerPathFileName()
+		Dim gameSetup As GameSetup
+		Dim gamePathFileName As String
+		gameSetup = TheApp.Settings.GameSetups(TheApp.Settings.CompileGameSetupSelectedIndex)
+		gamePathFileName = gameSetup.GamePathFileName
+
+		If Not File.Exists(gameCompilerPathFileName) Then
+			inputsAreValid = False
+			Me.WriteErrorMessage("The game's model compiler, """ + gameCompilerPathFileName + """, does not exist.")
+			Me.UpdateProgress(1, My.Resources.ErrorMessageSDKMissingCause)
+		End If
+		If Not File.Exists(gamePathFileName) Then
+			inputsAreValid = False
+			Me.WriteErrorMessage("The game's """ + gamePathFileName + """ file does not exist.")
+			Me.UpdateProgress(1, My.Resources.ErrorMessageSDKMissingCause)
+		End If
 		If String.IsNullOrEmpty(TheApp.Settings.CompileQcPathFileName) Then
 			inputsAreValid = False
 			Me.WriteErrorMessage("QC file or folder has not been selected.")
-		ElseIf TheApp.Settings.CompileOptionDefineBonesIsChecked Then
+		ElseIf Not File.Exists(TheApp.Settings.CompileQcPathFileName) Then
+			inputsAreValid = False
+			Me.WriteErrorMessage("The QC file, """ + TheApp.Settings.CompileQcPathFileName + """, does not exist.")
+		End If
+		If TheApp.Settings.CompileOptionDefineBonesIsChecked Then
 			If TheApp.Settings.CompileOptionDefineBonesCreateFileIsChecked Then
-				If File.Exists(Me.GetDefineBonesPathFileName()) Then
+				Dim defineBonesPathFileName As String
+				defineBonesPathFileName = Me.GetDefineBonesPathFileName()
+				If File.Exists(defineBonesPathFileName) Then
 					inputsAreValid = False
-					Me.WriteErrorMessage("The DefineBones file, """ + Me.GetDefineBonesPathFileName() + """, already exists.")
+					Me.WriteErrorMessage("The DefineBones file, """ + defineBonesPathFileName + """, already exists.")
 				End If
 			End If
-		ElseIf TheApp.Settings.CompileOutputFolderIsChecked Then
+		End If
+		If TheApp.Settings.CompileOutputFolderIsChecked Then
 			If Not FileManager.OutputPathIsUsable(Me.theOutputPath) Then
 				inputsAreValid = False
 				Me.WriteErrorMessage("The Output Folder, """ + Me.theOutputPath + """ could not be created.")
@@ -507,7 +531,7 @@ Public Class Compiler
 			qcFileName = Path.GetFileNameWithoutExtension(qcPathFileName)
 			logPath = FileManager.GetPath(qcPathFileName)
 			FileManager.CreatePath(logPath)
-			logFileName = qcFileName + " compile.log"
+			logFileName = qcFileName + " compile-log.txt"
 			logPathFileName = Path.Combine(logPath, logFileName)
 
 			Me.theLogFileStream = File.CreateText(logPathFileName)
@@ -525,10 +549,6 @@ Public Class Compiler
 		End If
 	End Sub
 
-	Private Sub WriteErrorMessage(ByVal line As String)
-		Me.UpdateProgressInternal(0, "Crowbar ERROR: " + line)
-	End Sub
-
 	Private Sub UpdateProgressStart(ByVal line As String)
 		Me.UpdateProgressInternal(0, line)
 	End Sub
@@ -539,6 +559,10 @@ Public Class Compiler
 
 	Private Sub UpdateProgress()
 		Me.UpdateProgressInternal(1, "")
+	End Sub
+
+	Private Sub WriteErrorMessage(ByVal line As String)
+		Me.UpdateProgressInternal(1, "Crowbar ERROR: " + line)
 	End Sub
 
 	Private Sub UpdateProgress(ByVal indentLevel As Integer, ByVal line As String)

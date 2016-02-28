@@ -15,8 +15,8 @@ Public Class FileSeekLog
 		Try
 			Me.theFileSeekList.Add(startOffset, endOffset)
 			Me.theFileSeekDescriptionList.Add(startOffset, description)
-		Catch
-			'TODO: Break here to see to discover duplicate names.
+		Catch ex As Exception
+			Dim debug As Integer = 4242
 		End Try
 	End Sub
 

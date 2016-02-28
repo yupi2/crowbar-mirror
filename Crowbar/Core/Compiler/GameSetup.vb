@@ -2,6 +2,7 @@ Imports System.ComponentModel
 Imports System.Xml.Serialization
 
 Public Class GameSetup
+	Implements ICloneable
 	Implements INotifyPropertyChanged
 
 #Region "Create and Destroy"
@@ -17,7 +18,20 @@ Public Class GameSetup
 		Me.theGamePathFileName = "C:\Program Files (x86)\Steam\steamapps\common\left 4 dead 2\left4dead2\gameinfo.txt"
 		Me.theViewAsReplacementModelsSubfolderName = GetDefaultViewAsReplacementModelsSubfolderName()
 		Me.theCompilerPathFileName = "C:\Program Files (x86)\Steam\steamapps\common\left 4 dead 2\bin\studiomdl.exe"
+		Me.theViewerPathFileName = "C:\Program Files (x86)\Steam\steamapps\common\left 4 dead 2\bin\hlmv.exe"
 	End Sub
+
+	Protected Sub New(ByVal originalObject As GameSetup)
+		Me.theGameName = originalObject.GameName()
+		Me.theGamePathFileName = originalObject.GamePathFileName
+		Me.theViewAsReplacementModelsSubfolderName = originalObject.ViewAsReplacementModelsSubfolderName
+		Me.theCompilerPathFileName = originalObject.CompilerPathFileName
+		Me.theViewerPathFileName = originalObject.ViewerPathFileName
+	End Sub
+
+	Public Function Clone() As Object Implements System.ICloneable.Clone
+		Return New GameSetup(Me)
+	End Function
 
 #End Region
 
@@ -65,6 +79,16 @@ Public Class GameSetup
 		End Set
 	End Property
 
+	Public Property ViewerPathFileName() As String
+		Get
+			Return Me.theViewerPathFileName
+		End Get
+		Set(ByVal value As String)
+			Me.theViewerPathFileName = value
+			NotifyPropertyChanged("ViewerPathFileName")
+		End Set
+	End Property
+
 #End Region
 
 #Region "Methods"
@@ -95,6 +119,7 @@ Public Class GameSetup
 	Private theGamePathFileName As String
 	Private theViewAsReplacementModelsSubfolderName As String
 	Private theCompilerPathFileName As String
+	Private theViewerPathFileName As String
 
 #End Region
 

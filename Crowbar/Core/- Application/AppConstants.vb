@@ -5,7 +5,4 @@ Module AppConstants
     Public HelpIndexLink As String = "index.html"
     Public HelpTipsLink As String = "tips.html"
 
-    Public AboutProductLink As String = "http://steamcommunity.com/groups/CrowbarTool"
-    Public AboutAuthorLink As String = "http://steamcommunity.com/id/zeqmacaw"
-
 End Module

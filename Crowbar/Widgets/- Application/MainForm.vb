@@ -52,23 +52,25 @@ Public Class MainForm
 			Me.SetDroppedPathFileName(True, commandLineParams(1))
 		End If
 
-		AddHandler Me.ViewUserControl1.UseInDecompileButton.Click, AddressOf Me.ViewUserControl1_UseInDecompileButton_Click
+		AddHandler Me.PreviewViewUserControl.UseInDecompileButton.Click, AddressOf Me.ViewUserControl_UseInDecompileButton_Click
 		AddHandler Me.DecompilerUserControl1.UseAllInCompileButton.Click, AddressOf Me.DecompilerUserControl1_UseAllInCompileButton_Click
 		'AddHandler Me.DecompilerUserControl1.UseInEditButton.Click, AddressOf Me.DecompilerUserControl1_UseInEditButton_Click
 		AddHandler Me.DecompilerUserControl1.UseInCompileButton.Click, AddressOf Me.DecompilerUserControl1_UseInCompileButton_Click
 		'AddHandler Me.CompilerUserControl1.UseAllInPackButton.Click, AddressOf Me.CompilerUserControl1_UseAllInPackButton_Click
 		AddHandler Me.CompilerUserControl1.UseInViewButton.Click, AddressOf Me.CompilerUserControl1_UseInViewButton_Click
 		'AddHandler Me.CompilerUserControl1.UseInPackButton.Click, AddressOf Me.CompilerUserControl1_UseInPackButton_Click
+		AddHandler Me.ViewViewUserControl.UseInDecompileButton.Click, AddressOf Me.ViewUserControl_UseInDecompileButton_Click
 	End Sub
 
 	Private Sub Free()
-		RemoveHandler Me.ViewUserControl1.UseInDecompileButton.Click, AddressOf Me.ViewUserControl1_UseInDecompileButton_Click
+		RemoveHandler Me.PreviewViewUserControl.UseInDecompileButton.Click, AddressOf Me.ViewUserControl_UseInDecompileButton_Click
 		RemoveHandler Me.DecompilerUserControl1.UseAllInCompileButton.Click, AddressOf Me.DecompilerUserControl1_UseAllInCompileButton_Click
 		'RemoveHandler Me.DecompilerUserControl1.UseInEditButton.Click, AddressOf Me.DecompilerUserControl1_UseInEditButton_Click
 		RemoveHandler Me.DecompilerUserControl1.UseInCompileButton.Click, AddressOf Me.DecompilerUserControl1_UseInCompileButton_Click
 		'RemoveHandler Me.CompilerUserControl1.UseAllInPackButton.Click, AddressOf Me.CompilerUserControl1_UseAllInPackButton_Click
 		RemoveHandler Me.CompilerUserControl1.UseInViewButton.Click, AddressOf Me.CompilerUserControl1_UseInViewButton_Click
 		'RemoveHandler Me.CompilerUserControl1.UseInPackButton.Click, AddressOf Me.CompilerUserControl1_UseInPackButton_Click
+		RemoveHandler Me.ViewViewUserControl.UseInDecompileButton.Click, AddressOf Me.ViewUserControl_UseInDecompileButton_Click
 
 		If Me.WindowState = FormWindowState.Normal Then
 			TheApp.Settings.WindowLocation = Me.Location
@@ -112,33 +114,33 @@ Public Class MainForm
 
 #Region "Child Widget Event Handlers"
 
-	Private Sub ViewUserControl1_UseInDecompileButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
-		Me.MainTabControl.SelectedTab = Me.DecompileTabPage
-	End Sub
-
 	Private Sub DecompilerUserControl1_UseAllInCompileButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
-		Me.MainTabControl.SelectedTab = Me.CompileTabPage
+		Me.MainTabControl.SelectTab(Me.CompileTabPage)
 	End Sub
 
 	'Private Sub DecompilerUserControl1_UseInEditButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
-	'	Me.MainTabControl.SelectedTab = Me.EditTabPage
+	'	Me.MainTabControl.SelectTab(Me.EditTabPage)
 	'End Sub
 
 	Private Sub DecompilerUserControl1_UseInCompileButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
-		Me.MainTabControl.SelectedTab = Me.CompileTabPage
+		Me.MainTabControl.SelectTab(Me.CompileTabPage)
 	End Sub
 
 	'Private Sub CompilerUserControl1_UseAllInPackButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
-	'	Me.MainTabControl.SelectedTab = Me.PackTabPage
+	'	Me.MainTabControl.SelectTab(Me.PackTabPage)
 	'End Sub
 
 	Private Sub CompilerUserControl1_UseInViewButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
-		Me.MainTabControl.SelectedTab = Me.ViewTabPage
+		Me.MainTabControl.SelectTab(Me.ViewTabPage)
 	End Sub
 
 	'Private Sub CompilerUserControl1_UseInPackButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
-	'	Me.MainTabControl.SelectedTab = Me.PackTabPage
+	'	Me.MainTabControl.SelectTab(Me.PackTabPage)
 	'End Sub
+
+	Private Sub ViewUserControl_UseInDecompileButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
+		Me.MainTabControl.SelectTab(Me.DecompileTabPage)
+	End Sub
 
 #End Region
 

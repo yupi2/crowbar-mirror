@@ -187,4 +187,13 @@
   <data name="Decompile_LogFileNameSuffix" xml:space="preserve">
     <value>decompile-log.txt</value>
   </data>
+  <data name="AboutAuthorLink" xml:space="preserve">
+    <value>http://steamcommunity.com/id/zeqmacaw</value>
+  </data>
+  <data name="AboutProductLink" xml:space="preserve">
+    <value>http://steamcommunity.com/groups/CrowbarTool</value>
+  </data>
+  <data name="ErrorMessageSDKMissingCause" xml:space="preserve">
+    <value>Possible causes: The game's SDK or Authoring Tools has not been installed (usually via Steam Library Tools) or the path given to Crowbar (via Set Up Games button) is incorrect.</value>
+  </data>
 </root>

@@ -40,11 +40,11 @@ Public Class AppExceptionHandler
 			If TheApp Is Nothing Then
 				errorReportText += "Exception occured before or after TheApp's lifetime."
 			Else
-				If TheApp.Settings.ViewerIsRunning Then
-					errorReportText += "Viewing "
-					errorReportText += TheApp.Settings.ViewMdlPathFileName
-					errorReportText += vbCrLf
-				End If
+				'If TheApp.Settings.ViewerIsRunning Then
+				'	errorReportText += "Viewing "
+				'	errorReportText += TheApp.Settings.ViewMdlPathFileName
+				'	errorReportText += vbCrLf
+				'End If
 				If TheApp.Settings.DecompilerIsRunning Then
 					errorReportText += "Decompiling "
 					errorReportText += TheApp.Settings.DecompileMdlPathFileName

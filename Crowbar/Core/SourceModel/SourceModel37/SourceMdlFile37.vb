@@ -1357,6 +1357,177 @@ Public Class SourceMdlFile37
 		End If
 	End Sub
 
+	Public Sub ReadTextures()
+		If Me.theMdlFileData.textureCount > 0 Then
+			Dim textureInputFileStreamPosition As Long
+			Dim inputFileStreamPosition As Long
+			Dim fileOffsetStart As Long
+			Dim fileOffsetEnd As Long
+			Dim fileOffsetStart2 As Long
+			Dim fileOffsetEnd2 As Long
+
+			Me.theInputFileReader.BaseStream.Seek(Me.theMdlFileData.textureOffset, SeekOrigin.Begin)
+			fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+
+			Me.theMdlFileData.theTextures = New List(Of SourceMdlTexture37)(Me.theMdlFileData.textureCount)
+			For i As Integer = 0 To Me.theMdlFileData.textureCount - 1
+				textureInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+				Dim aTexture As New SourceMdlTexture37()
+
+				aTexture.fileNameOffset = Me.theInputFileReader.ReadInt32()
+				aTexture.flags = Me.theInputFileReader.ReadInt32()
+				aTexture.width = Me.theInputFileReader.ReadSingle()
+				aTexture.height = Me.theInputFileReader.ReadSingle()
+				aTexture.worldUnitsPerU = Me.theInputFileReader.ReadSingle()
+				aTexture.worldUnitsPerV = Me.theInputFileReader.ReadSingle()
+				For x As Integer = 0 To aTexture.unknown.Length - 1
+					aTexture.unknown(x) = Me.theInputFileReader.ReadInt32()
+				Next
+
+				Me.theMdlFileData.theTextures.Add(aTexture)
+
+				inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+
+				If aTexture.fileNameOffset <> 0 Then
+					Me.theInputFileReader.BaseStream.Seek(textureInputFileStreamPosition + aTexture.fileNameOffset, SeekOrigin.Begin)
+					fileOffsetStart2 = Me.theInputFileReader.BaseStream.Position
+
+					aTexture.theFileName = FileManager.ReadNullTerminatedString(Me.theInputFileReader)
+
+					' Convert all forward slashes to backward slashes.
+					aTexture.theFileName = FileManager.GetNormalizedPathFileName(aTexture.theFileName)
+
+					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
+					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
+						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aTexture.theName = " + aTexture.theFileName)
+					End If
+				Else
+					aTexture.theFileName = ""
+				End If
+
+				Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
+			Next
+
+			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theTextures")
+
+			Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "theMdlFileData.theTextures alignment")
+		End If
+	End Sub
+
+	Public Sub ReadTexturePaths()
+		If Me.theMdlFileData.texturePathCount > 0 Then
+			Dim texturePathInputFileStreamPosition As Long
+			Dim inputFileStreamPosition As Long
+			Dim fileOffsetStart As Long
+			Dim fileOffsetEnd As Long
+			Dim fileOffsetStart2 As Long
+			Dim fileOffsetEnd2 As Long
+
+			Me.theInputFileReader.BaseStream.Seek(Me.theMdlFileData.texturePathOffset, SeekOrigin.Begin)
+			fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+
+			Me.theMdlFileData.theTexturePaths = New List(Of String)(Me.theMdlFileData.texturePathCount)
+			Dim texturePathOffset As Integer
+			For i As Integer = 0 To Me.theMdlFileData.texturePathCount - 1
+				texturePathInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+				Dim aTexturePath As String
+				texturePathOffset = Me.theInputFileReader.ReadInt32()
+
+				inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+
+				If texturePathOffset <> 0 Then
+					Me.theInputFileReader.BaseStream.Seek(texturePathOffset, SeekOrigin.Begin)
+					fileOffsetStart2 = Me.theInputFileReader.BaseStream.Position
+
+					aTexturePath = FileManager.ReadNullTerminatedString(Me.theInputFileReader)
+
+					'TEST: Convert all forward slashes to backward slashes.
+					aTexturePath = FileManager.GetNormalizedPathFileName(aTexturePath)
+
+					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
+					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
+						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aTexturePath = " + aTexturePath)
+					End If
+				Else
+					aTexturePath = ""
+				End If
+				Me.theMdlFileData.theTexturePaths.Add(aTexturePath)
+
+				Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
+			Next
+
+			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theTexturePaths")
+
+			Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "theMdlFileData.theTexturePaths alignment")
+		End If
+	End Sub
+
+	Public Sub ReadSkinFamilies()
+		If Me.theMdlFileData.skinFamilyCount > 0 Then
+			Dim skinFamilyInputFileStreamPosition As Long
+			'Dim inputFileStreamPosition As Long
+			Dim fileOffsetStart As Long
+			Dim fileOffsetEnd As Long
+			'Dim fileOffsetStart2 As Long
+			'Dim fileOffsetEnd2 As Long
+
+			Me.theInputFileReader.BaseStream.Seek(Me.theMdlFileData.skinOffset, SeekOrigin.Begin)
+			fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+
+			Me.theMdlFileData.theSkinFamilies = New List(Of List(Of Integer))(Me.theMdlFileData.skinFamilyCount)
+			For i As Integer = 0 To Me.theMdlFileData.skinFamilyCount - 1
+				skinFamilyInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+				Dim aSkinFamily As New List(Of Integer)()
+
+				For j As Integer = 0 To Me.theMdlFileData.skinReferenceCount - 1
+					Dim aSkinRef As Integer
+					aSkinRef = Me.theInputFileReader.ReadInt16()
+					aSkinFamily.Add(aSkinRef)
+				Next
+
+				Me.theMdlFileData.theSkinFamilies.Add(aSkinFamily)
+
+				'inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+
+				'Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
+
+				'If Me.theMdlFileData.theTextures IsNot Nothing AndAlso Me.theMdlFileData.theTextures.Count > 0 Then
+				'	'$pos1 += ($matname_num * 2);
+				'	Me.theInputFileReader.BaseStream.Seek(skinFamilyInputFileStreamPosition + Me.theMdlFileData.theTextures.Count * 2, SeekOrigin.Begin)
+				'End If
+			Next
+
+			'TEST: Remove skinRef from each skinFamily, if it is at same skinRef index in all skinFamilies. 
+			'      Start with the last skinRef index (Me.theMdlFileData.skinReferenceCount)
+			'      and step -1 to 0 until skinRefs are different between skinFamilies.
+			Dim index As Integer = -1
+			For currentSkinRef As Integer = Me.theMdlFileData.skinReferenceCount - 1 To 0 Step -1
+				For index = 0 To Me.theMdlFileData.skinFamilyCount - 1
+					Dim aSkinRef As Integer
+					aSkinRef = Me.theMdlFileData.theSkinFamilies(index)(currentSkinRef)
+
+					If aSkinRef <> currentSkinRef Then
+						Exit For
+					End If
+				Next
+
+				If index = Me.theMdlFileData.skinFamilyCount Then
+					For index = 0 To Me.theMdlFileData.skinFamilyCount - 1
+						Me.theMdlFileData.theSkinFamilies(index).RemoveAt(currentSkinRef)
+					Next
+					Me.theMdlFileData.skinReferenceCount -= 1
+				End If
+			Next
+
+			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theSkinFamilies")
+
+			Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "theMdlFileData.theSkinFamilies alignment")
+		End If
+	End Sub
+
 #End Region
 
 #Region "Private Methods"
@@ -1510,6 +1681,7 @@ Public Class SourceMdlFile37
 					inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 
 					If aHitbox.nameOffset <> 0 Then
+						'NOTE: The nameOffset is absolute offset in studiomdl.
 						Me.theInputFileReader.BaseStream.Seek(aHitbox.nameOffset, SeekOrigin.Begin)
 						fileOffsetStart2 = Me.theInputFileReader.BaseStream.Position
 
