@@ -289,9 +289,9 @@ Public Class ViewUserControl
 		Me.MdlPathFileTextBox.DataBindings.Add("Text", TheApp.Settings, Me.NameOfAppSettingMdlPathFileName, False, DataSourceUpdateMode.OnValidation)
 
 		'NOTE: The DataSource, DisplayMember, and ValueMember need to be set before DataBindings, or else an exception is raised.
-		Me.GameSetupComboBox.DataSource = TheApp.Settings.GameSetups
 		Me.GameSetupComboBox.DisplayMember = "GameName"
 		Me.GameSetupComboBox.ValueMember = "GameName"
+		Me.GameSetupComboBox.DataSource = TheApp.Settings.GameSetups
 		Me.GameSetupComboBox.DataBindings.Add("SelectedIndex", TheApp.Settings, Me.NameOfAppSettingGameSetupSelectedIndex, False, DataSourceUpdateMode.OnPropertyChanged)
 	End Sub
 

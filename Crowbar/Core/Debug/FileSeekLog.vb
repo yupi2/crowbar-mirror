@@ -13,11 +13,20 @@ Public Class FileSeekLog
 
 	Public Sub Add(ByVal startOffset As Long, ByVal endOffset As Long, ByVal description As String)
 		Try
-			Me.theFileSeekList.Add(startOffset, endOffset)
-			Me.theFileSeekDescriptionList.Add(startOffset, description)
+			If Me.theFileSeekList.ContainsKey(startOffset) AndAlso Me.theFileSeekList(startOffset) = endOffset Then
+				Me.theFileSeekDescriptionList(startOffset) += "; " + description
+			Else
+				Me.theFileSeekList.Add(startOffset, endOffset)
+				Me.theFileSeekDescriptionList.Add(startOffset, description)
+			End If
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		End Try
+	End Sub
+
+	Public Sub Clear()
+		Me.theFileSeekList.Clear()
+		Me.theFileSeekDescriptionList.Clear()
 	End Sub
 
 	Public Sub LogToEndAndAlignToNextStart(ByVal inputFileReader As BinaryReader, ByVal fileOffsetEnd As Long, ByVal byteAlignmentCount As Integer, ByVal description As String)

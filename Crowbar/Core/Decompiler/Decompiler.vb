@@ -16,6 +16,7 @@ Public Class Decompiler
 		Me.theDecompiledVtaFiles = New BindingListEx(Of String)()
 		Me.theDecompiledFirstBoneAnimSmdFiles = New BindingListEx(Of String)()
 		Me.theDecompiledVrdFiles = New BindingListEx(Of String)()
+		Me.theDecompiledDeclareSequenceQciFiles = New BindingListEx(Of String)()
 		Me.theDecompiledFirstTextureBmpFiles = New BindingListEx(Of String)()
 		Me.theDecompiledLogFiles = New BindingListEx(Of String)()
 		Me.theDecompiledFirstDebugFiles = New BindingListEx(Of String)()
@@ -130,6 +131,8 @@ Public Class Decompiler
 			decompileResultInfo.theDecompiledRelativePathFileNames = Me.theDecompiledFirstBoneAnimSmdFiles
 		ElseIf TheApp.Settings.DecompileProceduralBonesVrdFileIsChecked Then
 			decompileResultInfo.theDecompiledRelativePathFileNames = Me.theDecompiledVrdFiles
+		ElseIf TheApp.Settings.DecompileDeclareSequenceQciFileIsChecked Then
+			decompileResultInfo.theDecompiledRelativePathFileNames = Me.theDecompiledDeclareSequenceQciFiles
 		ElseIf TheApp.Settings.DecompileTextureBmpFilesIsChecked Then
 			decompileResultInfo.theDecompiledRelativePathFileNames = Me.theDecompiledFirstTextureBmpFiles
 		ElseIf TheApp.Settings.DecompileLogFileIsChecked Then
@@ -161,6 +164,7 @@ Public Class Decompiler
 		Me.theDecompiledVtaFiles.Clear()
 		Me.theDecompiledFirstBoneAnimSmdFiles.Clear()
 		Me.theDecompiledVrdFiles.Clear()
+		Me.theDecompiledDeclareSequenceQciFiles.Clear()
 		Me.theDecompiledFirstTextureBmpFiles.Clear()
 		Me.theDecompiledLogFiles.Clear()
 		Me.theDecompiledFirstDebugFiles.Clear()
@@ -383,12 +387,15 @@ Public Class Decompiler
 
 	Private Sub CreateLogTextFile(ByVal modelName As String)
 		If TheApp.Settings.DecompileLogFileIsChecked Then
-			Dim logPathName As String
+			Dim logPath As String
+			Dim logFileName As String
 			Dim logPathFileName As String
 
-			logPathName = Me.theModelOutputPath
-			FileManager.CreatePath(logPathName)
-			logPathFileName = Path.Combine(logPathName, modelName + " " + My.Resources.Decompile_LogFileNameSuffix)
+			logPath = Me.theModelOutputPath
+			FileManager.CreatePath(logPath)
+
+			logFileName = modelName + " " + My.Resources.Decompile_LogFileNameSuffix
+			logPathFileName = Path.Combine(logPath, logFileName)
 
 			Me.theLogFileStream = File.CreateText(logPathFileName)
 			Me.theLogFileStream.AutoFlush = True
@@ -458,7 +465,7 @@ Public Class Decompiler
 			End If
 		End If
 
-		If model.AniFileIsUsed Then
+		If model.AniFileIsUsed AndAlso TheApp.Settings.DecompileBoneAnimationSmdFilesIsChecked Then
 			Me.UpdateProgress(3, "Reading ANI file ...")
 			status = model.ReadAniFile()
 			If status = StatusMessage.Success Then
@@ -536,6 +543,13 @@ Public Class Decompiler
 		End If
 
 		status = Me.WriteTextureFiles(model)
+		If status = StatusMessage.Canceled Then
+			Return status
+		ElseIf status = StatusMessage.Skipped Then
+			Return status
+		End If
+
+		status = Me.WriteDeclareSequenceQciFile(model)
 
 		Return status
 	End Function
@@ -745,6 +759,38 @@ Public Class Decompiler
 		Return status
 	End Function
 
+	Private Function WriteDeclareSequenceQciFile(ByVal model As SourceModel) As AppEnums.StatusMessage
+		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+
+		If TheApp.Settings.DecompileDeclareSequenceQciFileIsChecked Then
+			If model.HasBoneAnimationData Then
+				Me.UpdateProgress(3, "DeclareSequence QCI file: ")
+				Me.theDecompiledFileType = DecompiledFileType.DeclareSequenceQci
+				Me.theFirstDecompiledFileHasBeenAdded = False
+				AddHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
+
+				Dim declareSequenceQciPathFileName As String
+				declareSequenceQciPathFileName = Path.Combine(Me.theModelOutputPath, SourceFileNamesModule.GetDeclareSequenceQciFileName(model.Name))
+
+				status = model.WriteDeclareSequenceQciFile(declareSequenceQciPathFileName)
+
+				If File.Exists(declareSequenceQciPathFileName) Then
+					Me.theDecompiledDeclareSequenceQciFiles.Add(FileManager.GetRelativePathFileName(Me.theOutputPath, declareSequenceQciPathFileName))
+				End If
+
+				RemoveHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
+			End If
+		End If
+
+		If Me.CancellationPending Then
+			status = StatusMessage.Canceled
+		ElseIf Me.theSkipCurrentModelIsActive Then
+			status = StatusMessage.Skipped
+		End If
+
+		Return status
+	End Function
+
 	Private Function WriteTextureFiles(ByVal model As SourceModel) As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
@@ -915,6 +961,7 @@ Public Class Decompiler
 	Private theDecompiledVtaFiles As BindingListEx(Of String)
 	Private theDecompiledFirstBoneAnimSmdFiles As BindingListEx(Of String)
 	Private theDecompiledVrdFiles As BindingListEx(Of String)
+	Private theDecompiledDeclareSequenceQciFiles As BindingListEx(Of String)
 	Private theDecompiledFirstTextureBmpFiles As BindingListEx(Of String)
 	Private theDecompiledLogFiles As BindingListEx(Of String)
 	Private theDecompiledFirstDebugFiles As BindingListEx(Of String)

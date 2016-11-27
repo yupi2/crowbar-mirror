@@ -31,6 +31,6 @@ Public Class SourceMdlTexture
 	Public unused(9) As Integer
 
 	'	inline char * const		pszName( void ) const { return ((char *)this) + sznameindex; }
-	Public theFileName As String
+	Public thePathFileName As String
 
 End Class

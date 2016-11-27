@@ -56,6 +56,6 @@
 	Public yaw(1) As Double
 
 	Public theName As String
-	'Public theTextureIndex As Integer
+	Public theTextureIndex As Integer
 
 End Class

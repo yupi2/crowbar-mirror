@@ -32,9 +32,9 @@ Public Class CompileUserControl
 		Me.UpdateOutputFolderWidgets()
 
 		'NOTE: The DataSource, DisplayMember, and ValueMember need to be set before DataBindings, or else an exception is raised.
-		Me.GameSetupComboBox.DataSource = TheApp.Settings.GameSetups
 		Me.GameSetupComboBox.DisplayMember = "GameName"
 		Me.GameSetupComboBox.ValueMember = "GameName"
+		Me.GameSetupComboBox.DataSource = TheApp.Settings.GameSetups
 		Me.GameSetupComboBox.DataBindings.Add("SelectedIndex", TheApp.Settings, "CompileGameSetupSelectedIndex", False, DataSourceUpdateMode.OnPropertyChanged)
 
 		Me.InitCrowbarOptions()
@@ -132,7 +132,7 @@ Public Class CompileUserControl
 
 #Region "Child Widget Event Handlers"
 
-	Private Sub QcPathFileNameTextBox_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles QcPathFileNameTextBox.TextChanged
+	Private Sub QcPathFileNameTextBox_Validated(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles QcPathFileNameTextBox.Validated
 		Me.QcPathFileNameTextBox.Text = FileManager.GetCleanPathFileName(Me.QcPathFileNameTextBox.Text)
 		Me.SetCompilerOptionsText()
 	End Sub
@@ -474,12 +474,15 @@ Public Class CompileUserControl
                 Exit Try
             End If
 
-            Me.CompileComboBox.DataBindings.Add("SelectedValue", TheApp.Settings, "CompileMode", False, DataSourceUpdateMode.OnPropertyChanged)
-            Me.CompileComboBox.DataSource = anEnumList
-            Me.CompileComboBox.DisplayMember = "Value"
+			Me.CompileComboBox.DisplayMember = "Value"
             Me.CompileComboBox.ValueMember = "Key"
-        Catch
-        End Try
+			Me.CompileComboBox.DataSource = anEnumList
+			Me.CompileComboBox.DataBindings.Add("SelectedValue", TheApp.Settings, "CompileMode", False, DataSourceUpdateMode.OnPropertyChanged)
+
+			Me.CompileComboBox.SelectedIndex = 0
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		End Try
     End Sub
 
     Private Sub RunCompiler()

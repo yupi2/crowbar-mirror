@@ -14,15 +14,13 @@ Public Class SourceMdlFileData04
 	Public boneCount As Integer
 	Public bodyPartCount As Integer
 	Public unknownCount As Integer
+	Public sequenceDescCount As Integer
 	Public sequenceCount As Integer
 
 	Public unknown02 As Integer
-	Public unknown03 As Integer
-	Public unknown04 As Integer
 
-	'Public theID As String
-
-	Public theBodyParts As List(Of SourceMdlBodyPart06)
-	Public theBones As List(Of SourceMdlBone06)
+	Public theBodyParts As List(Of SourceMdlBodyPart04)
+	Public theBones As List(Of SourceMdlBone04)
+	Public theSequenceDescs As List(Of SourceMdlSequenceDesc04)
 
 End Class

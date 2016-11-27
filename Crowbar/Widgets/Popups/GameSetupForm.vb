@@ -10,7 +10,7 @@ Public Class GameSetupForm
 		InitializeComponent()
 
 		'NOTE: Override any nonsense that the Visual Designer does to the size.
-		Me.Size = New System.Drawing.Size(640, 290)
+		Me.Size = New System.Drawing.Size(640, 410)
 	End Sub
 
 #End Region
@@ -18,9 +18,9 @@ Public Class GameSetupForm
 #Region "Init and Free"
 
 	Protected Sub InitDataBinding()
-		Me.GameSetupComboBox.DataSource = Me.theGameSetupFormInfo.GameSetups
 		Me.GameSetupComboBox.DisplayMember = "GameName"
 		Me.GameSetupComboBox.ValueMember = "GameName"
+		Me.GameSetupComboBox.DataSource = Me.theGameSetupFormInfo.GameSetups
 		Me.GameSetupComboBox.SelectedIndex = Me.theGameSetupFormInfo.GameSetupIndex
 
 		Me.UpdateWidgets()
@@ -103,6 +103,7 @@ Public Class GameSetupForm
 
 	Private Sub BrowseForCompilerPathFileNameButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BrowseForCompilerPathFileNameButton.Click
 		Dim openFileWdw As New OpenFileDialog()
+		openFileWdw.Title = "Select Source Engine Model Compiler Tool"
 		openFileWdw.AddExtension = True
 		openFileWdw.ValidateNames = True
 		openFileWdw.Filter = "Source Engine Model Compiler Files|studiomdl.exe|Executable Files (*.exe)|*.exe|All Files (*.*)|*.*"
@@ -113,6 +114,38 @@ Public Class GameSetupForm
 			Application.DoEvents()
 
 			Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).CompilerPathFileName = openFileWdw.FileName
+		End If
+	End Sub
+
+	Private Sub BrowseForViewerPathFileNameButton_Click(sender As Object, e As EventArgs) Handles BrowseForViewerPathFileNameButton.Click
+		Dim openFileWdw As New OpenFileDialog()
+		openFileWdw.Title = "Select Source Engine Model Viewer Tool"
+		openFileWdw.AddExtension = True
+		openFileWdw.ValidateNames = True
+		openFileWdw.Filter = "Source Engine Model Viewer Files|hlmv.exe|Executable Files (*.exe)|*.exe|All Files (*.*)|*.*"
+		openFileWdw.InitialDirectory = FileManager.GetPath(Me.ViewerPathFileNameTextBox.Text)
+		openFileWdw.FileName = Path.GetFileName(Me.ViewerPathFileNameTextBox.Text)
+		If openFileWdw.ShowDialog() = Windows.Forms.DialogResult.OK Then
+			' Allow dialog window to completely disappear.
+			Application.DoEvents()
+
+			Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).ViewerPathFileName = openFileWdw.FileName
+		End If
+	End Sub
+
+	Private Sub BrowseForUnpackerPathFileNameButton_Click(sender As Object, e As EventArgs) Handles BrowseForUnpackerPathFileNameButton.Click
+		Dim openFileWdw As New OpenFileDialog()
+		openFileWdw.Title = "Select Source Engine Packer/Unpacker Tool"
+		openFileWdw.AddExtension = True
+		openFileWdw.ValidateNames = True
+		openFileWdw.Filter = "Source Engine Packer/Unpacker Files|vpk.exe;gmad.exe|Executable Files (*.exe)|*.exe|All Files (*.*)|*.*"
+		openFileWdw.InitialDirectory = FileManager.GetPath(Me.UnpackerPathFileNameTextBox.Text)
+		openFileWdw.FileName = Path.GetFileName(Me.UnpackerPathFileNameTextBox.Text)
+		If openFileWdw.ShowDialog() = Windows.Forms.DialogResult.OK Then
+			' Allow dialog window to completely disappear.
+			Application.DoEvents()
+
+			Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).UnpackerPathFileName = openFileWdw.FileName
 		End If
 	End Sub
 
@@ -172,14 +205,21 @@ Public Class GameSetupForm
 		Me.DeleteGameSetupButton.Enabled = (Me.theGameSetupFormInfo.GameSetups.Count > 1)
 
 		'NOTE: Reset the bindings, because a new game setup has been chosen.
+
 		Me.GameNameTextBox.DataBindings.Clear()
 		Me.GameNameTextBox.DataBindings.Add("Text", Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex), "GameName", False, DataSourceUpdateMode.OnValidation)
+
 		Me.GamePathFileNameTextBox.DataBindings.Clear()
 		Me.GamePathFileNameTextBox.DataBindings.Add("Text", Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex), "GamePathFileName", False, DataSourceUpdateMode.OnValidation)
 		Me.ViewAsReplacementModelsSubfolderNameTextBox.DataBindings.Clear()
 		Me.ViewAsReplacementModelsSubfolderNameTextBox.DataBindings.Add("Text", Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex), "ViewAsReplacementModelsSubfolderName", False, DataSourceUpdateMode.OnValidation)
+
 		Me.CompilerPathFileNameTextBox.DataBindings.Clear()
 		Me.CompilerPathFileNameTextBox.DataBindings.Add("Text", Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex), "CompilerPathFileName", False, DataSourceUpdateMode.OnValidation)
+		Me.ViewerPathFileNameTextBox.DataBindings.Clear()
+		Me.ViewerPathFileNameTextBox.DataBindings.Add("Text", Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex), "ViewerPathFileName", False, DataSourceUpdateMode.OnValidation)
+		Me.UnpackerPathFileNameTextBox.DataBindings.Clear()
+		Me.UnpackerPathFileNameTextBox.DataBindings.Add("Text", Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex), "UnpackerPathFileName", False, DataSourceUpdateMode.OnValidation)
 	End Sub
 
 #End Region

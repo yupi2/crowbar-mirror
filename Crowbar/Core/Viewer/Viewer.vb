@@ -215,8 +215,8 @@ Public Class Viewer
 			Dim modelViewerPathFileName As String
 			gameSetup = TheApp.Settings.GameSetups(Me.theGameSetupSelectedIndex)
 			gamePath = FileManager.GetPath(gameSetup.GamePathFileName)
-			modelViewerPathFileName = Path.Combine(FileManager.GetPath(gameSetup.CompilerPathFileName), "hlmv.exe")
-			'modelViewerPathFileName = gameSetup.ViewerPathFileName
+			'modelViewerPathFileName = Path.Combine(FileManager.GetPath(gameSetup.CompilerPathFileName), "hlmv.exe")
+			modelViewerPathFileName = gameSetup.ViewerPathFileName
 
 			If Not File.Exists(modelViewerPathFileName) Then
 				inputsAreValid = False
@@ -262,7 +262,7 @@ Public Class Viewer
 				Me.UpdateProgress(1, "ERROR: Model file not found: " + """" + Me.theInputMdlPathName + """")
 			End If
 		Catch ex As Exception
-			Me.UpdateProgress(1, "ERROR: " + ex.Message)
+			Me.WriteErrorMessage(ex.Message)
 		End Try
 	End Sub
 
@@ -283,7 +283,8 @@ Public Class Viewer
 		Dim gameSetup As GameSetup
 		gameSetup = TheApp.Settings.GameSetups(Me.theGameSetupSelectedIndex)
 		gamePath = FileManager.GetPath(gameSetup.GamePathFileName)
-		modelViewerPathFileName = Path.Combine(FileManager.GetPath(gameSetup.CompilerPathFileName), "hlmv.exe")
+		'modelViewerPathFileName = Path.Combine(FileManager.GetPath(gameSetup.CompilerPathFileName), "hlmv.exe")
+		modelViewerPathFileName = gameSetup.ViewerPathFileName
 		gameModelsPath = Path.Combine(gamePath, "models")
 
 		currentFolder = Directory.GetCurrentDirectory()
@@ -364,6 +365,8 @@ Public Class Viewer
 						Me.WriteErrorMessage("Model version not currently supported: " + CStr(SourceModel.GetVersion()))
 						Return ""
 					End If
+				Catch ex As FormatException
+					Me.WriteErrorMessage(ex.Message)
 				Catch ex As Exception
 					Me.WriteErrorMessage("Crowbar tried to write to the temporary replacement MDL file but Windows gave this message: " + ex.Message)
 					Return ""

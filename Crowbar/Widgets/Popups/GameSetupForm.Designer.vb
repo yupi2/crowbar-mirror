@@ -25,9 +25,11 @@ Partial Class GameSetupForm
 		Me.components = New System.ComponentModel.Container()
 		Me.GameSetupComboBox = New System.Windows.Forms.ComboBox()
 		Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+		Me.CloneButton = New System.Windows.Forms.Button()
 		Me.ViewAsReplacementModelsSubfolderNameTextBox = New System.Windows.Forms.TextBox()
 		Me.Label6 = New System.Windows.Forms.Label()
 		Me.UseDefaultOutputSubfolderNameButton = New System.Windows.Forms.Button()
+		Me.GameNameTextBox = New Crowbar.TextBoxEx()
 		Me.Label2 = New System.Windows.Forms.Label()
 		Me.DeleteGameSetupButton = New System.Windows.Forms.Button()
 		Me.BrowseForGamePathFileNameButton = New System.Windows.Forms.Button()
@@ -40,8 +42,12 @@ Partial Class GameSetupForm
 		Me.SaveAndCloseButton = New System.Windows.Forms.Button()
 		Me.SaveButton = New System.Windows.Forms.Button()
 		Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-		Me.GameNameTextBox = New Crowbar.TextBoxEx()
-		Me.CloneButton = New System.Windows.Forms.Button()
+		Me.Label3 = New System.Windows.Forms.Label()
+		Me.BrowseForViewerPathFileNameButton = New System.Windows.Forms.Button()
+		Me.ViewerPathFileNameTextBox = New System.Windows.Forms.TextBox()
+		Me.Label5 = New System.Windows.Forms.Label()
+		Me.BrowseForUnpackerPathFileNameButton = New System.Windows.Forms.Button()
+		Me.UnpackerPathFileNameTextBox = New System.Windows.Forms.TextBox()
 		Me.GroupBox1.SuspendLayout()
 		Me.SuspendLayout()
 		'
@@ -60,6 +66,12 @@ Partial Class GameSetupForm
 		'
 		Me.GroupBox1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.GroupBox1.Controls.Add(Me.Label5)
+		Me.GroupBox1.Controls.Add(Me.BrowseForUnpackerPathFileNameButton)
+		Me.GroupBox1.Controls.Add(Me.UnpackerPathFileNameTextBox)
+		Me.GroupBox1.Controls.Add(Me.Label3)
+		Me.GroupBox1.Controls.Add(Me.BrowseForViewerPathFileNameButton)
+		Me.GroupBox1.Controls.Add(Me.ViewerPathFileNameTextBox)
 		Me.GroupBox1.Controls.Add(Me.CloneButton)
 		Me.GroupBox1.Controls.Add(Me.ViewAsReplacementModelsSubfolderNameTextBox)
 		Me.GroupBox1.Controls.Add(Me.Label6)
@@ -75,9 +87,18 @@ Partial Class GameSetupForm
 		Me.GroupBox1.Controls.Add(Me.Label4)
 		Me.GroupBox1.Location = New System.Drawing.Point(12, 39)
 		Me.GroupBox1.Name = "GroupBox1"
-		Me.GroupBox1.Size = New System.Drawing.Size(608, 204)
+		Me.GroupBox1.Size = New System.Drawing.Size(608, 288)
 		Me.GroupBox1.TabIndex = 2
 		Me.GroupBox1.TabStop = False
+		'
+		'CloneButton
+		'
+		Me.CloneButton.Location = New System.Drawing.Point(307, 253)
+		Me.CloneButton.Name = "CloneButton"
+		Me.CloneButton.Size = New System.Drawing.Size(75, 23)
+		Me.CloneButton.TabIndex = 12
+		Me.CloneButton.Text = "Clone"
+		Me.CloneButton.UseVisualStyleBackColor = True
 		'
 		'ViewAsReplacementModelsSubfolderNameTextBox
 		'
@@ -109,6 +130,15 @@ Partial Class GameSetupForm
 		Me.UseDefaultOutputSubfolderNameButton.Text = "Use Default"
 		Me.UseDefaultOutputSubfolderNameButton.UseVisualStyleBackColor = True
 		'
+		'GameNameTextBox
+		'
+		Me.GameNameTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.GameNameTextBox.Location = New System.Drawing.Point(91, 13)
+		Me.GameNameTextBox.Name = "GameNameTextBox"
+		Me.GameNameTextBox.Size = New System.Drawing.Size(511, 20)
+		Me.GameNameTextBox.TabIndex = 1
+		'
 		'Label2
 		'
 		Me.Label2.AutoSize = True
@@ -120,7 +150,7 @@ Partial Class GameSetupForm
 		'
 		'DeleteGameSetupButton
 		'
-		Me.DeleteGameSetupButton.Location = New System.Drawing.Point(6, 173)
+		Me.DeleteGameSetupButton.Location = New System.Drawing.Point(226, 253)
 		Me.DeleteGameSetupButton.Name = "DeleteGameSetupButton"
 		Me.DeleteGameSetupButton.Size = New System.Drawing.Size(75, 23)
 		Me.DeleteGameSetupButton.TabIndex = 8
@@ -196,7 +226,7 @@ Partial Class GameSetupForm
 		'SaveAndCloseButton
 		'
 		Me.SaveAndCloseButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.SaveAndCloseButton.Location = New System.Drawing.Point(520, 249)
+		Me.SaveAndCloseButton.Location = New System.Drawing.Point(520, 333)
 		Me.SaveAndCloseButton.Name = "SaveAndCloseButton"
 		Me.SaveAndCloseButton.Size = New System.Drawing.Size(100, 23)
 		Me.SaveAndCloseButton.TabIndex = 4
@@ -206,36 +236,74 @@ Partial Class GameSetupForm
 		'SaveButton
 		'
 		Me.SaveButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.SaveButton.Location = New System.Drawing.Point(439, 249)
+		Me.SaveButton.Location = New System.Drawing.Point(439, 333)
 		Me.SaveButton.Name = "SaveButton"
 		Me.SaveButton.Size = New System.Drawing.Size(75, 23)
 		Me.SaveButton.TabIndex = 3
 		Me.SaveButton.Text = "Save"
 		Me.SaveButton.UseVisualStyleBackColor = True
 		'
-		'GameNameTextBox
+		'Label3
 		'
-		Me.GameNameTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+		Me.Label3.AutoSize = True
+		Me.Label3.Location = New System.Drawing.Point(6, 161)
+		Me.Label3.Name = "Label3"
+		Me.Label3.Size = New System.Drawing.Size(215, 13)
+		Me.Label3.TabIndex = 13
+		Me.Label3.Text = "Location of game's model viewer (hlmv.exe):"
+		'
+		'BrowseForViewerPathFileNameButton
+		'
+		Me.BrowseForViewerPathFileNameButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.BrowseForViewerPathFileNameButton.Location = New System.Drawing.Point(527, 175)
+		Me.BrowseForViewerPathFileNameButton.Name = "BrowseForViewerPathFileNameButton"
+		Me.BrowseForViewerPathFileNameButton.Size = New System.Drawing.Size(75, 23)
+		Me.BrowseForViewerPathFileNameButton.TabIndex = 15
+		Me.BrowseForViewerPathFileNameButton.Text = "Browse..."
+		Me.BrowseForViewerPathFileNameButton.UseVisualStyleBackColor = True
+		'
+		'ViewerPathFileNameTextBox
+		'
+		Me.ViewerPathFileNameTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.GameNameTextBox.Location = New System.Drawing.Point(91, 13)
-		Me.GameNameTextBox.Name = "GameNameTextBox"
-		Me.GameNameTextBox.Size = New System.Drawing.Size(511, 20)
-		Me.GameNameTextBox.TabIndex = 1
+		Me.ViewerPathFileNameTextBox.Location = New System.Drawing.Point(6, 177)
+		Me.ViewerPathFileNameTextBox.Name = "ViewerPathFileNameTextBox"
+		Me.ViewerPathFileNameTextBox.Size = New System.Drawing.Size(515, 20)
+		Me.ViewerPathFileNameTextBox.TabIndex = 14
 		'
-		'CloneButton
+		'Label5
 		'
-		Me.CloneButton.Location = New System.Drawing.Point(527, 173)
-		Me.CloneButton.Name = "CloneButton"
-		Me.CloneButton.Size = New System.Drawing.Size(75, 23)
-		Me.CloneButton.TabIndex = 12
-		Me.CloneButton.Text = "Clone"
-		Me.CloneButton.UseVisualStyleBackColor = True
+		Me.Label5.AutoSize = True
+		Me.Label5.Location = New System.Drawing.Point(6, 200)
+		Me.Label5.Name = "Label5"
+		Me.Label5.Size = New System.Drawing.Size(293, 13)
+		Me.Label5.TabIndex = 16
+		Me.Label5.Text = "Location of game's packer/unpacker (vpk.exe or gmad.exe):"
+		'
+		'BrowseForUnpackerPathFileNameButton
+		'
+		Me.BrowseForUnpackerPathFileNameButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.BrowseForUnpackerPathFileNameButton.Location = New System.Drawing.Point(527, 214)
+		Me.BrowseForUnpackerPathFileNameButton.Name = "BrowseForUnpackerPathFileNameButton"
+		Me.BrowseForUnpackerPathFileNameButton.Size = New System.Drawing.Size(75, 23)
+		Me.BrowseForUnpackerPathFileNameButton.TabIndex = 18
+		Me.BrowseForUnpackerPathFileNameButton.Text = "Browse..."
+		Me.BrowseForUnpackerPathFileNameButton.UseVisualStyleBackColor = True
+		'
+		'UnpackerPathFileNameTextBox
+		'
+		Me.UnpackerPathFileNameTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.UnpackerPathFileNameTextBox.Location = New System.Drawing.Point(6, 216)
+		Me.UnpackerPathFileNameTextBox.Name = "UnpackerPathFileNameTextBox"
+		Me.UnpackerPathFileNameTextBox.Size = New System.Drawing.Size(515, 20)
+		Me.UnpackerPathFileNameTextBox.TabIndex = 17
 		'
 		'GameSetupForm
 		'
 		Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
 		Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-		Me.ClientSize = New System.Drawing.Size(632, 311)
+		Me.ClientSize = New System.Drawing.Size(632, 378)
 		Me.ControlBox = False
 		Me.Controls.Add(Me.SaveButton)
 		Me.Controls.Add(Me.AddGameSetupButton)
@@ -244,7 +312,7 @@ Partial Class GameSetupForm
 		Me.Controls.Add(Me.GroupBox1)
 		Me.MaximizeBox = False
 		Me.MinimizeBox = False
-		Me.MinimumSize = New System.Drawing.Size(640, 319)
+		Me.MinimumSize = New System.Drawing.Size(640, 410)
 		Me.Name = "GameSetupForm"
 		Me.ShowIcon = False
 		Me.ShowInTaskbar = False
@@ -274,4 +342,10 @@ Partial Class GameSetupForm
 	Friend WithEvents UseDefaultOutputSubfolderNameButton As System.Windows.Forms.Button
 	Friend WithEvents ToolTip1 As System.Windows.Forms.ToolTip
 	Friend WithEvents CloneButton As System.Windows.Forms.Button
+	Friend WithEvents Label5 As System.Windows.Forms.Label
+	Friend WithEvents BrowseForUnpackerPathFileNameButton As System.Windows.Forms.Button
+	Friend WithEvents UnpackerPathFileNameTextBox As System.Windows.Forms.TextBox
+	Friend WithEvents Label3 As System.Windows.Forms.Label
+	Friend WithEvents BrowseForViewerPathFileNameButton As System.Windows.Forms.Button
+	Friend WithEvents ViewerPathFileNameTextBox As System.Windows.Forms.TextBox
 End Class

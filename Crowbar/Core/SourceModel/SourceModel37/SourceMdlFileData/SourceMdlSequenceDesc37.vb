@@ -151,6 +151,7 @@
 	Public theKeyValues As String
 	Public theName As String
 	Public thePoseKeys As List(Of Double)
+	Public theWeightListIndex As Integer
 
 	Public theBoneWeightsAreDefault As Boolean
 

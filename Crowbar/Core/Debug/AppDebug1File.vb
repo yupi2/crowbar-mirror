@@ -723,7 +723,7 @@ Public Class AppDebug1File
 				'Me.WriteLogLine(1, "[index: " + i.ToString() + "]")
 				Me.WriteLogLine(1, DebugFormatModule.FormatIndexLine("Texture", i))
 
-				Me.WriteLogLine(1, DebugFormatModule.FormatIntegerLine("00 nameOffset", aTexture.nameOffset) + " (" + aTexture.theFileName + ")")
+				Me.WriteLogLine(1, DebugFormatModule.FormatIntegerLine("00 nameOffset", aTexture.nameOffset) + " (" + aTexture.thePathFileName + ")")
 				line = "--------------------"
 				Me.WriteLogLine(1, line)
 			Next

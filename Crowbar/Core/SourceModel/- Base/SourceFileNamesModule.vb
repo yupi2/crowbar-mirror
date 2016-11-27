@@ -17,15 +17,13 @@ Module SourceFileNamesModule
 			bodyGroupSmdFileName += "_reference"
 			bodyGroupSmdFileName += ".smd"
 		Else
-			'aModel = aBodyPart.theModels(modelIndex)
-
-			'bodyModelFileName = Path.GetFileName(CStr(aModel.name).Trim(Chr(0))).ToLower(TheApp.InternalCultureInfo)
-			bodyModelFileName = Path.GetFileName(bodyModelName.Trim(Chr(0))).ToLower(TheApp.InternalCultureInfo)
-			If FileManager.FilePathHasInvalidChars(bodyModelFileName) Then
+			If FileManager.FilePathHasInvalidChars(bodyModelName.Trim(Chr(0))) Then
 				bodyModelFileName = "body"
 				bodyModelFileName += CStr(bodyPartIndex)
 				bodyModelFileName += "_model"
 				bodyModelFileName += CStr(modelIndex)
+			Else
+				bodyModelFileName = Path.GetFileName(bodyModelName.Trim(Chr(0))).ToLower(TheApp.InternalCultureInfo)
 			End If
 			bodyModelFileNameWithoutExtension = Path.GetFileNameWithoutExtension(bodyModelFileName)
 
@@ -106,5 +104,42 @@ Module SourceFileNamesModule
 
 		Return collisionSmdFileName
 	End Function
+
+	Public Function GetDeclareSequenceQciFileName(ByVal modelName As String) As String
+		Dim declareSequenceQciFileName As String
+
+		declareSequenceQciFileName = modelName
+		declareSequenceQciFileName += "_DeclareSequence.qci"
+
+		Return declareSequenceQciFileName
+	End Function
+
+	'TODO: Call *after* both ReadTextures() and ReadTexturePaths() are called.
+	Public Sub CopyPathsFromTextureFileNamesToTexturePaths(ByVal texturePaths As List(Of String), ByVal texturePathFileNames As List(Of String))
+		For textureIndex As Integer = 0 To texturePathFileNames.Count - 1
+			Dim aTexturePathFileName As String
+			aTexturePathFileName = texturePathFileNames(textureIndex)
+
+			' Check if the texturePathFileName starts with a path that is in the texturePaths list.
+			For texturePathIndex As Integer = 0 To texturePaths.Count - 1
+				Dim aTexturePath As String
+				aTexturePath = texturePaths(texturePathIndex)
+
+				If aTexturePath <> "" AndAlso aTexturePathFileName.StartsWith(aTexturePath) Then
+					texturePathFileNames(textureIndex) = texturePathFileNames(textureIndex).Replace(aTexturePath, "")
+					Exit For
+				End If
+			Next
+
+			Dim texturePath As String
+			Dim textureFileName As String
+			texturePath = FileManager.GetPath(aTexturePathFileName)
+			textureFileName = Path.GetFileName(aTexturePathFileName)
+			If aTexturePathFileName <> textureFileName Then
+				'NOTE: Place first because it should override whatever is already in list.
+				texturePaths.Insert(0, texturePath)
+			End If
+		Next
+	End Sub
 
 End Module

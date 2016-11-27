@@ -40,6 +40,19 @@ Public Module AppEnums
 		'<Description("Options")> Options
 	End Enum
 
+	Public Enum ContainerType
+		GMA
+		VPK
+	End Enum
+
+	Public Enum VpkAppAction
+		Extract
+		Insert
+		List
+		Pack
+		Unpack
+	End Enum
+
 	Public Enum ViewerType
 		<Description("Preview")> Preview
 		<Description("View")> View
@@ -55,6 +68,7 @@ Public Module AppEnums
 		ProceduralBones
 		TextureBmp
 		Debug
+		DeclareSequenceQci
 	End Enum
 
 	Public Enum ProgressOptions
@@ -62,6 +76,11 @@ Public Module AppEnums
 
 		WritingFileStarted
 		WritingFileFinished
+	End Enum
+
+	Public Enum FindDirection
+		Previous
+		[Next]
 	End Enum
 
 End Module

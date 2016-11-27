@@ -22,6 +22,15 @@ Public Class AppSettings
 		Me.theViewDataViewerIsRunning = False
 		'Me.theViewerIsRunning = False
 
+		Me.theUnpackContainerType = ContainerType.VPK
+		Me.theUnpackVpkPathFolderOrFileName = ""
+		Me.theUnpackOutputFolderOption = OutputFolderOptions.SubfolderName
+		Me.SetDefaultUnpackOutputSubfolderName()
+		Me.theUnpackOutputFullPath = ""
+		Me.theUnpackGameSetupSelectedIndex = 0
+		Me.SetDefaultUnpackOptions()
+		Me.theUnpackMode = ActionMode.File
+
 		Me.thePreviewMdlPathFileName = ""
 		Me.thePreviewGameSetupSelectedIndex = 0
 
@@ -29,47 +38,18 @@ Public Class AppSettings
 		Me.theDecompileOutputFolderOption = OutputFolderOptions.SubfolderName
 		Me.SetDefaultDecompileOutputSubfolderName()
 		Me.theDecompileOutputFullPath = ""
-
-		'Me.theDecompileQcFileIsChecked = True
-		'Me.theDecompileGroupIntoQciFilesIsChecked = False
-		'Me.theDecompileQcIncludeDefineBoneLinesIsChecked = False
-		'Me.theDecompileReferenceMeshSmdFileIsChecked = True
-		'Me.theDecompileApplyRightHandFixIsChecked = False
-		'Me.theDecompileLodMeshSmdFilesIsChecked = True
-		'Me.theDecompilePhysicsMeshSmdFileIsChecked = True
-		'Me.theDecompileVertexAnimationVtaFileIsChecked = True
-		'Me.theDecompileBoneAnimationSmdFilesIsChecked = True
-		'Me.theDecompileBoneAnimationPlaceInSubfolderIsChecked = True
-		'Me.theDecompileProceduralBonesVrdFileIsChecked = True
-		'
-		'Me.theDecompileFolderForEachModelIsChecked = False
-		'Me.theDecompileLogFileIsChecked = False
-		'Me.theDecompileDebugInfoFilesIsChecked = False
-		'Me.theDecompileDifferentSpacingIsChecked = False
 		Me.SetDefaultDecompileOptions()
-
 		Me.theDecompileMode = ActionMode.File
 
 		Me.theGameSetups = New BindingListExAutoSort(Of GameSetup)("GameName")
-		Me.theCompileGameSetupSelectedIndex = 0
 
 		Me.theCompileQcPathFileName = ""
-
 		Me.theCompileOutputFolderIsChecked = True
 		Me.theCompileOutputFolderOption = OutputFolderOptions.SubfolderName
 		Me.SetDefaultCompileOutputSubfolderName()
 		Me.theCompileOutputFullPath = ""
-
-		'Me.theCompileFolderForEachModelIsChecked = False
-		'Me.theCompileLogFileIsChecked = False
-		'
-		'      Me.theCompileOptionDefineBonesIsChecked = False
-		'      Me.theCompileOptionDefineBonesQciFileName = "DefineBones"
-		'      Me.theCompileOptionNoP4IsChecked = True
-		'      Me.theCompileOptionVerboseIsChecked = True
-		'      Me.theCompileOptionsText = ""
+		Me.theCompileGameSetupSelectedIndex = 0
 		Me.SetDefaultCompileOptions()
-
 		Me.theCompileMode = ActionMode.File
 
 		Me.theViewMdlPathFileName = ""
@@ -130,45 +110,118 @@ Public Class AppSettings
 		End Set
 	End Property
 
-	Public Property ViewMdlPathFileName() As String
+	Public Property UnpackContainerType() As ContainerType
 		Get
-			Return Me.theViewMdlPathFileName
+			Return Me.theUnpackContainerType
+		End Get
+		Set(ByVal value As ContainerType)
+			Me.theUnpackContainerType = value
+			NotifyPropertyChanged("UnpackContainerType")
+		End Set
+	End Property
+
+	Public Property UnpackVpkPathFolderOrFileName() As String
+		Get
+			Return Me.theUnpackVpkPathFolderOrFileName
 		End Get
 		Set(ByVal value As String)
-			Me.theViewMdlPathFileName = value
-			NotifyPropertyChanged("ViewMdlPathFileName")
+			Me.theUnpackVpkPathFolderOrFileName = value
+			NotifyPropertyChanged("UnpackVpkPathFolderOrFileName")
 		End Set
 	End Property
 
-	Public Property ViewGameSetupSelectedIndex() As Integer
+	Public Property UnpackOutputFolderOption() As OutputFolderOptions
 		Get
-			Return Me.theViewGameSetupSelectedIndex
+			Return Me.theUnpackOutputFolderOption
+		End Get
+		Set(ByVal value As OutputFolderOptions)
+			Me.theUnpackOutputFolderOption = value
+			NotifyPropertyChanged("UnpackOutputFolderOption")
+		End Set
+	End Property
+
+	Public Property UnpackOutputSubfolderName() As String
+		Get
+			Return Me.theUnpackOutputSubfolderName
+		End Get
+		Set(ByVal value As String)
+			Me.theUnpackOutputSubfolderName = value
+			NotifyPropertyChanged("UnpackOutputSubfolderName")
+		End Set
+	End Property
+
+	Public Property UnpackOutputFullPath() As String
+		Get
+			Return Me.theUnpackOutputFullPath
+		End Get
+		Set(ByVal value As String)
+			Me.theUnpackOutputFullPath = value
+			NotifyPropertyChanged("UnpackOutputFullPath")
+		End Set
+	End Property
+
+	Public Property UnpackVpkPathFileName() As String
+		Get
+			Return Me.theUnpackVpkPathFileName
+		End Get
+		Set(ByVal value As String)
+			If Me.theUnpackVpkPathFileName <> value Then
+				Me.theUnpackVpkPathFileName = value
+				NotifyPropertyChanged("UnpackVpkPathFileName")
+			End If
+		End Set
+	End Property
+
+	Public Property UnpackGameSetupSelectedIndex() As Integer
+		Get
+			Return Me.theUnpackGameSetupSelectedIndex
 		End Get
 		Set(ByVal value As Integer)
-			Me.theViewGameSetupSelectedIndex = value
-			NotifyPropertyChanged("ViewGameSetupSelectedIndex")
+			Me.theUnpackGameSetupSelectedIndex = value
+			NotifyPropertyChanged("UnpackGameSetupSelectedIndex")
+		End Set
+	End Property
+
+	Public Property UnpackExtractIsChecked() As Boolean
+		Get
+			Return Me.theUnpackExtractIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theUnpackExtractIsChecked = value
+			NotifyPropertyChanged("UnpackExtractIsChecked")
+		End Set
+	End Property
+
+	Public Property UnpackLogFileIsChecked() As Boolean
+		Get
+			Return Me.theUnpackLogFileIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theUnpackLogFileIsChecked = value
+			NotifyPropertyChanged("UnpackLogFileIsChecked")
+		End Set
+	End Property
+
+	Public Property UnpackMode() As ActionMode
+		Get
+			Return Me.theUnpackMode
+		End Get
+		Set(ByVal value As ActionMode)
+			If Me.theUnpackMode <> value Then
+				Me.theUnpackMode = value
+				NotifyPropertyChanged("UnpackMode")
+			End If
 		End Set
 	End Property
 
 	<XmlIgnore()> _
-	Public Property ViewDataViewerIsRunning() As Boolean
+	Public Property UnpackerIsRunning() As Boolean
 		Get
-			Return Me.theViewDataViewerIsRunning
+			Return Me.theUnpackerIsRunning
 		End Get
 		Set(ByVal value As Boolean)
-			Me.theViewDataViewerIsRunning = value
-			NotifyPropertyChanged("ViewDataViewerIsRunning")
-		End Set
-	End Property
-
-	<XmlIgnore()> _
-	Public Property ViewViewerIsRunning() As Boolean
-		Get
-			Return Me.theViewViewerIsRunning
-		End Get
-		Set(ByVal value As Boolean)
-			Me.theViewViewerIsRunning = value
-			NotifyPropertyChanged("ViewerIsRunning")
+			Me.theUnpackerIsRunning = value
+			NotifyPropertyChanged("UnpackerIsRunning")
 		End Set
 	End Property
 
@@ -384,6 +437,16 @@ Public Class AppSettings
 		End Set
 	End Property
 
+	Public Property DecompileDeclareSequenceQciFileIsChecked() As Boolean
+		Get
+			Return Me.theDecompileDeclareSequenceQciFileIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theDecompileDeclareSequenceQciFileIsChecked = value
+			NotifyPropertyChanged("DecompileDeclareSequenceQciFileIsChecked")
+		End Set
+	End Property
+
 	Public Property DecompileFolderForEachModelIsChecked() As Boolean
 		Get
 			Return Me.theDecompileFolderForEachModelIsChecked
@@ -421,6 +484,16 @@ Public Class AppSettings
 		Set(ByVal value As Boolean)
 			Me.theDecompileStricterFormatIsChecked = value
 			NotifyPropertyChanged("DecompileStricterFormatIsChecked")
+		End Set
+	End Property
+
+	Public Property DecompileRemovePathFromSmdMaterialFileNamesIsChecked() As Boolean
+		Get
+			Return Me.theDecompileRemovePathFromSmdMaterialFileNamesIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theDecompileRemovePathFromSmdMaterialFileNamesIsChecked = value
+			NotifyPropertyChanged("DecompileRemovePathFromSmdMaterialFileNamesIsChecked")
 		End Set
 	End Property
 
@@ -627,6 +700,48 @@ Public Class AppSettings
 		End Set
 	End Property
 
+	Public Property ViewMdlPathFileName() As String
+		Get
+			Return Me.theViewMdlPathFileName
+		End Get
+		Set(ByVal value As String)
+			Me.theViewMdlPathFileName = value
+			NotifyPropertyChanged("ViewMdlPathFileName")
+		End Set
+	End Property
+
+	Public Property ViewGameSetupSelectedIndex() As Integer
+		Get
+			Return Me.theViewGameSetupSelectedIndex
+		End Get
+		Set(ByVal value As Integer)
+			Me.theViewGameSetupSelectedIndex = value
+			NotifyPropertyChanged("ViewGameSetupSelectedIndex")
+		End Set
+	End Property
+
+	<XmlIgnore()> _
+	Public Property ViewDataViewerIsRunning() As Boolean
+		Get
+			Return Me.theViewDataViewerIsRunning
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theViewDataViewerIsRunning = value
+			NotifyPropertyChanged("ViewDataViewerIsRunning")
+		End Set
+	End Property
+
+	<XmlIgnore()> _
+	Public Property ViewViewerIsRunning() As Boolean
+		Get
+			Return Me.theViewViewerIsRunning
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theViewViewerIsRunning = value
+			NotifyPropertyChanged("ViewerIsRunning")
+		End Set
+	End Property
+
 	Public Property OptionsAutoOpenMdlFileIsChecked() As Boolean
 		Get
 			Return Me.theOptionsAutoOpenMdlFileIsChecked
@@ -821,6 +936,17 @@ Public Class AppSettings
 
 #Region "Methods"
 
+	Public Sub SetDefaultUnpackOutputSubfolderName()
+		'NOTE: Call the properties so the NotifyPropertyChanged events are raised.
+		Me.UnpackOutputSubfolderName = "unpacked " + My.Application.Info.Version.ToString(2)
+	End Sub
+
+	Public Sub SetDefaultUnpackOptions()
+		'NOTE: Call the properties so the NotifyPropertyChanged events are raised.
+		Me.UnpackExtractIsChecked = False
+		Me.UnpackLogFileIsChecked = False
+	End Sub
+
 	Public Sub SetDefaultDecompileOutputSubfolderName()
 		'NOTE: Call the properties so the NotifyPropertyChanged events are raised.
 		Me.DecompileOutputSubfolderName = "decompiled " + My.Application.Info.Version.ToString(2)
@@ -847,6 +973,7 @@ Public Class AppSettings
 		Me.DecompileLogFileIsChecked = False
 		Me.DecompileDebugInfoFilesIsChecked = False
 		Me.DecompileStricterFormatIsChecked = False
+		Me.DecompileRemovePathFromSmdMaterialFileNamesIsChecked = False
 	End Sub
 
 	Public Sub SetDefaultCompileOutputSubfolderName()
@@ -925,6 +1052,22 @@ Public Class AppSettings
 	Private theWindowState As FormWindowState
 	Private theMainWindowSelectedTabIndex As Integer
 
+	' Unpack tab
+
+	Private theUnpackContainerType As ContainerType
+	Private theUnpackVpkPathFolderOrFileName As String
+	Private theUnpackOutputFolderOption As OutputFolderOptions
+	Private theUnpackOutputSubfolderName As String
+	Private theUnpackOutputFullPath As String
+	Private theUnpackVpkPathFileName As String
+	Private theUnpackGameSetupSelectedIndex As Integer
+
+	Private theUnpackExtractIsChecked As Boolean
+	Private theUnpackLogFileIsChecked As Boolean
+
+	Private theUnpackMode As ActionMode
+	Private theUnpackerIsRunning As Boolean
+
 	' Preview tab
 
 	Private thePreviewMdlPathFileName As String
@@ -939,7 +1082,7 @@ Public Class AppSettings
 	Private theDecompileOutputFolderOption As OutputFolderOptions
 	Private theDecompileOutputSubfolderName As String
 	Private theDecompileOutputFullPath As String
-	Private theDecompileOutputPathName As String
+	'Private theDecompileOutputPathName As String
 
 	Private theDecompileQcFileIsChecked As Boolean
 	Private theDecompileGroupIntoQciFilesIsChecked As Boolean
@@ -956,10 +1099,13 @@ Public Class AppSettings
 	Private theDecompileVertexAnimationVtaFileIsChecked As Boolean
 	Private theDecompileProceduralBonesVrdFileIsChecked As Boolean
 
+	Private theDecompileDeclareSequenceQciFileIsChecked As Boolean
+
 	Private theDecompileFolderForEachModelIsChecked As Boolean
 	Private theDecompileLogFileIsChecked As Boolean
 	Private theDecompileDebugInfoFilesIsChecked As Boolean
 	Private theDecompileStricterFormatIsChecked As Boolean
+	Private theDecompileRemovePathFromSmdMaterialFileNamesIsChecked As Boolean
 
 	Private theDecompileMode As ActionMode
 	Private theDecompilerIsRunning As Boolean

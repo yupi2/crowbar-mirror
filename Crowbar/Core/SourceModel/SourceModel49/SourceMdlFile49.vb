@@ -1037,6 +1037,12 @@ Public Class SourceMdlFile49
 
 					If anAnimationDesc.sectionOffset <> 0 AndAlso anAnimationDesc.sectionFrameCount > 0 Then
 					ElseIf anAnimationDesc.animBlock = 0 Then
+						'NOTE: This code is reached by L4D2's pak01_dir.vpk\models\v_models\v_huntingrifle.mdl.
+						fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+						Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 16, "anAnimationDesc.theAnimations [ReadAnimationFrameByBone()] pre-alignment (NOTE: Should end at: " + CStr(animInputFileStreamPosition + anAnimationDesc.animOffset - 1) + ")")
+
+						Me.theInputFileReader.BaseStream.Seek(animInputFileStreamPosition + anAnimationDesc.animOffset, SeekOrigin.Begin)
+						Me.ReadAnimationFrameByBone(Me.theInputFileReader.BaseStream.Position, anAnimationDesc, anAnimationDesc.frameCount, anAnimationDesc.theSectionsOfAnimations(0))
 					End If
 				Else
 					If anAnimationDesc.sectionOffset <> 0 AndAlso anAnimationDesc.sectionFrameCount > 0 Then
@@ -1316,6 +1322,185 @@ Public Class SourceMdlFile49
 		End If
 
 		Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "anAnimationDesc.anAnimation alignment")
+	End Sub
+
+	'TODO: Should this be the same as SourceAniFile49.ReadAniAnimation()?
+	'Protected Sub ReadAnimationFrameByBone(ByVal animInputFileStreamPosition As Long, ByVal anAnimationDesc As SourceMdlAnimationDesc49, ByVal sectionFrameCount As Integer, ByVal aSectionOfAnimation As List(Of SourceMdlAnimation))
+	'	Dim animationInputFileStreamPosition As Long
+	'	'Dim inputFileStreamPosition As Long
+	'	'Dim fileOffsetStart As Long
+	'	'Dim fileOffsetEnd As Long
+	'	'Dim fileOffsetStart2 As Long
+	'	'Dim fileOffsetEnd2 As Long
+	'	Dim boneCount As Integer
+
+	'	Me.theInputFileReader.BaseStream.Seek(animInputFileStreamPosition, SeekOrigin.Begin)
+	'	'fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+
+	'	For frameIndex As Integer = 0 To sectionFrameCount - 1
+	'		animationInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+	'		'Dim anAnimation As New SourceMdlAnimation()
+
+	'		'boneCount = Me.theMdlFileData.theBones.Count
+	'		'For boneIndex As Integer = 0 To boneCount - 1
+	'		'	anAnimation.flags = Me.theInputFileReader.ReadByte()
+	'		'Next
+
+	'		'aSectionOfAnimation.Add(anAnimation)
+
+	'		''inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+
+	'		''Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
+
+	'		Me.theMdlFileData.theFileSeekLog.Add(animationInputFileStreamPosition, Me.theInputFileReader.BaseStream.Position - 1, "anAnimationDesc.anAnimation [ReadAnimationFrameByBone()] (frameCount = " + CStr(anAnimationDesc.frameCount) + "; sectionFrameCount = " + CStr(sectionFrameCount) + ")")
+	'	Next
+
+	'	'Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "anAnimationDesc.anAnimation [ReadAnimationFrameByBone()] alignment")
+	'End Sub
+	'======
+	Protected Sub ReadAnimationFrameByBone(ByVal animInputFileStreamPosition As Long, ByVal anAnimationDesc As SourceMdlAnimationDesc49, ByVal sectionFrameCount As Integer, ByVal aSectionOfAnimation As List(Of SourceMdlAnimation))
+		Me.theInputFileReader.BaseStream.Seek(animInputFileStreamPosition, SeekOrigin.Begin)
+
+		Dim animFrameInputFileStreamPosition As Long
+		Dim boneFrameDataStartInputFileStreamPosition As Long
+		Dim fileOffsetStart As Long
+		Dim fileOffsetEnd As Long
+		Dim boneCount As Integer
+		Dim anAniFrameAnim As SourceAniFrameAnim
+		Dim boneFlag As Byte
+		Dim aBoneConstantInfo As BoneConstantInfo
+		Dim aBoneFrameDataInfoList As List(Of BoneFrameDataInfo)
+		Dim aBoneFrameDataInfo As BoneFrameDataInfo
+
+		boneCount = Me.theMdlFileData.theBones.Count
+		Try
+			'While Me.theInputFileReader.BaseStream.Position < animInputFileStreamEndPosition + 1
+			animFrameInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+
+			fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+
+			anAniFrameAnim = New SourceAniFrameAnim()
+			'anAnimationDesc.theAniFrameAnims.Add(anAniFrameAnim)
+			anAnimationDesc.theAniFrameAnim = anAniFrameAnim
+
+			anAniFrameAnim.constantsOffset = Me.theInputFileReader.ReadInt32()
+			anAniFrameAnim.frameOffset = Me.theInputFileReader.ReadInt32()
+			anAniFrameAnim.frameLength = Me.theInputFileReader.ReadInt32()
+			For x As Integer = 0 To anAniFrameAnim.unused.Length - 1
+				anAniFrameAnim.unused(x) = Me.theInputFileReader.ReadInt32()
+			Next
+
+			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAnimationDesc.theAniFrameAnim")
+
+			fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+
+			anAniFrameAnim.theBoneFlags = New List(Of Byte)(boneCount)
+			For boneIndex As Integer = 0 To boneCount - 1
+				boneFlag = Me.theInputFileReader.ReadByte()
+				anAniFrameAnim.theBoneFlags.Add(boneFlag)
+
+				'DEBUG:
+				If (boneFlag And SourceAniFrameAnim.STUDIO_FRAME_FULLANIMPOS) > 0 Then
+					Dim foundSTUDIO_FRAME_FULLANIMPOSFlag As Boolean = True
+				End If
+
+				'DEBUG:
+				If boneFlag >= 32 Then
+					Dim foundNewFlag As Boolean = True
+				End If
+			Next
+
+			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAniFrameAnim.theBoneFlags")
+			Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "anAniFrameAnim.theBoneFlags alignment")
+
+			If anAniFrameAnim.constantsOffset <> 0 Then
+				Me.theInputFileReader.BaseStream.Seek(animFrameInputFileStreamPosition + anAniFrameAnim.constantsOffset, SeekOrigin.Begin)
+				fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+
+				anAniFrameAnim.theBoneConstantInfos = New List(Of BoneConstantInfo)(boneCount)
+				For boneIndex As Integer = 0 To boneCount - 1
+					aBoneConstantInfo = New BoneConstantInfo()
+					anAniFrameAnim.theBoneConstantInfos.Add(aBoneConstantInfo)
+
+					boneFlag = anAniFrameAnim.theBoneFlags(boneIndex)
+					If (boneFlag And SourceAniFrameAnim.STUDIO_FRAME_RAWROT) > 0 Then
+						aBoneConstantInfo.theConstantRawRot = New SourceQuaternion48bits()
+						aBoneConstantInfo.theConstantRawRot.theXInput = Me.theInputFileReader.ReadUInt16()
+						aBoneConstantInfo.theConstantRawRot.theYInput = Me.theInputFileReader.ReadUInt16()
+						aBoneConstantInfo.theConstantRawRot.theZWInput = Me.theInputFileReader.ReadUInt16()
+					End If
+					If (boneFlag And SourceAniFrameAnim.STUDIO_FRAME_RAWPOS) > 0 Then
+						aBoneConstantInfo.theConstantRawPos = New SourceVector48bits()
+						aBoneConstantInfo.theConstantRawPos.theXInput.the16BitValue = Me.theInputFileReader.ReadUInt16()
+						aBoneConstantInfo.theConstantRawPos.theYInput.the16BitValue = Me.theInputFileReader.ReadUInt16()
+						aBoneConstantInfo.theConstantRawPos.theZInput.the16BitValue = Me.theInputFileReader.ReadUInt16()
+					End If
+				Next
+
+				fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+				Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAniFrameAnim.theBoneConstantInfos")
+				Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "anAniFrameAnim.theBoneConstantInfos alignment")
+			End If
+
+			If anAniFrameAnim.frameOffset <> 0 Then
+				Me.theInputFileReader.BaseStream.Seek(animFrameInputFileStreamPosition + anAniFrameAnim.frameOffset, SeekOrigin.Begin)
+				fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+
+				anAniFrameAnim.theBoneFrameDataInfos = New List(Of List(Of BoneFrameDataInfo))(sectionFrameCount)
+				'TODO: Does this section always contain data for all frames?
+				'      If not, then how is the end of data found?
+				For frameIndex As Integer = 0 To sectionFrameCount - 1
+					aBoneFrameDataInfoList = New List(Of BoneFrameDataInfo)(boneCount)
+					anAniFrameAnim.theBoneFrameDataInfos.Add(aBoneFrameDataInfoList)
+
+					boneFrameDataStartInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+
+					For boneIndex As Integer = 0 To boneCount - 1
+						aBoneFrameDataInfo = New BoneFrameDataInfo()
+						aBoneFrameDataInfoList.Add(aBoneFrameDataInfo)
+
+						boneFlag = anAniFrameAnim.theBoneFlags(boneIndex)
+						If (boneFlag And SourceAniFrameAnim.STUDIO_FRAME_ANIMROT) > 0 Then
+							aBoneFrameDataInfo.theAnimRotation = New SourceQuaternion48bits()
+							aBoneFrameDataInfo.theAnimRotation.theXInput = Me.theInputFileReader.ReadUInt16()
+							aBoneFrameDataInfo.theAnimRotation.theYInput = Me.theInputFileReader.ReadUInt16()
+							aBoneFrameDataInfo.theAnimRotation.theZWInput = Me.theInputFileReader.ReadUInt16()
+						End If
+						If (boneFlag And SourceAniFrameAnim.STUDIO_FRAME_ANIMPOS) > 0 Then
+							aBoneFrameDataInfo.theAnimPosition = New SourceVector48bits()
+							aBoneFrameDataInfo.theAnimPosition.theXInput.the16BitValue = Me.theInputFileReader.ReadUInt16()
+							aBoneFrameDataInfo.theAnimPosition.theYInput.the16BitValue = Me.theInputFileReader.ReadUInt16()
+							aBoneFrameDataInfo.theAnimPosition.theZInput.the16BitValue = Me.theInputFileReader.ReadUInt16()
+						End If
+						If (boneFlag And SourceAniFrameAnim.STUDIO_FRAME_FULLANIMPOS) > 0 Then
+							aBoneFrameDataInfo.theFullAnimPosition = New SourceVector()
+							aBoneFrameDataInfo.theFullAnimPosition.x = Me.theInputFileReader.ReadUInt16()
+							aBoneFrameDataInfo.theFullAnimPosition.y = Me.theInputFileReader.ReadUInt16()
+							aBoneFrameDataInfo.theFullAnimPosition.z = Me.theInputFileReader.ReadUInt16()
+						End If
+					Next
+
+					'DEBUG: Check frame data length for debugging.
+					If boneFlag >= 4 AndAlso ((anAniFrameAnim.frameLength) <> (Me.theInputFileReader.BaseStream.Position - boneFrameDataStartInputFileStreamPosition)) Then
+						Dim somethingIsWrong As Integer = 4242
+					End If
+				Next
+
+				fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+				Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAniFrameAnim.theBoneFrameDataInfos")
+				Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 16, "anAniFrameAnim.theBoneFrameDataInfos alignment")
+
+				Dim debug As Integer = 4242
+			End If
+			'End While
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		End Try
+
+		'fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+		'Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAnimationDesc.theAniFrameAnims [this includes other logged data offsets]")
 	End Sub
 
 	'==========================================================
@@ -3021,40 +3206,17 @@ Public Class SourceMdlFile49
 					Me.theInputFileReader.BaseStream.Seek(textureInputFileStreamPosition + aTexture.nameOffset, SeekOrigin.Begin)
 					fileOffsetStart2 = Me.theInputFileReader.BaseStream.Position
 
-					aTexture.theFileName = FileManager.ReadNullTerminatedString(Me.theInputFileReader)
+					aTexture.thePathFileName = FileManager.ReadNullTerminatedString(Me.theInputFileReader)
 
 					' Convert all forward slashes to backward slashes.
-					aTexture.theFileName = FileManager.GetNormalizedPathFileName(aTexture.theFileName)
-
-					'NOTE: Leave this commented so QC file simply shows what is stored in MDL file.
-					'      Crowbar should always try to show what was in original files unless user opts to do something else.
-					'' Delete the path in the texture name that is already in the texturepaths list.
-					'For j As Integer = 0 To Me.theMdlFileData.theTexturePaths.Count - 1
-					'	texturePath = Me.theMdlFileData.theTexturePaths(j)
-					'	If texturePath <> "" AndAlso aTexture.theName.StartsWith(texturePath) Then
-					'		aTexture.theName = aTexture.theName.Replace(texturePath, "")
-					'		Exit For
-					'	End If
-					'Next
-					'
-					''TEST: If texture name still has a path, remove the path and add it to the texturepaths list.
-					'Dim texturePathName As String
-					'Dim textureFileName As String
-					'texturePathName = FileManager.GetPath(aTexture.theName)
-					'textureFileName = Path.GetFileName(aTexture.theName)
-					'If aTexture.theName <> textureFileName Then
-					'	'NOTE: Place first because it should override whatever is already in list.
-					'	'Me.theMdlFileData.theTexturePaths.Add(texturePathName)
-					'	Me.theMdlFileData.theTexturePaths.Insert(0, texturePathName)
-					'	aTexture.theName = textureFileName
-					'End If
+					aTexture.thePathFileName = FileManager.GetNormalizedPathFileName(aTexture.thePathFileName)
 
 					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
 						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aTexture.theName")
 					End If
 				Else
-					aTexture.theFileName = ""
+					aTexture.thePathFileName = ""
 				End If
 
 				Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
@@ -3853,6 +4015,19 @@ Public Class SourceMdlFile49
 					Next
 				End If
 			Next
+		End If
+	End Sub
+
+	Public Sub ProcessTexturePaths()
+		For Each aTexturePath As String In Me.theMdlFileData.theTexturePaths
+			Me.theMdlFileData.theModifiedTexturePaths.Add(aTexturePath)
+		Next
+		For Each aTexture As SourceMdlTexture In Me.theMdlFileData.theTextures
+			Me.theMdlFileData.theModifiedTextureFileNames.Add(aTexture.thePathFileName)
+		Next
+
+		If TheApp.Settings.DecompileRemovePathFromSmdMaterialFileNamesIsChecked Then
+			SourceFileNamesModule.CopyPathsFromTextureFileNamesToTexturePaths(Me.theMdlFileData.theModifiedTexturePaths, Me.theMdlFileData.theModifiedTextureFileNames)
 		End If
 	End Sub
 

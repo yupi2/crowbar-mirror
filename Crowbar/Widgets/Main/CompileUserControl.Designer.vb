@@ -47,7 +47,7 @@ Partial Class CompileUserControl
 		Me.DirectCompilerOptionsTextBox = New System.Windows.Forms.TextBox()
 		Me.BrowseForQcPathFolderOrFileNameButton = New System.Windows.Forms.Button()
 		Me.Label6 = New System.Windows.Forms.Label()
-		Me.QcPathFileNameTextBox = New System.Windows.Forms.TextBox()
+		Me.QcPathFileNameTextBox = New Crowbar.TextBoxEx()
 		Me.EditGameSetupButton = New System.Windows.Forms.Button()
 		Me.Label3 = New System.Windows.Forms.Label()
 		Me.CompileButton = New System.Windows.Forms.Button()
@@ -746,7 +746,7 @@ Partial Class CompileUserControl
 	Friend WithEvents CheckBox25 As System.Windows.Forms.CheckBox
 	Friend WithEvents BrowseForQcPathFolderOrFileNameButton As System.Windows.Forms.Button
 	Friend WithEvents Label6 As System.Windows.Forms.Label
-	Friend WithEvents QcPathFileNameTextBox As System.Windows.Forms.TextBox
+	Friend WithEvents QcPathFileNameTextBox As Crowbar.TextBoxEx
 	Friend WithEvents EditGameSetupButton As System.Windows.Forms.Button
 	Friend WithEvents Label3 As System.Windows.Forms.Label
 	Friend WithEvents CompileButton As System.Windows.Forms.Button

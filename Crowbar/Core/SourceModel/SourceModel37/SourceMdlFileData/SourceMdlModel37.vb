@@ -54,5 +54,7 @@
 	Public theEyeballs As List(Of SourceMdlEyeball37)
 	Public theMeshes As List(Of SourceMdlMesh37)
 	Public theName As String
+	Public theTangents As List(Of SourceVector4D)
+	Public theVertexes As List(Of SourceMdlVertex37)
 
 End Class

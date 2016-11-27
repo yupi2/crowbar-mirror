@@ -137,7 +137,8 @@ Public Class SourceSmdFile44
 		'Dim maxIndexForMesh As Integer
 		'Dim cumulativeMaxIndex As Integer
 		Dim materialIndex As Integer
-		Dim materialName As String
+		Dim materialPathFileName As String
+		Dim materialFileName As String
 		Dim meshVertexIndexStart As Integer
 
 		Try
@@ -150,9 +151,13 @@ Public Class SourceSmdFile44
 				For meshIndex As Integer = 0 To aVtxLod.theVtxMeshes.Count - 1
 					aVtxMesh = aVtxLod.theVtxMeshes(meshIndex)
 					materialIndex = aModel.theMeshes(meshIndex).materialIndex
-					materialName = Me.theMdlFileData.theTextures(materialIndex).theFileName
-					'TODO: This was used in previous versions, but maybe should leave as above.
-					'materialName = Path.GetFileName(Me.theSourceEngineModel.theMdlFileHeader.theTextures(materialIndex).theName)
+					materialPathFileName = Me.theMdlFileData.theTextures(materialIndex).thePathFileName
+					materialFileName = Me.theMdlFileData.theModifiedTextureFileNames(materialIndex)
+
+					If TheApp.Settings.DecompileDebugInfoFilesIsChecked AndAlso materialPathFileName <> materialFileName Then
+						materialLine = "// In the MDL file as: " + materialPathFileName
+						Me.theOutputFileStreamWriter.WriteLine(materialLine)
+					End If
 
 					meshVertexIndexStart = aModel.theMeshes(meshIndex).vertexIndexStart
 
@@ -170,7 +175,7 @@ Public Class SourceSmdFile44
 									'Me.WriteVertexLine(aStripGroup, vtxIndexIndex + 1, lodIndex, meshVertexIndexStart, bodyPartVertexIndexStart)
 									'------
 									'NOTE: studiomdl.exe will complain if texture name for eyeball is not at start of line.
-									materialLine = materialName
+									materialLine = materialFileName
 									vertex1Line = Me.WriteVertexLine(aStripGroup, vtxIndexIndex, lodIndex, meshVertexIndexStart, bodyPartVertexIndexStart)
 									vertex2Line = Me.WriteVertexLine(aStripGroup, vtxIndexIndex + 2, lodIndex, meshVertexIndexStart, bodyPartVertexIndexStart)
 									vertex3Line = Me.WriteVertexLine(aStripGroup, vtxIndexIndex + 1, lodIndex, meshVertexIndexStart, bodyPartVertexIndexStart)

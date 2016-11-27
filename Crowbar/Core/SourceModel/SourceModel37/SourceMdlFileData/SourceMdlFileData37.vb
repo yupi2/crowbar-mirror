@@ -254,9 +254,15 @@
 	Public theSurfacePropName As String
 	Public theTexturePaths As List(Of String)
 	Public theTextures As List(Of SourceMdlTexture37)
-	Public theTransitions As List(Of List(Of Byte))
+	Public theTransitions As List(Of List(Of Integer))
 
 	Public theModelCommandIsUsed As Boolean
 	Public theProceduralBonesCommandIsUsed As Boolean
+
+	Public theEyelidFlexFrameIndexes As List(Of Integer)
+	Public theFirstAnimationDesc As SourceMdlAnimationDesc44
+	Public theFirstAnimationDescFrameLines As New SortedList(Of Integer, AnimationFrameLine)()
+	Public theFlexFrames As List(Of FlexFrame)
+	Public theWeightLists As New List(Of SourceMdlWeightList)()
 
 End Class

@@ -142,8 +142,15 @@ Public Class FileManager
 	Public Shared Function GetPath(ByVal pathFileName As String) As String
 		Try
 			pathFileName = FileManager.GetNormalizedPathFileName(pathFileName)
-			Return pathFileName.Substring(0, pathFileName.LastIndexOf(Path.DirectorySeparatorChar))
-		Catch
+			Dim length As Integer = pathFileName.LastIndexOf(Path.DirectorySeparatorChar)
+			If length > 0 Then
+				pathFileName = pathFileName.Substring(0, length)
+			End If
+			If pathFileName.Length = 2 AndAlso pathFileName(1) = ":"c Then
+				pathFileName += Path.DirectorySeparatorChar
+			End If
+			Return pathFileName
+		Catch ex As Exception
 			Return String.Empty
 		End Try
 	End Function

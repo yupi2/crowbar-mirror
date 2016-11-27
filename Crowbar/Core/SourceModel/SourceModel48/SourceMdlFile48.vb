@@ -3032,40 +3032,17 @@ Public Class SourceMdlFile48
 					Me.theInputFileReader.BaseStream.Seek(textureInputFileStreamPosition + aTexture.nameOffset, SeekOrigin.Begin)
 					fileOffsetStart2 = Me.theInputFileReader.BaseStream.Position
 
-					aTexture.theFileName = FileManager.ReadNullTerminatedString(Me.theInputFileReader)
+					aTexture.thePathFileName = FileManager.ReadNullTerminatedString(Me.theInputFileReader)
 
 					' Convert all forward slashes to backward slashes.
-					aTexture.theFileName = FileManager.GetNormalizedPathFileName(aTexture.theFileName)
-
-					'NOTE: Leave this commented so QC file simply shows what is stored in MDL file.
-					'      Crowbar should always try to show what was in original files unless user opts to do something else.
-					'' Delete the path in the texture name that is already in the texturepaths list.
-					'For j As Integer = 0 To Me.theMdlFileData.theTexturePaths.Count - 1
-					'	texturePath = Me.theMdlFileData.theTexturePaths(j)
-					'	If texturePath <> "" AndAlso aTexture.theName.StartsWith(texturePath) Then
-					'		aTexture.theName = aTexture.theName.Replace(texturePath, "")
-					'		Exit For
-					'	End If
-					'Next
-					'
-					''TEST: If texture name still has a path, remove the path and add it to the texturepaths list.
-					'Dim texturePathName As String
-					'Dim textureFileName As String
-					'texturePathName = FileManager.GetPath(aTexture.theName)
-					'textureFileName = Path.GetFileName(aTexture.theName)
-					'If aTexture.theName <> textureFileName Then
-					'	'NOTE: Place first because it should override whatever is already in list.
-					'	'Me.theMdlFileData.theTexturePaths.Add(texturePathName)
-					'	Me.theMdlFileData.theTexturePaths.Insert(0, texturePathName)
-					'	aTexture.theName = textureFileName
-					'End If
+					aTexture.thePathFileName = FileManager.GetNormalizedPathFileName(aTexture.thePathFileName)
 
 					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
 						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aTexture.theName")
 					End If
 				Else
-					aTexture.theFileName = ""
+					aTexture.thePathFileName = ""
 				End If
 
 				Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
@@ -3864,6 +3841,19 @@ Public Class SourceMdlFile48
 					Next
 				End If
 			Next
+		End If
+	End Sub
+
+	Public Sub ProcessTexturePaths()
+		For Each aTexturePath As String In Me.theMdlFileData.theTexturePaths
+			Me.theMdlFileData.theModifiedTexturePaths.Add(aTexturePath)
+		Next
+		For Each aTexture As SourceMdlTexture In Me.theMdlFileData.theTextures
+			Me.theMdlFileData.theModifiedTextureFileNames.Add(aTexture.thePathFileName)
+		Next
+
+		If TheApp.Settings.DecompileRemovePathFromSmdMaterialFileNamesIsChecked Then
+			SourceFileNamesModule.CopyPathsFromTextureFileNamesToTexturePaths(Me.theMdlFileData.theModifiedTexturePaths, Me.theMdlFileData.theModifiedTextureFileNames)
 		End If
 	End Sub
 

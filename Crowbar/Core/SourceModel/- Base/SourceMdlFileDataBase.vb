@@ -19,6 +19,8 @@
 	Public theActualFileSize As Long
 	Public theID As String
 	Public theName As String
+	Public theModifiedTexturePaths As New List(Of String)()
+	Public theModifiedTextureFileNames As New List(Of String)()
 
 	Public theChecksumIsValid As Boolean
 	Public theMdlFileOnlyHasAnimations As Boolean

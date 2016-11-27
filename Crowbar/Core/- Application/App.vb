@@ -52,6 +52,7 @@ Public Class App
 		Me.theAppPath = Application.StartupPath
 		Me.LoadAppSettings()
 
+		Me.theUnpacker = New Unpacker()
 		Me.theDecompiler = New Decompiler()
 		Me.theCompiler = New Compiler()
         'Me.theModelViewer = New Viewer()
@@ -85,6 +86,12 @@ Public Class App
 	Public ReadOnly Property ErrorPathFileName() As String
 		Get
 			Return Path.Combine(Me.GetAppDataPath(), Me.ErrorFileName)
+		End Get
+	End Property
+
+	Public ReadOnly Property Unpacker() As Unpacker
+		Get
+			Return Me.theUnpacker
 		End Get
 	End Property
 
@@ -271,6 +278,7 @@ Public Class App
 
 	Private ErrorFileName As String = "decompile error.txt"
 
+	Private theUnpacker As Unpacker
 	Private theDecompiler As Decompiler
 	Private theCompiler As Compiler
 	'Private theModelViewer As Viewer

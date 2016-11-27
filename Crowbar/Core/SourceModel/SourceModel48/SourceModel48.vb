@@ -1,7 +1,7 @@
 ﻿Imports System.IO
 
 Public Class SourceModel48
-	Inherits SourceModel44
+	Inherits SourceModel46
 
 #Region "Creation and Destruction"
 
@@ -282,7 +282,7 @@ Public Class SourceModel48
 			Dim aTexture As SourceMdlTexture
 			aTexture = Me.theMdlFileData.theTextures(i)
 
-			textureFileNames.Add(aTexture.theFileName)
+			textureFileNames.Add(aTexture.thePathFileName)
 		Next
 
 		Return textureFileNames
@@ -393,6 +393,7 @@ Public Class SourceModel48
 
 		' Post-processing.
 		mdlFile.CreateFlexFrameList()
+		mdlFile.ProcessTexturePaths()
 	End Sub
 
 	Protected Overrides Sub ReadMdlFileHeader_Internal()
@@ -636,6 +637,18 @@ Public Class SourceModel48
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		Finally
+		End Try
+	End Sub
+
+	Protected Overrides Sub WriteDeclareSequenceQciFile()
+		Dim qciFile As New SourceQcFile48(Me.theOutputFileTextWriter, Me.theQcPathFileName, Me.theMdlFileData, Me.theName)
+
+		Try
+			qciFile.WriteHeaderComment()
+
+			qciFile.WriteQciDeclareSequenceLines()
+		Catch ex As Exception
+			Dim debug As Integer = 4242
 		End Try
 	End Sub
 

@@ -20,8 +20,14 @@ Public Class AccessedBytesDebugFile
 		Me.theOutputFileStreamWriter.WriteLine(line)
 	End Sub
 
-	Public Sub WriteFileSeekLog(ByVal aFileSeekLog As FileSeekLog)
+	Public Sub WriteFileSeekLog(ByVal aFileSeekLog As FileSeekLog, ByVal fileSize As Long)
 		Dim line As String
+
+		line = "====== File Size ======"
+		Me.WriteLogLine(0, line)
+
+		line = fileSize.ToString("N0")
+		Me.WriteLogLine(1, line)
 
 		line = "====== File Seek Log ======"
 		Me.WriteLogLine(0, line)

@@ -272,6 +272,16 @@ Public Class SourceModel44
 		Return status
 	End Function
 
+	Public Overrides Function WriteDeclareSequenceQciFile(ByVal declareSequenceQciPathFileName As String) As AppEnums.StatusMessage
+		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+
+		Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, declareSequenceQciPathFileName)
+		Me.WriteTextFile(declareSequenceQciPathFileName, AddressOf Me.WriteDeclareSequenceQciFile)
+		Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, declareSequenceQciPathFileName)
+
+		Return status
+	End Function
+
 	Public Overrides Function WriteAccessedBytesDebugFiles(ByVal debugPath As String) As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
@@ -314,7 +324,7 @@ Public Class SourceModel44
 			Dim aTexture As SourceMdlTexture
 			aTexture = Me.theMdlFileData.theTextures(i)
 
-			textureFileNames.Add(aTexture.theFileName)
+			textureFileNames.Add(aTexture.thePathFileName)
 		Next
 
 		Return textureFileNames
@@ -422,6 +432,7 @@ Public Class SourceModel44
 
 		' Post-processing.
 		mdlFile.CreateFlexFrameList()
+		mdlFile.ProcessTexturePaths()
 	End Sub
 
 	Protected Overrides Sub ReadMdlFileHeader_Internal()
@@ -654,6 +665,18 @@ Public Class SourceModel44
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		Finally
+		End Try
+	End Sub
+
+	Protected Overrides Sub WriteDeclareSequenceQciFile()
+		Dim qciFile As New SourceQcFile44(Me.theOutputFileTextWriter, Me.theQcPathFileName, Me.theMdlFileData, Me.theName)
+
+		Try
+			qciFile.WriteHeaderComment()
+
+			qciFile.WriteQciDeclareSequenceLines()
+		Catch ex As Exception
+			Dim debug As Integer = 4242
 		End Try
 	End Sub
 

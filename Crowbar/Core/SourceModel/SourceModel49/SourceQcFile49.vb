@@ -18,65 +18,24 @@ Public Class SourceQcFile49
 		Me.theOutputFileNameWithoutExtension = Path.GetFileNameWithoutExtension(outputPathFileName)
 	End Sub
 
-#End Region
+	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal outputPathFileName As String, ByVal mdlFileData As SourceMdlFileData49, ByVal modelName As String)
+		Me.theOutputFileStreamWriter = outputFileStream
+		Me.theMdlFileData = mdlFileData
+		Me.theModelName = modelName
 
-#Region "Methods"
-
-	'Public Function GetMdlRelativePathFileName(ByVal qcPathFileName As String) As String
-	'	Dim modelRelativePathFileName As String
-
-	'	modelRelativePathFileName = ""
-
-	'	Using inputFileStream As StreamReader = New StreamReader(qcPathFileName)
-	'		Dim inputLine As String
-	'		Dim temp As String
-
-	'		While (Not (inputFileStream.EndOfStream))
-	'			inputLine = inputFileStream.ReadLine()
-
-	'			temp = inputLine.ToLower().TrimStart()
-	'			If temp.StartsWith("$modelname") Then
-	'				temp = temp.Replace("$modelname", "")
-	'				temp = temp.Trim()
-	'				temp = temp.Trim(Chr(34))
-	'				modelRelativePathFileName = temp.Replace("/", "\")
-	'				Exit While
-	'			End If
-	'		End While
-	'	End Using
-
-	'	Return modelRelativePathFileName
-	'End Function
-
-	'Public Sub InsertAnIncludeFileCommand(ByVal qcPathFileName As String, ByVal includedPathFileName As String)
-	'	Using outputFileStream As StreamWriter = File.AppendText(qcPathFileName)
-	'		If File.Exists(includedPathFileName) Then
-	'			Dim qciFileInfo As New FileInfo(includedPathFileName)
-	'			If qciFileInfo.Length > 0 Then
-	'				Dim line As String = ""
-
-	'				outputFileStream.WriteLine()
-
-	'				line += "$Include"
-	'				line += " "
-	'				line += """"
-	'				line += FileManager.GetRelativePathFileName(qcPathFileName, includedPathFileName)
-	'				line += """"
-	'				outputFileStream.WriteLine(line)
-	'			End If
-	'		End If
-	'	End Using
-	'End Sub
+		Me.theOutputPath = FileManager.GetPath(outputPathFileName)
+		Me.theOutputFileNameWithoutExtension = Path.GetFileNameWithoutExtension(outputPathFileName)
+	End Sub
 
 #End Region
 
-#Region "Private Delegates"
+#Region "Delegates"
 
 	Public Delegate Sub WriteGroupDelegate()
 
 #End Region
 
-#Region "Private Methods"
+#Region "Methods"
 
 	Public Sub WriteGroup(ByVal qciGroupName As String, ByVal writeGroupAction As WriteGroupDelegate, ByVal includeLineIsCommented As Boolean, ByVal includeLineIsIndented As Boolean)
 		If TheApp.Settings.DecompileGroupIntoQciFilesIsChecked Then
@@ -359,7 +318,7 @@ Public Class SourceQcFile49
 						If anEyeball.theTextureIndex = -1 Then
 							eyeballTextureName = "[unknown_texture]"
 						Else
-							eyeballTextureName = Me.theMdlFileData.theTextures(anEyeball.theTextureIndex).theFileName
+							eyeballTextureName = Me.theMdlFileData.theTextures(anEyeball.theTextureIndex).thePathFileName
 							'eyeballTextureName = Path.GetFileName(theSourceEngineModel.theMdlFileHeader.theTextures(anEyeball.theTextureIndex).theName)
 						End If
 
@@ -824,7 +783,7 @@ Public Class SourceQcFile49
 
 		Dim cVal As Double
 		cVal = (val - A) / (B - A)
-		cVal = clamp(cVal, 0.0F, 1.0F)
+		cVal = Clamp(cVal, 0.0F, 1.0F)
 
 		Return C + (D - C) * cVal
 	End Function
@@ -1344,31 +1303,35 @@ Public Class SourceQcFile49
 
 	Public Sub WriteCdMaterialsCommand()
 		Dim line As String = ""
+		Dim texturePaths As List(Of String)
+
+		texturePaths = Me.theMdlFileData.theModifiedTexturePaths
 
 		'$cdmaterials "models\survivors\producer\"
 		'$cdmaterials "models\survivors\"
 		'$cdmaterials ""
-		If Me.theMdlFileData.theTexturePaths IsNot Nothing Then
+		If texturePaths IsNot Nothing Then
 			line = ""
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
-			For i As Integer = 0 To Me.theMdlFileData.theTexturePaths.Count - 1
+			For i As Integer = 0 To texturePaths.Count - 1
 				Dim aTexturePath As String
-				aTexturePath = Me.theMdlFileData.theTexturePaths(i)
-				'NOTE: Write out null or empty strings, because Crowbar should show what was stored.
-				'If Not String.IsNullOrEmpty(aTexturePath) Then
+				aTexturePath = texturePaths(i)
+				'NOTE: Write out all stored paths, even if null or empty strings, because Crowbar should show what was stored.
 				line = "$CDMaterials "
 				line += """"
 				line += aTexturePath
 				line += """"
 				Me.theOutputFileStreamWriter.WriteLine(line)
-				'End If
 			Next
 		End If
 	End Sub
 
 	Public Sub WriteTextureGroupCommand()
 		Dim line As String = ""
+		Dim textureFileNames As List(Of String)
+
+		textureFileNames = Me.theMdlFileData.theModifiedTextureFileNames
 
 		'$texturegroup skinfamilies
 		'{
@@ -1383,7 +1346,7 @@ Public Class SourceQcFile49
 		' "producer_body_it.vmt"
 		'}
 		' }
-		If Me.theMdlFileData.theSkinFamilies IsNot Nothing AndAlso Me.theMdlFileData.theSkinFamilies.Count > 0 AndAlso Me.theMdlFileData.theTextures IsNot Nothing AndAlso Me.theMdlFileData.theTextures.Count > 0 AndAlso Me.theMdlFileData.skinReferenceCount > 0 Then
+		If Me.theMdlFileData.theSkinFamilies IsNot Nothing AndAlso Me.theMdlFileData.theSkinFamilies.Count > 0 AndAlso textureFileNames IsNot Nothing AndAlso textureFileNames.Count > 0 AndAlso Me.theMdlFileData.skinReferenceCount > 0 Then
 			line = ""
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
@@ -1392,48 +1355,20 @@ Public Class SourceQcFile49
 			line = "{"
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
-			'For i As Integer = 0 To Me.theMdlFileData.theSkinFamilies.Count - 1
-			'	Dim aSkinFamily As List(Of Integer)
-			'	aSkinFamily = Me.theMdlFileData.theSkinFamilies(i)
-
-			'	line = vbTab
-			'	line += "{"
-			'	Me.theOutputFileStreamWriter.WriteLine(line)
-
-			'	'For j As Integer = 0 To theSourceEngineModel.theMdlFileData.theBodyParts(0).theModels(0).theMeshes.Count - 1
-			'	For j As Integer = 0 To Me.theMdlFileData.skinReferenceCount - 1
-			'		'If aSourceEngineModel.theBodyParts(0).theModels(0).theMeshes(j).materialType = 0 Then
-			'		Dim aTexture As SourceMdlTexture
-			'		'aTexture = theSourceEngineModel.theMdlFileHeader.theTextures(j)
-			'		aTexture = Me.theMdlFileData.theTextures(aSkinFamily(j))
-			'		line = vbTab
-			'		line += vbTab
-			'		line += """"
-			'		line += aTexture.theName
-			'		line += ".vmt"""
-			'		Me.theOutputFileStreamWriter.WriteLine(line)
-			'		'End If
-			'	Next
-
-			'	line = vbTab
-			'	line += "}"
-			'	Me.theOutputFileStreamWriter.WriteLine(line)
-			'Next
-			'------
 			Dim skinFamilies As New List(Of List(Of String))(Me.theMdlFileData.theSkinFamilies.Count)
 			For i As Integer = 0 To Me.theMdlFileData.theSkinFamilies.Count - 1
 				Dim aSkinFamily As List(Of Integer)
 				aSkinFamily = Me.theMdlFileData.theSkinFamilies(i)
 
-				Dim textureFileNames As New List(Of String)(Me.theMdlFileData.skinReferenceCount)
+				Dim textureFileNamesForSkinFamily As New List(Of String)(Me.theMdlFileData.skinReferenceCount)
 				For j As Integer = 0 To Me.theMdlFileData.skinReferenceCount - 1
-					Dim aTexture As SourceMdlTexture
-					aTexture = Me.theMdlFileData.theTextures(aSkinFamily(j))
+					Dim aTextureFileName As String
+					aTextureFileName = textureFileNames(aSkinFamily(j))
 
-					textureFileNames.Add(aTexture.theFileName)
+					textureFileNamesForSkinFamily.Add(aTextureFileName)
 				Next
 
-				skinFamilies.Add(textureFileNames)
+				skinFamilies.Add(textureFileNamesForSkinFamily)
 			Next
 
 			Dim skinFamilyLines As List(Of String)
@@ -1455,20 +1390,20 @@ Public Class SourceQcFile49
 		'// Model uses material "models/survivors/producer/producer_hair.vmt"
 		'// Model uses material "models/survivors/producer/producer_eyeball_l.vmt"
 		'// Model uses material "models/survivors/producer/producer_eyeball_r.vmt"
-		If Me.theMdlFileData.theTextures IsNot Nothing Then
+		If TheApp.Settings.DecompileDebugInfoFilesIsChecked AndAlso Me.theMdlFileData.theTextures IsNot Nothing Then
 			Dim line As String
 
 			line = ""
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
-			line = "// This list shows the VMT files used in the SMD files."
+			line = "// This list shows the VMT file names used in the SMD files."
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
 			For j As Integer = 0 To Me.theMdlFileData.theTextures.Count - 1
 				Dim aTexture As SourceMdlTexture
 				aTexture = Me.theMdlFileData.theTextures(j)
 				line = "// """
-				line += aTexture.theFileName
+				line += aTexture.thePathFileName
 				line += ".vmt"""
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			Next
@@ -4087,6 +4022,25 @@ Public Class SourceQcFile49
 				lineQuoteCount = 0
 			End If
 		Next
+	End Sub
+
+	Public Sub WriteQciDeclareSequenceLines()
+		If Me.theMdlFileData.theSequenceDescs IsNot Nothing Then
+			Dim line As String = ""
+
+			Me.theOutputFileStreamWriter.WriteLine()
+
+			For i As Integer = 0 To Me.theMdlFileData.theSequenceDescs.Count - 1
+				Dim aSequenceDesc As SourceMdlSequenceDesc
+				aSequenceDesc = Me.theMdlFileData.theSequenceDescs(i)
+
+				line = "$DeclareSequence"
+				line += " """
+				line += aSequenceDesc.theName
+				line += """"
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			Next
+		End If
 	End Sub
 
 #End Region

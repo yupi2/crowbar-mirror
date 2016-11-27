@@ -24,6 +24,12 @@ Public MustInherit Class SourceModel
 			ElseIf version = 29 Then
 				'NOT IMPLEMENTED YET.
 				'model = New SourceModel29(mdlPathFileName)
+			ElseIf version = 31 Then
+				'NOT IMPLEMENTED YET.
+				'model = New SourceModel31(mdlPathFileName)
+			ElseIf version = 36 Then
+				'NOT IMPLEMENTED YET.
+				'model = New SourceModel36(mdlPathFileName)
 			ElseIf version = 37 Then
 				'NOT IMPLEMENTED YET.
 				'model = New SourceModel37(mdlPathFileName)
@@ -32,6 +38,10 @@ Public MustInherit Class SourceModel
 				'model = New SourceModel38(mdlPathFileName)
 			ElseIf version = 44 Then
 				model = New SourceModel44(mdlPathFileName)
+			ElseIf version = 45 Then
+				model = New SourceModel45(mdlPathFileName)
+			ElseIf version = 46 Then
+				model = New SourceModel46(mdlPathFileName)
 			ElseIf version = 48 Then
 				model = New SourceModel48(mdlPathFileName)
 			ElseIf version = 49 Then
@@ -76,6 +86,8 @@ Public MustInherit Class SourceModel
 					Else
 						Throw New FormatException("File does not have expected MDL header ID (first 4 bytes of file) of 'IDST' (without quotes). MDL file is not a GoldSource- or Source-engine MDL file.")
 					End If
+				Catch ex As FormatException
+					Throw
 				Catch ex As Exception
 					Dim debug As Integer = 4242
 				Finally
@@ -84,6 +96,8 @@ Public MustInherit Class SourceModel
 					End If
 				End Try
 			End If
+		Catch ex As FormatException
+			Throw
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		Finally
@@ -446,6 +460,12 @@ Public MustInherit Class SourceModel
 		Return status
 	End Function
 
+	Public Overridable Function WriteDeclareSequenceQciFile(ByVal declareSequenceQciPathFileName As String) As AppEnums.StatusMessage
+		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+
+		Return status
+	End Function
+
 	Public Overridable Sub WriteMdlFileNameToMdlFile(ByVal mdlPathFileName As String, ByVal internalMdlFileName As String)
 		Me.ReadFile(mdlPathFileName, AddressOf Me.ReadMdlFileHeader_Internal)
 		Me.WriteFile(mdlPathFileName, AddressOf Me.WriteMdlFileNameToMdlFile, internalMdlFileName, Me.theMdlFileDataGeneric)
@@ -590,6 +610,10 @@ Public MustInherit Class SourceModel
 
 	End Sub
 
+	Protected Overridable Sub WriteDeclareSequenceQciFile()
+
+	End Sub
+
 	Protected Overridable Sub ReadMdlFileHeader_Internal()
 
 	End Sub
@@ -686,7 +710,7 @@ Public MustInherit Class SourceModel
 
 			Dim debugFile As New AccessedBytesDebugFile(Me.theOutputFileTextWriter)
 			debugFile.WriteHeaderComment()
-			debugFile.WriteFileSeekLog(fileSeekLog)
+			debugFile.WriteFileSeekLog(fileSeekLog, Me.theMdlFileDataGeneric.theActualFileSize)
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		Finally

@@ -161,7 +161,7 @@ Public Class Compiler
 		If String.IsNullOrEmpty(TheApp.Settings.CompileQcPathFileName) Then
 			inputsAreValid = False
 			Me.WriteErrorMessage("QC file or folder has not been selected.")
-		ElseIf Not File.Exists(TheApp.Settings.CompileQcPathFileName) Then
+		ElseIf TheApp.Settings.CompileMode = ActionMode.File AndAlso Not File.Exists(TheApp.Settings.CompileQcPathFileName) Then
 			inputsAreValid = False
 			Me.WriteErrorMessage("The QC file, """ + TheApp.Settings.CompileQcPathFileName + """, does not exist.")
 		End If
@@ -264,8 +264,6 @@ Public Class Compiler
 	End Sub
 
 	Private Sub CompileModelsInFolder(ByVal modelsPathName As String)
-		'For Each aPathFileName As String In Directory.GetFiles(modelsPathName)
-		'	If Path.GetExtension(aPathFileName) = ".qc" Then
 		For Each aPathFileName As String In Directory.GetFiles(modelsPathName, "*.qc")
 			Me.CompileOneModel(aPathFileName)
 
@@ -279,8 +277,6 @@ Public Class Compiler
 				Continue For
 			End If
 		Next
-		'	End If
-		'Next
 	End Sub
 
 	'SET Left4Dead2PathRootFolder=C:\Program Files (x86)\Steam\SteamApps\common\left 4 dead 2\
@@ -362,13 +358,13 @@ Public Class Compiler
 		End Try
 	End Sub
 
-	Private Sub RunStudioMdlApp(ByVal qcPathName As String, ByVal qcFileName As String)
+	Private Sub RunStudioMdlApp(ByVal qcPath As String, ByVal qcFileName As String)
 		Dim currentFolder As String
 		currentFolder = Directory.GetCurrentDirectory()
-		Directory.SetCurrentDirectory(qcPathName)
+		Directory.SetCurrentDirectory(qcPath)
 
-		Dim gameCompilerPath As String
-		gameCompilerPath = Me.GetGameCompilerPathFileName()
+		Dim gameCompilerPathFileName As String
+		gameCompilerPathFileName = Me.GetGameCompilerPathFileName()
 
 		Dim arguments As String = ""
 		arguments += "-game"
@@ -384,7 +380,7 @@ Public Class Compiler
 		arguments += """"
 
 		Dim myProcess As New Process()
-		Dim myProcessStartInfo As New ProcessStartInfo(gameCompilerPath, arguments)
+		Dim myProcessStartInfo As New ProcessStartInfo(gameCompilerPathFileName, arguments)
 		myProcessStartInfo.UseShellExecute = False
 		myProcessStartInfo.RedirectStandardOutput = True
 		myProcessStartInfo.RedirectStandardError = True
@@ -626,10 +622,12 @@ Public Class Compiler
 
 #End Region
 
+#Region "Data"
+
 	Private theSkipCurrentModelIsActive As Boolean
 	Private theInputQcPath As String
-    Private theOutputPath As String
-    Private theModelOutputPath As String
+	Private theOutputPath As String
+	Private theModelOutputPath As String
 
 	Private theLogFileStream As StreamWriter
 	Private theLastLine As String
@@ -638,5 +636,7 @@ Public Class Compiler
 	Private theCompiledMdlFiles As BindingListEx(Of String)
 
 	Private theDefineBonesFileStream As StreamWriter
+
+#End Region
 
 End Class

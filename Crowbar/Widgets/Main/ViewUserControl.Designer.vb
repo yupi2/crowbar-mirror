@@ -165,9 +165,9 @@ Partial Class ViewUserControl
 		Me.Label3.AutoSize = True
 		Me.Label3.Location = New System.Drawing.Point(0, 8)
 		Me.Label3.Name = "Label3"
-		Me.Label3.Size = New System.Drawing.Size(240, 13)
+		Me.Label3.Size = New System.Drawing.Size(162, 13)
 		Me.Label3.TabIndex = 5
-		Me.Label3.Text = "Game that has the model viewer you want to use:"
+		Me.Label3.Text = "Game that has the model viewer:"
 		'
 		'GameSetupComboBox
 		'
@@ -175,9 +175,9 @@ Partial Class ViewUserControl
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.GameSetupComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
 		Me.GameSetupComboBox.FormattingEnabled = True
-		Me.GameSetupComboBox.Location = New System.Drawing.Point(246, 5)
+		Me.GameSetupComboBox.Location = New System.Drawing.Point(168, 5)
 		Me.GameSetupComboBox.Name = "GameSetupComboBox"
-		Me.GameSetupComboBox.Size = New System.Drawing.Size(436, 21)
+		Me.GameSetupComboBox.Size = New System.Drawing.Size(514, 21)
 		Me.GameSetupComboBox.TabIndex = 6
 		'
 		'EditGameSetupButton

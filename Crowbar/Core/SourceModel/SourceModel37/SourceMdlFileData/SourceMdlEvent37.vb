@@ -10,6 +10,7 @@
 
 	Public cycle As Double
 	Public eventIndex As Integer
+	'NOTE: Does not seem to be used, even though it takes up space in the MDL file.
 	Public eventType As Integer
 	Public options(63) As Char
 

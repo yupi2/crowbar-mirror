@@ -25,6 +25,8 @@ Partial Class MainForm
 		Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
 		Me.AboutCrowbarToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
 		Me.MainTabControl = New System.Windows.Forms.TabControl()
+		Me.PreviewTabPage = New System.Windows.Forms.TabPage()
+		Me.PreviewViewUserControl = New Crowbar.ViewUserControl()
 		Me.DecompileTabPage = New System.Windows.Forms.TabPage()
 		Me.DecompilerUserControl1 = New Crowbar.DecompileUserControl()
 		Me.CompileTabPage = New System.Windows.Forms.TabPage()
@@ -38,15 +40,13 @@ Partial Class MainForm
 		Me.ToolStripMenuItem2 = New System.Windows.Forms.ToolStripMenuItem()
 		Me.AboutCrowbarToolStripMenuItem2 = New System.Windows.Forms.ToolStripMenuItem()
 		Me.MainToolTip = New System.Windows.Forms.ToolTip(Me.components)
-		Me.PreviewTabPage = New System.Windows.Forms.TabPage()
-		Me.PreviewViewUserControl = New Crowbar.ViewUserControl()
 		Me.MainTabControl.SuspendLayout()
+		Me.PreviewTabPage.SuspendLayout()
 		Me.DecompileTabPage.SuspendLayout()
 		Me.CompileTabPage.SuspendLayout()
 		Me.ViewTabPage.SuspendLayout()
 		Me.OptionsTabPage.SuspendLayout()
 		Me.AboutTabPage.SuspendLayout()
-		Me.PreviewTabPage.SuspendLayout()
 		Me.SuspendLayout()
 		'
 		'AboutCrowbarToolStripMenuItem
@@ -76,6 +76,20 @@ Partial Class MainForm
 		resources.ApplyResources(Me.MainTabControl, "MainTabControl")
 		Me.MainTabControl.Name = "MainTabControl"
 		Me.MainTabControl.SelectedIndex = 0
+		'
+		'PreviewTabPage
+		'
+		Me.PreviewTabPage.Controls.Add(Me.PreviewViewUserControl)
+		resources.ApplyResources(Me.PreviewTabPage, "PreviewTabPage")
+		Me.PreviewTabPage.Name = "PreviewTabPage"
+		Me.PreviewTabPage.UseVisualStyleBackColor = True
+		'
+		'PreviewViewUserControl
+		'
+		Me.PreviewViewUserControl.BackColor = System.Drawing.SystemColors.ControlLight
+		resources.ApplyResources(Me.PreviewViewUserControl, "PreviewViewUserControl")
+		Me.PreviewViewUserControl.Name = "PreviewViewUserControl"
+		Me.PreviewViewUserControl.ViewerType = Crowbar.AppEnums.ViewerType.Preview
 		'
 		'DecompileTabPage
 		'
@@ -153,20 +167,6 @@ Partial Class MainForm
 		Me.AboutCrowbarToolStripMenuItem2.Name = "AboutCrowbarToolStripMenuItem2"
 		resources.ApplyResources(Me.AboutCrowbarToolStripMenuItem2, "AboutCrowbarToolStripMenuItem2")
 		'
-		'PreviewTabPage
-		'
-		Me.PreviewTabPage.Controls.Add(Me.PreviewViewUserControl)
-		resources.ApplyResources(Me.PreviewTabPage, "PreviewTabPage")
-		Me.PreviewTabPage.Name = "PreviewTabPage"
-		Me.PreviewTabPage.UseVisualStyleBackColor = True
-		'
-		'PreviewViewUserControl
-		'
-		Me.PreviewViewUserControl.BackColor = System.Drawing.SystemColors.ControlLight
-		resources.ApplyResources(Me.PreviewViewUserControl, "PreviewViewUserControl")
-		Me.PreviewViewUserControl.Name = "PreviewViewUserControl"
-		Me.PreviewViewUserControl.ViewerType = Crowbar.AppEnums.ViewerType.Preview
-		'
 		'MainForm
 		'
 		Me.AllowDrop = True
@@ -175,12 +175,12 @@ Partial Class MainForm
 		Me.Controls.Add(Me.MainTabControl)
 		Me.Name = "MainForm"
 		Me.MainTabControl.ResumeLayout(False)
+		Me.PreviewTabPage.ResumeLayout(False)
 		Me.DecompileTabPage.ResumeLayout(False)
 		Me.CompileTabPage.ResumeLayout(False)
 		Me.ViewTabPage.ResumeLayout(False)
 		Me.OptionsTabPage.ResumeLayout(False)
 		Me.AboutTabPage.ResumeLayout(False)
-		Me.PreviewTabPage.ResumeLayout(False)
 		Me.ResumeLayout(False)
 
 	End Sub

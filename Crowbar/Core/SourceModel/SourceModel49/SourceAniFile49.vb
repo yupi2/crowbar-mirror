@@ -222,7 +222,8 @@ Public Class SourceAniFile49
 				Dim debug As Integer = 4242
 			End If
 			'End While
-		Catch
+		Catch ex As Exception
+			Dim debug As Integer = 4242
 		End Try
 
 		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
