@@ -32,7 +32,8 @@ Public Class ViewUserControl
 	Private Sub Free()
 		RemoveHandler TheApp.Settings.PropertyChanged, AddressOf AppSettings_PropertyChanged
 
-		Me.MdlPathFileTextBox.DataBindings.Clear()
+		RemoveHandler Me.MdlPathFileNameTextBox.DataBindings("Text").Parse, AddressOf Me.ParsePathFileName
+		Me.MdlPathFileNameTextBox.DataBindings.Clear()
 	End Sub
 
 #End Region
@@ -60,6 +61,17 @@ Public Class ViewUserControl
 #End Region
 
 #Region "Child Widget Event Handlers"
+
+	Private Sub ParsePathFileName(ByVal sender As Object, ByVal e As ConvertEventArgs)
+		If e.DesiredType IsNot GetType(String) Then
+			Exit Sub
+		End If
+		e.Value = FileManager.GetCleanPathFileName(CStr(e.Value))
+	End Sub
+
+	'Private Sub MdlPathFileNameTextBox_Validated(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MdlPathFileNameTextBox.Validated
+	'	Me.MdlPathFileNameTextBox.Text = FileManager.GetCleanPathFileName(Me.MdlPathFileNameTextBox.Text)
+	'End Sub
 
 	Private Sub BrowseForMdlFileButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BrowseForMdlFileButton.Click
 		Dim openFileWdw As New OpenFileDialog()
@@ -286,7 +298,8 @@ Public Class ViewUserControl
 #Region "Private Methods"
 
 	Private Sub UpdateDataBindings()
-		Me.MdlPathFileTextBox.DataBindings.Add("Text", TheApp.Settings, Me.NameOfAppSettingMdlPathFileName, False, DataSourceUpdateMode.OnValidation)
+		Me.MdlPathFileNameTextBox.DataBindings.Add("Text", TheApp.Settings, Me.NameOfAppSettingMdlPathFileName, False, DataSourceUpdateMode.OnValidation)
+		AddHandler Me.MdlPathFileNameTextBox.DataBindings("Text").Parse, AddressOf Me.ParsePathFileName
 
 		'NOTE: The DataSource, DisplayMember, and ValueMember need to be set before DataBindings, or else an exception is raised.
 		Me.GameSetupComboBox.DisplayMember = "GameName"

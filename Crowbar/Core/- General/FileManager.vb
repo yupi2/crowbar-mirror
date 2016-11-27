@@ -93,14 +93,40 @@ Public Class FileManager
 	'	Return False
 	'End Function
 
+	'Public Shared Function ReadKeyValueLine(ByVal inputFileReader As BinaryReader, ByRef oKey As String, ByRef oValue As String) As Boolean
+	'	Dim line As String
+	'	Dim delimiters As Char() = {""""c, " "c, CChar(vbTab)}
+	'	Dim tokens As String() = {""}
+	'	line = ReadTextLine(inputFileReader)
+	'	If line IsNot Nothing Then
+	'		tokens = line.Split(delimiters, StringSplitOptions.RemoveEmptyEntries)
+	'		If tokens.Length = 2 Then
+	'			oKey = tokens(0)
+	'			oValue = tokens(1)
+	'			Return True
+	'		ElseIf tokens.Length = 1 Then
+	'			oKey = tokens(0)
+	'			oValue = tokens(0)
+	'			Return False
+	'		End If
+	'	End If
+	'	oKey = line
+	'	oValue = line
+	'	Return False
+	'End Function
+
 	Public Shared Function ReadKeyValueLine(ByVal inputFileReader As BinaryReader, ByRef oKey As String, ByRef oValue As String) As Boolean
 		Dim line As String
-		Dim delimiters As Char() = {""""c, " "c, CChar(vbTab)}
+		Dim delimiters As Char() = {""""c}
 		Dim tokens As String() = {""}
 		line = ReadTextLine(inputFileReader)
 		If line IsNot Nothing Then
 			tokens = line.Split(delimiters, StringSplitOptions.RemoveEmptyEntries)
-			If tokens.Length = 2 Then
+			If tokens.Length = 3 Then
+				oKey = tokens(0)
+				oValue = tokens(2)
+				Return True
+			ElseIf tokens.Length = 2 Then
 				oKey = tokens(0)
 				oValue = tokens(1)
 				Return True
@@ -155,10 +181,10 @@ Public Class FileManager
 		End Try
 	End Function
 
-	Public Shared Sub CreatePath(ByVal pathName As String)
+	Public Shared Sub CreatePath(ByVal path As String)
 		Try
-			If Not Directory.Exists(pathName) Then
-				Directory.CreateDirectory(pathName)
+			If Not Directory.Exists(path) Then
+				Directory.CreateDirectory(path)
 			End If
 		Catch ex As Exception
 			Throw ex
@@ -261,6 +287,13 @@ Public Class FileManager
 
 		Return cleanPathFileName
 	End Function
+
+	'This is the code that works like GetTempFileName, but instead creates a folder:
+	'public string GetTempDirectory() {
+	'	string path = Path.GetRandomFileName();
+	'	Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), path));
+	'	return path;
+	'}
 
 	Private Shared Function GetPathAttribute(ByVal path As String) As Integer
 		Dim di As New DirectoryInfo(path)

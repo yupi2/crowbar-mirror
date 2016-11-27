@@ -61,15 +61,23 @@ Public Class SourceMdlFile04
 
 					aBone.parentBoneIndex = Me.theInputFileReader.ReadInt32()
 					aBone.unknown = Me.theInputFileReader.ReadInt32()
-					'aBone.position.x = Me.theInputFileReader.ReadSingle()
-					'aBone.position.y = Me.theInputFileReader.ReadSingle()
-					'aBone.position.z = Me.theInputFileReader.ReadSingle()
-					aBone.positionX.the16BitValue = Me.theInputFileReader.ReadUInt16()
-					aBone.positionY.the16BitValue = Me.theInputFileReader.ReadUInt16()
-					aBone.positionZ.the16BitValue = Me.theInputFileReader.ReadUInt16()
-					aBone.rotationX.the16BitValue = Me.theInputFileReader.ReadUInt16()
-					aBone.rotationY.the16BitValue = Me.theInputFileReader.ReadUInt16()
-					aBone.rotationZ.the16BitValue = Me.theInputFileReader.ReadUInt16()
+					aBone.position.x = Me.theInputFileReader.ReadSingle()
+					aBone.position.y = Me.theInputFileReader.ReadSingle()
+					aBone.position.z = Me.theInputFileReader.ReadSingle()
+					'If aBone.parentBoneIndex > -1 Then
+					'	aBone.position.x += Me.theMdlFileData.theBones(aBone.parentBoneIndex).position.x
+					'	aBone.position.y += Me.theMdlFileData.theBones(aBone.parentBoneIndex).position.y
+					'	aBone.position.z += Me.theMdlFileData.theBones(aBone.parentBoneIndex).position.z
+					'End If
+					'aBone.rotationX.the16BitValue = Me.theInputFileReader.ReadUInt16()
+					'aBone.rotationY.the16BitValue = Me.theInputFileReader.ReadUInt16()
+					'aBone.rotationZ.the16BitValue = Me.theInputFileReader.ReadUInt16()
+					'aBone.positionX.the16BitValue = Me.theInputFileReader.ReadUInt16()
+					'aBone.positionY.the16BitValue = Me.theInputFileReader.ReadUInt16()
+					'aBone.positionZ.the16BitValue = Me.theInputFileReader.ReadUInt16()
+					'aBone.rotationX.the16BitValue = Me.theInputFileReader.ReadUInt16()
+					'aBone.rotationY.the16BitValue = Me.theInputFileReader.ReadUInt16()
+					'aBone.rotationZ.the16BitValue = Me.theInputFileReader.ReadUInt16()
 
 					Me.theMdlFileData.theBones.Add(aBone)
 				Next
@@ -118,7 +126,7 @@ Public Class SourceMdlFile04
 				fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
 				For i As Integer = 0 To Me.theMdlFileData.unknownCount - 1
-					Me.theInputFileReader.ReadInt32()
+					Dim unknown As Integer = Me.theInputFileReader.ReadInt32()
 				Next
 
 				fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
@@ -165,6 +173,7 @@ Public Class SourceMdlFile04
 					Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aBodyPart name = " + aBodyPart.theName)
 
 					Me.ReadModels(aBodyPart)
+					Me.SetFileNameForMeshes(aBodyPart)
 				Next
 
 				'fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
@@ -221,15 +230,15 @@ Public Class SourceMdlFile04
 					For x As Integer = 0 To aSequence.unknown.Length - 1
 						aSequence.unknown(x) = Me.theInputFileReader.ReadInt32()
 					Next
-					'aSequence.unknownSingle01 = Me.theInputFileReader.ReadSingle()
-					'aSequence.unknownSingle02 = Me.theInputFileReader.ReadSingle()
-					'aSequence.unknownSingle03 = Me.theInputFileReader.ReadSingle()
-					aSequence.positionScaleX = Me.theInputFileReader.ReadInt16()
-					aSequence.positionScaleY = Me.theInputFileReader.ReadInt16()
-					aSequence.positionScaleZ = Me.theInputFileReader.ReadInt16()
-					aSequence.rotationScaleX = Me.theInputFileReader.ReadInt16()
-					aSequence.rotationScaleY = Me.theInputFileReader.ReadInt16()
-					aSequence.rotationScaleZ = Me.theInputFileReader.ReadInt16()
+					aSequence.unknownSingle01 = Me.theInputFileReader.ReadSingle()
+					aSequence.unknownSingle02 = Me.theInputFileReader.ReadSingle()
+					aSequence.unknownSingle03 = Me.theInputFileReader.ReadSingle()
+					'aSequence.positionScaleX = Me.theInputFileReader.ReadInt16()
+					'aSequence.positionScaleY = Me.theInputFileReader.ReadInt16()
+					'aSequence.positionScaleZ = Me.theInputFileReader.ReadInt16()
+					'aSequence.rotationScaleX = Me.theInputFileReader.ReadInt16()
+					'aSequence.rotationScaleY = Me.theInputFileReader.ReadInt16()
+					'aSequence.rotationScaleZ = Me.theInputFileReader.ReadInt16()
 
 					aSequenceDesc.theSequences.Add(aSequence)
 
@@ -300,8 +309,8 @@ Public Class SourceMdlFile04
 					Dim aModel As New SourceMdlModel04()
 
 					aModel.unknownSingle = Me.theInputFileReader.ReadSingle()
-					aModel.normalCount = Me.theInputFileReader.ReadInt32()
 					aModel.vertexCount = Me.theInputFileReader.ReadInt32()
+					aModel.normalCount = Me.theInputFileReader.ReadInt32()
 					aModel.meshCount = Me.theInputFileReader.ReadInt32()
 
 					aBodyPart.theModels.Add(aModel)
@@ -437,8 +446,14 @@ Public Class SourceMdlFile04
 				For faceIndex As Integer = 0 To aMesh.faceCount - 1
 					Dim aFace As New SourceMdlFace04()
 
-					For x As Integer = 0 To aFace.vertexIndex.Length - 1
-						aFace.vertexIndex(x) = Me.theInputFileReader.ReadInt32()
+					'For x As Integer = 0 To aFace.vertexIndex.Length - 1
+					'	aFace.vertexIndex(x) = Me.theInputFileReader.ReadInt32()
+					'Next
+					For x As Integer = 0 To aFace.vertexInfo.Length - 1
+						aFace.vertexInfo(x).vertexIndex = Me.theInputFileReader.ReadInt32()
+						aFace.vertexInfo(x).normalIndex = Me.theInputFileReader.ReadInt32()
+						aFace.vertexInfo(x).s = Me.theInputFileReader.ReadSingle()
+						aFace.vertexInfo(x).t = Me.theInputFileReader.ReadSingle()
 					Next
 
 					aMesh.theFaces.Add(aFace)
@@ -475,6 +490,28 @@ Public Class SourceMdlFile04
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		End Try
+	End Sub
+
+	Private Sub SetFileNameForMeshes(ByVal aBodyPart As SourceMdlBodyPart04)
+		Dim aModel As SourceMdlModel04
+		Dim aMesh As SourceMdlMesh04
+		Dim textureFileName As String
+
+		For bodyPartIndex As Integer = 0 To Me.theMdlFileData.theBodyParts.Count - 1
+			aBodyPart = Me.theMdlFileData.theBodyParts(bodyPartIndex)
+			For modelIndex As Integer = 0 To aBodyPart.theModels.Count - 1
+				aModel = aBodyPart.theModels(modelIndex)
+				For meshIndex As Integer = 0 To aModel.theMeshes.Count - 1
+					aMesh = aModel.theMeshes(meshIndex)
+					Try
+						textureFileName = "bodypart" + bodyPartIndex.ToString() + "_model" + modelIndex.ToString() + "_mesh" + meshIndex.ToString() + ".bmp"
+						aMesh.theTextureFileName = textureFileName
+					Catch ex As Exception
+						Dim debug As Integer = 4242
+					End Try
+				Next
+			Next
+		Next
 	End Sub
 
 #End Region

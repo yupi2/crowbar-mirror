@@ -5,51 +5,60 @@ Public MustInherit Class SourceModel
 
 #Region "Shared"
 
-	Public Shared Function Create(ByVal mdlPathFileName As String) As SourceModel
+	Public Shared Function Create(ByVal mdlPathFileName As String, ByRef version As Integer) As SourceModel
 		Dim model As SourceModel = Nothing
 
 		Try
-			Dim version As Integer
 			version = SourceModel.GetVersion(mdlPathFileName)
 
 			If version = 4 Then
 				'NOT IMPLEMENTED YET.
-				'model = New SourceModel04(mdlPathFileName)
+				'model = New SourceModel04(mdlPathFileName, version)
 			ElseIf version = 6 Then
-				model = New SourceModel06(mdlPathFileName)
+				model = New SourceModel06(mdlPathFileName, version)
 			ElseIf version = 10 Then
-				model = New SourceModel10(mdlPathFileName)
+				model = New SourceModel10(mdlPathFileName, version)
 			ElseIf version = 2531 Then
-				model = New SourceModel2531(mdlPathFileName)
+				model = New SourceModel2531(mdlPathFileName, version)
 			ElseIf version = 29 Then
 				'NOT IMPLEMENTED YET.
-				'model = New SourceModel29(mdlPathFileName)
+				'model = New SourceModel29(mdlPathFileName, version)
 			ElseIf version = 31 Then
 				'NOT IMPLEMENTED YET.
-				'model = New SourceModel31(mdlPathFileName)
+				'model = New SourceModel31(mdlPathFileName, version)
+			ElseIf version = 32 Then
+				'NOT IMPLEMENTED YET.
+				'model = New SourceModel32(mdlPathFileName, version)
+			ElseIf version = 35 Then
+				'NOT IMPLEMENTED YET.
+				'model = New SourceModel35(mdlPathFileName, version)
 			ElseIf version = 36 Then
 				'NOT IMPLEMENTED YET.
-				'model = New SourceModel36(mdlPathFileName)
+				model = New SourceModel36(mdlPathFileName, version)
 			ElseIf version = 37 Then
 				'NOT IMPLEMENTED YET.
-				'model = New SourceModel37(mdlPathFileName)
+				model = New SourceModel37(mdlPathFileName, version)
 			ElseIf version = 38 Then
 				'NOT IMPLEMENTED YET.
-				'model = New SourceModel38(mdlPathFileName)
+				'model = New SourceModel38(mdlPathFileName, version)
 			ElseIf version = 44 Then
-				model = New SourceModel44(mdlPathFileName)
+				model = New SourceModel44(mdlPathFileName, version)
 			ElseIf version = 45 Then
-				model = New SourceModel45(mdlPathFileName)
+				model = New SourceModel45(mdlPathFileName, version)
 			ElseIf version = 46 Then
-				model = New SourceModel46(mdlPathFileName)
+				model = New SourceModel46(mdlPathFileName, version)
+			ElseIf version = 47 Then
+				'TODO: For now, decompile v47 as v46.
+				model = New SourceModel46(mdlPathFileName, version)
+				'model = New SourceModel47(mdlPathFileName, version)
 			ElseIf version = 48 Then
-				model = New SourceModel48(mdlPathFileName)
+				model = New SourceModel48(mdlPathFileName, version)
 			ElseIf version = 49 Then
-				model = New SourceModel49(mdlPathFileName)
+				model = New SourceModel49(mdlPathFileName, version)
 			ElseIf version = 52 Then
 				'TODO: Properly decompile v52, but for now v52 is decompiled as v49.
-				'model = New SourceModel52(mdlPathFileName)
-				model = New SourceModel49(mdlPathFileName)
+				'model = New SourceModel52(mdlPathFileName, version)
+				model = New SourceModel49(mdlPathFileName, version)
 			Else
 				' Version not implemented.
 				model = Nothing
@@ -61,15 +70,12 @@ Public MustInherit Class SourceModel
 		Return model
 	End Function
 
-	Public Shared Function GetVersion() As Integer
-		Return SourceModel.version_shared
-	End Function
-
 	Private Shared Function GetVersion(mdlPathFileName As String) As Integer
+		Dim version As Integer
 		Dim inputFileStream As FileStream
 		Dim inputFileReader As BinaryReader
 
-		SourceModel.version_shared = -1
+		version = -1
 		inputFileStream = Nothing
 		inputFileReader = Nothing
 		Try
@@ -82,7 +88,7 @@ Public MustInherit Class SourceModel
 					Dim id As String
 					id = inputFileReader.ReadChars(4)
 					If id = "IDST" Then
-						SourceModel.version_shared = inputFileReader.ReadInt32()
+						version = inputFileReader.ReadInt32()
 					Else
 						Throw New FormatException("File does not have expected MDL header ID (first 4 bytes of file) of 'IDST' (without quotes). MDL file is not a GoldSource- or Source-engine MDL file.")
 					End If
@@ -106,18 +112,19 @@ Public MustInherit Class SourceModel
 			End If
 		End Try
 
-		Return SourceModel.version_shared
+		Return version
 	End Function
 
-	Private Shared version_shared As Integer
+	'Private Shared version_shared As Integer
 
 #End Region
 
 #Region "Creation and Destruction"
 
-	Protected Sub New(ByVal mdlPathFileName As String)
+	Protected Sub New(ByVal mdlPathFileName As String, ByVal mdlVersion As Integer)
 		Me.theMdlPathFileName = mdlPathFileName
 		Me.theName = Path.GetFileNameWithoutExtension(mdlPathFileName)
+		Me.theVersion = mdlVersion
 	End Sub
 
 #End Region
@@ -127,6 +134,12 @@ Public MustInherit Class SourceModel
 	Public ReadOnly Property ID() As String
 		Get
 			Return Me.theMdlFileDataGeneric.theID
+		End Get
+	End Property
+
+	Public ReadOnly Property Version() As Integer
+		Get
+			Return Me.theVersion
 		End Get
 	End Property
 
@@ -497,6 +510,8 @@ Public MustInherit Class SourceModel
 			Me.GetModelFileDataFromMdlFile(textLines)
 			textLines.Add("")
 			Me.GetTextureDataFromMdlFile(textLines)
+			'textLines.Add("")
+			'Me.GetSequenceDataFromMdlFile(textLines)
 		Catch ex As Exception
 			'textLines.Add("ERROR: " + ex.Message)
 			Throw
@@ -510,6 +525,10 @@ Public MustInherit Class SourceModel
 	End Function
 
 	Public Overridable Function GetTextureFileNames() As List(Of String)
+		Return New List(Of String)()
+	End Function
+
+	Public Overridable Function GetSequenceInfo() As List(Of String)
 		Return New List(Of String)()
 	End Function
 
@@ -871,10 +890,29 @@ Public MustInherit Class SourceModel
 		End If
 	End Sub
 
+	'Private Sub GetSequenceDataFromMdlFile(ByVal ioTextLines As List(Of String))
+	'	ioTextLines.Add("=== Sequence Info ===")
+	'	ioTextLines.Add("")
+
+	'	If Me.HasBoneAnimationData Then
+	'		If Me.theMdlFileDataGeneric.version <= 10 Then
+	'		Else
+	'			Dim sequenceNames As List(Of String)
+	'			sequenceNames = Me.GetSequenceInfo()
+	'			For Each aSequenceName As String In sequenceNames
+	'				ioTextLines.Add("""" + aSequenceName + """")
+	'			Next
+	'		End If
+	'	Else
+	'		ioTextLines.Add("No sequence data.")
+	'	End If
+	'End Sub
+
 #End Region
 
 #Region "Data"
 
+	Protected theVersion As Integer
 	Protected theName As String
 
 	Protected theMdlFileDataGeneric As SourceMdlFileDataBase

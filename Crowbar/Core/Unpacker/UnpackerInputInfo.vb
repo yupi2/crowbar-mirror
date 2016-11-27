@@ -3,6 +3,6 @@ Imports System.ComponentModel
 Public Class UnpackerInputInfo
 
 	Public unpackerAction As VpkAppAction
-	Public thePathFileNames As List(Of String)
+	Public thePackInternalPathFileNames As List(Of String)
 
 End Class

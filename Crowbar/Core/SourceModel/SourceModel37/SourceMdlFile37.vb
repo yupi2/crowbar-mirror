@@ -184,7 +184,7 @@ Public Class SourceMdlFile37
 				fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
 				Me.theMdlFileData.theBones = New List(Of SourceMdlBone37)(Me.theMdlFileData.boneCount)
-				For i As Integer = 0 To Me.theMdlFileData.boneCount - 1
+				For boneIndex As Integer = 0 To Me.theMdlFileData.boneCount - 1
 					boneInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 					Dim aBone As New SourceMdlBone37()
 
@@ -271,6 +271,7 @@ Public Class SourceMdlFile37
 					ElseIf aBone.theName Is Nothing Then
 						aBone.theName = ""
 					End If
+					Me.theMdlFileData.theBoneNameToBoneIndexMap.Add(aBone.theName, boneIndex)
 
 					If aBone.proceduralRuleOffset <> 0 Then
 						If aBone.proceduralRuleType = SourceMdlBone37.STUDIO_PROC_AXISINTERP Then
@@ -601,12 +602,12 @@ Public Class SourceMdlFile37
 				Me.theMdlFileData.theAnimGroups = New List(Of SourceMdlAnimGroup37)(Me.theMdlFileData.animationGroupCount)
 				For i As Integer = 0 To Me.theMdlFileData.animationGroupCount - 1
 					'seqInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
-					Dim aSeqDesc As New SourceMdlAnimGroup37()
+					Dim anAnimGroup As New SourceMdlAnimGroup37()
 
-					aSeqDesc.group = Me.theInputFileReader.ReadInt32()
-					aSeqDesc.index = Me.theInputFileReader.ReadInt32()
+					anAnimGroup.group = Me.theInputFileReader.ReadInt32()
+					anAnimGroup.index = Me.theInputFileReader.ReadInt32()
 
-					Me.theMdlFileData.theAnimGroups.Add(aSeqDesc)
+					Me.theMdlFileData.theAnimGroups.Add(anAnimGroup)
 
 					'inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 
@@ -763,6 +764,7 @@ Public Class SourceMdlFile37
 				fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
 				Me.theMdlFileData.theSequenceGroups = New List(Of SourceMdlSequenceGroup37)(Me.theMdlFileData.sequenceGroupCount)
+				Me.theMdlFileData.theIncludeModelFileNames = New List(Of String)()
 				For sequenceGroupIndex As Integer = 0 To Me.theMdlFileData.sequenceGroupCount - 1
 					sequenceGroupInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 					Dim aSequenceGroup As New SourceMdlSequenceGroup37()
@@ -800,6 +802,10 @@ Public Class SourceMdlFile37
 						End If
 					Else
 						aSequenceGroup.theFileName = ""
+					End If
+
+					If aSequenceGroup.theName = "shared_animation" Then
+						Me.theMdlFileData.theIncludeModelFileNames.Add(aSequenceGroup.theFileName)
 					End If
 
 					Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
@@ -905,6 +911,9 @@ Public Class SourceMdlFile37
 						fileOffsetStart2 = Me.theInputFileReader.BaseStream.Position
 
 						anAnimationDesc.theName = FileManager.ReadNullTerminatedString(Me.theInputFileReader)
+						If Me.theMdlFileData.theFirstAnimationDesc Is Nothing AndAlso anAnimationDesc.theName(0) <> "@" Then
+							Me.theMdlFileData.theFirstAnimationDesc = anAnimationDesc
+						End If
 						If anAnimationDesc.theName(0) = "@" Then
 							anAnimationDesc.theName = anAnimationDesc.theName.Remove(0, 1)
 						End If

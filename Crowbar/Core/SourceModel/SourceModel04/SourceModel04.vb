@@ -6,8 +6,8 @@ Public Class SourceModel04
 
 #Region "Creation and Destruction"
 
-	Public Sub New(ByVal mdlPathFileName As String)
-		MyBase.New(mdlPathFileName)
+	Public Sub New(ByVal mdlPathFileName As String, ByVal mdlVersion As Integer)
+		MyBase.New(mdlPathFileName, mdlVersion)
 	End Sub
 
 #End Region
@@ -88,6 +88,7 @@ Public Class SourceModel04
 		Dim aModel As SourceMdlModel04
 		Dim aMesh As SourceMdlMesh04
 		Dim texturePath As String
+		Dim textureFileName As String
 		Dim texturePathFileName As String
 		For bodyPartIndex As Integer = 0 To Me.theMdlFileData.theBodyParts.Count - 1
 			aBodyPart = Me.theMdlFileData.theBodyParts(bodyPartIndex)
@@ -96,8 +97,10 @@ Public Class SourceModel04
 				For meshIndex As Integer = 0 To aModel.theMeshes.Count - 1
 					aMesh = aModel.theMeshes(meshIndex)
 					Try
-						texturePathFileName = Path.Combine(modelOutputPath, "bodypart" + bodyPartIndex.ToString() + "_model" + modelIndex.ToString() + "_mesh" + meshIndex.ToString() + ".bmp")
-						texturePath = FileManager.GetPath(texturePathFileName)
+						texturePath = modelOutputPath
+						'textureFileName = "bodypart" + bodyPartIndex.ToString() + "_model" + modelIndex.ToString() + "_mesh" + meshIndex.ToString() + ".bmp"
+						textureFileName = aMesh.theTextureFileName
+						texturePathFileName = Path.Combine(texturePath, textureFileName)
 						If FileManager.OutputPathIsUsable(texturePath) Then
 							Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, texturePathFileName)
 							'NOTE: Check here in case writing is canceled in the above event.
@@ -185,7 +188,6 @@ Public Class SourceModel04
 
 		mdlFile.ReadBones()
 		mdlFile.ReadSequenceDescs()
-		'NOTE: In player.mdl, a texture (bmp data) starts at 15310 (0x3BCE).
 		mdlFile.ReadBodyParts()
 
 		' Post-processing.
@@ -222,7 +224,7 @@ Public Class SourceModel04
 			smdFile.WriteHeaderSection()
 			smdFile.WriteNodesSection()
 			smdFile.WriteSkeletonSection()
-			'smdFile.WriteTrianglesSection(aModel)
+			smdFile.WriteTrianglesSection(aModel)
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		End Try

@@ -11,6 +11,7 @@ Public Class Win32Api
 		WM_MOUSEWHEEL = &H20A
 		WM_NOTIFY = &H4E
 		WM_SHOWWINDOW = &H18
+		'HWND_BROADCAST = &HFFFF
 	End Enum
 
 	Public Enum DialogChangeStatus As Long
@@ -366,7 +367,7 @@ Public Class Win32Api
 	''' <param name="lParam">lParam</param>
 	''' <returns>Zero if failure, otherwise non-zero</returns>
 	<DllImport("user32.dll", SetLastError:=True)> _
-	Public Shared Function PostMessage(ByVal hWnd As IntPtr, ByVal Msg As Int32, ByVal wParam As IntPtr, ByVal lParam As IntPtr) As Boolean
+	Public Shared Function PostMessage(ByVal hWnd As IntPtr, ByVal Msg As UInteger, ByVal wParam As IntPtr, ByVal lParam As IntPtr) As Boolean
 	End Function
 
 	<DllImport("user32.dll", SetLastError:=True, CharSet:=CharSet.Unicode)> _
@@ -385,6 +386,74 @@ Public Class Win32Api
 	Public Shared Function FindWindowEx(ByVal parentHandle As IntPtr, ByVal childAfter As IntPtr, ByVal lclassName As String, ByVal windowTitle As String) As IntPtr
 	End Function
 
+	<DllImport("kernel32.dll", SetLastError:=True, CharSet:=CharSet.Unicode)> _
+	Public Shared Function CreateHardLink(ByVal lpNewFileName As String, ByVal lpExistingFileName As String, ByVal lpSecurityAttributes As IntPtr) As Boolean
+	End Function
+
+	Public Enum SymbolicLink
+		File = 0
+		Directory = 1
+	End Enum
+
+	<DllImport("kernel32.dll", SetLastError:=True)> _
+	Public Shared Function CreateSymbolicLink(lpSymlinkFileName As String, lpTargetFileName As String, dwFlags As SymbolicLink) As Boolean
+	End Function
+
+	Private Const MAX_PATH As Integer = 260
+	Private Const NAMESIZE As Integer = 80
+	Private Const SHGFI_LARGEICON As Int32 = &H0
+	Private Const SHGFI_SMALLICON As Int32 = &H1
+	Private Const SHGFI_USEFILEATTRIBUTES As Int32 = &H10
+	Private Const SHGFI_ICON As Int32 = &H100
+	Public Const FILE_ATTRIBUTE_DIRECTORY As Integer = &H10
+	Public Const CFSTR_FILEDESCRIPTORW As String = "FileGroupDescriptorW"
+	Public Const CFSTR_PREFERREDDROPEFFECT As String = "Preferred DropEffect"
+	Public Const CFSTR_PERFORMEDDROPEFFECT As String = "Performed DropEffect"
+	Public Const FD_PROGRESSUI As Int32 = &H4000
+
+	<StructLayout(LayoutKind.Sequential)>
+	Private Structure SHFILEINFO
+		Public hIcon As IntPtr
+		Public iIcon As Integer
+		Public dwAttributes As Integer
+		<MarshalAs(UnmanagedType.ByValTStr, SizeConst:=MAX_PATH)>
+		Public szDisplayName As String
+		<MarshalAs(UnmanagedType.ByValTStr, SizeConst:=NAMESIZE)>
+		Public szTypeName As String
+	End Structure
+
+	<DllImport("Shell32.dll")>
+	Private Shared Function SHGetFileInfo(pszPath As String,
+										  dwFileAttributes As Integer,
+										  ByRef psfi As SHFILEINFO,
+										  cbFileInfo As Integer,
+										  uFlags As Integer) As IntPtr
+	End Function
+
+	<DllImport("user32.dll", SetLastError:=True)>
+	Private Shared Function DestroyIcon(hIcon As IntPtr) As Boolean
+	End Function
+
+	Public Shared Function GetShellIcon(path As String, Optional ByVal fileAttributes As Integer = 0) As Bitmap
+		Dim bmp As Bitmap
+		Dim ret As IntPtr
+		Dim shfi As SHFILEINFO
+
+		bmp = Nothing
+		shfi = New SHFILEINFO()
+		ret = SHGetFileInfo(path, fileAttributes, shfi, Marshal.SizeOf(shfi), SHGFI_USEFILEATTRIBUTES Or SHGFI_ICON)
+		If ret <> IntPtr.Zero Then
+			bmp = System.Drawing.Icon.FromHandle(shfi.hIcon).ToBitmap
+			DestroyIcon(shfi.hIcon)
+		End If
+
+		Return bmp
+	End Function
+
+	'<DllImport("user32.dll", SetLastError:=True, CharSet:=CharSet.Unicode)> _
+	'Public Shared Function RegisterWindowMessage(ByVal lpString As String) As UInteger
+	'End Function
+
 	'Public Shared Function GetSpecialFolderPath(ByVal folderCSIDL As SpecialFolderCSIDL) As String
 	'	Dim winPath As New StringBuilder(300)
 	'	If SHGetFolderPath(Nothing, folderCSIDL, Nothing, 0, winPath) <> 0 Then
@@ -393,6 +462,35 @@ Public Class Win32Api
 	'	End If
 	'	Return winPath.ToString()
 	'End Function
+
+	'Public Shared Function GetContentType(ByVal extension As String) As String
+	'	Dim regKey As Microsoft.Win32.RegistryKey = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(extension)
+	'	If Not regKey Is Nothing Then
+	'		Dim ct As Object = regKey.GetValue("Content Type")
+	'		If Not ct Is Nothing Then
+	'			Return ct.ToString()
+	'		End If
+	'	End If
+	'	Return ""
+	'End Function
+
+	Public Shared Function GetFileTypeDescription(ByVal extension As String) As String
+		Dim regKey As Microsoft.Win32.RegistryKey = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(extension)
+		If Not regKey Is Nothing Then
+			Dim extensionDefaultValue As Object = regKey.GetValue("")
+			If extensionDefaultValue IsNot Nothing Then
+				Dim classname As String = extensionDefaultValue.ToString()
+				Dim classnameKey As Microsoft.Win32.RegistryKey = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(classname)
+				If classnameKey IsNot Nothing Then
+					Dim ct As Object = classnameKey.GetValue("")
+					If ct IsNot Nothing Then
+						Return ct.ToString()
+					End If
+				End If
+			End If
+		End If
+		Return ""
+	End Function
 
 	Public Shared Function CreateFileAssociation(ByVal extension As String, ByVal className As String, ByVal description As String, ByVal exeProgram As String) As Boolean
 		Const SHCNE_ASSOCCHANGED As Integer = &H8000000
@@ -403,24 +501,35 @@ Public Class Win32Api
 			extension = "." + extension
 		End If
 
-		Dim key1 As Microsoft.Win32.RegistryKey = Nothing
-		Dim key2 As Microsoft.Win32.RegistryKey = Nothing
-		Dim key3 As Microsoft.Win32.RegistryKey = Nothing
+		Dim currentUser As Microsoft.Win32.RegistryKey = Microsoft.Win32.Registry.CurrentUser
+		Dim classesKey As Microsoft.Win32.RegistryKey = Nothing
+		Dim extensionKey As Microsoft.Win32.RegistryKey = Nothing
+		Dim classnameKey As Microsoft.Win32.RegistryKey = Nothing
+		Dim defaultIconKey As Microsoft.Win32.RegistryKey = Nothing
+		Dim shellOpenCommandKey As Microsoft.Win32.RegistryKey = Nothing
 		Try
-			key1 = Microsoft.Win32.Registry.ClassesRoot.CreateSubKey(extension)
-			key1.SetValue("", className)
+			Win32Api.DeleteFileAssociation(extension, className, description, "")
 
-			key2 = Microsoft.Win32.Registry.ClassesRoot.CreateSubKey(className)
-			key2.SetValue("", description)
+			classesKey = currentUser.OpenSubKey("Software\Classes", True)
 
-			key3 = Microsoft.Win32.Registry.ClassesRoot.CreateSubKey(className + "\Shell\Open\Command")
-			key3.SetValue("", exeProgram + " ""%1""")
+			extensionKey = classesKey.CreateSubKey(extension)
+			extensionKey.SetValue("", className)
+
+			classnameKey = classesKey.CreateSubKey(className)
+			classnameKey.SetValue("", description)
+
+			defaultIconKey = classesKey.CreateSubKey(className + "\DefaultIcon")
+			defaultIconKey.SetValue("", exeProgram + ",0")
+
+			shellOpenCommandKey = classesKey.CreateSubKey(className + "\Shell\Open\Command")
+			shellOpenCommandKey.SetValue("", exeProgram + " ""%1""")
 		Catch ex As Exception
 			Return False
 		Finally
-			If Not key1 Is Nothing Then key1.Close()
-			If Not key2 Is Nothing Then key2.Close()
-			If Not key3 Is Nothing Then key3.Close()
+			If Not classesKey Is Nothing Then classesKey.Close()
+			If Not extensionKey Is Nothing Then extensionKey.Close()
+			If Not classnameKey Is Nothing Then classnameKey.Close()
+			If Not shellOpenCommandKey Is Nothing Then shellOpenCommandKey.Close()
 		End Try
 
 		' notify Windows that file associations have changed
@@ -438,36 +547,32 @@ Public Class Win32Api
 			extension = "." + extension
 		End If
 
+		Dim currentUser As Microsoft.Win32.RegistryKey = Microsoft.Win32.Registry.CurrentUser
+		Dim classesKey As Microsoft.Win32.RegistryKey = Nothing
+		Dim shellOpenCommandKey As Microsoft.Win32.RegistryKey = Nothing
 		Try
-			'key3 = Microsoft.Win32.Registry.ClassesRoot.CreateSubKey(className + "\Shell\Open\Command")
-			'Dim keyValue3 As Object = Microsoft.Win32.Registry.ClassesRoot.GetValue(className + "\Shell\Open\Command")
-			'Dim keyValue3 As Object = Microsoft.Win32.Registry.GetValue("HKEY_CLASSES_ROOT\" + className + "\Shell\Open\Command", "", "")
-			Dim root As Microsoft.Win32.RegistryKey = Microsoft.Win32.Registry.ClassesRoot
-			Dim key3 As Microsoft.Win32.RegistryKey = Nothing
-			key3 = root.OpenSubKey(className + "\Shell\Open\Command")
-			If key3.GetValueKind("") = Microsoft.Win32.RegistryValueKind.String Then
-				Dim keyValueString3 As String = CType(key3.GetValue(""), String)
-				'key3.SetValue("", exeProgram + " ""%1""")
-				If keyValueString3 = (exeProgram + " ""%1""") Then
-					Microsoft.Win32.Registry.ClassesRoot.DeleteSubKey(className + "\Shell\Open\Command")
-
-					'key2 = Microsoft.Win32.Registry.ClassesRoot.CreateSubKey(className)
-					Dim keyValue2 As Object = Microsoft.Win32.Registry.ClassesRoot.GetValue(className)
-					If keyValue2 IsNot Nothing Then
-						Microsoft.Win32.Registry.ClassesRoot.DeleteSubKey(className)
-
-						'key1 = Microsoft.Win32.Registry.ClassesRoot.CreateSubKey(extension)
-						Dim keyValue1 As Object = Microsoft.Win32.Registry.ClassesRoot.GetValue(extension)
-						If keyValue1 IsNot Nothing Then
-							Microsoft.Win32.Registry.ClassesRoot.DeleteSubKey(extension)
-						End If
+			classesKey = currentUser.OpenSubKey("Software\Classes", True)
+			shellOpenCommandKey = classesKey.OpenSubKey(className + "\Shell\Open\Command")
+			If shellOpenCommandKey IsNot Nothing Then
+				If shellOpenCommandKey.GetValueKind("") = Microsoft.Win32.RegistryValueKind.String Then
+					Dim keyValueString3 As String = CType(shellOpenCommandKey.GetValue(""), String)
+					If exeProgram = "" OrElse keyValueString3 = (exeProgram + " ""%1""") Then
+						classesKey.DeleteSubKey(className + "\Shell\Open\Command", False)
+						classesKey.DeleteSubKey(className + "\Shell\Open", False)
+						classesKey.DeleteSubKey(className + "\Shell", False)
+						classesKey.DeleteSubKey(className + "\DefaultIcon", False)
+						classesKey.DeleteSubKey(className, False)
+						classesKey.DeleteSubKey(extension, False)
 					End If
 				End If
 			End If
-			key3.Close()
 		Catch ex As Exception
 			Return False
-			'Finally
+		Finally
+			If Not classesKey Is Nothing Then classesKey.Close()
+			'If Not key1 Is Nothing Then key1.Close()
+			'If Not key2 Is Nothing Then key2.Close()
+			If Not shellOpenCommandKey Is Nothing Then shellOpenCommandKey.Close()
 		End Try
 
 		' notify Windows that file associations have changed

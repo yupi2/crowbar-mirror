@@ -182,15 +182,15 @@ Public Class AppSettings
 		End Set
 	End Property
 
-	Public Property UnpackExtractIsChecked() As Boolean
-		Get
-			Return Me.theUnpackExtractIsChecked
-		End Get
-		Set(ByVal value As Boolean)
-			Me.theUnpackExtractIsChecked = value
-			NotifyPropertyChanged("UnpackExtractIsChecked")
-		End Set
-	End Property
+	'Public Property UnpackExtractIsChecked() As Boolean
+	'	Get
+	'		Return Me.theUnpackExtractIsChecked
+	'	End Get
+	'	Set(ByVal value As Boolean)
+	'		Me.theUnpackExtractIsChecked = value
+	'		NotifyPropertyChanged("UnpackExtractIsChecked")
+	'	End Set
+	'End Property
 
 	Public Property UnpackLogFileIsChecked() As Boolean
 		Get
@@ -742,13 +742,27 @@ Public Class AppSettings
 		End Set
 	End Property
 
+	Public Property OptionsAutoOpenVpkFileIsChecked() As Boolean
+		Get
+			Return Me.theOptionsAutoOpenVpkFileIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			If Me.theOptionsAutoOpenVpkFileIsChecked <> value Then
+				Me.theOptionsAutoOpenVpkFileIsChecked = value
+				NotifyPropertyChanged("OptionsAutoOpenVpkFileIsChecked")
+			End If
+		End Set
+	End Property
+
 	Public Property OptionsAutoOpenMdlFileIsChecked() As Boolean
 		Get
 			Return Me.theOptionsAutoOpenMdlFileIsChecked
 		End Get
 		Set(ByVal value As Boolean)
-			Me.theOptionsAutoOpenMdlFileIsChecked = value
-			NotifyPropertyChanged("OptionsAutoOpenMdlFileIsChecked")
+			If Me.theOptionsAutoOpenMdlFileIsChecked <> value Then
+				Me.theOptionsAutoOpenMdlFileIsChecked = value
+				NotifyPropertyChanged("OptionsAutoOpenMdlFileIsChecked")
+			End If
 		End Set
 	End Property
 
@@ -769,6 +783,16 @@ Public Class AppSettings
 		Set(ByVal value As Boolean)
 			Me.theOptionsAutoOpenQcFileIsChecked = value
 			NotifyPropertyChanged("OptionsAutoOpenQcFileIsChecked")
+		End Set
+	End Property
+
+	Public Property OptionsDragAndDropVpkFileIsChecked() As Boolean
+		Get
+			Return Me.theOptionsDragAndDropVpkFileIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theOptionsDragAndDropVpkFileIsChecked = value
+			NotifyPropertyChanged("OptionsDragAndDropVpkFileIsChecked")
 		End Set
 	End Property
 
@@ -943,7 +967,7 @@ Public Class AppSettings
 
 	Public Sub SetDefaultUnpackOptions()
 		'NOTE: Call the properties so the NotifyPropertyChanged events are raised.
-		Me.UnpackExtractIsChecked = False
+		'Me.UnpackExtractIsChecked = False
 		Me.UnpackLogFileIsChecked = False
 	End Sub
 
@@ -997,6 +1021,7 @@ Public Class AppSettings
 
 	Public Sub SetDefaultOptionsAutoOpenOptions()
 		'NOTE: Call the properties so the NotifyPropertyChanged events are raised.
+		Me.OptionsAutoOpenVpkFileIsChecked = False
 		Me.OptionsAutoOpenMdlFileIsChecked = False
 		Me.OptionsAutoOpenMdlFileOption = ActionType.Decompile
 		Me.OptionsAutoOpenQcFileIsChecked = False
@@ -1004,6 +1029,7 @@ Public Class AppSettings
 
 	Public Sub SetDefaultOptionsDragAndDropOptions()
 		'NOTE: Call the properties so the NotifyPropertyChanged events are raised.
+		Me.OptionsDragAndDropVpkFileIsChecked = True
 		Me.OptionsDragAndDropMdlFileIsChecked = True
 		Me.OptionsDragAndDropMdlFileOption = ActionType.Decompile
 		Me.OptionsDragAndDropQcFileIsChecked = True
@@ -1062,7 +1088,7 @@ Public Class AppSettings
 	Private theUnpackVpkPathFileName As String
 	Private theUnpackGameSetupSelectedIndex As Integer
 
-	Private theUnpackExtractIsChecked As Boolean
+	'Private theUnpackExtractIsChecked As Boolean
 	Private theUnpackLogFileIsChecked As Boolean
 
 	Private theUnpackMode As ActionMode
@@ -1146,13 +1172,13 @@ Public Class AppSettings
 
 	' Options tab
 
-	'Private theOptionsAutoOpenVpkFileIsChecked As Boolean
+	Private theOptionsAutoOpenVpkFileIsChecked As Boolean
 	Private theOptionsAutoOpenMdlFileIsChecked As Boolean
 	Private theOptionsAutoOpenMdlFileOption As ActionType
 	Private theOptionsAutoOpenQcFileIsChecked As Boolean
 	'Private theOptionsAutoOpenQcFileOption As ActionType
 
-	'Private theOptionsDragAndDropVpkFileIsChecked As Boolean
+	Private theOptionsDragAndDropVpkFileIsChecked As Boolean
 	Private theOptionsDragAndDropMdlFileIsChecked As Boolean
 	Private theOptionsDragAndDropMdlFileOption As ActionType
 	Private theOptionsDragAndDropQcFileIsChecked As Boolean

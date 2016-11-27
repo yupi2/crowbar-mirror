@@ -15,6 +15,16 @@ Module Main
 		' Set the unhandled exception mode to call Application.ThreadException event for all Windows Forms exceptions.
 		Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException)
 
+		'Dim appUniqueIdentifier As String
+		'Dim appMutex As System.Threading.Mutex
+		'appUniqueIdentifier = Application.ExecutablePath.Replace("\", "_")
+		'appMutex = New System.Threading.Mutex(False, appUniqueIdentifier)
+		'If appMutex.WaitOne(0, False) = False Then
+		'	appMutex.Close()
+		'	appMutex = Nothing
+		'	'MessageBox.Show("Another instance is already running!")
+		'	Win32Api.PostMessage(CType(Win32Api.WindowsMessages.HWND_BROADCAST, IntPtr), appUniqueWindowsMessageIdentifier, IntPtr.Zero, IntPtr.Zero)
+		'Else
 		'NOTE: Use the Windows Vista and later visual styles (such as rounded buttons).
 		Application.EnableVisualStyles()
 		'NOTE: Needed for keeping Label and Button text rendering correctly.
@@ -29,6 +39,7 @@ Module Main
 		'Finally
 		'End Try
 		TheApp.Dispose()
+		'End If
 
 		Return 0
 	End Function

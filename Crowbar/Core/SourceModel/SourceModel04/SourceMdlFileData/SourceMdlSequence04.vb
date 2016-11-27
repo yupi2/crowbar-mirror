@@ -1,19 +1,16 @@
 ﻿Public Class SourceMdlSequence04
 
-	' 342 bytes for scienceeat.mdl; 264 for greendoc.mdl; 270 for player.mdl
-
-	'Public unknownInt01 As Integer
 	Public frameIndexAsSingle As Double
 	Public unknown(10) As Integer
-	'Public unknownSingle01 As Double
-	'Public unknownSingle02 As Double
-	'Public unknownSingle03 As Double
-	Public positionScaleX As Short
-	Public positionScaleY As Short
-	Public positionScaleZ As Short
-	Public rotationScaleX As Short
-	Public rotationScaleY As Short
-	Public rotationScaleZ As Short
+	Public unknownSingle01 As Double
+	Public unknownSingle02 As Double
+	Public unknownSingle03 As Double
+	'Public positionScaleX As Short
+	'Public positionScaleY As Short
+	'Public positionScaleZ As Short
+	'Public rotationScaleX As Short
+	'Public rotationScaleY As Short
+	'Public rotationScaleZ As Short
 
 	Public thePositionsAndRotations As List(Of SourceMdlSequenceValue04)
 

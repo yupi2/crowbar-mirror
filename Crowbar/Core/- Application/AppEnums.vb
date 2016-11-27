@@ -31,10 +31,11 @@ Public Module AppEnums
 	Public Enum ActionType
 		<Description("Unknown")> Unknown
 		<Description("Unpack")> Unpack
-		<Description("View")> View
+		<Description("Preview")> Preview
 		<Description("Decompile")> Decompile
 		<Description("Edit")> Edit
 		<Description("Compile")> Compile
+		<Description("View")> View
 		<Description("Pack")> Pack
 		'<Description("Release")> Release
 		'<Description("Options")> Options
@@ -46,7 +47,10 @@ Public Module AppEnums
 	End Enum
 
 	Public Enum VpkAppAction
+		Undefined
 		Extract
+		ExtractAndOpen
+		ExtractToTemp
 		Insert
 		List
 		Pack

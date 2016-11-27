@@ -5,8 +5,8 @@ Public Class SourceModel49
 
 #Region "Creation and Destruction"
 
-	Public Sub New(ByVal mdlPathFileName As String)
-		MyBase.New(mdlPathFileName)
+	Public Sub New(ByVal mdlPathFileName As String, ByVal mdlVersion As Integer)
+		MyBase.New(mdlPathFileName, mdlVersion)
 	End Sub
 
 #End Region
@@ -270,6 +270,19 @@ Public Class SourceModel49
 		Return textureFileNames
 	End Function
 
+	'Public Overrides Function GetSequenceInfo() As List(Of String)
+	'	Dim sequenceFileNames As New List(Of String)()
+
+	'	For i As Integer = 0 To Me.theMdlFileData.theSequenceDescs.Count - 1
+	'		Dim aSequence As SourceMdlSequenceDesc
+	'		aSequence = Me.theMdlFileData.theSequenceDescs(i)
+
+	'		sequenceFileNames.Add(aSequence.theName)
+	'	Next
+
+	'	Return sequenceFileNames
+	'End Function
+
 #End Region
 
 #Region "Private Methods"
@@ -329,12 +342,7 @@ Public Class SourceModel49
 		End If
 
 		' Read what WriteSequenceInfo() writes.
-		If Me.theMdlFileData.localSequenceCount > 0 Then
-			Try
-				mdlFile.ReadSequenceDescs()
-			Catch
-			End Try
-		End If
+		mdlFile.ReadSequenceDescs()
 		mdlFile.ReadLocalNodeNames()
 		mdlFile.ReadLocalNodes()
 
@@ -375,7 +383,7 @@ Public Class SourceModel49
 
 		' Post-processing.
 		mdlFile.CreateFlexFrameList()
-		mdlFile.ProcessTexturePaths()
+		Common.ProcessTexturePaths(Me.theMdlFileData.theTexturePaths, Me.theMdlFileData.theTextures, Me.theMdlFileData.theModifiedTexturePaths, Me.theMdlFileData.theModifiedTextureFileNames)
 	End Sub
 
 	Protected Overrides Sub ReadPhyFile_Internal()
@@ -518,6 +526,7 @@ Public Class SourceModel49
 
 		mdlFile.ReadTexturePaths()
 		mdlFile.ReadTextures()
+		mdlFile.ReadSequenceDescs()
 	End Sub
 
 	Protected Overrides Function WriteMeshSmdFiles(ByVal modelOutputPath As String, ByVal lodStartIndex As Integer, ByVal lodStopIndex As Integer) As AppEnums.StatusMessage
@@ -623,7 +632,7 @@ Public Class SourceModel49
 	End Sub
 
 	Protected Overrides Sub WriteDeclareSequenceQciFile()
-		Dim qciFile As New SourceQcFile49(Me.theOutputFileTextWriter, Me.theQcPathFileName, Me.theMdlFileData, Me.theName)
+		Dim qciFile As New SourceQcFile49(Me.theOutputFileTextWriter, Me.theMdlFileData, Me.theName)
 
 		Try
 			qciFile.WriteHeaderComment()

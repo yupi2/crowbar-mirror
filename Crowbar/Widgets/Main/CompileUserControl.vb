@@ -165,6 +165,8 @@ Public Class CompileUserControl
 			Else
 				TheApp.Settings.CompileQcPathFileName = openFileWdw.FileName
 			End If
+
+			Me.SetCompilerOptionsText()
 		End If
 	End Sub
 

@@ -9,5 +9,6 @@
 	Public theName As String
 	Public theFaces As List(Of SourceMdlFace04)
 	Public theTextureBmpData As List(Of Byte)
+	Public theTextureFileName As String
 
 End Class

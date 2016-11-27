@@ -5,8 +5,8 @@ Public Class SourceModel45
 
 #Region "Creation and Destruction"
 
-	Public Sub New(ByVal mdlPathFileName As String)
-		MyBase.New(mdlPathFileName)
+	Public Sub New(ByVal mdlPathFileName As String, ByVal mdlVersion As Integer)
+		MyBase.New(mdlPathFileName, mdlVersion)
 	End Sub
 
 #End Region
@@ -393,7 +393,7 @@ Public Class SourceModel45
 
 		' Post-processing.
 		mdlFile.CreateFlexFrameList()
-		mdlFile.ProcessTexturePaths()
+		Common.ProcessTexturePaths(Me.theMdlFileData.theTexturePaths, Me.theMdlFileData.theTextures, Me.theMdlFileData.theModifiedTexturePaths, Me.theMdlFileData.theModifiedTextureFileNames)
 	End Sub
 
 	Protected Overrides Sub ReadMdlFileHeader_Internal()
@@ -641,7 +641,7 @@ Public Class SourceModel45
 	End Sub
 
 	Protected Overrides Sub WriteDeclareSequenceQciFile()
-		Dim qciFile As New SourceQcFile45(Me.theOutputFileTextWriter, Me.theQcPathFileName, Me.theMdlFileData, Me.theName)
+		Dim qciFile As New SourceQcFile45(Me.theOutputFileTextWriter, Me.theMdlFileData, Me.theName)
 
 		Try
 			qciFile.WriteHeaderComment()

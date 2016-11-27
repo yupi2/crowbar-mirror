@@ -186,7 +186,7 @@
 	'NOTE: In the file, a bone weight is a 32-bit float, i.e. a Single, but is stored as Double for better writing to file.
 	Public theBoneWeights As List(Of Double)
 	Public theWeightListIndex As Integer
-	Public theAnimDescIndexes As List(Of Short)
+	'Public theAnimDescIndexes As List(Of Short)
 	Public theKeyValues As String
 
 

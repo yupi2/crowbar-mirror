@@ -107,6 +107,7 @@
     <Compile Include="Core\Decompiler\Decompiler.vb">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Core\SourceModel\- Base\Common.vb" />
     <Compile Include="Core\SourceModel\- Base\SourceMdlAnimationDescBase.vb" />
     <Compile Include="Core\SourceModel\- Base\SourceMdlFileDataBase.vb" />
     <Compile Include="Core\SourceModel\- Base\SourceMdlSequenceDescBase.vb" />
@@ -121,6 +122,7 @@
     <Compile Include="Core\SourceModel\SourceGlobal\SourceFloat8bits.vb" />
     <Compile Include="Core\SourceModel\SourceGlobal\SourceVector4D.vb" />
     <Compile Include="Core\SourceModel\SourceModel04\SourceMdlFileData\SourceMdlBodyPart04.vb" />
+    <Compile Include="Core\SourceModel\SourceModel04\SourceMdlFileData\SourceMdlFaceVertexInfo04.vb" />
     <Compile Include="Core\SourceModel\SourceModel04\SourceMdlFileData\SourceMdlFace04.vb" />
     <Compile Include="Core\SourceModel\SourceModel04\SourceMdlFileData\SourceMdlMesh04.vb" />
     <Compile Include="Core\SourceModel\SourceModel04\SourceMdlFileData\SourceMdlModel04.vb" />
@@ -232,6 +234,13 @@
     <Compile Include="Core\SourceModel\SourceModel31\SourceModule31.vb" />
     <Compile Include="Core\SourceModel\SourceModel31\SourceQcFile31.vb" />
     <Compile Include="Core\SourceModel\SourceModel31\SourceSmdFile31.vb" />
+    <Compile Include="Core\SourceModel\SourceModel36\SourceMdlFile36.vb" />
+    <Compile Include="Core\SourceModel\SourceModel36\SourceMdlFileData\SourceMdlAnimationDesc36.vb" />
+    <Compile Include="Core\SourceModel\SourceModel36\SourceMdlFileData\SourceMdlFileData36.vb" />
+    <Compile Include="Core\SourceModel\SourceModel36\SourceMdlFileData\SourceMdlSequenceDesc36.vb" />
+    <Compile Include="Core\SourceModel\SourceModel36\SourceModel36.vb" />
+    <Compile Include="Core\SourceModel\SourceModel36\SourceQcFile36.vb" />
+    <Compile Include="Core\SourceModel\SourceModel36\SourceSmdFile36.vb" />
     <Compile Include="Core\SourceModel\SourceModel45\SourceAniFile45.vb" />
     <Compile Include="Core\SourceModel\SourceModel45\SourceAniFileData\SourceAniFileData45.vb" />
     <Compile Include="Core\SourceModel\SourceModel45\SourceMdlFile45.vb" />
@@ -445,6 +454,8 @@
     <Compile Include="Core\SourceModel\FileDataCompiled\SourceVtxFileData\SourceVtxVertex.vb" />
     <Compile Include="Core\SourceModel\FileDataCompiled\SourceVtxFileData\SourceVtxFileData.vb" />
     <Compile Include="Core\SourceModel\FileDataCompiled\SourceVvdFileData\SourceVvdFixup.vb" />
+    <Compile Include="Widgets\- Application\FolderAndFileListViewItemComparer.vb" />
+    <Compile Include="Widgets\- General\FileDragDropHelper.vb" />
     <Compile Include="Widgets\- General\RichTextBoxEx.vb">
       <SubType>Component</SubType>
     </Compile>
@@ -665,16 +676,19 @@
     <Content Include="Data\Crowbar Settings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="resources\Datamodel.NET.dll" />
+    <None Include="resources\EnterArrow.png" />
     <None Include="resources\FindPrevious.png" />
     <None Include="resources\FindNext.png" />
-    <None Include="resources\SearchFolder.png" />
     <None Include="resources\crowbar_icon_large.png" />
     <None Include="resources\macaw.png" />
     <None Include="resources\crowbar_icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Core\SourceModel\SourceModel36\" />
+    <Folder Include="Core\SourceModel\SourceModel32\" />
+    <Folder Include="Core\SourceModel\SourceModel35\" />
     <Folder Include="Core\SourceModel\SourceModel52\" />
+    <Folder Include="Core\SourceModel\SourceModel57\" />
     <Folder Include="Documents\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />

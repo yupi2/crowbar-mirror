@@ -265,12 +265,13 @@ Public Class Decompiler
 			Me.UpdateProgress(1, "Decompiling """ + mdlRelativePathFileName + """ ...")
 
 			Dim model As SourceModel = Nothing
+			Dim version As Integer
 			Try
-				model = SourceModel.Create(mdlPathFileName)
+				model = SourceModel.Create(mdlPathFileName, version)
 				If model IsNot Nothing Then
-					Me.UpdateProgress(2, "Model version " + CStr(SourceModel.GetVersion()) + " detected.")
+					Me.UpdateProgress(2, "Model version " + CStr(model.Version) + " detected.")
 				Else
-					Me.UpdateProgress(2, "ERROR: Model version " + CStr(SourceModel.GetVersion()) + " not currently supported.")
+					Me.UpdateProgress(2, "ERROR: Model version " + CStr(version) + " not currently supported.")
 					Me.UpdateProgress(1, "... Decompiling """ + mdlRelativePathFileName + """ FAILED.")
 					status = StatusMessage.Error
 					Return status
@@ -493,6 +494,9 @@ Public Class Decompiler
 
 		TheApp.SmdFilesWritten.Clear()
 
+		'TEST:
+		'Me.TestWriteDmx()
+
 		status = Me.WriteQcFile(model)
 		If status = StatusMessage.Canceled Then
 			Return status
@@ -553,6 +557,21 @@ Public Class Decompiler
 
 		Return status
 	End Function
+
+	'Private Sub TestWriteDmx()
+	'	Dim currentFolder As String
+	'	currentFolder = Directory.GetCurrentDirectory()
+	'	Directory.SetCurrentDirectory(Me.theModelOutputPath)
+
+	'	Dim HelloWorld As New Datamodel.Datamodel("model", 1)		' must provide a format name (can be anything) and version
+	'	HelloWorld.Root = HelloWorld.CreateElement("my_root")
+	'	HelloWorld.Root("Hello") = "World"		' any supported attribute type can be assigned
+	'	Dim MyString As String = HelloWorld.Root.[Get](Of String)("Hello")
+
+	'	HelloWorld.Save("hello world.dmx", "binary", 2)		' must provide an encoding name and version	
+
+	'	Directory.SetCurrentDirectory(currentFolder)
+	'End Sub
 
 	Private Function WriteQcFile(ByVal model As SourceModel) As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success

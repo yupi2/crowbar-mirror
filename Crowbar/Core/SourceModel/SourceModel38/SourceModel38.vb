@@ -5,8 +5,8 @@ Public Class SourceModel38
 
 #Region "Creation and Destruction"
 
-	Public Sub New(ByVal mdlPathFileName As String)
-		MyBase.New(mdlPathFileName)
+	Public Sub New(ByVal mdlPathFileName As String, ByVal mdlVersion As Integer)
+		MyBase.New(mdlPathFileName, mdlVersion)
 	End Sub
 
 #End Region

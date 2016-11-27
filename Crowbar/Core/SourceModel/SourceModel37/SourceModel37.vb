@@ -5,12 +5,13 @@
 '          bullsquid.dx80.vtx
 '          bullsquid.phy
 Public Class SourceModel37
+	'Inherits SourceModel36
 	Inherits SourceModel29
 
 #Region "Creation and Destruction"
 
-	Public Sub New(ByVal mdlPathFileName As String)
-		MyBase.New(mdlPathFileName)
+	Public Sub New(ByVal mdlPathFileName As String, ByVal mdlVersion As Integer)
+		MyBase.New(mdlPathFileName, mdlVersion)
 	End Sub
 
 #End Region
@@ -107,13 +108,12 @@ Public Class SourceModel37
 
 	Public Overrides ReadOnly Property HasBoneAnimationData As Boolean
 		Get
-			'If Me.theMdlFileData.theAnimationDescs IsNot Nothing _
-			' AndAlso Me.theMdlFileData.theAnimationDescs.Count > 0 Then
-			'	Return True
-			'Else
-			'	Return False
-			'End If
-			Return False
+			If Me.theMdlFileData.theAnimationDescs IsNot Nothing _
+			 AndAlso Me.theMdlFileData.theAnimationDescs.Count > 0 Then
+				Return True
+			Else
+				Return False
+			End If
 		End Get
 	End Property
 
@@ -222,6 +222,44 @@ Public Class SourceModel37
 				Me.theOutputFileTextWriter.Flush()
 				Me.theOutputFileTextWriter.Close()
 			End If
+		End Try
+
+		Return status
+	End Function
+
+	Public Overrides Function WriteBoneAnimationSmdFiles(ByVal modelOutputPath As String) As AppEnums.StatusMessage
+		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+
+		Dim anAnimationDesc As SourceMdlAnimationDesc37
+		Dim smdPath As String
+		Dim smdFileName As String
+		Dim smdPathFileName As String
+
+		Try
+			For anAnimDescIndex As Integer = 0 To Me.theMdlFileData.theAnimationDescs.Count - 1
+				anAnimationDesc = Me.theMdlFileData.theAnimationDescs(anAnimDescIndex)
+
+				smdFileName = SourceFileNamesModule.GetAnimationSmdRelativePathFileName(Me.Name, anAnimationDesc.theName)
+				smdPathFileName = Path.Combine(modelOutputPath, smdFileName)
+				smdPath = FileManager.GetPath(smdPathFileName)
+				If FileManager.OutputPathIsUsable(smdPath) Then
+					Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
+					'NOTE: Check here in case writing is canceled in the above event.
+					If Me.theWritingIsCanceled Then
+						status = StatusMessage.Canceled
+						Return status
+					ElseIf Me.theWritingSingleFileIsCanceled Then
+						Me.theWritingSingleFileIsCanceled = False
+						Continue For
+					End If
+
+					Me.WriteBoneAnimationSmdFile(smdPathFileName, Nothing, anAnimationDesc)
+
+					Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, smdPathFileName)
+				End If
+			Next
+		Catch ex As Exception
+			Dim debug As Integer = 4242
 		End Try
 
 		Return status
@@ -508,6 +546,20 @@ Public Class SourceModel37
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		Finally
+		End Try
+	End Sub
+
+	Protected Overrides Sub WriteBoneAnimationSmdFile(ByVal aSequenceDesc As SourceMdlSequenceDescBase, ByVal anAnimationDesc As SourceMdlAnimationDescBase)
+		Dim smdFile As New SourceSmdFile37(Me.theOutputFileTextWriter, Me.theMdlFileData)
+
+		Try
+			smdFile.WriteHeaderComment()
+
+			smdFile.WriteHeaderSection()
+			smdFile.WriteNodesSection(-1)
+			smdFile.WriteSkeletonSectionForAnimation(aSequenceDesc, anAnimationDesc)
+		Catch ex As Exception
+			Dim debug As Integer = 4242
 		End Try
 	End Sub
 

@@ -24,7 +24,7 @@ Partial Class ViewUserControl
 	Private Sub InitializeComponent()
 		Me.components = New System.ComponentModel.Container()
 		Me.ViewButton = New System.Windows.Forms.Button()
-		Me.MdlPathFileTextBox = New Crowbar.TextBoxEx()
+		Me.MdlPathFileNameTextBox = New Crowbar.TextBoxEx()
 		Me.BrowseForMdlFileButton = New System.Windows.Forms.Button()
 		Me.Label1 = New System.Windows.Forms.Label()
 		Me.Panel2 = New System.Windows.Forms.Panel()
@@ -57,14 +57,14 @@ Partial Class ViewUserControl
 		Me.ViewButton.Text = "View"
 		Me.ViewButton.UseVisualStyleBackColor = True
 		'
-		'MdlPathFileTextBox
+		'MdlPathFileNameTextBox
 		'
-		Me.MdlPathFileTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+		Me.MdlPathFileNameTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.MdlPathFileTextBox.Location = New System.Drawing.Point(58, 5)
-		Me.MdlPathFileTextBox.Name = "MdlPathFileTextBox"
-		Me.MdlPathFileTextBox.Size = New System.Drawing.Size(596, 20)
-		Me.MdlPathFileTextBox.TabIndex = 1
+		Me.MdlPathFileNameTextBox.Location = New System.Drawing.Point(58, 5)
+		Me.MdlPathFileNameTextBox.Name = "MdlPathFileNameTextBox"
+		Me.MdlPathFileNameTextBox.Size = New System.Drawing.Size(596, 20)
+		Me.MdlPathFileNameTextBox.TabIndex = 1
 		'
 		'BrowseForMdlFileButton
 		'
@@ -88,7 +88,7 @@ Partial Class ViewUserControl
 		'Panel2
 		'
 		Me.Panel2.Controls.Add(Me.Label1)
-		Me.Panel2.Controls.Add(Me.MdlPathFileTextBox)
+		Me.Panel2.Controls.Add(Me.MdlPathFileNameTextBox)
 		Me.Panel2.Controls.Add(Me.BrowseForMdlFileButton)
 		Me.Panel2.Controls.Add(Me.GotoMdlFileButton)
 		Me.Panel2.Controls.Add(Me.SplitContainer1)
@@ -251,7 +251,7 @@ Partial Class ViewUserControl
 
 	End Sub
 	Friend WithEvents ViewButton As System.Windows.Forms.Button
-	Friend WithEvents MdlPathFileTextBox As TextBoxEx
+	Friend WithEvents MdlPathFileNameTextBox As TextBoxEx
 	Friend WithEvents BrowseForMdlFileButton As System.Windows.Forms.Button
 	Friend WithEvents Label1 As System.Windows.Forms.Label
 	Friend WithEvents Panel2 As System.Windows.Forms.Panel

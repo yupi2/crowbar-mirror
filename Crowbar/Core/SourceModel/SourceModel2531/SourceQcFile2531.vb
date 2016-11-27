@@ -575,8 +575,8 @@ Public Class SourceQcFile2531
 		If Me.theMdlFileData.theSequences IsNot Nothing AndAlso Me.theMdlFileData.theSequences.Count > 0 Then
 			Me.theOutputFileStreamWriter.WriteLine()
 
-			For sequenceGroupIndex As Integer = 0 To Me.theMdlFileData.theSequences.Count - 1
-				aSequence = Me.theMdlFileData.theSequences(sequenceGroupIndex)
+			For sequenceIndex As Integer = 0 To Me.theMdlFileData.theSequences.Count - 1
+				aSequence = Me.theMdlFileData.theSequences(sequenceIndex)
 
 				line = "$Sequence "
 				line += """"

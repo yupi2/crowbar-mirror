@@ -24,6 +24,9 @@ Public Class SourcePhyFile37
 		Me.thePhyFileData.size = Me.theInputFileReader.ReadInt32()
 		Me.thePhyFileData.id = Me.theInputFileReader.ReadInt32()
 		Me.thePhyFileData.solidCount = Me.theInputFileReader.ReadInt32()
+		If Me.thePhyFileData.solidCount = 1 Then
+			Me.thePhyFileData.theSourcePhyIsCollisionModel = True
+		End If
 		Me.thePhyFileData.checksum = Me.theInputFileReader.ReadInt32()
 
 		'NOTE: If header size ever increases, this will at least skip over extra stuff.
@@ -92,15 +95,16 @@ Public Class SourcePhyFile37
 				'vertexDataStreamPosition = Me.theInputFileReader.BaseStream.Position + faceDataOffset - 4
 				vertexDataStreamPosition = faceDataStreamPosition + vertexDataOffset
 
-				'faceSection.theBoneIndex = Me.theInputFileReader.ReadInt32()
-				'TODO: Verify why this is using "- 1". Needed for L4D2 survivor_teenangst.
-				faceSection.theBoneIndex = Me.theInputFileReader.ReadInt32() - 1
-				If faceSection.theBoneIndex < 0 Then
-					faceSection.theBoneIndex = 0
-					Me.thePhyFileData.theSourcePhyIsCollisionModel = True
-				End If
+				'TODO: This does not seem to be used by MDL v37.
+				faceSection.theBoneIndex = Me.theInputFileReader.ReadInt32()
+				'faceSection.theBoneIndex = Me.theInputFileReader.ReadInt32() - 1
+				'If faceSection.theBoneIndex < 0 Then
+				'	faceSection.theBoneIndex = 0
+				'	Me.thePhyFileData.theSourcePhyIsCollisionModel = True
+				'End If
 
-				Me.theInputFileReader.ReadInt32()
+				Dim test As Integer
+				test = Me.theInputFileReader.ReadInt32()
 
 				'0c 00 00 00    count of lines after this (00 - 0b)
 				triangleCount = Me.theInputFileReader.ReadInt32()

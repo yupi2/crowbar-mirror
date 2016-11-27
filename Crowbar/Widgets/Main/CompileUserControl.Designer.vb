@@ -235,9 +235,9 @@ Partial Class CompileUserControl
 		Me.LogFileCheckBox.AutoSize = True
 		Me.LogFileCheckBox.Location = New System.Drawing.Point(6, 52)
 		Me.LogFileCheckBox.Name = "LogFileCheckBox"
-		Me.LogFileCheckBox.Size = New System.Drawing.Size(60, 17)
+		Me.LogFileCheckBox.Size = New System.Drawing.Size(105, 17)
 		Me.LogFileCheckBox.TabIndex = 1
-		Me.LogFileCheckBox.Text = "Log file"
+		Me.LogFileCheckBox.Text = "Write log to a file"
 		Me.ToolTip1.SetToolTip(Me.LogFileCheckBox, "Write compile log to a file (in same folder as QC file).")
 		Me.LogFileCheckBox.UseVisualStyleBackColor = True
 		'

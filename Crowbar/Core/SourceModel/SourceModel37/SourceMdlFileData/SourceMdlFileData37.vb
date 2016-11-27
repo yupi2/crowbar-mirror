@@ -246,6 +246,7 @@
 	Public theHitboxSets As List(Of SourceMdlHitboxSet37)
 	Public theIkChains As List(Of SourceMdlIkChain37)
 	Public theIkLocks As List(Of SourceMdlIkLock37)
+	Public theIncludeModelFileNames As List(Of String)
 	Public theMouths As List(Of SourceMdlMouth)
 	Public thePoseParamDescs As List(Of SourceMdlPoseParamDesc)
 	Public theSequenceDescs As List(Of SourceMdlSequenceDesc37)
@@ -259,10 +260,11 @@
 	Public theModelCommandIsUsed As Boolean
 	Public theProceduralBonesCommandIsUsed As Boolean
 
+	Public theBoneNameToBoneIndexMap As New SortedList(Of String, Integer)()
 	Public theEyelidFlexFrameIndexes As List(Of Integer)
-	Public theFirstAnimationDesc As SourceMdlAnimationDesc44
+	Public theFirstAnimationDesc As SourceMdlAnimationDesc37
 	Public theFirstAnimationDescFrameLines As New SortedList(Of Integer, AnimationFrameLine)()
-	Public theFlexFrames As List(Of FlexFrame)
+	'Public theFlexFrames As List(Of FlexFrame)
 	Public theWeightLists As New List(Of SourceMdlWeightList)()
 
 End Class

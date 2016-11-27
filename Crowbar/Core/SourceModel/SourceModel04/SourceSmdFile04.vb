@@ -72,26 +72,29 @@ Public Class SourceSmdFile04
 		For boneIndex As Integer = 0 To Me.theMdlFileData.theBones.Count - 1
 			aBone = Me.theMdlFileData.theBones(boneIndex)
 
-			'If aBone.parentBoneIndex = -1 Then
-			'	position.x = aBone.positionY
-			'	position.y = -aBone.positionX
-			'	position.z = aBone.positionZ
+			position.x = aBone.position.x
+			position.y = aBone.position.y
+			position.z = aBone.position.z
+			''If aBone.parentBoneIndex = -1 Then
+			''	position.x = aBone.positionY
+			''	position.y = -aBone.positionX
+			''	position.z = aBone.positionZ
 
-			'	rotation.x = MathModule.DegreesToRadians(aBone.rotationX)
-			'	rotation.y = MathModule.DegreesToRadians(aBone.rotationY)
-			'	rotation.z = MathModule.DegreesToRadians(aBone.rotationZ) + MathModule.DegreesToRadians(-90)
-			'Else
-			position.x = aBone.positionX.TheFloatValue
-			position.y = aBone.positionY.TheFloatValue
-			position.z = aBone.positionZ.TheFloatValue
+			''	rotation.x = MathModule.DegreesToRadians(aBone.rotationX)
+			''	rotation.y = MathModule.DegreesToRadians(aBone.rotationY)
+			''	rotation.z = MathModule.DegreesToRadians(aBone.rotationZ) + MathModule.DegreesToRadians(-90)
+			''Else
+			'position.x = aBone.positionX.TheFloatValue
+			'position.y = aBone.positionY.TheFloatValue
+			'position.z = aBone.positionZ.TheFloatValue
 
-			'rotation.x = MathModule.DegreesToRadians(aBone.rotationX / 200)
-			'rotation.y = MathModule.DegreesToRadians(aBone.rotationY / 200)
-			'rotation.z = MathModule.DegreesToRadians(aBone.rotationZ / 200)
-			rotation.x = aBone.rotationX.TheFloatValue
-			rotation.y = aBone.rotationY.TheFloatValue
-			rotation.z = aBone.rotationZ.TheFloatValue
-			'End If
+			''rotation.x = MathModule.DegreesToRadians(aBone.rotationX / 200)
+			''rotation.y = MathModule.DegreesToRadians(aBone.rotationY / 200)
+			''rotation.z = MathModule.DegreesToRadians(aBone.rotationZ / 200)
+			'rotation.x = aBone.rotationX.TheFloatValue
+			'rotation.y = aBone.rotationY.TheFloatValue
+			'rotation.z = aBone.rotationZ.TheFloatValue
+			''End If
 
 			line = "    "
 			line += boneIndex.ToString(TheApp.InternalNumberFormat)
@@ -190,65 +193,60 @@ Public Class SourceSmdFile04
 	'	Me.theOutputFileStreamWriter.WriteLine(line)
 	'End Sub
 
-	'Public Sub WriteTrianglesSection(ByVal aBodyModel As SourceMdlModel04)
-	'	Dim line As String = ""
-	'	Dim materialLine As String = ""
-	'	Dim vertex1Line As String = ""
-	'	Dim vertex2Line As String = ""
-	'	Dim vertex3Line As String = ""
-	'	Dim materialIndex As Integer
-	'	Dim materialName As String
-	'	Dim aMesh As SourceMdlMesh04
-	'	Dim aTexture As SourceMdlTexture04
+	Public Sub WriteTrianglesSection(ByVal aBodyModel As SourceMdlModel04)
+		Dim line As String = ""
+		Dim materialLine As String = ""
+		Dim vertex1Line As String = ""
+		Dim vertex2Line As String = ""
+		Dim vertex3Line As String = ""
+		Dim materialName As String
+		Dim aMesh As SourceMdlMesh04
 
-	'	'triangles
-	'	line = "triangles"
-	'	Me.theOutputFileStreamWriter.WriteLine(line)
+		'triangles
+		line = "triangles"
+		Me.theOutputFileStreamWriter.WriteLine(line)
 
-	'	Try
-	'		If aBodyModel.theMeshes IsNot Nothing Then
-	'			For meshIndex As Integer = 0 To aBodyModel.theMeshes.Count - 1
-	'				aMesh = aBodyModel.theMeshes(meshIndex)
-	'				materialIndex = aMesh.skinref
-	'				aTexture = Me.theMdlFileData.theTextures(materialIndex)
-	'				materialName = aTexture.theFileName
+		Try
+			If aBodyModel.theMeshes IsNot Nothing Then
+				For meshIndex As Integer = 0 To aBodyModel.theMeshes.Count - 1
+					aMesh = aBodyModel.theMeshes(meshIndex)
+					materialName = aMesh.theTextureFileName
 
-	'				If aMesh.theVertexAndNormalIndexes IsNot Nothing Then
-	'					For groupIndex As Integer = 0 To aMesh.theVertexAndNormalIndexes.Count - 3 Step 3
-	'						materialLine = materialName
+					If aMesh.theFaces IsNot Nothing Then
+						For faceIndex As Integer = 0 To aMesh.theFaces.Count - 1
+							materialLine = materialName
 
-	'						'NOTE: Reverse the order of the vertices so the normals will be on the correct side of the face.
-	'						vertex1Line = Me.GetVertexLine(aBodyModel, aMesh.theVertexAndNormalIndexes(groupIndex + 2), aTexture)
-	'						vertex2Line = Me.GetVertexLine(aBodyModel, aMesh.theVertexAndNormalIndexes(groupIndex + 1), aTexture)
-	'						vertex3Line = Me.GetVertexLine(aBodyModel, aMesh.theVertexAndNormalIndexes(groupIndex), aTexture)
+							vertex1Line = Me.GetVertexLine(aBodyModel, aMesh, aMesh.theFaces(faceIndex).vertexInfo(0))
+							vertex2Line = Me.GetVertexLine(aBodyModel, aMesh, aMesh.theFaces(faceIndex).vertexInfo(1))
+							vertex3Line = Me.GetVertexLine(aBodyModel, aMesh, aMesh.theFaces(faceIndex).vertexInfo(2))
 
-	'						If vertex1Line.StartsWith("// ") OrElse vertex2Line.StartsWith("// ") OrElse vertex3Line.StartsWith("// ") Then
-	'							materialLine = "// " + materialLine
-	'							If Not vertex1Line.StartsWith("// ") Then
-	'								vertex1Line = "// " + vertex1Line
-	'							End If
-	'							If Not vertex2Line.StartsWith("// ") Then
-	'								vertex2Line = "// " + vertex2Line
-	'							End If
-	'							If Not vertex3Line.StartsWith("// ") Then
-	'								vertex3Line = "// " + vertex3Line
-	'							End If
-	'						End If
-	'						Me.theOutputFileStreamWriter.WriteLine(materialLine)
-	'						Me.theOutputFileStreamWriter.WriteLine(vertex1Line)
-	'						Me.theOutputFileStreamWriter.WriteLine(vertex2Line)
-	'						Me.theOutputFileStreamWriter.WriteLine(vertex3Line)
-	'					Next
-	'				End If
-	'			Next
-	'		End If
-	'	Catch ex As Exception
-	'		Dim debug As Integer = 4242
-	'	End Try
+							If vertex1Line.StartsWith("// ") OrElse vertex2Line.StartsWith("// ") OrElse vertex3Line.StartsWith("// ") Then
+								materialLine = "// " + materialLine
+								If Not vertex1Line.StartsWith("// ") Then
+									vertex1Line = "// " + vertex1Line
+								End If
+								If Not vertex2Line.StartsWith("// ") Then
+									vertex2Line = "// " + vertex2Line
+								End If
+								If Not vertex3Line.StartsWith("// ") Then
+									vertex3Line = "// " + vertex3Line
+								End If
+							End If
+							Me.theOutputFileStreamWriter.WriteLine(materialLine)
+							Me.theOutputFileStreamWriter.WriteLine(vertex1Line)
+							Me.theOutputFileStreamWriter.WriteLine(vertex2Line)
+							Me.theOutputFileStreamWriter.WriteLine(vertex3Line)
+						Next
+					End If
+				Next
+			End If
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		End Try
 
-	'	line = "end"
-	'	Me.theOutputFileStreamWriter.WriteLine(line)
-	'End Sub
+		line = "end"
+		Me.theOutputFileStreamWriter.WriteLine(line)
+	End Sub
 
 #End Region
 
@@ -258,106 +256,63 @@ Public Class SourceSmdFile04
 
 #Region "Private Methods"
 
-	'Private Function GetVertexLine(ByVal aBodyModel As SourceMdlModel04, ByVal aStripGroup As SourceMdlTriangleVertex06, ByVal aTexture As SourceMdlTexture06) As String
-	'	Dim line As String
-	'	Dim boneIndex As Integer
-	'	Dim vecin As New SourceVector
-	'	Dim rawPosition As SourceVector
-	'	Dim rawNormal As SourceVector
-	'	Dim position As New SourceVector
-	'	Dim normal As New SourceVector
-	'	Dim texCoordX As Double
-	'	Dim texCoordY As Double
+	Private Function GetVertexLine(ByVal aBodyModel As SourceMdlModel04, ByVal aMesh As SourceMdlMesh04, ByVal aVertexInfo As SourceMdlFaceVertexInfo04) As String
+		Dim line As String
+		Dim boneIndex As Integer
+		Dim aBone As SourceMdlBone04
+		Dim position As New SourceVector
+		Dim normal As New SourceVector
+		Dim texCoordX As Double
+		Dim texCoordY As Double
 
-	'	line = ""
-	'	Try
-	'		boneIndex = aBodyModel.theVertexBoneInfos(aStripGroup.vertexIndex)
-	'		Dim boneTransform As SourceBoneTransform06
-	'		boneTransform = Me.theMdlFileData.theBoneTransforms(boneIndex)
+		line = ""
+		Try
+			boneIndex = aBodyModel.theVertexes(aVertexInfo.vertexIndex).index
+			aBone = Me.theMdlFileData.theBones(boneIndex)
 
-	'		' Reverse these.
-	'		'FROM: [1999] HLStandardSDK\SourceCode\utils\studiomdl\studiomdl.c
-	'		'      void Grab_Triangles( s_model_t *pmodel )
-	'		'	// move vertex position to object space.
-	'		'	VectorSubtract( p.org, bonefixup[p.bone].worldorg, tmp );
-	'		'	VectorTransform(tmp, bonefixup[p.bone].im, p.org );
-	'		'------
-	'		'FROM: [06] HL1Alpha model viewer gsmv_beta2a_bin_src\src\src\mdldec\smdfile.cpp
-	'		'      void WriteTriangles( FILE * pFile, mstudiomodel_t * pmodel )
-	'		'			// Transform vertex position
-	'		'			vec3_t vecin, vecpos, vecnorm;
-	'		'			VectorCopy( pvert[ ptrivert->vertindex ], vecin );
-	'		'			VectorTransform( vecin,
-	'		'				g_bonetransform[ pvertbone[ ptrivert->vertindex ] ], vecpos );
-	'		MathModule.VectorCopy(aBodyModel.theModelDatas(0).theVertexes(aStripGroup.vertexIndex), vecin)
-	'		rawPosition = MathModule.VectorTransform(vecin, boneTransform.matrixColumn0, boneTransform.matrixColumn1, boneTransform.matrixColumn2, boneTransform.matrixColumn3)
+			'position.x = aBone.position.x + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.x
+			'position.y = aBone.position.y + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.y
+			'position.z = aBone.position.z + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.z
 
-	'		position.x = rawPosition.y
-	'		position.y = -rawPosition.x
-	'		position.z = rawPosition.z
+			'position.x = aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.x
+			'position.y = aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.y
+			'position.z = aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.z
 
-	'		' Reverse these.
-	'		'FROM: [1999] HLStandardSDK\SourceCode\utils\studiomdl\studiomdl.c
-	'		'      void Grab_Triangles( s_model_t *pmodel )
-	'		'	// move normal to object space.
-	'		'	VectorCopy( normal.org, tmp );
-	'		'	VectorTransform(tmp, bonefixup[p.bone].im, normal.org );
-	'		'	VectorNormalize( normal.org );
-	'		'------
-	'		'FROM: [06] HL1Alpha model viewer gsmv_beta2a_bin_src\src\src\mdldec\smdfile.cpp
-	'		'      void WriteTriangles( FILE * pFile, mstudiomodel_t * pmodel )
-	'		'			// Transform vertex normal
-	'		'			VectorCopy( pnorm[ ptrivert->normindex ], vecin );
-	'		'			VectorRotate( vecin,
-	'		'				g_bonetransform[ pnormbone[ ptrivert->normindex ] ], vecnorm );
-	'		'			VectorNormalize( vecnorm );
-	'		MathModule.VectorCopy(aBodyModel.theModelDatas(0).theNormals(aStripGroup.normalIndex), vecin)
-	'		rawNormal = MathModule.VectorRotate(vecin, boneTransform.matrixColumn0, boneTransform.matrixColumn1, boneTransform.matrixColumn2, boneTransform.matrixColumn3)
-	'		MathModule.VectorNormalize(rawNormal)
+			normal.x = aBodyModel.theNormals(aVertexInfo.vertexIndex).vector.x
+			normal.y = aBodyModel.theNormals(aVertexInfo.vertexIndex).vector.y
+			normal.z = aBodyModel.theNormals(aVertexInfo.vertexIndex).vector.z
 
-	'		normal.x = rawNormal.y
-	'		normal.y = -rawNormal.x
-	'		normal.z = rawNormal.z
+			texCoordX = aVertexInfo.s / aMesh.textureWidth
+			texCoordY = 1 - aVertexInfo.t / aMesh.textureHeight
 
-	'		' Reverse these.
-	'		'FROM: [06] HL1Alpha model viewer gsmv_beta2a_bin_src\src\src\mdldec\smdfile.cpp
-	'		'      void WriteTriangles( FILE * pFile, mstudiomodel_t * pmodel )
-	'		'		// Texture "scale" factor
-	'		'		float ss = 1.0f / ( float )pcurtexture->width;
-	'		'		float st = 1.0f / ( float )pcurtexture->height;
-	'		'				( float )ptrivert->s * ss,
-	'		'				1.0f - ( float )ptrivert->t * st );
-	'		texCoordX = aStripGroup.s / aTexture.width
-	'		texCoordY = 1 - aStripGroup.t / aTexture.height
+			line = "  "
+			line += boneIndex.ToString(TheApp.InternalNumberFormat)
 
-	'		line = "  "
-	'		line += boneIndex.ToString(TheApp.InternalNumberFormat)
+			line += " "
+			line += position.x.ToString("0.000000", TheApp.InternalNumberFormat)
+			line += " "
+			line += position.y.ToString("0.000000", TheApp.InternalNumberFormat)
+			line += " "
+			line += position.z.ToString("0.000000", TheApp.InternalNumberFormat)
 
-	'		line += " "
-	'		line += position.x.ToString("0.000000", TheApp.InternalNumberFormat)
-	'		line += " "
-	'		line += position.y.ToString("0.000000", TheApp.InternalNumberFormat)
-	'		line += " "
-	'		line += position.z.ToString("0.000000", TheApp.InternalNumberFormat)
+			line += " "
+			line += normal.x.ToString("0.000000", TheApp.InternalNumberFormat)
+			line += " "
+			line += normal.y.ToString("0.000000", TheApp.InternalNumberFormat)
+			line += " "
+			line += normal.z.ToString("0.000000", TheApp.InternalNumberFormat)
 
-	'		line += " "
-	'		line += normal.x.ToString("0.000000", TheApp.InternalNumberFormat)
-	'		line += " "
-	'		line += normal.y.ToString("0.000000", TheApp.InternalNumberFormat)
-	'		line += " "
-	'		line += normal.z.ToString("0.000000", TheApp.InternalNumberFormat)
+			line += " "
+			line += texCoordX.ToString("0.000000", TheApp.InternalNumberFormat)
+			line += " "
+			'line += aVertex.texCoordY.ToString("0.000000", TheApp.InternalNumberFormat)
+			line += (1 - texCoordY).ToString("0.000000", TheApp.InternalNumberFormat)
+		Catch ex As Exception
+			line = "// " + line
+		End Try
 
-	'		line += " "
-	'		line += texCoordX.ToString("0.000000", TheApp.InternalNumberFormat)
-	'		line += " "
-	'		'line += aVertex.texCoordY.ToString("0.000000", TheApp.InternalNumberFormat)
-	'		line += (1 - texCoordY).ToString("0.000000", TheApp.InternalNumberFormat)
-	'	Catch ex As Exception
-	'		line = "// " + line
-	'	End Try
-
-	'	Return line
-	'End Function
+		Return line
+	End Function
 
 #End Region
 

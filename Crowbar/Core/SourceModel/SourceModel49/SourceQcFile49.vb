@@ -27,6 +27,12 @@ Public Class SourceQcFile49
 		Me.theOutputFileNameWithoutExtension = Path.GetFileNameWithoutExtension(outputPathFileName)
 	End Sub
 
+	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal mdlFileData As SourceMdlFileData49, ByVal modelName As String)
+		Me.theOutputFileStreamWriter = outputFileStream
+		Me.theMdlFileData = mdlFileData
+		Me.theModelName = modelName
+	End Sub
+
 #End Region
 
 #Region "Delegates"

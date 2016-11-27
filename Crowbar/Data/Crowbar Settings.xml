@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <AppSettings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SelectedGameSetupIndex>5</SelectedGameSetupIndex>
   <GameSetups>
     <GameSetup>
       <GameName>Alien Swarm</GameName>
@@ -22,6 +21,14 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Aperture Tag\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Aperture Tag\bin\hlmv.exe</ViewerPathFileName>
+    </GameSetup>
+    <GameSetup>
+      <GameName>Black Mesa</GameName>
+      <GamePathFileName>C:\Program Files (x86)\Steam\steamapps\common\Black Mesa\bms\gameinfo.txt</GamePathFileName>
+      <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
+      <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Black Mesa\bin\studiomdl.exe</CompilerPathFileName>
+      <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Black Mesa\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Black Mesa\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Blade Symphony</GameName>

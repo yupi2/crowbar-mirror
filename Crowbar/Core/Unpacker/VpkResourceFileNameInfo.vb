@@ -45,6 +45,26 @@ Public Class VpkResourceFileNameInfo
 		End Set
 	End Property
 
+	Public Property Extension() As String
+		Get
+			Return Me.theExtension
+		End Get
+		Set(ByVal value As String)
+			Me.theExtension = value
+			NotifyPropertyChanged("Extension")
+		End Set
+	End Property
+
+	Public Property IsFolder() As Boolean
+		Get
+			Return Me.theResourceFileIsFolder
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theResourceFileIsFolder = value
+			NotifyPropertyChanged("IsFolder")
+		End Set
+	End Property
+
 #End Region
 
 #Region "Events"
@@ -68,6 +88,9 @@ Public Class VpkResourceFileNameInfo
 	Private theName As String
 	Private theSize As Long
 	Private theType As String
+	Private theExtension As String
+
+	Private theResourceFileIsFolder As Boolean
 
 #End Region
 

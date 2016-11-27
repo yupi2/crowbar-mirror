@@ -37,6 +37,7 @@ Partial Class DecompileUserControl
 		Me.OutputSubfolderNameRadioButton = New System.Windows.Forms.RadioButton()
 		Me.OptionsGroupBox = New System.Windows.Forms.GroupBox()
 		Me.Panel1 = New System.Windows.Forms.Panel()
+		Me.RemovePathFromMaterialFileNamesCheckBox = New System.Windows.Forms.CheckBox()
 		Me.DeclareSequenceQciCheckBox = New System.Windows.Forms.CheckBox()
 		Me.SkinFamilyOnSingleLineCheckBox = New System.Windows.Forms.CheckBox()
 		Me.TextureBmpFilesCheckBox = New System.Windows.Forms.CheckBox()
@@ -71,7 +72,6 @@ Partial Class DecompileUserControl
 		Me.DecompiledFilesComboBox = New System.Windows.Forms.ComboBox()
 		Me.GotoDecompiledFileButton = New System.Windows.Forms.Button()
 		Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-		Me.RemovePathFromMaterialFileNamesCheckBox = New System.Windows.Forms.CheckBox()
 		Me.OutputFolderGroupBox.SuspendLayout()
 		Me.OptionsGroupBox.SuspendLayout()
 		Me.Panel1.SuspendLayout()
@@ -252,6 +252,17 @@ Partial Class DecompileUserControl
 		Me.Panel1.Size = New System.Drawing.Size(772, 237)
 		Me.Panel1.TabIndex = 11
 		'
+		'RemovePathFromMaterialFileNamesCheckBox
+		'
+		Me.RemovePathFromMaterialFileNamesCheckBox.AutoSize = True
+		Me.RemovePathFromMaterialFileNamesCheckBox.Location = New System.Drawing.Point(20, 95)
+		Me.RemovePathFromMaterialFileNamesCheckBox.Name = "RemovePathFromMaterialFileNamesCheckBox"
+		Me.RemovePathFromMaterialFileNamesCheckBox.Size = New System.Drawing.Size(202, 17)
+		Me.RemovePathFromMaterialFileNamesCheckBox.TabIndex = 41
+		Me.RemovePathFromMaterialFileNamesCheckBox.Text = "Remove path from material file names"
+		Me.ToolTip1.SetToolTip(Me.RemovePathFromMaterialFileNamesCheckBox, "Write the decompile log to a file.")
+		Me.RemovePathFromMaterialFileNamesCheckBox.UseVisualStyleBackColor = True
+		'
 		'DeclareSequenceQciCheckBox
 		'
 		Me.DeclareSequenceQciCheckBox.AutoSize = True
@@ -338,9 +349,9 @@ Partial Class DecompileUserControl
 		Me.LogFileCheckBox.AutoSize = True
 		Me.LogFileCheckBox.Location = New System.Drawing.Point(565, 72)
 		Me.LogFileCheckBox.Name = "LogFileCheckBox"
-		Me.LogFileCheckBox.Size = New System.Drawing.Size(60, 17)
+		Me.LogFileCheckBox.Size = New System.Drawing.Size(105, 17)
 		Me.LogFileCheckBox.TabIndex = 13
-		Me.LogFileCheckBox.Text = "Log file"
+		Me.LogFileCheckBox.Text = "Write log to a file"
 		Me.ToolTip1.SetToolTip(Me.LogFileCheckBox, "Write the decompile log to a file.")
 		Me.LogFileCheckBox.UseVisualStyleBackColor = True
 		'
@@ -624,17 +635,6 @@ Partial Class DecompileUserControl
 		Me.GotoDecompiledFileButton.TabIndex = 4
 		Me.GotoDecompiledFileButton.Text = "Goto"
 		Me.GotoDecompiledFileButton.UseVisualStyleBackColor = True
-		'
-		'RemovePathFromMaterialFileNamesCheckBox
-		'
-		Me.RemovePathFromMaterialFileNamesCheckBox.AutoSize = True
-		Me.RemovePathFromMaterialFileNamesCheckBox.Location = New System.Drawing.Point(20, 95)
-		Me.RemovePathFromMaterialFileNamesCheckBox.Name = "RemovePathFromMaterialFileNamesCheckBox"
-		Me.RemovePathFromMaterialFileNamesCheckBox.Size = New System.Drawing.Size(202, 17)
-		Me.RemovePathFromMaterialFileNamesCheckBox.TabIndex = 41
-		Me.RemovePathFromMaterialFileNamesCheckBox.Text = "Remove path from material file names"
-		Me.ToolTip1.SetToolTip(Me.RemovePathFromMaterialFileNamesCheckBox, "Write the decompile log to a file.")
-		Me.RemovePathFromMaterialFileNamesCheckBox.UseVisualStyleBackColor = True
 		'
 		'DecompileUserControl
 		'

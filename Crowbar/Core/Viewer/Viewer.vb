@@ -245,9 +245,10 @@ Public Class Viewer
 
 	Private Sub ShowDataFromMdlFile()
 		Dim model As SourceModel = Nothing
+		Dim version As Integer
 		Try
 			If File.Exists(Me.theInputMdlPathName) Then
-				model = SourceModel.Create(Me.theInputMdlPathName)
+				model = SourceModel.Create(Me.theInputMdlPathName, version)
 				If model IsNot Nothing Then
 					Dim textLines As List(Of String)
 					textLines = model.GetOverviewTextLines(Me.theInputMdlPathName)
@@ -256,7 +257,7 @@ Public Class Viewer
 						Me.UpdateProgress(1, aTextLine)
 					Next
 				Else
-					Me.UpdateProgress(1, "ERROR: Model version not currently supported: " + CStr(SourceModel.GetVersion()))
+					Me.UpdateProgress(1, "ERROR: Model version not currently supported: " + CStr(version))
 				End If
 			Else
 				Me.UpdateProgress(1, "ERROR: Model file not found: " + """" + Me.theInputMdlPathName + """")
@@ -277,23 +278,29 @@ Public Class Viewer
 	Private Sub RunHlmvApp(ByVal viewerIsOpeningModel As Boolean)
 		Dim modelViewerPathFileName As String
 		Dim gamePath As String
+		Dim gameFileName As String
 		Dim gameModelsPath As String
 		Dim currentFolder As String
 
 		Dim gameSetup As GameSetup
 		gameSetup = TheApp.Settings.GameSetups(Me.theGameSetupSelectedIndex)
 		gamePath = FileManager.GetPath(gameSetup.GamePathFileName)
+		gameFileName = Path.GetFileName(gameSetup.GamePathFileName)
 		'modelViewerPathFileName = Path.Combine(FileManager.GetPath(gameSetup.CompilerPathFileName), "hlmv.exe")
 		modelViewerPathFileName = gameSetup.ViewerPathFileName
 		gameModelsPath = Path.Combine(gamePath, "models")
+
+		'TODO: Portal game does not have a "models" folder, so probably should create it.
 
 		currentFolder = Directory.GetCurrentDirectory()
 		Directory.SetCurrentDirectory(gameModelsPath)
 
 		Dim arguments As String = ""
-		arguments += " -game """
-		arguments += gamePath
-		arguments += """"
+		If gameFileName = "gameinfo.txt" Then
+			arguments += " -game """
+			arguments += gamePath
+			arguments += """"
+		End If
 		If viewerIsOpeningModel Then
 			arguments += " """
 			If Me.theInputMdlIsViewedAsReplacement Then
@@ -356,13 +363,14 @@ Public Class Viewer
 
 			If File.Exists(replacementMdlPathFileName) Then
 				Dim model As SourceModel = Nothing
+				Dim version As Integer
 				Try
-					model = SourceModel.Create(Me.theInputMdlPathName)
+					model = SourceModel.Create(Me.theInputMdlPathName, version)
 					If model IsNot Nothing Then
 						model.WriteMdlFileNameToMdlFile(replacementMdlPathFileName, replacementMdlRelativePathFileName)
 						model.WriteAniFileNameToMdlFile(replacementMdlPathFileName, replacementMdlRelativePathFileName)
 					Else
-						Me.WriteErrorMessage("Model version not currently supported: " + CStr(SourceModel.GetVersion()))
+						Me.WriteErrorMessage("Model version not currently supported: " + CStr(version))
 						Return ""
 					End If
 				Catch ex As FormatException

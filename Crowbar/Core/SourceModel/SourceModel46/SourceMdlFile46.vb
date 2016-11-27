@@ -497,6 +497,7 @@ Public Class SourceMdlFile46
 
 				Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "theMdlFileData.theBones alignment")
 			Catch
+				Dim debug As Integer = 4242
 			End Try
 		End If
 	End Sub
@@ -3844,19 +3845,6 @@ Public Class SourceMdlFile46
 					Next
 				End If
 			Next
-		End If
-	End Sub
-
-	Public Sub ProcessTexturePaths()
-		For Each aTexturePath As String In Me.theMdlFileData.theTexturePaths
-			Me.theMdlFileData.theModifiedTexturePaths.Add(aTexturePath)
-		Next
-		For Each aTexture As SourceMdlTexture In Me.theMdlFileData.theTextures
-			Me.theMdlFileData.theModifiedTextureFileNames.Add(aTexture.thePathFileName)
-		Next
-
-		If TheApp.Settings.DecompileRemovePathFromSmdMaterialFileNamesIsChecked Then
-			SourceFileNamesModule.CopyPathsFromTextureFileNamesToTexturePaths(Me.theMdlFileData.theModifiedTexturePaths, Me.theMdlFileData.theModifiedTextureFileNames)
 		End If
 	End Sub
 

@@ -23,10 +23,11 @@ Partial Class UnpackUserControl
 	<System.Diagnostics.DebuggerStepThrough()> _
 	Private Sub InitializeComponent()
 		Me.components = New System.ComponentModel.Container()
-		Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+		Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
 		Me.Panel2 = New System.Windows.Forms.Panel()
 		Me.ContainerTypeComboBox = New System.Windows.Forms.ComboBox()
 		Me.Label1 = New System.Windows.Forms.Label()
+		Me.VpkPathFileNameTextBox = New Crowbar.TextBoxEx()
 		Me.BrowseForVpkPathFolderOrFileNameButton = New System.Windows.Forms.Button()
 		Me.GotoVpkButton = New System.Windows.Forms.Button()
 		Me.OutputFolderGroupBox = New System.Windows.Forms.GroupBox()
@@ -52,6 +53,8 @@ Partial Class UnpackUserControl
 		Me.SelectionPathTextBox = New System.Windows.Forms.TextBox()
 		Me.SplitContainer3 = New System.Windows.Forms.SplitContainer()
 		Me.VpkTreeView = New System.Windows.Forms.TreeView()
+		Me.ImageList1 = New System.Windows.Forms.ImageList(Me.components)
+		Me.VpkListView = New System.Windows.Forms.ListView()
 		Me.VpkDataGridView = New System.Windows.Forms.DataGridView()
 		Me.OptionsGroupBox = New System.Windows.Forms.GroupBox()
 		Me.Panel1 = New System.Windows.Forms.Panel()
@@ -68,13 +71,12 @@ Partial Class UnpackUserControl
 		Me.SkipCurrentVpkButton = New System.Windows.Forms.Button()
 		Me.CancelUnpackButton = New System.Windows.Forms.Button()
 		Me.UseAllInDecompileButton = New System.Windows.Forms.Button()
+		Me.UnpackerLogTextBox = New Crowbar.RichTextBoxEx()
 		Me.UnpackedFilesComboBox = New System.Windows.Forms.ComboBox()
 		Me.UseInViewButton = New System.Windows.Forms.Button()
 		Me.UseInDecompileButton = New System.Windows.Forms.Button()
 		Me.GotoUnpackedFileButton = New System.Windows.Forms.Button()
 		Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-		Me.VpkPathFileNameTextBox = New Crowbar.TextBoxEx()
-		Me.UnpackerLogTextBox = New Crowbar.RichTextBoxEx()
 		Me.Panel2.SuspendLayout()
 		Me.OutputFolderGroupBox.SuspendLayout()
 		CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -130,6 +132,15 @@ Partial Class UnpackUserControl
 		Me.Label1.Size = New System.Drawing.Size(88, 13)
 		Me.Label1.TabIndex = 1
 		Me.Label1.Text = "VPK file or folder:"
+		'
+		'VpkPathFileNameTextBox
+		'
+		Me.VpkPathFileNameTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.VpkPathFileNameTextBox.Location = New System.Drawing.Point(97, 5)
+		Me.VpkPathFileNameTextBox.Name = "VpkPathFileNameTextBox"
+		Me.VpkPathFileNameTextBox.Size = New System.Drawing.Size(557, 20)
+		Me.VpkPathFileNameTextBox.TabIndex = 2
 		'
 		'BrowseForVpkPathFolderOrFileNameButton
 		'
@@ -402,6 +413,7 @@ Partial Class UnpackUserControl
 		'
 		'SplitContainer3.Panel2
 		'
+		Me.SplitContainer3.Panel2.Controls.Add(Me.VpkListView)
 		Me.SplitContainer3.Panel2.Controls.Add(Me.VpkDataGridView)
 		Me.SplitContainer3.Size = New System.Drawing.Size(488, 196)
 		Me.SplitContainer3.SplitterDistance = 162
@@ -411,10 +423,34 @@ Partial Class UnpackUserControl
 		'
 		Me.VpkTreeView.Dock = System.Windows.Forms.DockStyle.Fill
 		Me.VpkTreeView.HideSelection = False
+		Me.VpkTreeView.ImageIndex = 0
+		Me.VpkTreeView.ImageList = Me.ImageList1
 		Me.VpkTreeView.Location = New System.Drawing.Point(0, 0)
 		Me.VpkTreeView.Name = "VpkTreeView"
+		Me.VpkTreeView.SelectedImageIndex = 0
 		Me.VpkTreeView.Size = New System.Drawing.Size(162, 196)
 		Me.VpkTreeView.TabIndex = 0
+		'
+		'ImageList1
+		'
+		Me.ImageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit
+		Me.ImageList1.ImageSize = New System.Drawing.Size(16, 16)
+		Me.ImageList1.TransparentColor = System.Drawing.Color.Transparent
+		'
+		'VpkListView
+		'
+		Me.VpkListView.AllowColumnReorder = True
+		Me.VpkListView.Dock = System.Windows.Forms.DockStyle.Fill
+		Me.VpkListView.HideSelection = False
+		Me.VpkListView.Location = New System.Drawing.Point(0, 0)
+		Me.VpkListView.Name = "VpkListView"
+		Me.VpkListView.ShowGroups = False
+		Me.VpkListView.Size = New System.Drawing.Size(322, 196)
+		Me.VpkListView.SmallImageList = Me.ImageList1
+		Me.VpkListView.Sorting = System.Windows.Forms.SortOrder.Ascending
+		Me.VpkListView.TabIndex = 1
+		Me.VpkListView.UseCompatibleStateImageBehavior = False
+		Me.VpkListView.View = System.Windows.Forms.View.Details
 		'
 		'VpkDataGridView
 		'
@@ -425,17 +461,17 @@ Partial Class UnpackUserControl
 		Me.VpkDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells
 		Me.VpkDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
 		Me.VpkDataGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None
+		Me.VpkDataGridView.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText
 		Me.VpkDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-		DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-		DataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window
-		DataGridViewCellStyle2.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		DataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText
-		DataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight
-		DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-		DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-		Me.VpkDataGridView.DefaultCellStyle = DataGridViewCellStyle2
-		Me.VpkDataGridView.Dock = System.Windows.Forms.DockStyle.Fill
-		Me.VpkDataGridView.Location = New System.Drawing.Point(0, 0)
+		DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+		DataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window
+		DataGridViewCellStyle1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		DataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText
+		DataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight
+		DataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+		DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+		Me.VpkDataGridView.DefaultCellStyle = DataGridViewCellStyle1
+		Me.VpkDataGridView.Location = New System.Drawing.Point(267, 32)
 		Me.VpkDataGridView.Name = "VpkDataGridView"
 		Me.VpkDataGridView.ReadOnly = True
 		Me.VpkDataGridView.RowHeadersVisible = False
@@ -446,6 +482,7 @@ Partial Class UnpackUserControl
 		Me.VpkDataGridView.ShowRowErrors = False
 		Me.VpkDataGridView.Size = New System.Drawing.Size(322, 196)
 		Me.VpkDataGridView.TabIndex = 0
+		Me.VpkDataGridView.Visible = False
 		'
 		'OptionsGroupBox
 		'
@@ -508,18 +545,19 @@ Partial Class UnpackUserControl
 		'ExtractCheckBox
 		'
 		Me.ExtractCheckBox.AutoSize = True
-		Me.ExtractCheckBox.Location = New System.Drawing.Point(3, 56)
+		Me.ExtractCheckBox.Location = New System.Drawing.Point(16, 157)
 		Me.ExtractCheckBox.Name = "ExtractCheckBox"
 		Me.ExtractCheckBox.Size = New System.Drawing.Size(238, 17)
 		Me.ExtractCheckBox.TabIndex = 3
 		Me.ExtractCheckBox.Text = "Unpack selected folders or files only (Extract)"
 		Me.ToolTip1.SetToolTip(Me.ExtractCheckBox, "Write unpack log to a file (in same folder as QC file).")
 		Me.ExtractCheckBox.UseVisualStyleBackColor = True
+		Me.ExtractCheckBox.Visible = False
 		'
 		'SelectAllModelsAndMaterialsFoldersCheckBox
 		'
 		Me.SelectAllModelsAndMaterialsFoldersCheckBox.AutoSize = True
-		Me.SelectAllModelsAndMaterialsFoldersCheckBox.Location = New System.Drawing.Point(20, 79)
+		Me.SelectAllModelsAndMaterialsFoldersCheckBox.Location = New System.Drawing.Point(33, 180)
 		Me.SelectAllModelsAndMaterialsFoldersCheckBox.Name = "SelectAllModelsAndMaterialsFoldersCheckBox"
 		Me.SelectAllModelsAndMaterialsFoldersCheckBox.Size = New System.Drawing.Size(224, 17)
 		Me.SelectAllModelsAndMaterialsFoldersCheckBox.TabIndex = 4
@@ -530,12 +568,12 @@ Partial Class UnpackUserControl
 		'LogFileCheckBox
 		'
 		Me.LogFileCheckBox.AutoSize = True
-		Me.LogFileCheckBox.Location = New System.Drawing.Point(3, 102)
+		Me.LogFileCheckBox.Location = New System.Drawing.Point(3, 56)
 		Me.LogFileCheckBox.Name = "LogFileCheckBox"
-		Me.LogFileCheckBox.Size = New System.Drawing.Size(60, 17)
+		Me.LogFileCheckBox.Size = New System.Drawing.Size(105, 17)
 		Me.LogFileCheckBox.TabIndex = 5
-		Me.LogFileCheckBox.Text = "Log file"
-		Me.ToolTip1.SetToolTip(Me.LogFileCheckBox, "Write unpack log to a file (in same folder as QC file).")
+		Me.LogFileCheckBox.Text = "Write log to a file"
+		Me.ToolTip1.SetToolTip(Me.LogFileCheckBox, "Write unpack log to a file.")
 		Me.LogFileCheckBox.UseVisualStyleBackColor = True
 		'
 		'UnpackOptionsUseDefaultsButton
@@ -612,6 +650,21 @@ Partial Class UnpackUserControl
 		Me.UseAllInDecompileButton.Text = "Use All in Decompile"
 		Me.UseAllInDecompileButton.UseVisualStyleBackColor = True
 		'
+		'UnpackerLogTextBox
+		'
+		Me.UnpackerLogTextBox.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+			Or System.Windows.Forms.AnchorStyles.Left) _
+			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.UnpackerLogTextBox.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+		Me.UnpackerLogTextBox.HideSelection = False
+		Me.UnpackerLogTextBox.Location = New System.Drawing.Point(0, -1)
+		Me.UnpackerLogTextBox.Name = "UnpackerLogTextBox"
+		Me.UnpackerLogTextBox.ReadOnly = True
+		Me.UnpackerLogTextBox.Size = New System.Drawing.Size(778, 62)
+		Me.UnpackerLogTextBox.TabIndex = 0
+		Me.UnpackerLogTextBox.Text = ""
+		Me.UnpackerLogTextBox.WordWrap = False
+		'
 		'UnpackedFilesComboBox
 		'
 		Me.UnpackedFilesComboBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
@@ -654,30 +707,6 @@ Partial Class UnpackUserControl
 		Me.GotoUnpackedFileButton.TabIndex = 4
 		Me.GotoUnpackedFileButton.Text = "Goto"
 		Me.GotoUnpackedFileButton.UseVisualStyleBackColor = True
-		'
-		'VpkPathFileNameTextBox
-		'
-		Me.VpkPathFileNameTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.VpkPathFileNameTextBox.Location = New System.Drawing.Point(97, 5)
-		Me.VpkPathFileNameTextBox.Name = "VpkPathFileNameTextBox"
-		Me.VpkPathFileNameTextBox.Size = New System.Drawing.Size(557, 20)
-		Me.VpkPathFileNameTextBox.TabIndex = 2
-		'
-		'UnpackerLogTextBox
-		'
-		Me.UnpackerLogTextBox.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-			Or System.Windows.Forms.AnchorStyles.Left) _
-			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.UnpackerLogTextBox.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.UnpackerLogTextBox.HideSelection = False
-		Me.UnpackerLogTextBox.Location = New System.Drawing.Point(0, -1)
-		Me.UnpackerLogTextBox.Name = "UnpackerLogTextBox"
-		Me.UnpackerLogTextBox.ReadOnly = True
-		Me.UnpackerLogTextBox.Size = New System.Drawing.Size(778, 62)
-		Me.UnpackerLogTextBox.TabIndex = 0
-		Me.UnpackerLogTextBox.Text = ""
-		Me.UnpackerLogTextBox.WordWrap = False
 		'
 		'UnpackUserControl
 		'
@@ -764,5 +793,7 @@ Partial Class UnpackUserControl
 	Friend WithEvents ToolStripSeparator1 As System.Windows.Forms.ToolStripSeparator
 	Friend WithEvents Panel1 As System.Windows.Forms.Panel
 	Friend WithEvents ContainerTypeComboBox As System.Windows.Forms.ComboBox
+	Friend WithEvents VpkListView As System.Windows.Forms.ListView
+	Friend WithEvents ImageList1 As System.Windows.Forms.ImageList
 
 End Class

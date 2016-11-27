@@ -56,9 +56,11 @@ Module SourceFileNamesModule
 		Dim animationName As String
 		Dim animationSmdRelativePathFileName As String
 
-		'NOTE: The file name for the animation data file is not stored in mdl file (which makes sense), 
-		'      so make the file name the same as the animation name.
-		If iAnimationName(0) = "@"c Then
+		If String.IsNullOrEmpty(iAnimationName) Then
+			animationName = ""
+		ElseIf iAnimationName(0) = "@"c Then
+			'NOTE: The file name for the animation data file is not stored in mdl file (which makes sense), 
+			'      so make the file name the same as the animation name.
 			animationName = iAnimationName.Substring(1)
 		Else
 			animationName = iAnimationName

@@ -485,7 +485,8 @@ Public Class SourceMdlFile49
 				Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theBones")
 
 				Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "theMdlFileData.theBones alignment")
-			Catch
+			Catch ex As Exception
+				Dim debug As Integer = 4242
 			End Try
 		End If
 	End Sub
@@ -1897,148 +1898,154 @@ Public Class SourceMdlFile49
 	End Sub
 
 	Public Sub ReadSequenceDescs()
-		Dim seqInputFileStreamPosition As Long
-		Dim inputFileStreamPosition As Long
-		Dim fileOffsetStart As Long
-		Dim fileOffsetEnd As Long
-		Dim fileOffsetStart2 As Long
-		Dim fileOffsetEnd2 As Long
+		If Me.theMdlFileData.localSequenceCount > 0 Then
+			Dim seqInputFileStreamPosition As Long
+			Dim inputFileStreamPosition As Long
+			Dim fileOffsetStart As Long
+			Dim fileOffsetEnd As Long
+			Dim fileOffsetStart2 As Long
+			Dim fileOffsetEnd2 As Long
 
-		Me.theInputFileReader.BaseStream.Seek(Me.theMdlFileData.localSequenceOffset, SeekOrigin.Begin)
-		fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+			Try
+				Me.theInputFileReader.BaseStream.Seek(Me.theMdlFileData.localSequenceOffset, SeekOrigin.Begin)
+				fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
-		Me.theMdlFileData.theSequenceDescs = New List(Of SourceMdlSequenceDesc)(Me.theMdlFileData.localSequenceCount)
-		For i As Integer = 0 To Me.theMdlFileData.localSequenceCount - 1
-			seqInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
-			Dim aSeqDesc As New SourceMdlSequenceDesc()
-			aSeqDesc.baseHeaderOffset = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.nameOffset = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.activityNameOffset = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.flags = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.activity = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.activityWeight = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.eventCount = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.eventOffset = Me.theInputFileReader.ReadInt32()
+				Me.theMdlFileData.theSequenceDescs = New List(Of SourceMdlSequenceDesc)(Me.theMdlFileData.localSequenceCount)
+				For i As Integer = 0 To Me.theMdlFileData.localSequenceCount - 1
+					seqInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+					Dim aSeqDesc As New SourceMdlSequenceDesc()
+					aSeqDesc.baseHeaderOffset = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.nameOffset = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.activityNameOffset = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.flags = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.activity = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.activityWeight = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.eventCount = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.eventOffset = Me.theInputFileReader.ReadInt32()
 
-			aSeqDesc.bbMin.x = Me.theInputFileReader.ReadSingle()
-			aSeqDesc.bbMin.y = Me.theInputFileReader.ReadSingle()
-			aSeqDesc.bbMin.z = Me.theInputFileReader.ReadSingle()
-			aSeqDesc.bbMax.x = Me.theInputFileReader.ReadSingle()
-			aSeqDesc.bbMax.y = Me.theInputFileReader.ReadSingle()
-			aSeqDesc.bbMax.z = Me.theInputFileReader.ReadSingle()
+					aSeqDesc.bbMin.x = Me.theInputFileReader.ReadSingle()
+					aSeqDesc.bbMin.y = Me.theInputFileReader.ReadSingle()
+					aSeqDesc.bbMin.z = Me.theInputFileReader.ReadSingle()
+					aSeqDesc.bbMax.x = Me.theInputFileReader.ReadSingle()
+					aSeqDesc.bbMax.y = Me.theInputFileReader.ReadSingle()
+					aSeqDesc.bbMax.z = Me.theInputFileReader.ReadSingle()
 
-			aSeqDesc.blendCount = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.animIndexOffset = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.movementIndex = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.groupSize(0) = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.groupSize(1) = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.blendCount = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.animIndexOffset = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.movementIndex = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.groupSize(0) = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.groupSize(1) = Me.theInputFileReader.ReadInt32()
 
-			aSeqDesc.paramIndex(0) = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.paramIndex(1) = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.paramStart(0) = Me.theInputFileReader.ReadSingle()
-			aSeqDesc.paramStart(1) = Me.theInputFileReader.ReadSingle()
-			aSeqDesc.paramEnd(0) = Me.theInputFileReader.ReadSingle()
-			aSeqDesc.paramEnd(1) = Me.theInputFileReader.ReadSingle()
-			aSeqDesc.paramParent = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.paramIndex(0) = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.paramIndex(1) = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.paramStart(0) = Me.theInputFileReader.ReadSingle()
+					aSeqDesc.paramStart(1) = Me.theInputFileReader.ReadSingle()
+					aSeqDesc.paramEnd(0) = Me.theInputFileReader.ReadSingle()
+					aSeqDesc.paramEnd(1) = Me.theInputFileReader.ReadSingle()
+					aSeqDesc.paramParent = Me.theInputFileReader.ReadInt32()
 
-			aSeqDesc.fadeInTime = Me.theInputFileReader.ReadSingle()
-			aSeqDesc.fadeOutTime = Me.theInputFileReader.ReadSingle()
+					aSeqDesc.fadeInTime = Me.theInputFileReader.ReadSingle()
+					aSeqDesc.fadeOutTime = Me.theInputFileReader.ReadSingle()
 
-			aSeqDesc.localEntryNodeIndex = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.localExitNodeIndex = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.nodeFlags = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.localEntryNodeIndex = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.localExitNodeIndex = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.nodeFlags = Me.theInputFileReader.ReadInt32()
 
-			aSeqDesc.entryPhase = Me.theInputFileReader.ReadSingle()
-			aSeqDesc.exitPhase = Me.theInputFileReader.ReadSingle()
-			aSeqDesc.lastFrame = Me.theInputFileReader.ReadSingle()
+					aSeqDesc.entryPhase = Me.theInputFileReader.ReadSingle()
+					aSeqDesc.exitPhase = Me.theInputFileReader.ReadSingle()
+					aSeqDesc.lastFrame = Me.theInputFileReader.ReadSingle()
 
-			aSeqDesc.nextSeq = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.pose = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.nextSeq = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.pose = Me.theInputFileReader.ReadInt32()
 
-			aSeqDesc.ikRuleCount = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.autoLayerCount = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.autoLayerOffset = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.weightOffset = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.poseKeyOffset = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.ikRuleCount = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.autoLayerCount = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.autoLayerOffset = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.weightOffset = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.poseKeyOffset = Me.theInputFileReader.ReadInt32()
 
-			aSeqDesc.ikLockCount = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.ikLockOffset = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.keyValueOffset = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.keyValueSize = Me.theInputFileReader.ReadInt32()
-			aSeqDesc.cyclePoseIndex = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.ikLockCount = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.ikLockOffset = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.keyValueOffset = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.keyValueSize = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.cyclePoseIndex = Me.theInputFileReader.ReadInt32()
 
-			aSeqDesc.activityModifierOffset = 0
-			aSeqDesc.activityModifierCount = 0
-			If Me.theMdlFileData.version = 49 Then
-				aSeqDesc.activityModifierOffset = Me.theInputFileReader.ReadInt32()
-				aSeqDesc.activityModifierCount = Me.theInputFileReader.ReadInt32()
-				For x As Integer = 0 To 4
-					aSeqDesc.unused(x) = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.activityModifierOffset = 0
+					aSeqDesc.activityModifierCount = 0
+					If Me.theMdlFileData.version = 49 Then
+						aSeqDesc.activityModifierOffset = Me.theInputFileReader.ReadInt32()
+						aSeqDesc.activityModifierCount = Me.theInputFileReader.ReadInt32()
+						For x As Integer = 0 To 4
+							aSeqDesc.unused(x) = Me.theInputFileReader.ReadInt32()
+						Next
+					Else
+						For x As Integer = 0 To 6
+							aSeqDesc.unused(x) = Me.theInputFileReader.ReadInt32()
+						Next
+					End If
+
+					Me.theMdlFileData.theSequenceDescs.Add(aSeqDesc)
+
+					inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+
+					If aSeqDesc.nameOffset <> 0 Then
+						Me.theInputFileReader.BaseStream.Seek(seqInputFileStreamPosition + aSeqDesc.nameOffset, SeekOrigin.Begin)
+						fileOffsetStart2 = Me.theInputFileReader.BaseStream.Position
+
+						aSeqDesc.theName = FileManager.ReadNullTerminatedString(Me.theInputFileReader)
+
+						fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
+						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aSeqDesc.theLabel")
+					Else
+						aSeqDesc.theName = ""
+					End If
+					If aSeqDesc.activityNameOffset <> 0 Then
+						Me.theInputFileReader.BaseStream.Seek(seqInputFileStreamPosition + aSeqDesc.activityNameOffset, SeekOrigin.Begin)
+						fileOffsetStart2 = Me.theInputFileReader.BaseStream.Position
+
+						aSeqDesc.theActivityName = FileManager.ReadNullTerminatedString(Me.theInputFileReader)
+
+						fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
+						If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
+							Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aSeqDesc.theActivityName")
+						End If
+					Else
+						aSeqDesc.theActivityName = ""
+					End If
+					If (aSeqDesc.groupSize(0) > 1 OrElse aSeqDesc.groupSize(1) > 1) AndAlso aSeqDesc.poseKeyOffset <> 0 Then
+						Me.ReadPoseKeys(seqInputFileStreamPosition, aSeqDesc)
+					End If
+					If aSeqDesc.eventCount > 0 AndAlso aSeqDesc.eventOffset <> 0 Then
+						Me.ReadEvents(seqInputFileStreamPosition, aSeqDesc)
+					End If
+					If aSeqDesc.autoLayerCount > 0 AndAlso aSeqDesc.autoLayerOffset <> 0 Then
+						Me.ReadAutoLayers(seqInputFileStreamPosition, aSeqDesc)
+					End If
+					If Me.theMdlFileData.boneCount > 0 AndAlso aSeqDesc.weightOffset > 0 Then
+						Me.ReadMdlAnimBoneWeights(seqInputFileStreamPosition, aSeqDesc)
+					End If
+					If aSeqDesc.ikLockCount > 0 AndAlso aSeqDesc.ikLockOffset <> 0 Then
+						Me.ReadSequenceIkLocks(seqInputFileStreamPosition, aSeqDesc)
+					End If
+					If (aSeqDesc.groupSize(0) * aSeqDesc.groupSize(1)) > 0 AndAlso aSeqDesc.animIndexOffset <> 0 Then
+						Me.ReadMdlAnimIndexes(seqInputFileStreamPosition, aSeqDesc)
+					End If
+					If aSeqDesc.keyValueSize > 0 AndAlso aSeqDesc.keyValueOffset <> 0 Then
+						Me.ReadSequenceKeyValues(seqInputFileStreamPosition, aSeqDesc)
+					End If
+					If aSeqDesc.activityModifierCount <> 0 AndAlso aSeqDesc.activityModifierOffset <> 0 Then
+						Me.ReadActivityModifiers(seqInputFileStreamPosition, aSeqDesc)
+					End If
+
+					Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
 				Next
-			Else
-				For x As Integer = 0 To 6
-					aSeqDesc.unused(x) = Me.theInputFileReader.ReadInt32()
-				Next
-			End If
 
-			Me.theMdlFileData.theSequenceDescs.Add(aSeqDesc)
-
-			inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
-
-			If aSeqDesc.nameOffset <> 0 Then
-				Me.theInputFileReader.BaseStream.Seek(seqInputFileStreamPosition + aSeqDesc.nameOffset, SeekOrigin.Begin)
-				fileOffsetStart2 = Me.theInputFileReader.BaseStream.Position
-
-				aSeqDesc.theName = FileManager.ReadNullTerminatedString(Me.theInputFileReader)
-
-				fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
-				Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aSeqDesc.theLabel")
-			Else
-				aSeqDesc.theName = ""
-			End If
-			If aSeqDesc.activityNameOffset <> 0 Then
-				Me.theInputFileReader.BaseStream.Seek(seqInputFileStreamPosition + aSeqDesc.activityNameOffset, SeekOrigin.Begin)
-				fileOffsetStart2 = Me.theInputFileReader.BaseStream.Position
-
-				aSeqDesc.theActivityName = FileManager.ReadNullTerminatedString(Me.theInputFileReader)
-
-				fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
-				If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-					Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aSeqDesc.theActivityName")
-				End If
-			Else
-				aSeqDesc.theActivityName = ""
-			End If
-			If (aSeqDesc.groupSize(0) > 1 OrElse aSeqDesc.groupSize(1) > 1) AndAlso aSeqDesc.poseKeyOffset <> 0 Then
-				Me.ReadPoseKeys(seqInputFileStreamPosition, aSeqDesc)
-			End If
-			If aSeqDesc.eventCount > 0 AndAlso aSeqDesc.eventOffset <> 0 Then
-				Me.ReadEvents(seqInputFileStreamPosition, aSeqDesc)
-			End If
-			If aSeqDesc.autoLayerCount > 0 AndAlso aSeqDesc.autoLayerOffset <> 0 Then
-				Me.ReadAutoLayers(seqInputFileStreamPosition, aSeqDesc)
-			End If
-			If Me.theMdlFileData.boneCount > 0 AndAlso aSeqDesc.weightOffset > 0 Then
-				Me.ReadMdlAnimBoneWeights(seqInputFileStreamPosition, aSeqDesc)
-			End If
-			If aSeqDesc.ikLockCount > 0 AndAlso aSeqDesc.ikLockOffset <> 0 Then
-				Me.ReadSequenceIkLocks(seqInputFileStreamPosition, aSeqDesc)
-			End If
-			If (aSeqDesc.groupSize(0) * aSeqDesc.groupSize(1)) > 0 AndAlso aSeqDesc.animIndexOffset <> 0 Then
-				Me.ReadMdlAnimIndexes(seqInputFileStreamPosition, aSeqDesc)
-			End If
-			If aSeqDesc.keyValueSize > 0 AndAlso aSeqDesc.keyValueOffset <> 0 Then
-				Me.ReadSequenceKeyValues(seqInputFileStreamPosition, aSeqDesc)
-			End If
-			If aSeqDesc.activityModifierCount <> 0 AndAlso aSeqDesc.activityModifierOffset <> 0 Then
-				Me.ReadActivityModifiers(seqInputFileStreamPosition, aSeqDesc)
-			End If
-
-			Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
-		Next
-
-		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-		Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theSequenceDescs")
+				fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+				Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theSequenceDescs")
+			Catch ex As Exception
+				Dim debug As Integer = 4242
+			End Try
+		End If
 	End Sub
 
 	Private Sub ReadPoseKeys(ByVal seqInputFileStreamPosition As Long, ByVal aSeqDesc As SourceMdlSequenceDesc)
@@ -2250,9 +2257,11 @@ Public Class SourceMdlFile49
 			anAnimIndex = Me.theInputFileReader.ReadInt16()
 			aSeqDesc.theAnimDescIndexes.Add(anAnimIndex)
 
-			'NOTE: Set this boolean for use in writing lines in qc file.
-			Me.theMdlFileData.theAnimationDescs(anAnimIndex).theAnimIsLinkedToSequence = True
-			Me.theMdlFileData.theAnimationDescs(anAnimIndex).theLinkedSequences.Add(aSeqDesc)
+			If Me.theMdlFileData.theAnimationDescs IsNot Nothing AndAlso Me.theMdlFileData.theAnimationDescs.Count > anAnimIndex Then
+				'NOTE: Set this boolean for use in writing lines in qc file.
+				Me.theMdlFileData.theAnimationDescs(anAnimIndex).theAnimIsLinkedToSequence = True
+				Me.theMdlFileData.theAnimationDescs(anAnimIndex).theLinkedSequences.Add(aSeqDesc)
+			End If
 
 			'inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 
@@ -4015,19 +4024,6 @@ Public Class SourceMdlFile49
 					Next
 				End If
 			Next
-		End If
-	End Sub
-
-	Public Sub ProcessTexturePaths()
-		For Each aTexturePath As String In Me.theMdlFileData.theTexturePaths
-			Me.theMdlFileData.theModifiedTexturePaths.Add(aTexturePath)
-		Next
-		For Each aTexture As SourceMdlTexture In Me.theMdlFileData.theTextures
-			Me.theMdlFileData.theModifiedTextureFileNames.Add(aTexture.thePathFileName)
-		Next
-
-		If TheApp.Settings.DecompileRemovePathFromSmdMaterialFileNamesIsChecked Then
-			SourceFileNamesModule.CopyPathsFromTextureFileNamesToTexturePaths(Me.theMdlFileData.theModifiedTexturePaths, Me.theMdlFileData.theModifiedTextureFileNames)
 		End If
 	End Sub
 

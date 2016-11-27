@@ -20,6 +20,7 @@ Public Class OptionsUserControl
 	Private Sub Init()
 		' Auto-Open
 
+		Me.AutoOpenVpkFileForUnpackingCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsAutoOpenVpkFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.AutoOpenMdlFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsAutoOpenMdlFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.AutoOpenQcFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsAutoOpenQcFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 
@@ -27,6 +28,7 @@ Public Class OptionsUserControl
 
 		' Drag and Drop
 
+		Me.DragAndDropVpkFileForUnpackingCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsDragAndDropVpkFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.DragAndDropMdlFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsDragAndDropMdlFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.DragAndDropQcFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsDragAndDropQcFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.DragAndDropFolderCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsDragAndDropFolderIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
@@ -37,6 +39,10 @@ Public Class OptionsUserControl
 
 		Me.IntegrateContextMenuItemsCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsContextMenuIntegrateMenuItemsIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.IntegrateAsSubmenuCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsContextMenuIntegrateSubMenuIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
+
+		'Me.OptionsContextMenuDecompileVpkFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsUnpackVpkFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
+		'Me.OptionsContextMenuDecompileFolderCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsUnpackFolderIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
+		'Me.OptionsContextMenuDecompileFolderAndSubfoldersCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsUnpackFolderAndSubfoldersIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 
 		Me.OptionsContextMenuOpenWithCrowbarCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsOpenWithCrowbarIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.OptionsContextMenuViewMdlFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsViewMdlFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
@@ -53,13 +59,15 @@ Public Class OptionsUserControl
 	End Sub
 
 	Private Sub InitAutoOpenRadioButtons()
-		Me.AutoOpenMdlFileForViewingRadioButton.Checked = (TheApp.Settings.OptionsAutoOpenMdlFileOption = ActionType.View)
+		Me.AutoOpenMdlFileForPreviewingRadioButton.Checked = (TheApp.Settings.OptionsAutoOpenMdlFileOption = ActionType.Preview)
 		Me.AutoOpenMdlFileForDecompilingRadioButton.Checked = (TheApp.Settings.OptionsAutoOpenMdlFileOption = ActionType.Decompile)
+		Me.AutoOpenMdlFileForViewingRadioButton.Checked = (TheApp.Settings.OptionsAutoOpenMdlFileOption = ActionType.View)
 	End Sub
 
 	Private Sub InitDragAndDropRadioButtons()
-		Me.DragAndDropMdlFileForViewingRadioButton.Checked = (TheApp.Settings.OptionsDragAndDropMdlFileOption = ActionType.View)
+		Me.DragAndDropMdlFileForPreviewingRadioButton.Checked = (TheApp.Settings.OptionsDragAndDropMdlFileOption = ActionType.Preview)
 		Me.DragAndDropMdlFileForDecompilingRadioButton.Checked = (TheApp.Settings.OptionsDragAndDropMdlFileOption = ActionType.Decompile)
+		Me.DragAndDropMdlFileForViewingRadioButton.Checked = (TheApp.Settings.OptionsDragAndDropMdlFileOption = ActionType.View)
 		Me.DragAndDropFolderForDecompilingRadioButton.Checked = (TheApp.Settings.OptionsDragAndDropFolderOption = ActionType.Decompile)
 		Me.DragAndDropFolderForCompilingRadioButton.Checked = (TheApp.Settings.OptionsDragAndDropFolderOption = ActionType.Compile)
 	End Sub
@@ -103,15 +111,21 @@ Public Class OptionsUserControl
 
 #Region "Widget Event Handlers"
 
+	Private Sub OptionsUserControl_Disposed(sender As Object, e As EventArgs) Handles Me.Disposed
+		Me.Free()
+	End Sub
+
 #End Region
 
 #Region "Child Widget Event Handlers"
 
 	Private Sub AutoOpenMdlFileForViewingRadioButton_CheckedChanged(sender As Object, e As EventArgs) Handles AutoOpenMdlFileForViewingRadioButton.CheckedChanged
-		If Me.AutoOpenMdlFileForViewingRadioButton.Checked Then
-			TheApp.Settings.OptionsAutoOpenMdlFileOption = ActionType.View
-		Else
+		If Me.AutoOpenMdlFileForPreviewingRadioButton.Checked Then
+			TheApp.Settings.OptionsAutoOpenMdlFileOption = ActionType.Preview
+		ElseIf Me.AutoOpenMdlFileForDecompilingRadioButton.Checked Then
 			TheApp.Settings.OptionsAutoOpenMdlFileOption = ActionType.Decompile
+		Else
+			TheApp.Settings.OptionsAutoOpenMdlFileOption = ActionType.View
 		End If
 	End Sub
 
@@ -121,10 +135,12 @@ Public Class OptionsUserControl
 	End Sub
 
 	Private Sub DragAndDropMdlFileForViewingRadioButton_CheckedChanged(sender As Object, e As EventArgs) Handles DragAndDropMdlFileForViewingRadioButton.CheckedChanged
-		If Me.DragAndDropMdlFileForViewingRadioButton.Checked Then
-			TheApp.Settings.OptionsDragAndDropMdlFileOption = ActionType.View
-		Else
+		If Me.DragAndDropMdlFileForPreviewingRadioButton.Checked Then
+			TheApp.Settings.OptionsDragAndDropMdlFileOption = ActionType.Preview
+		ElseIf Me.DragAndDropMdlFileForDecompilingRadioButton.Checked Then
 			TheApp.Settings.OptionsDragAndDropMdlFileOption = ActionType.Decompile
+		Else
+			TheApp.Settings.OptionsDragAndDropMdlFileOption = ActionType.View
 		End If
 	End Sub
 
@@ -159,7 +175,9 @@ Public Class OptionsUserControl
 		'ElseIf e.PropertyName.StartsWith("Decompile") AndAlso e.PropertyName.EndsWith("IsChecked") Then
 		'	Me.UpdateWidgets(TheApp.Settings.DecompilerIsRunning)
 		'End If
-		If e.PropertyName = "OptionsAutoOpenMdlFileIsChecked" Then
+		If e.PropertyName = "OptionsAutoOpenVpkFileIsChecked" Then
+			Me.ApplyAutoOpenVpkFileOptions()
+		ElseIf e.PropertyName = "OptionsAutoOpenMdlFileIsChecked" Then
 			Me.ApplyAutoOpenMdlFileOptions()
 		ElseIf e.PropertyName = "OptionsAutoOpenQcFileIsChecked" Then
 			Me.ApplyAutoOpenQcFileOptions()
@@ -169,6 +187,14 @@ Public Class OptionsUserControl
 #End Region
 
 #Region "Private Methods"
+
+	Private Sub ApplyAutoOpenVpkFileOptions()
+		If TheApp.Settings.OptionsAutoOpenVpkFileIsChecked Then
+			Win32Api.CreateFileAssociation("vpk", "vpkFile", "VPK File", Application.ExecutablePath)
+		Else
+			Win32Api.DeleteFileAssociation("vpk", "vpkFile", "VPK File", Application.ExecutablePath)
+		End If
+	End Sub
 
 	Private Sub ApplyAutoOpenMdlFileOptions()
 		If TheApp.Settings.OptionsAutoOpenMdlFileIsChecked Then
@@ -193,16 +219,25 @@ Public Class OptionsUserControl
 		'My.Computer.Registry.ClassesRoot.CreateSubKey(".mdl").SetValue("", "mdlFile", Microsoft.Win32.RegistryValueKind.String)
 		'My.Computer.Registry.ClassesRoot.CreateSubKey("mdlFile").SetValue("", "MDL File", Microsoft.Win32.RegistryValueKind.String)
 		'My.Computer.Registry.ClassesRoot.CreateSubKey("mdlFile\shell\open\command").SetValue("", Application.ExecutablePath + " ""%l"" ", Microsoft.Win32.RegistryValueKind.String)
-		If TheApp.Settings.OptionsAutoOpenMdlFileIsChecked Then
-			Win32Api.CreateFileAssociation("mdl", "mdlFile", "MDL File", Application.ExecutablePath)
-		Else
-			Win32Api.DeleteFileAssociation("mdl", "mdlFile", "MDL File", Application.ExecutablePath)
-		End If
-		If TheApp.Settings.OptionsAutoOpenQcFileIsChecked Then
-			Win32Api.CreateFileAssociation("qc", "qcFile", "QC File", Application.ExecutablePath)
-		Else
-			Win32Api.DeleteFileAssociation("qc", "qcFile", "QC File", Application.ExecutablePath)
-		End If
+
+		'If TheApp.Settings.OptionsAutoOpenVpkFileIsChecked Then
+		'	Win32Api.CreateFileAssociation("vpk", "vpkFile", "VPK File", Application.ExecutablePath)
+		'Else
+		'	Win32Api.DeleteFileAssociation("vpk", "vpkFile", "VPK File", Application.ExecutablePath)
+		'End If
+		'If TheApp.Settings.OptionsAutoOpenMdlFileIsChecked Then
+		'	Win32Api.CreateFileAssociation("mdl", "mdlFile", "MDL File", Application.ExecutablePath)
+		'Else
+		'	Win32Api.DeleteFileAssociation("mdl", "mdlFile", "MDL File", Application.ExecutablePath)
+		'End If
+		'If TheApp.Settings.OptionsAutoOpenQcFileIsChecked Then
+		'	Win32Api.CreateFileAssociation("qc", "qcFile", "QC File", Application.ExecutablePath)
+		'Else
+		'	Win32Api.DeleteFileAssociation("qc", "qcFile", "QC File", Application.ExecutablePath)
+		'End If
+		Me.ApplyAutoOpenVpkFileOptions()
+		Me.ApplyAutoOpenMdlFileOptions()
+		Me.ApplyAutoOpenQcFileOptions()
 
 		'TODO: Apply the context menu options to Windows.
 	End Sub

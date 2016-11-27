@@ -219,6 +219,16 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property EnterArrow() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("EnterArrow", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized string similar to Possible causes: The game&apos;s SDK or Authoring Tools has not been installed (usually via Steam Library Tools) or the path given to Crowbar (via Set Up Games button) is incorrect..
         '''</summary>
         Friend ReadOnly Property ErrorMessageSDKMissingCause() As String
@@ -260,10 +270,10 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized string similar to unpack-log.txt.
         '''</summary>
-		Friend ReadOnly Property Unpack_LogFileNameSuffix() As String
-			Get
-				Return ResourceManager.GetString("Unpack_LogFileNameSuffix", resourceCulture)
-			End Get
-		End Property
+        Friend ReadOnly Property Unpack_LogFileNameSuffix() As String
+            Get
+                Return ResourceManager.GetString("Unpack_LogFileNameSuffix", resourceCulture)
+            End Get
+        End Property
     End Module
 End Namespace

@@ -433,10 +433,12 @@ Public Class Compiler
 			Try
 				If TheApp.Settings.CompileOutputFolderIsChecked Then
 					targetPathFileName = Path.Combine(Me.theModelOutputPath, Path.GetFileName(sourcePathFileName))
-					If File.Exists(targetPathFileName) Then
-						File.Delete(targetPathFileName)
+					If String.Compare(sourcePathFileName, targetPathFileName, True) <> 0 Then
+						If File.Exists(targetPathFileName) Then
+							File.Delete(targetPathFileName)
+						End If
+						File.Move(sourcePathFileName, targetPathFileName)
 					End If
-					File.Move(sourcePathFileName, targetPathFileName)
 				Else
 					targetPathFileName = sourcePathFileName
 				End If
@@ -446,6 +448,7 @@ Public Class Compiler
 				End If
 			Catch ex As Exception
 				'TODO: Write a warning message.
+				Dim debug As Integer = 4242
 			End Try
 		Next
 	End Sub
@@ -508,7 +511,8 @@ Public Class Compiler
 				myProcess.CancelOutputRead()
 				myProcess.CancelErrorRead()
 				myProcess.Kill()
-			Catch
+			Catch ex As Exception
+				Dim debug As Integer = 4242
 			End Try
 		End If
 
