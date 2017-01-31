@@ -376,7 +376,7 @@ Public Class Viewer
 				Catch ex As FormatException
 					Me.WriteErrorMessage(ex.Message)
 				Catch ex As Exception
-					Me.WriteErrorMessage("Crowbar tried to write to the temporary replacement MDL file but Windows gave this message: " + ex.Message)
+					Me.WriteErrorMessage("Crowbar tried to write to the temporary replacement MDL file but the system gave this message: " + ex.Message)
 					Return ""
 				End Try
 

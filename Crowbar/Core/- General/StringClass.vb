@@ -20,4 +20,16 @@ Public Class StringClass
 		Return output
 	End Function
 
+	Public Shared Function RemoveUptoAndIncludingFirstDotCharacterFromString(ByVal input As String) As String
+		Dim output As String
+		Dim positionOfFirstDotChar As Integer
+		positionOfFirstDotChar = input.IndexOf(".")
+		If positionOfFirstDotChar >= 0 Then
+			output = input.Substring(positionOfFirstDotChar + 1)
+		Else
+			output = input
+		End If
+		Return output
+	End Function
+
 End Class

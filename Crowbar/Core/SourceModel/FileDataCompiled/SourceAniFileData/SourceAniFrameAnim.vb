@@ -42,6 +42,8 @@ Public Class SourceAniFrameAnim
 	Public Const STUDIO_FRAME_ANIMPOS As Integer = &H4
 	Public Const STUDIO_FRAME_ANIMROT As Integer = &H8
 	Public Const STUDIO_FRAME_FULLANIMPOS As Integer = &H10
+	Public Const STUDIO_FRAME_UNKNOWN01 As Integer = &H40	' Quaternion64 in framedata?
+	Public Const STUDIO_FRAME_UNKNOWN02 As Integer = &H80	' Quaternion64 in framedata?
 
 
 End Class

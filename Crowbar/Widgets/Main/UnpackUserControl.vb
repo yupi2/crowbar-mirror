@@ -81,6 +81,8 @@ Public Class UnpackUserControl
 		Me.RunUnpackerToGetListOfVpkContents()
 		Me.UpdateWidgets(False)
 
+		AddHandler Me.VpkPathFileNameTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
+		AddHandler Me.OutputFullPathTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
 		AddHandler TheApp.Settings.PropertyChanged, AddressOf AppSettings_PropertyChanged
 	End Sub
 
@@ -90,6 +92,8 @@ Public Class UnpackUserControl
 	End Sub
 
 	Private Sub Free()
+		RemoveHandler Me.VpkPathFileNameTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
+		RemoveHandler Me.OutputFullPathTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
 		RemoveHandler TheApp.Settings.PropertyChanged, AddressOf AppSettings_PropertyChanged
 		RemoveHandler TheApp.Unpacker.ProgressChanged, AddressOf Me.ListerBackgroundWorker_ProgressChanged
 		RemoveHandler TheApp.Unpacker.RunWorkerCompleted, AddressOf Me.ListerBackgroundWorker_RunWorkerCompleted
@@ -117,9 +121,9 @@ Public Class UnpackUserControl
 
 #Region "Child Widget Event Handlers"
 
-	Private Sub VpkPathFileNameTextBox_Validated(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles VpkPathFileNameTextBox.Validated
-		Me.VpkPathFileNameTextBox.Text = FileManager.GetCleanPathFileName(Me.VpkPathFileNameTextBox.Text)
-	End Sub
+	'Private Sub VpkPathFileNameTextBox_Validated(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles VpkPathFileNameTextBox.Validated
+	'	Me.VpkPathFileNameTextBox.Text = FileManager.GetCleanPathFileName(Me.VpkPathFileNameTextBox.Text)
+	'End Sub
 
 	Private Sub BrowseForVpkPathFolderOrFileNameButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BrowseForVpkPathFolderOrFileNameButton.Click
 		Dim containerTypeText As String
@@ -184,7 +188,7 @@ Public Class UnpackUserControl
 	End Sub
 
 	Private Sub OutputPathNameTextBox_Validated(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OutputFullPathTextBox.Validated
-		Me.OutputFullPathTextBox.Text = FileManager.GetCleanPathFileName(Me.OutputFullPathTextBox.Text)
+		'Me.OutputFullPathTextBox.Text = FileManager.GetCleanPathFileName(Me.OutputFullPathTextBox.Text)
 		Me.UpdateOutputFullPathTextBox()
 	End Sub
 
@@ -342,9 +346,9 @@ Public Class UnpackUserControl
 		TheApp.Settings.DecompileMdlPathFileName = TheApp.Unpacker.GetOutputPathFolderOrFileName()
 	End Sub
 
-	Private Sub UseInViewButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles UseInViewButton.Click
-		TheApp.Settings.ViewMdlPathFileName = TheApp.Unpacker.GetOutputPathFileName(Me.theUnpackedRelativePathFileNames(Me.UnpackedFilesComboBox.SelectedIndex))
-		TheApp.Settings.ViewGameSetupSelectedIndex = TheApp.Settings.UnpackGameSetupSelectedIndex
+	Private Sub UseInPreviewButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles UseInPreviewButton.Click
+		TheApp.Settings.PreviewMdlPathFileName = TheApp.Unpacker.GetOutputPathFileName(Me.theUnpackedRelativePathFileNames(Me.UnpackedFilesComboBox.SelectedIndex))
+		TheApp.Settings.PreviewGameSetupSelectedIndex = TheApp.Settings.UnpackGameSetupSelectedIndex
 	End Sub
 
 	Private Sub UseInDecompileButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles UseInDecompileButton.Click
@@ -653,7 +657,7 @@ Public Class UnpackUserControl
 		Me.UseAllInDecompileButton.Enabled = Not unpackerIsRunning AndAlso Me.theUnpackedRelativePathFileNames.Count > 0
 
 		Me.UnpackedFilesComboBox.Enabled = Not unpackerIsRunning AndAlso Me.theUnpackedRelativePathFileNames.Count > 0
-		Me.UseInViewButton.Enabled = Not unpackerIsRunning AndAlso Me.theUnpackedRelativePathFileNames.Count > 0
+		Me.UseInPreviewButton.Enabled = Not unpackerIsRunning AndAlso Me.theUnpackedRelativePathFileNames.Count > 0
 		Me.UseInDecompileButton.Enabled = Not unpackerIsRunning AndAlso Me.theUnpackedRelativePathFileNames.Count > 0
 		Me.GotoUnpackedFileButton.Enabled = Not unpackerIsRunning AndAlso Me.theUnpackedRelativePathFileNames.Count > 0
 	End Sub
@@ -820,12 +824,8 @@ Public Class UnpackUserControl
 
 			fileCount = list.Count
 
-			'For Each aRow As DataGridViewRow In Me.VpkDataGridView.SelectedRows
-			'	sizeTotal += list(aRow.Index).Size
-			'Next
-			'======
 			For Each item As ListViewItem In Me.VpkListView.SelectedItems
-				sizeTotal += list(item.Index).Size
+				sizeTotal += CType(item.Tag, VpkResourceFileNameInfo).Size
 			Next
 		End If
 

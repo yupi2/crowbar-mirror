@@ -1,10 +1,10 @@
 ﻿Imports System.IO
 
-Public Class SourceVrdFile46
+Public Class SourceVrdFile53
 
 #Region "Creation and Destruction"
 
-	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal mdlFileData As SourceMdlFileData46)
+	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal mdlFileData As SourceMdlFileData53)
 		Me.theOutputFileStreamWriter = outputFileStream
 		Me.theMdlFileData = mdlFileData
 	End Sub
@@ -173,7 +173,7 @@ Public Class SourceVrdFile46
 #Region "Data"
 
 	Private theOutputFileStreamWriter As StreamWriter
-	Private theMdlFileData As SourceMdlFileData46
+	Private theMdlFileData As SourceMdlFileData53
 
 #End Region
 

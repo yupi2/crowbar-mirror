@@ -73,7 +73,7 @@ Partial Class UnpackUserControl
 		Me.UseAllInDecompileButton = New System.Windows.Forms.Button()
 		Me.UnpackerLogTextBox = New Crowbar.RichTextBoxEx()
 		Me.UnpackedFilesComboBox = New System.Windows.Forms.ComboBox()
-		Me.UseInViewButton = New System.Windows.Forms.Button()
+		Me.UseInPreviewButton = New System.Windows.Forms.Button()
 		Me.UseInDecompileButton = New System.Windows.Forms.Button()
 		Me.GotoUnpackedFileButton = New System.Windows.Forms.Button()
 		Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
@@ -273,7 +273,7 @@ Partial Class UnpackUserControl
 		'
 		Me.SplitContainer1.Panel2.Controls.Add(Me.UnpackerLogTextBox)
 		Me.SplitContainer1.Panel2.Controls.Add(Me.UnpackedFilesComboBox)
-		Me.SplitContainer1.Panel2.Controls.Add(Me.UseInViewButton)
+		Me.SplitContainer1.Panel2.Controls.Add(Me.UseInPreviewButton)
 		Me.SplitContainer1.Panel2.Controls.Add(Me.UseInDecompileButton)
 		Me.SplitContainer1.Panel2.Controls.Add(Me.GotoUnpackedFileButton)
 		Me.SplitContainer1.Panel2MinSize = 90
@@ -673,19 +673,19 @@ Partial Class UnpackUserControl
 		Me.UnpackedFilesComboBox.FormattingEnabled = True
 		Me.UnpackedFilesComboBox.Location = New System.Drawing.Point(0, 69)
 		Me.UnpackedFilesComboBox.Name = "UnpackedFilesComboBox"
-		Me.UnpackedFilesComboBox.Size = New System.Drawing.Size(545, 21)
+		Me.UnpackedFilesComboBox.Size = New System.Drawing.Size(525, 21)
 		Me.UnpackedFilesComboBox.TabIndex = 1
 		'
-		'UseInViewButton
+		'UseInPreviewButton
 		'
-		Me.UseInViewButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.UseInViewButton.Enabled = False
-		Me.UseInViewButton.Location = New System.Drawing.Point(551, 67)
-		Me.UseInViewButton.Name = "UseInViewButton"
-		Me.UseInViewButton.Size = New System.Drawing.Size(75, 23)
-		Me.UseInViewButton.TabIndex = 2
-		Me.UseInViewButton.Text = "Use in View"
-		Me.UseInViewButton.UseVisualStyleBackColor = True
+		Me.UseInPreviewButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.UseInPreviewButton.Enabled = False
+		Me.UseInPreviewButton.Location = New System.Drawing.Point(531, 67)
+		Me.UseInPreviewButton.Name = "UseInPreviewButton"
+		Me.UseInPreviewButton.Size = New System.Drawing.Size(95, 23)
+		Me.UseInPreviewButton.TabIndex = 2
+		Me.UseInPreviewButton.Text = "Use in Preview"
+		Me.UseInPreviewButton.UseVisualStyleBackColor = True
 		'
 		'UseInDecompileButton
 		'
@@ -763,7 +763,7 @@ Partial Class UnpackUserControl
 	Friend WithEvents UnpackButton As System.Windows.Forms.Button
 	Friend WithEvents OptionsGroupBox As System.Windows.Forms.GroupBox
 	Friend WithEvents UseInDecompileButton As System.Windows.Forms.Button
-	Friend WithEvents UseInViewButton As System.Windows.Forms.Button
+	Friend WithEvents UseInPreviewButton As System.Windows.Forms.Button
 	Friend WithEvents UnpackerLogTextBox As Crowbar.RichTextBoxEx
 	Friend WithEvents UnpackedFilesComboBox As System.Windows.Forms.ComboBox
 	Friend WithEvents GotoUnpackedFileButton As System.Windows.Forms.Button

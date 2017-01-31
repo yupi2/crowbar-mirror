@@ -56,9 +56,12 @@ Public MustInherit Class SourceModel
 			ElseIf version = 49 Then
 				model = New SourceModel49(mdlPathFileName, version)
 			ElseIf version = 52 Then
-				'TODO: Properly decompile v52, but for now v52 is decompiled as v49.
+				'TODO: Properly decompile v52, but for now it is decompiled as v49.
 				'model = New SourceModel52(mdlPathFileName, version)
 				model = New SourceModel49(mdlPathFileName, version)
+			ElseIf version = 53 Then
+				'TODO: Properly decompile v53.
+				'model = New SourceModel53(mdlPathFileName, version)
 			Else
 				' Version not implemented.
 				model = Nothing
@@ -79,7 +82,7 @@ Public MustInherit Class SourceModel
 		inputFileStream = Nothing
 		inputFileReader = Nothing
 		Try
-			inputFileStream = New FileStream(mdlPathFileName, FileMode.Open)
+			inputFileStream = New FileStream(mdlPathFileName, FileMode.Open, FileAccess.Read, FileShare.Read)
 			If inputFileStream IsNot Nothing Then
 				Try
 					'NOTE: Important to set System.Text.Encoding.ASCII so that ReadChars() only reads in one byte per Char.
@@ -95,7 +98,8 @@ Public MustInherit Class SourceModel
 				Catch ex As FormatException
 					Throw
 				Catch ex As Exception
-					Dim debug As Integer = 4242
+					'Dim debug As Integer = 4242
+					Throw
 				Finally
 					If inputFileReader IsNot Nothing Then
 						inputFileReader.Close()
@@ -105,7 +109,8 @@ Public MustInherit Class SourceModel
 		Catch ex As FormatException
 			Throw
 		Catch ex As Exception
-			Dim debug As Integer = 4242
+			'Dim debug As Integer = 4242
+			Throw
 		Finally
 			If inputFileStream IsNot Nothing Then
 				inputFileStream.Close()
@@ -560,7 +565,7 @@ Public MustInherit Class SourceModel
 		Dim inputFileStream As FileStream = Nothing
 		Me.theInputFileReader = Nothing
 		Try
-			inputFileStream = New FileStream(pathFileName, FileMode.Open)
+			inputFileStream = New FileStream(pathFileName, FileMode.Open, FileAccess.Read, FileShare.Read)
 			If inputFileStream IsNot Nothing Then
 				Try
 					Me.theInputFileReader = New BinaryReader(inputFileStream, System.Text.Encoding.ASCII)

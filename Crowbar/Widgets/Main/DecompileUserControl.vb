@@ -38,6 +38,8 @@ Public Class DecompileUserControl
 		Me.UpdateDecompileMode()
 		Me.UpdateWidgets(False)
 
+		AddHandler Me.MdlPathFileNameTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
+		AddHandler Me.OutputFullPathTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
 		AddHandler TheApp.Settings.PropertyChanged, AddressOf AppSettings_PropertyChanged
 		AddHandler TheApp.Decompiler.ProgressChanged, AddressOf Me.DecompilerBackgroundWorker_ProgressChanged
 		AddHandler TheApp.Decompiler.RunWorkerCompleted, AddressOf Me.DecompilerBackgroundWorker_RunWorkerCompleted
@@ -69,6 +71,8 @@ Public Class DecompileUserControl
 	End Sub
 
 	Private Sub Free()
+		RemoveHandler Me.MdlPathFileNameTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
+		RemoveHandler Me.OutputFullPathTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
 		RemoveHandler TheApp.Settings.PropertyChanged, AddressOf AppSettings_PropertyChanged
 		RemoveHandler TheApp.Decompiler.ProgressChanged, AddressOf Me.DecompilerBackgroundWorker_ProgressChanged
 		RemoveHandler TheApp.Decompiler.RunWorkerCompleted, AddressOf Me.DecompilerBackgroundWorker_RunWorkerCompleted
@@ -121,9 +125,9 @@ Public Class DecompileUserControl
 
 #Region "Child Widget Event Handlers"
 
-	Private Sub MdlPathFileNameTextBox_Validated(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MdlPathFileNameTextBox.Validated
-		Me.MdlPathFileNameTextBox.Text = FileManager.GetCleanPathFileName(Me.MdlPathFileNameTextBox.Text)
-	End Sub
+	'Private Sub MdlPathFileNameTextBox_Validated(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MdlPathFileNameTextBox.Validated
+	'	Me.MdlPathFileNameTextBox.Text = FileManager.GetCleanPathFileName(Me.MdlPathFileNameTextBox.Text)
+	'End Sub
 
 	Private Sub BrowseForMdlPathFolderOrFileNameButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BrowseForMdlPathFolderOrFileNameButton.Click
 		Dim openFileWdw As New OpenFileDialog()
@@ -185,7 +189,7 @@ Public Class DecompileUserControl
 	End Sub
 
 	Private Sub OutputPathNameTextBox_Validated(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OutputFullPathTextBox.Validated
-		Me.OutputFullPathTextBox.Text = FileManager.GetCleanPathFileName(Me.OutputFullPathTextBox.Text)
+		'Me.OutputFullPathTextBox.Text = FileManager.GetCleanPathFileName(Me.OutputFullPathTextBox.Text)
 		Me.UpdateOutputFullPathTextBox()
 	End Sub
 
@@ -318,7 +322,8 @@ Public Class DecompileUserControl
 		If String.IsNullOrEmpty(Me.OutputFullPathTextBox.Text) Then
 			Try
 				TheApp.Settings.DecompileOutputFullPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
-			Catch
+			Catch ex As Exception
+				Dim debug As Integer = 4242
 			End Try
 		End If
 	End Sub

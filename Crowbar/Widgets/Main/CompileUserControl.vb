@@ -50,6 +50,8 @@ Public Class CompileUserControl
 		AddHandler TheApp.Compiler.ProgressChanged, AddressOf Me.CompilerBackgroundWorker_ProgressChanged
 		AddHandler TheApp.Compiler.RunWorkerCompleted, AddressOf Me.CompilerBackgroundWorker_RunWorkerCompleted
 
+		AddHandler Me.QcPathFileNameTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
+		AddHandler Me.OutputFullPathTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
 		'NOTE: Use AddHandler instead of Handles so the handler is not called several times during Init.
 		AddHandler Me.GameSetupComboBox.SelectedValueChanged, AddressOf Me.GameSetupComboBox_SelectedValueChanged
 	End Sub
@@ -81,6 +83,8 @@ Public Class CompileUserControl
     End Sub
 
 	Private Sub Free()
+		RemoveHandler Me.QcPathFileNameTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
+		RemoveHandler Me.OutputFullPathTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
 		RemoveHandler TheApp.Settings.PropertyChanged, AddressOf AppSettings_PropertyChanged
 		RemoveHandler TheApp.Compiler.ProgressChanged, AddressOf Me.CompilerBackgroundWorker_ProgressChanged
 		RemoveHandler TheApp.Compiler.RunWorkerCompleted, AddressOf Me.CompilerBackgroundWorker_RunWorkerCompleted
@@ -133,7 +137,7 @@ Public Class CompileUserControl
 #Region "Child Widget Event Handlers"
 
 	Private Sub QcPathFileNameTextBox_Validated(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles QcPathFileNameTextBox.Validated
-		Me.QcPathFileNameTextBox.Text = FileManager.GetCleanPathFileName(Me.QcPathFileNameTextBox.Text)
+		'Me.QcPathFileNameTextBox.Text = FileManager.GetCleanPathFileName(Me.QcPathFileNameTextBox.Text)
 		Me.SetCompilerOptionsText()
 	End Sub
 
@@ -198,7 +202,7 @@ Public Class CompileUserControl
 	End Sub
 
 	Private Sub OutputPathNameTextBox_Validated(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OutputFullPathTextBox.Validated
-		Me.OutputFullPathTextBox.Text = FileManager.GetCleanPathFileName(Me.OutputFullPathTextBox.Text)
+		'Me.OutputFullPathTextBox.Text = FileManager.GetCleanPathFileName(Me.OutputFullPathTextBox.Text)
 		Me.UpdateOutputFullPathTextBox()
 	End Sub
 

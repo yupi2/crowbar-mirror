@@ -259,7 +259,7 @@ Partial Class CompileUserControl
 		Me.CompilerOptionNoP4CheckBox.Size = New System.Drawing.Size(56, 17)
 		Me.CompilerOptionNoP4CheckBox.TabIndex = 0
 		Me.CompilerOptionNoP4CheckBox.Text = "No P4"
-		Me.ToolTip1.SetToolTip(Me.CompilerOptionNoP4CheckBox, "No perforce integration (modders do not usually have Perforce software).")
+		Me.ToolTip1.SetToolTip(Me.CompilerOptionNoP4CheckBox, "No Perforce integration (modders do not usually have Perforce software).")
 		Me.CompilerOptionNoP4CheckBox.UseVisualStyleBackColor = True
 		'
 		'CompilerOptionVerboseCheckBox

@@ -344,7 +344,9 @@ Public Class Compiler
 					Me.CloseDefineBonesFile()
 				End If
 			Else
-				Me.ProcessCompiledModel(qcRelativePathName, modelRelativePathFileName, compiledMdlPathFileName)
+				If File.Exists(compiledMdlPathFileName) Then
+					Me.ProcessCompiledModel(qcRelativePathName, modelRelativePathFileName, compiledMdlPathFileName)
+				End If
 			End If
 
 			Me.UpdateProgress(1, "... Compiling """ + qcRelativePathFileName + """ finished. Check above for any errors.")

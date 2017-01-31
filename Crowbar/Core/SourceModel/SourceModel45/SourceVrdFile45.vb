@@ -31,6 +31,10 @@ Public Class SourceVrdFile45
 			Dim aTrigger As SourceMdlQuatInterpBoneInfo
 			Dim aTriggerTrigger As SourceVector
 			Dim aTriggerQuat As SourceVector
+			Dim aBoneName As String
+			Dim aParentBoneName As String
+			Dim aParentControlBoneName As String
+			Dim aControlBoneName As String
 
 			For i As Integer = 0 To Me.theMdlFileData.theBones.Count - 1
 				aBone = Me.theMdlFileData.theBones(i)
@@ -49,17 +53,27 @@ Public Class SourceVrdFile45
 						aControlBone = Me.theMdlFileData.theBones(aBone.theQuatInterpBone.controlBoneIndex)
 						aParentControlBone = Me.theMdlFileData.theBones(aControlBone.parentBoneIndex)
 
+						'NOTE: A bone name in a VRD file must have its characters up to and including the first dot removed.
+						'aBoneName = aBone.theName.Replace("ValveBiped.", "")
+						'aParentBoneName = aParentBone.theName.Replace("ValveBiped.", "")
+						'aParentControlBoneName = aParentControlBone.theName.Replace("ValveBiped.", "")
+						'aControlBoneName = aControlBone.theName.Replace("ValveBiped.", "")
+						aBoneName = StringClass.RemoveUptoAndIncludingFirstDotCharacterFromString(aBone.theName)
+						aParentBoneName = StringClass.RemoveUptoAndIncludingFirstDotCharacterFromString(aParentBone.theName)
+						aParentControlBoneName = StringClass.RemoveUptoAndIncludingFirstDotCharacterFromString(aParentControlBone.theName)
+						aControlBoneName = StringClass.RemoveUptoAndIncludingFirstDotCharacterFromString(aControlBone.theName)
+
 						Me.theOutputFileStreamWriter.WriteLine()
 
 						line = "<helper>"
 						line += " "
-						line += aBone.theName.Replace("ValveBiped.", "")
+						line += aBoneName
 						line += " "
-						line += aParentBone.theName.Replace("ValveBiped.", "")
+						line += aParentBoneName
 						line += " "
-						line += aParentControlBone.theName.Replace("ValveBiped.", "")
+						line += aParentControlBoneName
 						line += " "
-						line += aControlBone.theName.Replace("ValveBiped.", "")
+						line += aControlBoneName
 						Me.theOutputFileStreamWriter.WriteLine(line)
 
 						''NOTE: Use "1" for the 3 size values because it looks like they are not used in compile.

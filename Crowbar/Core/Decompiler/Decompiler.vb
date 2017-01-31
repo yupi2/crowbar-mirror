@@ -259,7 +259,14 @@ Public Class Decompiler
 
 			FileManager.CreatePath(Me.theModelOutputPath)
 
-			Me.CreateLogTextFile(modelName)
+			Try
+				Me.CreateLogTextFile(modelName)
+			Catch ex As Exception
+				Me.UpdateProgress()
+				Me.UpdateProgress(2, "ERROR: Crowbar tried to write the decompile log file but the system gave this message: " + ex.Message)
+				status = StatusMessage.Error
+				Return status
+			End Try
 
 			Me.UpdateProgress()
 			Me.UpdateProgress(1, "Decompiling """ + mdlRelativePathFileName + """ ...")
@@ -276,8 +283,14 @@ Public Class Decompiler
 					status = StatusMessage.Error
 					Return status
 				End If
+			Catch ex As FormatException
+				Me.UpdateProgress(2, ex.Message)
+				Me.UpdateProgress(1, "... Decompiling """ + mdlRelativePathFileName + """ FAILED.")
+				status = StatusMessage.Error
+				Return status
 			Catch ex As Exception
-				Me.UpdateProgress(2, "ERROR: " + ex.Message)
+				'Me.UpdateProgress(2, "ERROR: " + ex.Message)
+				Me.UpdateProgress(2, "Crowbar tried to read the MDL file but the system gave this message: " + ex.Message)
 				Me.UpdateProgress(1, "... Decompiling """ + mdlRelativePathFileName + """ FAILED.")
 				status = StatusMessage.Error
 				Return status

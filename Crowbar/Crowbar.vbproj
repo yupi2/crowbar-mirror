@@ -273,6 +273,13 @@
     <Compile Include="Core\SourceModel\SourceModel46\SourceVtxFileData\SourceVtxFileData46.vb" />
     <Compile Include="Core\SourceModel\SourceModel46\SourceVvdFile46.vb" />
     <Compile Include="Core\SourceModel\SourceModel46\SourceVvdFileData\SourceVvdFileData46.vb" />
+    <Compile Include="Core\SourceModel\SourceModel53\SourceMdlFile53.vb" />
+    <Compile Include="Core\SourceModel\SourceModel53\SourceMdlFileData\SourceMdlFileData53.vb" />
+    <Compile Include="Core\SourceModel\SourceModel53\SourceModel53.vb" />
+    <Compile Include="Core\SourceModel\SourceModel53\SourceQcFile53.vb" />
+    <Compile Include="Core\SourceModel\SourceModel53\SourceSmdFile53.vb" />
+    <Compile Include="Core\SourceModel\SourceModel53\SourceVrdFile53.vb" />
+    <Compile Include="Core\SourceModel\SourceModel53\SourceVtaFile53.vb" />
     <Compile Include="Core\SourceModel\SourceVtxFile\SourceVtxFile06\SourceVtxMaterialReplacement06.vb" />
     <Compile Include="Core\SourceModel\SourceVtxFile\SourceVtxFile06\SourceVtxMaterialReplacementList06.vb" />
     <Compile Include="Core\SourceModel\SourceVtxFile\SourceVtxFileData107\SourceVertex2531.vb" />

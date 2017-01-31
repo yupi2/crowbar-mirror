@@ -7,6 +7,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\alien swarm\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\alien swarm\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\alien swarm\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Anarchy Arcade</GameName>
@@ -14,6 +15,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Anarchy Arcade\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Anarchy Arcade\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Anarchy Arcade\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Aperture Tag: The Paint Gun Testing Initiative</GameName>
@@ -21,6 +23,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Aperture Tag\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Aperture Tag\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Aperture Tag\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Black Mesa</GameName>
@@ -36,6 +39,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Blade Symphony\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Blade Symphony\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Blade Symphony\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Bloody Good Time (using Source SDK Base 2013 MP)</GameName>
@@ -43,6 +47,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Codename CURE</GameName>
@@ -50,6 +55,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Codename CURE\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Codename CURE\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Codename CURE\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Contagion</GameName>
@@ -57,6 +63,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Contagion\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Contagion\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Contagion\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Counter-Strike Global Offensive</GameName>
@@ -64,6 +71,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Counter-Strike Source</GameName>
@@ -71,6 +79,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Source\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Source\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Source\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Day of Defeat Source</GameName>
@@ -78,6 +87,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Day of Defeat Source\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Day of Defeat Source\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Day of Defeat Source\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Dino D-Day</GameName>
@@ -85,6 +95,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\dino d-day\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\dino d-day\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\dino d-day\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Dota 2</GameName>
@@ -92,6 +103,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\dota 2 beta\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\dota 2 beta\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\dota 2 beta\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Double Action: Boogaloo</GameName>
@@ -99,6 +111,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Double Action\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Double Action\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Double Action\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Dystopia</GameName>
@@ -106,6 +119,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Dystopia\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Dystopia\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Dystopia\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Empires</GameName>
@@ -113,6 +127,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Empires\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Empires\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Empires\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Estranged: Act I</GameName>
@@ -120,6 +135,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Estranged Act I\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Estranged Act I\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Estranged Act I\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Fistful of Frags</GameName>
@@ -127,6 +143,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Fistful of Frags\sdk\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Fistful of Frags\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Fistful of Frags\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Garry's Mod (using Source SDK Base 2013 MP)</GameName>
@@ -134,6 +151,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life 2</GameName>
@@ -141,6 +159,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life 2 Deathmatch</GameName>
@@ -148,6 +167,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2 Deathmatch\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2 Deathmatch\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2 Deathmatch\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life 2: Episode 1</GameName>
@@ -155,6 +175,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life 2: Episode 2</GameName>
@@ -162,6 +183,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life Deathmatch Source</GameName>
@@ -169,6 +191,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 1 Source Deathmatch\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 1 Source Deathmatch\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 1 Source Deathmatch\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life: Source</GameName>
@@ -176,6 +199,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Half-Life 2\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Insurgency</GameName>
@@ -183,6 +207,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\insurgency2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\insurgency2\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\insurgency2\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Insurgency: Modern Infantry Combat</GameName>
@@ -190,6 +215,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Left 4 Dead</GameName>
@@ -197,6 +223,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\left 4 dead\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\left 4 dead\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\left 4 dead\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Left 4 Dead 2</GameName>
@@ -204,6 +231,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\left 4 dead 2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\left 4 dead 2\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\left 4 dead 2\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>No More Room in Hell</GameName>
@@ -211,6 +239,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\nmrih\sdk\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\nmrih\sdk\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\nmrih\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Pirates, Vikings and Knights II</GameName>
@@ -218,6 +247,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2007\sdkbase_pvkii\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2007\sdkbase_pvkii\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2007\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Portal</GameName>
@@ -225,6 +255,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Portal\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Portal\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Portal\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Portal 2</GameName>
@@ -232,6 +263,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\portal 2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\portal 2\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\portal 2\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Portal Stories: Mel</GameName>
@@ -239,6 +271,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\portal 2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\portal 2\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\portal 2\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Rexaura</GameName>
@@ -246,6 +279,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Rexaura\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Rexaura\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Rexaura\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Source Filmmaker</GameName>
@@ -253,6 +287,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\SourceFilmmaker\game\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\SourceFilmmaker\game\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\SourceFilmmaker\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Source SDK 2013 Multiplayer</GameName>
@@ -260,6 +295,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Source SDK 2013 Singleplayer</GameName>
@@ -267,6 +303,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Singleplayer\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Singleplayer\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Singleplayer\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Synergy</GameName>
@@ -274,6 +311,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Synergy\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Synergy\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Synergy\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Team Fortress 2</GameName>
@@ -281,6 +319,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\Team Fortress 2\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>The Forgotten Ones</GameName>
@@ -288,6 +327,7 @@
       <ViewAsReplacementModelsSubfolderName>- temp</ViewAsReplacementModelsSubfolderName>
       <CompilerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\tfo\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\tfo\bin\hlmv.exe</ViewerPathFileName>
+      <UnpackerPathFileName>C:\Program Files (x86)\Steam\steamapps\common\tfo\bin\vpk.exe</UnpackerPathFileName>
     </GameSetup>
   </GameSetups>
 </AppSettings>

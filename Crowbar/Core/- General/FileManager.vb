@@ -261,21 +261,41 @@ Public Class FileManager
 	End Function
 
 	Public Shared Function GetCleanPathFileName(ByVal givenPathFileName As String) As String
-		Dim cleanPathFileName As String = givenPathFileName
+		Dim cleanPathFileName As String
+
+		Dim cleanedPathGivenPathFileName As String
+		cleanedPathGivenPathFileName = givenPathFileName
 		For Each invalidChar As Char In Path.GetInvalidPathChars()
-			cleanPathFileName = cleanPathFileName.Replace(invalidChar, "")
+			cleanedPathGivenPathFileName = cleanedPathGivenPathFileName.Replace(invalidChar, "")
 		Next
+		cleanedPathGivenPathFileName = Path.GetFullPath(cleanedPathGivenPathFileName)
 
-		Dim cleanFileName As String = Path.GetFileName(cleanPathFileName)
+		Dim cleanedGivenFileName As String
+		cleanedGivenFileName = Path.GetFileName(cleanedPathGivenPathFileName)
 		For Each invalidChar As Char In Path.GetInvalidFileNameChars()
-			cleanFileName = cleanFileName.Replace(invalidChar, "")
+			cleanedGivenFileName = cleanedGivenFileName.Replace(invalidChar, "")
 		Next
 
-		If cleanFileName = "" Then
-			Return cleanPathFileName
+		Dim cleanedGivenPath As String
+		cleanedGivenPath = FileManager.GetPath(cleanedPathGivenPathFileName)
+
+		If cleanedGivenFileName = "" Then
+			cleanPathFileName = cleanedPathGivenPathFileName
+		Else
+			cleanPathFileName = Path.Combine(cleanedGivenPath, cleanedGivenFileName)
 		End If
-		Return Path.Combine(GetPath(cleanPathFileName), cleanFileName)
+
+		Return cleanPathFileName
 	End Function
+
+	Public Shared Sub ParsePathFileName(ByVal sender As Object, ByVal e As ConvertEventArgs)
+		If e.DesiredType IsNot GetType(String) Then
+			Exit Sub
+		End If
+		If CStr(e.Value) <> "" Then
+			e.Value = FileManager.GetCleanPathFileName(CStr(e.Value))
+		End If
+	End Sub
 
 	Public Shared Function GetNormalizedPathFileName(ByVal givenPathFileName As String) As String
 		Dim cleanPathFileName As String
@@ -425,7 +445,11 @@ Public Class FileManager
 		ElseIf Directory.Exists(pathFileName) Then
 			Process.Start("explorer.exe", "/e,""" + pathFileName + """")
 		Else
-			Process.Start("explorer.exe", "/e,""" + System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + """")
+			'Process.Start("explorer.exe", "/e,""" + System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + """")
+			'======
+			Dim shorterPathFileName As String
+			shorterPathFileName = FileManager.GetPath(pathFileName)
+			FileManager.OpenWindowsExplorer(shorterPathFileName)
 		End If
 	End Sub
 

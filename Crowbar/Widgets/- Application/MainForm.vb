@@ -59,6 +59,8 @@ Public Class MainForm
 			'MessageBox.Show(text.ToString())
 		End If
 
+		AddHandler Me.UnpackUserControl1.UseInPreviewButton.Click, AddressOf Me.UnpackUserControl_UseInPreviewButton_Click
+		AddHandler Me.UnpackUserControl1.UseInDecompileButton.Click, AddressOf Me.UnpackUserControl_UseInDecompileButton_Click
 		AddHandler Me.PreviewViewUserControl.UseInDecompileButton.Click, AddressOf Me.ViewUserControl_UseInDecompileButton_Click
 		AddHandler Me.DecompilerUserControl1.UseAllInCompileButton.Click, AddressOf Me.DecompilerUserControl1_UseAllInCompileButton_Click
 		'AddHandler Me.DecompilerUserControl1.UseInEditButton.Click, AddressOf Me.DecompilerUserControl1_UseInEditButton_Click
@@ -70,6 +72,8 @@ Public Class MainForm
 	End Sub
 
 	Private Sub Free()
+		RemoveHandler Me.UnpackUserControl1.UseInPreviewButton.Click, AddressOf Me.UnpackUserControl_UseInPreviewButton_Click
+		RemoveHandler Me.UnpackUserControl1.UseInDecompileButton.Click, AddressOf Me.UnpackUserControl_UseInDecompileButton_Click
 		RemoveHandler Me.PreviewViewUserControl.UseInDecompileButton.Click, AddressOf Me.ViewUserControl_UseInDecompileButton_Click
 		RemoveHandler Me.DecompilerUserControl1.UseAllInCompileButton.Click, AddressOf Me.DecompilerUserControl1_UseAllInCompileButton_Click
 		'RemoveHandler Me.DecompilerUserControl1.UseInEditButton.Click, AddressOf Me.DecompilerUserControl1_UseInEditButton_Click
@@ -120,6 +124,14 @@ Public Class MainForm
 #End Region
 
 #Region "Child Widget Event Handlers"
+
+	Private Sub UnpackUserControl_UseInPreviewButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
+		Me.MainTabControl.SelectTab(Me.PreviewTabPage)
+	End Sub
+
+	Private Sub UnpackUserControl_UseInDecompileButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
+		Me.MainTabControl.SelectTab(Me.DecompileTabPage)
+	End Sub
 
 	Private Sub DecompilerUserControl1_UseAllInCompileButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
 		Me.MainTabControl.SelectTab(Me.CompileTabPage)

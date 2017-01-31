@@ -80,7 +80,8 @@ Public Class SourceAniFile49
 						If anAnimationDesc.ikRuleCount > 0 Then
 							Me.ReadMdlIkRules(animBlockInputFileStreamPosition + anAnimationDesc.animblockIkRuleOffset, anAnimationDesc)
 						End If
-					Catch
+					Catch ex As Exception
+						Dim debug As Integer = 4242
 					End Try
 
 					'If anAnimationDesc.ikRuleCount > 0 Then
@@ -121,12 +122,19 @@ Public Class SourceAniFile49
 			'anAnimationDesc.theAniFrameAnims.Add(anAniFrameAnim)
 			anAnimationDesc.theAniFrameAnim = anAniFrameAnim
 
+			fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+
 			anAniFrameAnim.constantsOffset = Me.theInputFileReader.ReadInt32()
 			anAniFrameAnim.frameOffset = Me.theInputFileReader.ReadInt32()
 			anAniFrameAnim.frameLength = Me.theInputFileReader.ReadInt32()
 			For x As Integer = 0 To anAniFrameAnim.unused.Length - 1
 				anAniFrameAnim.unused(x) = Me.theInputFileReader.ReadInt32()
 			Next
+
+			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAnimationDesc.theAniFrameAnim")
+
+			fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
 			anAniFrameAnim.theBoneFlags = New List(Of Byte)(boneCount)
 			For boneIndex As Integer = 0 To boneCount - 1
@@ -143,11 +151,14 @@ Public Class SourceAniFile49
 					Dim foundNewFlag As Boolean = True
 				End If
 			Next
+
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-			Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "anAnimFrame.theBoneFlags alignment")
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAniFrameAnim.theBoneFlags")
+			Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "anAniFrameAnim.theBoneFlags alignment")
 
 			If anAniFrameAnim.constantsOffset <> 0 Then
 				Me.theInputFileReader.BaseStream.Seek(animFrameInputFileStreamPosition + anAniFrameAnim.constantsOffset, SeekOrigin.Begin)
+				fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
 				anAniFrameAnim.theBoneConstantInfos = New List(Of BoneConstantInfo)(boneCount)
 				For boneIndex As Integer = 0 To boneCount - 1
@@ -170,11 +181,14 @@ Public Class SourceAniFile49
 				Next
 
 				fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-				Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "anAnimFrame.constantData alignment")
+				Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAniFrameAnim.theBoneConstantInfos")
+				Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "anAniFrameAnim.theBoneConstantInfos alignment")
+				'Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 8, "anAniFrameAnim.theBoneConstantInfos alignment")
 			End If
 
 			If anAniFrameAnim.frameOffset <> 0 Then
 				Me.theInputFileReader.BaseStream.Seek(animFrameInputFileStreamPosition + anAniFrameAnim.frameOffset, SeekOrigin.Begin)
+				fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
 				anAniFrameAnim.theBoneFrameDataInfos = New List(Of List(Of BoneFrameDataInfo))(sectionFrameCount)
 				'TODO: Does this section always contain data for all frames?
@@ -204,10 +218,35 @@ Public Class SourceAniFile49
 						End If
 						If (boneFlag And SourceAniFrameAnim.STUDIO_FRAME_FULLANIMPOS) > 0 Then
 							aBoneFrameDataInfo.theFullAnimPosition = New SourceVector()
-							aBoneFrameDataInfo.theFullAnimPosition.x = Me.theInputFileReader.ReadUInt16()
-							aBoneFrameDataInfo.theFullAnimPosition.y = Me.theInputFileReader.ReadUInt16()
-							aBoneFrameDataInfo.theFullAnimPosition.z = Me.theInputFileReader.ReadUInt16()
+							aBoneFrameDataInfo.theFullAnimPosition.x = Me.theInputFileReader.ReadSingle()
+							aBoneFrameDataInfo.theFullAnimPosition.y = Me.theInputFileReader.ReadSingle()
+							aBoneFrameDataInfo.theFullAnimPosition.z = Me.theInputFileReader.ReadSingle()
 						End If
+						If (boneFlag And &H20) > 0 Then
+							Dim unknownFlagIsUsed As Integer = 4242
+						End If
+						If (boneFlag And SourceAniFrameAnim.STUDIO_FRAME_UNKNOWN01) > 0 Then
+							'aBoneFrameDataInfo.theFullAnimUnknown01 = Me.theInputFileReader.ReadByte()
+							'aBoneFrameDataInfo.theFullAnimUnknown01 = Me.theInputFileReader.ReadSingle()
+							'aBoneFrameDataInfo.theFullAnimUnknown01 = New SourceQuaternion48bits()
+							'aBoneFrameDataInfo.theFullAnimUnknown01.theXInput = Me.theInputFileReader.ReadUInt16()
+							'aBoneFrameDataInfo.theFullAnimUnknown01.theYInput = Me.theInputFileReader.ReadUInt16()
+							'aBoneFrameDataInfo.theFullAnimUnknown01.theZWInput = Me.theInputFileReader.ReadUInt16()
+							'aBoneFrameDataInfo.theFullAnimUnknown01.theBytes = Me.theInputFileReader.ReadBytes(8)
+							'aBoneFrameDataInfo.theFullAnimUnknown01 = New SourceVector()
+							'aBoneFrameDataInfo.theFullAnimUnknown01.x = Me.theInputFileReader.ReadSingle()
+							'aBoneFrameDataInfo.theFullAnimUnknown01.y = Me.theInputFileReader.ReadSingle()
+							'aBoneFrameDataInfo.theFullAnimUnknown01.z = Me.theInputFileReader.ReadSingle()
+						End If
+						If (boneFlag And SourceAniFrameAnim.STUDIO_FRAME_UNKNOWN02) > 0 Then
+							'aBoneFrameDataInfo.theFullAnimUnknown02 = New SourceQuaternion64bits()
+							'aBoneFrameDataInfo.theFullAnimUnknown02.theBytes = Me.theInputFileReader.ReadBytes(8)
+						End If
+
+						''DEBUG:
+						'If boneFlag > &HDF Then
+						'	Dim unknownFlagIsUsed As Integer = 4242
+						'End If
 					Next
 
 					'DEBUG: Check frame data length for debugging.
@@ -217,17 +256,16 @@ Public Class SourceAniFile49
 				Next
 
 				fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-				Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 16, "anAnimFrame.frameData alignment")
-
-				Dim debug As Integer = 4242
+				Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAniFrameAnim.theBoneFrameDataInfos")
+				Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 16, "anAniFrameAnim.theBoneFrameDataInfos alignment")
 			End If
 			'End While
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		End Try
 
-		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-		Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAnimationDesc.theAniFrameAnims [this includes other logged data offsets]")
+		'fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+		'Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAnimationDesc.theAniFrameAnims [this includes other logged data offsets]")
 	End Sub
 
 #End Region
