@@ -41,6 +41,7 @@ Partial Class OptionsUserControl
 		Me.Label2 = New System.Windows.Forms.Label()
 		Me.AutoOpenUseDefaultsButton = New System.Windows.Forms.Button()
 		Me.Panel1 = New System.Windows.Forms.Panel()
+		Me.AutoOpenMdlFileForPreviewingRadioButton = New System.Windows.Forms.RadioButton()
 		Me.AutoOpenMdlFileForDecompilingRadioButton = New System.Windows.Forms.RadioButton()
 		Me.AutoOpenMdlFileForViewingRadioButton = New System.Windows.Forms.RadioButton()
 		Me.AutoOpenVpkFileForUnpackingCheckBox = New System.Windows.Forms.CheckBox()
@@ -57,6 +58,7 @@ Partial Class OptionsUserControl
 		Me.DragAndDropFolderForDecompilingRadioButton = New System.Windows.Forms.RadioButton()
 		Me.DragAndDropFolderCheckBox = New System.Windows.Forms.CheckBox()
 		Me.Panel6 = New System.Windows.Forms.Panel()
+		Me.DragAndDropMdlFileForPreviewingRadioButton = New System.Windows.Forms.RadioButton()
 		Me.DragAndDropMdlFileForDecompilingRadioButton = New System.Windows.Forms.RadioButton()
 		Me.DragAndDropMdlFileForViewingRadioButton = New System.Windows.Forms.RadioButton()
 		Me.DragAndDropMdlFileCheckBox = New System.Windows.Forms.CheckBox()
@@ -67,8 +69,6 @@ Partial Class OptionsUserControl
 		Me.Panel5 = New System.Windows.Forms.Panel()
 		Me.DragAndDropQcFileForCompilingRadioButton = New System.Windows.Forms.RadioButton()
 		Me.DragAndDropQcFileForEditingRadioButton = New System.Windows.Forms.RadioButton()
-		Me.DragAndDropMdlFileForPreviewingRadioButton = New System.Windows.Forms.RadioButton()
-		Me.AutoOpenMdlFileForPreviewingRadioButton = New System.Windows.Forms.RadioButton()
 		Me.GroupBox1.SuspendLayout()
 		Me.Panel7.SuspendLayout()
 		Me.GroupBox2.SuspendLayout()
@@ -319,6 +319,17 @@ Partial Class OptionsUserControl
 		Me.Panel1.Size = New System.Drawing.Size(107, 53)
 		Me.Panel1.TabIndex = 12
 		'
+		'AutoOpenMdlFileForPreviewingRadioButton
+		'
+		Me.AutoOpenMdlFileForPreviewingRadioButton.AutoSize = True
+		Me.AutoOpenMdlFileForPreviewingRadioButton.Location = New System.Drawing.Point(3, 1)
+		Me.AutoOpenMdlFileForPreviewingRadioButton.Name = "AutoOpenMdlFileForPreviewingRadioButton"
+		Me.AutoOpenMdlFileForPreviewingRadioButton.Size = New System.Drawing.Size(63, 17)
+		Me.AutoOpenMdlFileForPreviewingRadioButton.TabIndex = 15
+		Me.AutoOpenMdlFileForPreviewingRadioButton.TabStop = True
+		Me.AutoOpenMdlFileForPreviewingRadioButton.Text = "Preview"
+		Me.AutoOpenMdlFileForPreviewingRadioButton.UseVisualStyleBackColor = True
+		'
 		'AutoOpenMdlFileForDecompilingRadioButton
 		'
 		Me.AutoOpenMdlFileForDecompilingRadioButton.AutoSize = True
@@ -350,6 +361,7 @@ Partial Class OptionsUserControl
 		Me.AutoOpenVpkFileForUnpackingCheckBox.TabIndex = 9
 		Me.AutoOpenVpkFileForUnpackingCheckBox.Text = "VPK file for unpacking"
 		Me.AutoOpenVpkFileForUnpackingCheckBox.UseVisualStyleBackColor = True
+		Me.AutoOpenVpkFileForUnpackingCheckBox.Visible = False
 		'
 		'Panel2
 		'
@@ -497,6 +509,17 @@ Partial Class OptionsUserControl
 		Me.Panel6.Size = New System.Drawing.Size(107, 53)
 		Me.Panel6.TabIndex = 12
 		'
+		'DragAndDropMdlFileForPreviewingRadioButton
+		'
+		Me.DragAndDropMdlFileForPreviewingRadioButton.AutoSize = True
+		Me.DragAndDropMdlFileForPreviewingRadioButton.Location = New System.Drawing.Point(3, 1)
+		Me.DragAndDropMdlFileForPreviewingRadioButton.Name = "DragAndDropMdlFileForPreviewingRadioButton"
+		Me.DragAndDropMdlFileForPreviewingRadioButton.Size = New System.Drawing.Size(63, 17)
+		Me.DragAndDropMdlFileForPreviewingRadioButton.TabIndex = 14
+		Me.DragAndDropMdlFileForPreviewingRadioButton.TabStop = True
+		Me.DragAndDropMdlFileForPreviewingRadioButton.Text = "Preview"
+		Me.DragAndDropMdlFileForPreviewingRadioButton.UseVisualStyleBackColor = True
+		'
 		'DragAndDropMdlFileForDecompilingRadioButton
 		'
 		Me.DragAndDropMdlFileForDecompilingRadioButton.AutoSize = True
@@ -538,6 +561,7 @@ Partial Class OptionsUserControl
 		Me.DragAndDropVpkFileForUnpackingCheckBox.TabIndex = 9
 		Me.DragAndDropVpkFileForUnpackingCheckBox.Text = "VPK file for unpacking"
 		Me.DragAndDropVpkFileForUnpackingCheckBox.UseVisualStyleBackColor = True
+		Me.DragAndDropVpkFileForUnpackingCheckBox.Visible = False
 		'
 		'DragAndDropQcFileCheckBox
 		'
@@ -606,28 +630,6 @@ Partial Class OptionsUserControl
 		Me.DragAndDropQcFileForEditingRadioButton.TabStop = True
 		Me.DragAndDropQcFileForEditingRadioButton.Text = "for editing"
 		Me.DragAndDropQcFileForEditingRadioButton.UseVisualStyleBackColor = True
-		'
-		'DragAndDropMdlFileForPreviewingRadioButton
-		'
-		Me.DragAndDropMdlFileForPreviewingRadioButton.AutoSize = True
-		Me.DragAndDropMdlFileForPreviewingRadioButton.Location = New System.Drawing.Point(3, 1)
-		Me.DragAndDropMdlFileForPreviewingRadioButton.Name = "DragAndDropMdlFileForPreviewingRadioButton"
-		Me.DragAndDropMdlFileForPreviewingRadioButton.Size = New System.Drawing.Size(63, 17)
-		Me.DragAndDropMdlFileForPreviewingRadioButton.TabIndex = 14
-		Me.DragAndDropMdlFileForPreviewingRadioButton.TabStop = True
-		Me.DragAndDropMdlFileForPreviewingRadioButton.Text = "Preview"
-		Me.DragAndDropMdlFileForPreviewingRadioButton.UseVisualStyleBackColor = True
-		'
-		'AutoOpenMdlFileForPreviewingRadioButton
-		'
-		Me.AutoOpenMdlFileForPreviewingRadioButton.AutoSize = True
-		Me.AutoOpenMdlFileForPreviewingRadioButton.Location = New System.Drawing.Point(3, 1)
-		Me.AutoOpenMdlFileForPreviewingRadioButton.Name = "AutoOpenMdlFileForPreviewingRadioButton"
-		Me.AutoOpenMdlFileForPreviewingRadioButton.Size = New System.Drawing.Size(63, 17)
-		Me.AutoOpenMdlFileForPreviewingRadioButton.TabIndex = 15
-		Me.AutoOpenMdlFileForPreviewingRadioButton.TabStop = True
-		Me.AutoOpenMdlFileForPreviewingRadioButton.Text = "Preview"
-		Me.AutoOpenMdlFileForPreviewingRadioButton.UseVisualStyleBackColor = True
 		'
 		'OptionsUserControl
 		'

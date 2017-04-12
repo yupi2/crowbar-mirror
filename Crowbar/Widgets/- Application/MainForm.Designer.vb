@@ -25,8 +25,6 @@ Partial Class MainForm
 		Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
 		Me.AboutCrowbarToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
 		Me.MainTabControl = New System.Windows.Forms.TabControl()
-		Me.UnpackTabPage = New System.Windows.Forms.TabPage()
-		Me.UnpackUserControl1 = New Crowbar.UnpackUserControl()
 		Me.PreviewTabPage = New System.Windows.Forms.TabPage()
 		Me.PreviewViewUserControl = New Crowbar.ViewUserControl()
 		Me.DecompileTabPage = New System.Windows.Forms.TabPage()
@@ -43,7 +41,6 @@ Partial Class MainForm
 		Me.AboutCrowbarToolStripMenuItem2 = New System.Windows.Forms.ToolStripMenuItem()
 		Me.MainToolTip = New System.Windows.Forms.ToolTip(Me.components)
 		Me.MainTabControl.SuspendLayout()
-		Me.UnpackTabPage.SuspendLayout()
 		Me.PreviewTabPage.SuspendLayout()
 		Me.DecompileTabPage.SuspendLayout()
 		Me.CompileTabPage.SuspendLayout()
@@ -70,7 +67,6 @@ Partial Class MainForm
 		'
 		'MainTabControl
 		'
-		Me.MainTabControl.Controls.Add(Me.UnpackTabPage)
 		Me.MainTabControl.Controls.Add(Me.PreviewTabPage)
 		Me.MainTabControl.Controls.Add(Me.DecompileTabPage)
 		Me.MainTabControl.Controls.Add(Me.CompileTabPage)
@@ -80,18 +76,6 @@ Partial Class MainForm
 		resources.ApplyResources(Me.MainTabControl, "MainTabControl")
 		Me.MainTabControl.Name = "MainTabControl"
 		Me.MainTabControl.SelectedIndex = 0
-		'
-		'UnpackTabPage
-		'
-		Me.UnpackTabPage.BackColor = System.Drawing.SystemColors.ControlLight
-		Me.UnpackTabPage.Controls.Add(Me.UnpackUserControl1)
-		resources.ApplyResources(Me.UnpackTabPage, "UnpackTabPage")
-		Me.UnpackTabPage.Name = "UnpackTabPage"
-		'
-		'UnpackUserControl1
-		'
-		resources.ApplyResources(Me.UnpackUserControl1, "UnpackUserControl1")
-		Me.UnpackUserControl1.Name = "UnpackUserControl1"
 		'
 		'PreviewTabPage
 		'
@@ -191,7 +175,6 @@ Partial Class MainForm
 		Me.Controls.Add(Me.MainTabControl)
 		Me.Name = "MainForm"
 		Me.MainTabControl.ResumeLayout(False)
-		Me.UnpackTabPage.ResumeLayout(False)
 		Me.PreviewTabPage.ResumeLayout(False)
 		Me.DecompileTabPage.ResumeLayout(False)
 		Me.CompileTabPage.ResumeLayout(False)
@@ -222,7 +205,5 @@ Partial Class MainForm
 	Friend WithEvents AboutUserControl1 As Crowbar.AboutUserControl
 	Friend WithEvents PreviewTabPage As System.Windows.Forms.TabPage
 	Friend WithEvents PreviewViewUserControl As Crowbar.ViewUserControl
-	Friend WithEvents UnpackTabPage As System.Windows.Forms.TabPage
-	Friend WithEvents UnpackUserControl1 As Crowbar.UnpackUserControl
 
 End Class

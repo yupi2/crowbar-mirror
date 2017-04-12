@@ -59,8 +59,8 @@ Public Class MainForm
 			'MessageBox.Show(text.ToString())
 		End If
 
-		AddHandler Me.UnpackUserControl1.UseInPreviewButton.Click, AddressOf Me.UnpackUserControl_UseInPreviewButton_Click
-		AddHandler Me.UnpackUserControl1.UseInDecompileButton.Click, AddressOf Me.UnpackUserControl_UseInDecompileButton_Click
+		'AddHandler Me.UnpackUserControl1.UseInPreviewButton.Click, AddressOf Me.UnpackUserControl_UseInPreviewButton_Click
+		'AddHandler Me.UnpackUserControl1.UseInDecompileButton.Click, AddressOf Me.UnpackUserControl_UseInDecompileButton_Click
 		AddHandler Me.PreviewViewUserControl.UseInDecompileButton.Click, AddressOf Me.ViewUserControl_UseInDecompileButton_Click
 		AddHandler Me.DecompilerUserControl1.UseAllInCompileButton.Click, AddressOf Me.DecompilerUserControl1_UseAllInCompileButton_Click
 		'AddHandler Me.DecompilerUserControl1.UseInEditButton.Click, AddressOf Me.DecompilerUserControl1_UseInEditButton_Click
@@ -72,8 +72,8 @@ Public Class MainForm
 	End Sub
 
 	Private Sub Free()
-		RemoveHandler Me.UnpackUserControl1.UseInPreviewButton.Click, AddressOf Me.UnpackUserControl_UseInPreviewButton_Click
-		RemoveHandler Me.UnpackUserControl1.UseInDecompileButton.Click, AddressOf Me.UnpackUserControl_UseInDecompileButton_Click
+		'RemoveHandler Me.UnpackUserControl1.UseInPreviewButton.Click, AddressOf Me.UnpackUserControl_UseInPreviewButton_Click
+		'RemoveHandler Me.UnpackUserControl1.UseInDecompileButton.Click, AddressOf Me.UnpackUserControl_UseInDecompileButton_Click
 		RemoveHandler Me.PreviewViewUserControl.UseInDecompileButton.Click, AddressOf Me.ViewUserControl_UseInDecompileButton_Click
 		RemoveHandler Me.DecompilerUserControl1.UseAllInCompileButton.Click, AddressOf Me.DecompilerUserControl1_UseAllInCompileButton_Click
 		'RemoveHandler Me.DecompilerUserControl1.UseInEditButton.Click, AddressOf Me.DecompilerUserControl1_UseInEditButton_Click
@@ -184,10 +184,10 @@ Public Class MainForm
 					vpkAction = ActionType.Unpack
 				End If
 			End If
-			If vpkAction = ActionType.Unpack Then
-				TheApp.Settings.UnpackVpkPathFolderOrFileName = pathFileName
-				Me.MainTabControl.SelectTab(Me.UnpackTabPage)
-			End If
+			'If vpkAction = ActionType.Unpack Then
+			'	TheApp.Settings.UnpackVpkPathFolderOrFileName = pathFileName
+			'	Me.MainTabControl.SelectTab(Me.UnpackTabPage)
+			'End If
 		ElseIf extension = ".mdl" Then
 			Dim mdlAction As ActionType = ActionType.Unknown
 			If setViaAutoOpen Then
