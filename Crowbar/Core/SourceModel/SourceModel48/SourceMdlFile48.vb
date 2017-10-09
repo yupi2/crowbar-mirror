@@ -8,6 +8,8 @@ Public Class SourceMdlFile48
 	Public Sub New(ByVal mdlFileReader As BinaryReader, ByVal mdlFileData As SourceMdlFileData48)
 		Me.theInputFileReader = mdlFileReader
 		Me.theMdlFileData = mdlFileData
+
+		Me.theMdlFileData.theFileSeekLog.FileSize = Me.theInputFileReader.BaseStream.Length
 	End Sub
 
 	Public Sub New(ByVal mdlFileWriter As BinaryWriter, ByVal mdlFileData As SourceMdlFileData48)
@@ -985,6 +987,11 @@ Public Class SourceMdlFile48
 			anAnimationDesc.spanCount = Me.theInputFileReader.ReadInt16()
 			anAnimationDesc.spanOffset = Me.theInputFileReader.ReadInt32()
 			anAnimationDesc.spanStallTime = Me.theInputFileReader.ReadSingle()
+			'TODO: Get this data.
+			If anAnimationDesc.spanFrameCount <> 0 OrElse anAnimationDesc.spanCount <> 0 OrElse anAnimationDesc.spanOffset <> 0 OrElse anAnimationDesc.spanStallTime <> 0 Then
+				'NOTE: This code is reached by HL2:EP1 ghostanim_van.mdl.
+				Dim debug As Integer = 4242
+			End If
 
 			'For x As Integer = 0 To anAnimationDesc.unknown.Length - 1
 			'	anAnimationDesc.unknown(x) = Me.theInputFileReader.ReadInt32()
@@ -1098,6 +1105,8 @@ Public Class SourceMdlFile48
 								If sectionIndex < sectionCount - 2 Then
 									sectionFrameCount = anAnimationDesc.sectionFrameCount
 								Else
+									'NOTE: Due to the weird calculation of sectionCount in studiomdl, this line is called twice, which means there are two "last" sections.
+									'      This also likely means that the last section is bogus unused data.
 									sectionFrameCount = anAnimationDesc.frameCount - ((sectionCount - 2) * anAnimationDesc.sectionFrameCount)
 								End If
 

@@ -517,12 +517,14 @@ Public Class SourceModel44
 			qcFile.WriteStaticPropCommand()
 			qcFile.WriteConstDirectionalLightCommand()
 
-			If Me.theMdlFileData.theModelCommandIsUsed Then
-				qcFile.WriteModelCommand()
-				qcFile.WriteBodyGroupCommand(1)
-			Else
-				qcFile.WriteBodyGroupCommand(0)
-			End If
+			'If Me.theMdlFileData.theModelCommandIsUsed Then
+			'	qcFile.WriteModelCommand()
+			'	qcFile.WriteBodyGroupCommand(1)
+			'Else
+			'	qcFile.WriteBodyGroupCommand(0)
+			'End If
+			qcFile.WriteModelCommand()
+			qcFile.WriteBodyGroupCommand()
 			qcFile.WriteGroup("lod", AddressOf qcFile.WriteGroupLod, False, False)
 
 			qcFile.WriteSurfacePropCommand()

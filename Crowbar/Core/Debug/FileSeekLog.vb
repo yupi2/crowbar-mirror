@@ -15,6 +15,11 @@ Public Class FileSeekLog
 		Try
 			If Me.theFileSeekList.ContainsKey(startOffset) AndAlso Me.theFileSeekList(startOffset) = endOffset Then
 				Me.theFileSeekDescriptionList(startOffset) += "; " + description
+			ElseIf Me.theFileSeekList.ContainsKey(startOffset) Then
+				Dim temp As String
+				temp = Me.theFileSeekDescriptionList(startOffset)
+				Me.theFileSeekDescriptionList(startOffset) = "[ERROR] "
+				Me.theFileSeekDescriptionList(startOffset) += temp + "; [" + startOffset.ToString() + " - " + endOffset.ToString() + "] " + description
 			Else
 				Me.theFileSeekList.Add(startOffset, endOffset)
 				Me.theFileSeekDescriptionList.Add(startOffset, description)
@@ -28,6 +33,15 @@ Public Class FileSeekLog
 		Me.theFileSeekList.Clear()
 		Me.theFileSeekDescriptionList.Clear()
 	End Sub
+
+	Public Property FileSize() As Long
+		Get
+			Return Me.theFileSize
+		End Get
+		Set(value As Long)
+			Me.theFileSize = value
+		End Set
+	End Property
 
 	Public Sub LogToEndAndAlignToNextStart(ByVal inputFileReader As BinaryReader, ByVal fileOffsetEnd As Long, ByVal byteAlignmentCount As Integer, ByVal description As String)
 		Dim fileOffsetStart2 As Long
@@ -53,6 +67,7 @@ Public Class FileSeekLog
 		End If
 	End Sub
 
+	Public theFileSize As Long
 	Public theFileSeekList As SortedList(Of Long, Long)
 	Public theFileSeekDescriptionList As SortedList(Of Long, String)
 

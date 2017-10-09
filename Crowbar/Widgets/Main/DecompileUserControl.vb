@@ -50,9 +50,12 @@ Public Class DecompileUserControl
 		Me.GroupIntoQciFilesCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileGroupIntoQciFilesIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.SkinFamilyOnSingleLineCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileQcSkinFamilyOnSingleLineIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.IncludeDefineBoneLinesCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileQcIncludeDefineBoneLinesIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
+		Me.UseMixedCaseForKeywordsCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileQcUseMixedCaseForKeywordsIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
+
 		Me.ReferenceMeshSmdFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileReferenceMeshSmdFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.RemovePathFromMaterialFileNamesCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileRemovePathFromSmdMaterialFileNamesIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.ApplyRightHandFixCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileApplyRightHandFixIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
+
 		Me.BoneAnimationSmdFilesCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileBoneAnimationSmdFilesIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.PlaceInAnimsSubfolderCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileBoneAnimationPlaceInSubfolderIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 

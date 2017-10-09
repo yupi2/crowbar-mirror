@@ -22,6 +22,9 @@ Public Class OptionsUserControl
 
 		Me.AutoOpenVpkFileForUnpackingCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsAutoOpenVpkFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.AutoOpenMdlFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsAutoOpenMdlFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
+		Me.AutoOpenMdlFileForPreviewCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsAutoOpenMdlFileForPreviewIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
+		Me.AutoOpenMdlFileForDecompileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsAutoOpenMdlFileForDecompileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
+		Me.AutoOpenMdlFileForViewCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsAutoOpenMdlFileForViewIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.AutoOpenQcFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsAutoOpenQcFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 
 		Me.InitAutoOpenRadioButtons()
@@ -30,6 +33,9 @@ Public Class OptionsUserControl
 
 		Me.DragAndDropVpkFileForUnpackingCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsDragAndDropVpkFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.DragAndDropMdlFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsDragAndDropMdlFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
+		Me.DragAndDropMdlFileForPreviewCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsDragAndDropMdlFileForPreviewIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
+		Me.DragAndDropMdlFileForDecompileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsDragAndDropMdlFileForDecompileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
+		Me.DragAndDropMdlFileForViewCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsDragAndDropMdlFileForViewIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.DragAndDropQcFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsDragAndDropQcFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.DragAndDropFolderCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsDragAndDropFolderIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 
@@ -78,11 +84,17 @@ Public Class OptionsUserControl
 		' Auto-Open
 
 		Me.AutoOpenMdlFileCheckBox.DataBindings.Clear()
+		Me.AutoOpenMdlFileForPreviewCheckBox.DataBindings.Clear()
+		Me.AutoOpenMdlFileForDecompileCheckBox.DataBindings.Clear()
+		Me.AutoOpenMdlFileForViewCheckBox.DataBindings.Clear()
 		Me.AutoOpenQcFileCheckBox.DataBindings.Clear()
 
 		' Drag and Drop
 
 		Me.DragAndDropMdlFileCheckBox.DataBindings.Clear()
+		Me.DragAndDropMdlFileForPreviewCheckBox.DataBindings.Clear()
+		Me.DragAndDropMdlFileForDecompileCheckBox.DataBindings.Clear()
+		Me.DragAndDropMdlFileForViewCheckBox.DataBindings.Clear()
 		Me.DragAndDropQcFileCheckBox.DataBindings.Clear()
 		Me.DragAndDropFolderCheckBox.DataBindings.Clear()
 
@@ -119,7 +131,7 @@ Public Class OptionsUserControl
 
 #Region "Child Widget Event Handlers"
 
-	Private Sub AutoOpenMdlFileForViewingRadioButton_CheckedChanged(sender As Object, e As EventArgs) Handles AutoOpenMdlFileForViewingRadioButton.CheckedChanged
+	Private Sub AutoOpenMdlFileForViewingRadioButton_CheckedChanged(sender As Object, e As EventArgs) Handles AutoOpenMdlFileForPreviewingRadioButton.CheckedChanged, AutoOpenMdlFileForDecompilingRadioButton.CheckedChanged, AutoOpenMdlFileForViewingRadioButton.CheckedChanged
 		If Me.AutoOpenMdlFileForPreviewingRadioButton.Checked Then
 			TheApp.Settings.OptionsAutoOpenMdlFileOption = ActionType.Preview
 		ElseIf Me.AutoOpenMdlFileForDecompilingRadioButton.Checked Then
@@ -134,7 +146,7 @@ Public Class OptionsUserControl
 		Me.InitAutoOpenRadioButtons()
 	End Sub
 
-	Private Sub DragAndDropMdlFileForViewingRadioButton_CheckedChanged(sender As Object, e As EventArgs) Handles DragAndDropMdlFileForViewingRadioButton.CheckedChanged
+	Private Sub DragAndDropMdlFileForViewingRadioButton_CheckedChanged(sender As Object, e As EventArgs) Handles DragAndDropMdlFileForPreviewingRadioButton.CheckedChanged, DragAndDropMdlFileForDecompilingRadioButton.CheckedChanged, DragAndDropMdlFileForViewingRadioButton.CheckedChanged
 		If Me.DragAndDropMdlFileForPreviewingRadioButton.Checked Then
 			TheApp.Settings.OptionsDragAndDropMdlFileOption = ActionType.Preview
 		ElseIf Me.DragAndDropMdlFileForDecompilingRadioButton.Checked Then

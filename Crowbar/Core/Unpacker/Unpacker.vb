@@ -9,8 +9,9 @@ Public Class Unpacker
 	Public Sub New()
 		MyBase.New()
 
-		Me.theUnpackedLogFiles = New BindingListEx(Of String)()
+		Me.theLogFiles = New BindingListEx(Of String)()
 		Me.theUnpackedFiles = New BindingListEx(Of String)()
+		Me.theUnpackedTempFiles = New BindingListEx(Of String)()
 
 		Me.WorkerReportsProgress = True
 		Me.WorkerSupportsCancellation = True
@@ -35,63 +36,36 @@ Public Class Unpacker
 
 #Region "Methods"
 
-	Public Sub Run(ByVal unpackerAction As VpkAppAction)
+	Public Sub Run(ByVal unpackerAction As ArchiveAction, ByVal packInternalEntryIndexes As List(Of Integer))
 		Me.theSynchronousWorkerIsActive = False
-		Me.theGivenHardLinkFileName = Nothing
 		Me.theTempUnpackPath = Nothing
 		Dim info As New UnpackerInputInfo()
-		info.unpackerAction = unpackerAction
+		info.theArchiveEntryIndexes = packInternalEntryIndexes
+		info.theArchiveAction = unpackerAction
 		Me.RunWorkerAsync(info)
 	End Sub
 
-	Public Sub Run(ByVal packInternalPathFileNames As List(Of String), Optional ByVal unpackerAction As VpkAppAction = VpkAppAction.Extract)
-		Me.theSynchronousWorkerIsActive = False
-		Me.theGivenHardLinkFileName = Nothing
+	Public Sub RunSynchronous(ByVal unpackerAction As ArchiveAction, ByVal packInternalEntryIndexes As List(Of Integer))
+		Me.theSynchronousWorkerIsActive = True
 		Me.theTempUnpackPath = Nothing
 		Dim info As New UnpackerInputInfo()
-		info.thePackInternalPathFileNames = packInternalPathFileNames
-		info.unpackerAction = unpackerAction
-		Me.RunWorkerAsync(info)
+		info.theArchiveEntryIndexes = packInternalEntryIndexes
+		info.theArchiveAction = unpackerAction
+		'Me.RunWorkerAsync(info)
+		Dim e As New System.ComponentModel.DoWorkEventArgs(info)
+		Me.OnDoWork(e)
 	End Sub
 
-	Public Sub GetPathsAndPathFileNamesAndHardLinkFileName(ByVal packInternalPathFileNames As List(Of String), ByRef pathsAndPathFileNames As List(Of String), ByRef hardLinkFileName As String)
+	Public Sub GetPathsAndPathFileNames(ByVal packInternalPathFileNames As List(Of String), ByRef pathsAndPathFileNames As List(Of String))
 		Dim vpkPath As String
 		Dim vpkFileName As String
 		vpkPath = FileManager.GetPath(TheApp.Settings.UnpackVpkPathFileName)
 		vpkFileName = Path.GetFileName(TheApp.Settings.UnpackVpkPathFileName)
-		Me.theGivenHardLinkFileName = Nothing
-		hardLinkFileName = Me.GetHardLinkFileName(vpkFileName)
 
-		Dim hardLinkFileNameWithoutExtension As String
-		hardLinkFileNameWithoutExtension = Path.GetFileNameWithoutExtension(hardLinkFileName)
-
-		Dim hardLinkOutputPath As String
-		'If VpkAppAction = AppEnums.VpkAppAction.Unpack Then
-		'	hardLinkOutputPath = vpkPath
-		'Else
-		hardLinkOutputPath = Path.Combine(vpkPath, hardLinkFileNameWithoutExtension)
-		'End If
-
-		'If VpkAppAction = AppEnums.VpkAppAction.ExtractToTemp Then
 		pathsAndPathFileNames = New List(Of String)()
 		For Each packInternalPathFileName As String In packInternalPathFileNames
-			pathsAndPathFileNames.Add(Path.Combine(hardLinkOutputPath, packInternalPathFileName))
+			pathsAndPathFileNames.Add(Path.Combine(Path.GetTempPath(), packInternalPathFileName))
 		Next
-		'	Me.ReportProgress(75, Me.theUnpackedFiles)
-		'Me.theTempUnpackPath = hardLinkOutputPath
-		'End If
-	End Sub
-
-	Public Sub RunSynchronous(ByVal packInternalPathFileNames As List(Of String), ByVal givenHardLinkFileName As String, Optional ByVal unpackerAction As VpkAppAction = VpkAppAction.Extract)
-		Me.theSynchronousWorkerIsActive = True
-		Me.theGivenHardLinkFileName = givenHardLinkFileName
-		Me.theTempUnpackPath = Nothing
-		Dim info As New UnpackerInputInfo()
-		info.thePackInternalPathFileNames = packInternalPathFileNames
-		info.unpackerAction = unpackerAction
-		'Me.RunWorkerAsync(info)
-		Dim e As New System.ComponentModel.DoWorkEventArgs(info)
-		Me.OnDoWork(e)
 	End Sub
 
 	Public Sub SkipCurrentVpk()
@@ -114,6 +88,7 @@ Public Class Unpacker
 
 	Public Sub DeleteTempUnpackFolder()
 		If Me.theTempUnpackPath IsNot Nothing AndAlso Directory.Exists(Me.theTempUnpackPath) Then
+			'TODO: Double-check that this is completely safe. Double-check that it won't delete a root folder.
 			My.Computer.FileSystem.DeleteDirectory(Me.theTempUnpackPath, FileIO.DeleteDirectoryOption.DeleteAllContents)
 		End If
 	End Sub
@@ -131,45 +106,23 @@ Public Class Unpacker
 			Me.ReportProgress(0, "")
 		End If
 
-		Dim info As UnpackerInputInfo
-		info = CType(e.Argument, UnpackerInputInfo)
+		Dim status As AppEnums.StatusMessage
+		If Me.UnpackerInputsAreValid() Then
+			Dim info As UnpackerInputInfo
+			info = CType(e.Argument, UnpackerInputInfo)
 
-		If info.unpackerAction = VpkAppAction.List Then
-			If Me.UnpackerInputsAreValid() Then
-				Me.ListOneVpk()
-			End If
-		ElseIf info.unpackerAction = VpkAppAction.Unpack Then
-			Me.theOutputPath = Me.GetOutputPath()
-
-			Dim status As AppEnums.StatusMessage
-			If Me.UnpackerInputsAreValid() Then
+			If info.theArchiveAction = ArchiveAction.List Then
+				Me.List()
+			ElseIf info.theArchiveAction = ArchiveAction.Unpack Then
 				status = Me.Unpack()
-			Else
-				status = StatusMessage.Error
-			End If
-			e.Result = Me.GetUnpackerOutputInfo(status)
-		ElseIf info.unpackerAction = VpkAppAction.Extract Then
-			Me.theOutputPath = Me.GetOutputPath()
+			ElseIf info.theArchiveAction = ArchiveAction.Extract Then
+				status = Me.Extract(info.theArchiveEntryIndexes)
+			ElseIf info.theArchiveAction = ArchiveAction.ExtractAndOpen Then
+				status = Me.ExtractWithoutLogging(info.theArchiveEntryIndexes)
 
-			Dim status As AppEnums.StatusMessage
-			If Me.UnpackerInputsAreValid() Then
-				status = Me.Extract(info.thePackInternalPathFileNames)
-			Else
-				status = StatusMessage.Error
-			End If
-			e.Result = Me.GetUnpackerOutputInfo(status)
-		ElseIf info.unpackerAction = VpkAppAction.ExtractAndOpen Then
-			Me.theOutputPath = Path.GetTempPath()
-
-			Dim status As AppEnums.StatusMessage
-			If Me.UnpackerInputsAreValid() Then
-				status = Me.ExtractWithoutLogging(info.thePackInternalPathFileNames, VpkAppAction.ExtractAndOpen)
-
-				Dim packInternalFileName As String
-				Dim pathFileName As String
-				packInternalFileName = Path.GetFileName(info.thePackInternalPathFileNames(0))
-				pathFileName = TheApp.Unpacker.GetOutputPathFileName(packInternalFileName)
-				System.Diagnostics.Process.Start(pathFileName)
+				Dim entry As VpkDirectoryEntry
+				entry = Me.theVpkFileData.theEntries(info.theArchiveEntryIndexes(0))
+				Me.StartFile(entry.thePathFileName)
 
 				'TODO: Store a list of temp file names and delete them when Crowbar exits.
 
@@ -179,26 +132,14 @@ Public Class Unpacker
 				'Catch ex As Exception
 				'	Dim debug As Integer = 4242
 				'End Try
-			Else
-				status = StatusMessage.Error
+			ElseIf info.theArchiveAction = ArchiveAction.ExtractToTemp Then
+				status = Me.ExtractWithoutLogging(info.theArchiveEntryIndexes)
 			End If
-			e.Result = Nothing
-		ElseIf info.unpackerAction = VpkAppAction.ExtractToTemp Then
-			Me.theOutputPath = Me.GetOutputPath()
-
-			Dim status As AppEnums.StatusMessage
-			If Me.UnpackerInputsAreValid() Then
-				status = Me.ExtractWithoutLogging(info.thePackInternalPathFileNames, VpkAppAction.ExtractToTemp)
-			Else
-				status = StatusMessage.Error
-			End If
-
-			Dim unpackResultInfo As New UnpackerOutputInfo()
-			unpackResultInfo.theStatus = status
-			unpackResultInfo.unpackerAction = info.unpackerAction
-			unpackResultInfo.theUnpackedRelativePathFileNames = Me.theUnpackedFiles
-			e.Result = unpackResultInfo
+		Else
+			status = StatusMessage.Error
 		End If
+
+		e.Result = Me.GetUnpackerOutputInfo(status)
 
 		If Me.CancellationPending Then
 			e.Cancel = True
@@ -228,28 +169,6 @@ Public Class Unpacker
 	Private Function UnpackerInputsAreValid() As Boolean
 		Dim inputsAreValid As Boolean = True
 
-		Dim gameUnpackerPathFileName As String
-		gameUnpackerPathFileName = Me.GetGameUnpackerPathFileName()
-		'TODO: Comment this out when gmad.exe gets a list action or an internal gma unpacker/lister is written.
-		If Path.GetFileName(gameUnpackerPathFileName) = "gmad.exe" Then
-			Return False
-		End If
-
-		Dim gameSetup As GameSetup
-		Dim gamePathFileName As String
-		gameSetup = TheApp.Settings.GameSetups(TheApp.Settings.UnpackGameSetupSelectedIndex)
-		gamePathFileName = gameSetup.GamePathFileName
-
-		If Not File.Exists(gameUnpackerPathFileName) Then
-			inputsAreValid = False
-			Me.WriteErrorMessage("The game's unpacker, """ + gameUnpackerPathFileName + """, does not exist.")
-			Me.WriteErrorMessageContinued(My.Resources.ErrorMessageSDKMissingCause)
-		End If
-		If Not File.Exists(gamePathFileName) Then
-			inputsAreValid = False
-			Me.WriteErrorMessage("The game's """ + gamePathFileName + """ file does not exist.")
-			Me.WriteErrorMessageContinued(My.Resources.ErrorMessageSDKMissingCause)
-		End If
 		If String.IsNullOrEmpty(TheApp.Settings.UnpackVpkPathFolderOrFileName) Then
 			inputsAreValid = False
 			Me.WriteErrorMessage("VPK file or folder has not been selected.")
@@ -261,27 +180,6 @@ Public Class Unpacker
 		Return inputsAreValid
 	End Function
 
-	Private Function GetGameUnpackerPathFileName() As String
-		Dim gameUnpackerPathFileName As String
-
-		Dim gameSetup As GameSetup
-		gameSetup = TheApp.Settings.GameSetups(TheApp.Settings.UnpackGameSetupSelectedIndex)
-		'gameUnpackerPathFileName = Path.Combine(FileManager.GetPath(gameSetup.CompilerPathFileName), "vpk.exe")
-		gameUnpackerPathFileName = gameSetup.UnpackerPathFileName
-
-		Return gameUnpackerPathFileName
-	End Function
-
-	Private Function GetGamePath() As String
-		Dim gamePath As String
-
-		Dim gameSetup As GameSetup
-		gameSetup = TheApp.Settings.GameSetups(TheApp.Settings.UnpackGameSetupSelectedIndex)
-		gamePath = FileManager.GetPath(gameSetup.GamePathFileName)
-
-		Return gamePath
-	End Function
-
 	Private Function GetUnpackerOutputInfo(ByVal status As AppEnums.StatusMessage) As UnpackerOutputInfo
 		Dim unpackResultInfo As New UnpackerOutputInfo()
 
@@ -290,7 +188,7 @@ Public Class Unpacker
 		If Me.theUnpackedFiles.Count > 0 Then
 			unpackResultInfo.theUnpackedRelativePathFileNames = Me.theUnpackedFiles
 		ElseIf TheApp.Settings.UnpackLogFileIsChecked Then
-			unpackResultInfo.theUnpackedRelativePathFileNames = Me.theUnpackedLogFiles
+			unpackResultInfo.theUnpackedRelativePathFileNames = Me.theLogFiles
 		End If
 
 		Return unpackResultInfo
@@ -343,7 +241,7 @@ Public Class Unpacker
 			Me.theLogFileStream.AutoFlush = True
 
 			If File.Exists(logPathFileName) Then
-				Me.theUnpackedLogFiles.Add(FileManager.GetRelativePathFileName(Me.theOutputPath, logPathFileName))
+				Me.theLogFiles.Add(FileManager.GetRelativePathFileName(Me.theOutputPath, logPathFileName))
 			End If
 
 			Me.theLogFileStream.WriteLine("// " + TheApp.GetHeaderComment())
@@ -361,20 +259,45 @@ Public Class Unpacker
 			Me.theLogFileStream.Flush()
 		End If
 
-		Me.ReportProgress(progressValue, line)
+		If Not Me.theSynchronousWorkerIsActive Then
+			Me.ReportProgress(progressValue, line)
+		End If
 	End Sub
 
-	Private Sub ListOneVpk()
-		Try
-			Dim vpkPath As String
-			Dim vpkFileName As String
-			vpkPath = FileManager.GetPath(TheApp.Settings.UnpackVpkPathFileName)
-			vpkFileName = Path.GetFileName(TheApp.Settings.UnpackVpkPathFileName)
+	Private Sub List()
+		Me.theVpkFileData = New VpkFileData()
 
-			Me.DoUnpackAction(vpkPath, vpkFileName, VpkAppAction.List, Nothing)
+		Dim inputFileStream As FileStream = Nothing
+		Me.theInputFileReader = Nothing
+		Try
+			inputFileStream = New FileStream(TheApp.Settings.UnpackVpkPathFileName, FileMode.Open, FileAccess.Read, FileShare.Read)
+			If inputFileStream IsNot Nothing Then
+				Try
+					Me.theInputFileReader = New BinaryReader(inputFileStream, System.Text.Encoding.ASCII)
+
+					Dim vpkFile As New VpkFile(Me.theInputFileReader, Me.theVpkFileData)
+
+					vpkFile.ReadHeader()
+					vpkFile.ReadEntries()
+				Catch ex As Exception
+					Throw
+				Finally
+					If Me.theInputFileReader IsNot Nothing Then
+						Me.theInputFileReader.Close()
+					End If
+				End Try
+			End If
 		Catch ex As Exception
-			Dim debug As Integer = 4242
+			Throw
+		Finally
+			If inputFileStream IsNot Nothing Then
+				inputFileStream.Close()
+			End If
 		End Try
+
+		For Each line As String In Me.theVpkFileData.theEntryDataOutputTexts
+			Me.UpdateProgress(0, line)
+		Next
 	End Sub
 
 	Private Function Unpack() As AppEnums.StatusMessage
@@ -383,8 +306,9 @@ Public Class Unpacker
 		Me.theSkipCurrentPackIsActive = False
 
 		Me.theUnpackedFiles.Clear()
-		Me.theUnpackedLogFiles.Clear()
+		Me.theLogFiles.Clear()
 
+		Me.theOutputPath = Me.GetOutputPath()
 		Dim vpkPathFileName As String
 		vpkPathFileName = TheApp.Settings.UnpackVpkPathFolderOrFileName
 		If File.Exists(vpkPathFileName) Then
@@ -400,16 +324,16 @@ Public Class Unpacker
 			If TheApp.Settings.UnpackMode = ActionMode.FolderRecursion Then
 				progressDescriptionText += """" + Me.theInputVpkPath + """ (folder + subfolders)"
 				Me.UpdateProgressStart(progressDescriptionText + " ...")
-				Me.UnpackVpksInFolderRecursively(Me.theInputVpkPath)
+				Me.UnpackArchivesInFolderRecursively(Me.theInputVpkPath)
 			ElseIf TheApp.Settings.UnpackMode = ActionMode.Folder Then
 				progressDescriptionText += """" + Me.theInputVpkPath + """ (folder)"
 				Me.UpdateProgressStart(progressDescriptionText + " ...")
-				Me.UnpackVpksInFolder(Me.theInputVpkPath)
+				Me.UnpackArchivesInFolder(Me.theInputVpkPath)
 			Else
 				vpkPathFileName = TheApp.Settings.UnpackVpkPathFileName
 				progressDescriptionText += """" + vpkPathFileName + """"
 				Me.UpdateProgressStart(progressDescriptionText + " ...")
-				Me.UnpackOneVpk(vpkPathFileName)
+				Me.UnpackArchive(vpkPathFileName)
 			End If
 		Catch ex As Exception
 			status = StatusMessage.Error
@@ -420,97 +344,15 @@ Public Class Unpacker
 		Return status
 	End Function
 
-	Private Sub UnpackVpksInFolderRecursively(ByVal vpkPath As String)
-		Me.UnpackVpksInFolder(vpkPath)
-
-		For Each aPathSubFolder As String In Directory.GetDirectories(vpkPath)
-			Me.UnpackVpksInFolderRecursively(aPathSubFolder)
-			If Me.CancellationPending Then
-				Return
-			End If
-		Next
-	End Sub
-
-	Private Sub UnpackVpksInFolder(ByVal vpkPath As String)
-		For Each aPathFileName As String In Directory.GetFiles(vpkPath, "*.vpk")
-			Me.UnpackOneVpk(aPathFileName)
-
-			'TODO: Double-check if this is wanted. If so, then add equivalent to Decompiler.DecompileModelsInFolder().
-			Me.ReportProgress(5, "")
-
-			If Me.CancellationPending Then
-				Return
-			ElseIf Me.theSkipCurrentPackIsActive Then
-				Me.theSkipCurrentPackIsActive = False
-				Continue For
-			End If
-		Next
-	End Sub
-
-	Private Sub UnpackOneVpk(ByVal vpkPathFileName As String)
-		Try
-			Dim vpkPath As String
-			Dim vpkFileName As String
-			Dim vpkRelativePath As String
-			Dim vpkRelativePathFileName As String
-			vpkPath = FileManager.GetPath(vpkPathFileName)
-			vpkFileName = Path.GetFileName(vpkPathFileName)
-			vpkRelativePath = FileManager.GetRelativePathFileName(Me.theInputVpkPath, FileManager.GetPath(vpkPathFileName))
-			vpkRelativePathFileName = Path.Combine(vpkRelativePath, vpkFileName)
-
-			Dim vpkName As String
-			vpkName = Path.GetFileNameWithoutExtension(vpkPathFileName)
-
-			Me.CreateLogTextFile(vpkName)
-
-			Me.UpdateProgress()
-			Me.UpdateProgress(1, "Unpacking """ + vpkRelativePathFileName + """ ...")
-
-			Me.DoUnpackAction(vpkPath, vpkFileName, VpkAppAction.Unpack, Nothing)
-
-			Me.UpdateProgress(1, "... Unpacking """ + vpkRelativePathFileName + """ finished. Check above for any errors.")
-		Catch ex As Exception
-			Dim debug As Integer = 4242
-		Finally
-			If Me.theLogFileStream IsNot Nothing Then
-				Me.theLogFileStream.Flush()
-				Me.theLogFileStream.Close()
-				Me.theLogFileStream = Nothing
-			End If
-		End Try
-	End Sub
-
-	Private Function ExtractWithoutLogging(ByVal packInternalPathFileNames As List(Of String), ByVal unpackerAction As VpkAppAction) As AppEnums.StatusMessage
-		Dim status As AppEnums.StatusMessage = StatusMessage.Success
-
-		Me.theUnpackedFiles.Clear()
-
-		Dim vpkPathFileName As String
-		vpkPathFileName = TheApp.Settings.UnpackVpkPathFileName
-
-		Try
-			Dim vpkPath As String
-			Dim vpkFileName As String
-			vpkPath = FileManager.GetPath(vpkPathFileName)
-			vpkFileName = Path.GetFileName(vpkPathFileName)
-
-			Me.DoUnpackAction(vpkPath, vpkFileName, unpackerAction, packInternalPathFileNames)
-		Catch ex As Exception
-			status = StatusMessage.Error
-		Finally
-		End Try
-
-		Return status
-	End Function
-
-	Private Function Extract(ByVal packInternalPathFileNames As List(Of String)) As AppEnums.StatusMessage
+	Private Function Extract(ByVal packInternalEntryIndexes As List(Of Integer)) As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
 		Me.theSkipCurrentPackIsActive = False
 
 		Me.theUnpackedFiles.Clear()
-		Me.theUnpackedLogFiles.Clear()
+		Me.theLogFiles.Clear()
 
+		Me.theOutputPath = Me.GetOutputPath()
 		Dim vpkPathFileName As String
 		vpkPathFileName = TheApp.Settings.UnpackVpkPathFolderOrFileName
 		If File.Exists(vpkPathFileName) Then
@@ -526,7 +368,7 @@ Public Class Unpacker
 			vpkPathFileName = TheApp.Settings.UnpackVpkPathFileName
 			progressDescriptionText += """" + vpkPathFileName + """"
 			Me.UpdateProgressStart(progressDescriptionText + " ...")
-			Me.ExtractFromOneVpk(vpkPathFileName, packInternalPathFileNames)
+			Me.ExtractFromArchive(vpkPathFileName, packInternalEntryIndexes)
 		Catch ex As Exception
 			status = StatusMessage.Error
 		End Try
@@ -536,7 +378,92 @@ Public Class Unpacker
 		Return status
 	End Function
 
-	Private Sub ExtractFromOneVpk(ByVal vpkPathFileName As String, ByVal packInternalPathFileNames As List(Of String))
+	Private Function ExtractWithoutLogging(ByVal packInternalEntryIndexes As List(Of Integer)) As AppEnums.StatusMessage
+		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+
+		Me.theUnpackedFiles.Clear()
+
+		Me.theOutputPath = Path.GetTempPath()
+		Dim vpkPathFileName As String
+		vpkPathFileName = TheApp.Settings.UnpackVpkPathFileName
+
+		Try
+			Dim vpkPath As String
+			Dim vpkFileName As String
+			vpkPath = FileManager.GetPath(vpkPathFileName)
+			vpkFileName = Path.GetFileName(vpkPathFileName)
+
+			Me.DoUnpackAction(vpkPath, vpkFileName, packInternalEntryIndexes)
+		Catch ex As Exception
+			status = StatusMessage.Error
+		End Try
+
+		Return status
+	End Function
+
+	Private Sub UnpackArchivesInFolderRecursively(ByVal archivePath As String)
+		Me.UnpackArchivesInFolder(archivePath)
+
+		For Each aPathSubFolder As String In Directory.GetDirectories(archivePath)
+			Me.UnpackArchivesInFolderRecursively(aPathSubFolder)
+			If Me.CancellationPending Then
+				Return
+			End If
+		Next
+	End Sub
+
+	Private Sub UnpackArchivesInFolder(ByVal archivePath As String)
+		For Each anArchivePathFileName As String In Directory.GetFiles(archivePath, "*.vpk")
+			Me.UnpackArchive(anArchivePathFileName)
+
+			If Not Me.theSynchronousWorkerIsActive Then
+				'TODO: Double-check if this is wanted. If so, then add equivalent to Decompiler.DecompileModelsInFolder().
+				Me.ReportProgress(5, "")
+			End If
+
+			If Me.CancellationPending Then
+				Return
+			ElseIf Me.theSkipCurrentPackIsActive Then
+				Me.theSkipCurrentPackIsActive = False
+				Continue For
+			End If
+		Next
+	End Sub
+
+	Private Sub UnpackArchive(ByVal archivePathFileName As String)
+		Try
+			Dim vpkPath As String
+			Dim vpkFileName As String
+			Dim vpkRelativePath As String
+			Dim vpkRelativePathFileName As String
+			vpkPath = FileManager.GetPath(archivePathFileName)
+			vpkFileName = Path.GetFileName(archivePathFileName)
+			vpkRelativePath = FileManager.GetRelativePathFileName(Me.theInputVpkPath, FileManager.GetPath(archivePathFileName))
+			vpkRelativePathFileName = Path.Combine(vpkRelativePath, vpkFileName)
+
+			Dim vpkName As String
+			vpkName = Path.GetFileNameWithoutExtension(archivePathFileName)
+
+			Me.CreateLogTextFile(vpkName)
+
+			Me.UpdateProgress()
+			Me.UpdateProgress(1, "Unpacking """ + vpkRelativePathFileName + """ ...")
+
+			Me.DoUnpackAction(vpkPath, vpkFileName, Nothing)
+
+			Me.UpdateProgress(1, "... Unpacking """ + vpkRelativePathFileName + """ finished. Check above for any errors.")
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		Finally
+			If Me.theLogFileStream IsNot Nothing Then
+				Me.theLogFileStream.Flush()
+				Me.theLogFileStream.Close()
+				Me.theLogFileStream = Nothing
+			End If
+		End Try
+	End Sub
+
+	Private Sub ExtractFromArchive(ByVal vpkPathFileName As String, ByVal packInternalEntryIndexes As List(Of Integer))
 		Try
 			Dim vpkPath As String
 			Dim vpkFileName As String
@@ -550,12 +477,17 @@ Public Class Unpacker
 			Dim vpkName As String
 			vpkName = Path.GetFileNameWithoutExtension(vpkPathFileName)
 
+			Dim vpkFileNameWithoutExtension As String
+			vpkFileNameWithoutExtension = Path.GetFileNameWithoutExtension(vpkFileName)
+			Dim extractPath As String
+			extractPath = Path.Combine(Me.theOutputPath, vpkFileNameWithoutExtension)
+
 			Me.CreateLogTextFile(vpkName)
 
 			Me.UpdateProgress()
-			Me.UpdateProgress(1, "Unpacking from """ + vpkRelativePathFileName + """ ...")
+			Me.UpdateProgress(1, "Unpacking from """ + vpkRelativePathFileName + """ to """ + extractPath + """ ...")
 
-			Me.DoUnpackAction(vpkPath, vpkFileName, VpkAppAction.Extract, packInternalPathFileNames)
+			Me.DoUnpackAction(vpkPath, vpkFileName, packInternalEntryIndexes)
 
 			Me.UpdateProgress(1, "... Unpacking from """ + vpkRelativePathFileName + """ finished. Check above for any errors.")
 		Catch ex As Exception
@@ -569,459 +501,106 @@ Public Class Unpacker
 		End Try
 	End Sub
 
-	''NOTE: To unpack a gma file:
-	''mkdir "%~d1%~p1%~n1"
-	''"gmad.exe" extract -file %1 -out "%~d1%~p1%~n1"
-	'Private Sub RunVpkApp(ByVal vpkPath As String, ByVal vpkFileName As String, ByVal vpkAppAction As VpkAppAction, ByVal packInternalPathFileName As String)
-	'	'TODO: Create a temp folder because both gmad.exe and vpk.exe output to same folder as the gma or vpk.
-	'	'      Copy the gma or vpk files to temp folder. [Copying these files might take a long time, so make the temp folder in same folder as the vpk.]
-	'	'          If a temp folder can not be created in the same folder as vpk, then do the copy.
-	'	'      After unpacking, copy the unpacked folders and files from temp folder to output folder.
-	'	'      Delete the temp folder.
-
-	'	'Dim tempFolder As String
-	'	'tempFolder = Path.GetTempPath()
-
-	'	Dim currentPath As String
-	'	currentPath = Directory.GetCurrentDirectory()
-	'	Directory.SetCurrentDirectory(vpkPath)
-
-	'	If vpkAppAction = AppEnums.VpkAppAction.Unpack OrElse vpkAppAction = AppEnums.VpkAppAction.Extract OrElse vpkAppAction = AppEnums.VpkAppAction.ExtractAndOpen Then
-	'		'Dim vpkOutputPath As String
-	'		'vpkOutputPath = Me.theOutputPath
-
-	'		'If vpkAppAction = AppEnums.VpkAppAction.Extract Then
-	'		'	Dim vpkFileNameWithoutExtension As String
-	'		'	vpkFileNameWithoutExtension = Path.GetFileNameWithoutExtension(vpkFileName)
-	'		'	vpkOutputPath = Path.Combine(vpkOutputPath, vpkFileNameWithoutExtension)
-	'		'End If
-	'		'======
-	'		Dim vpkFileNameWithoutExtension As String
-	'		vpkFileNameWithoutExtension = Path.GetFileNameWithoutExtension(vpkFileName)
-	'		Dim tempVpkOutputPath As String
-	'		If vpkAppAction = AppEnums.VpkAppAction.Extract Then
-	'			tempVpkOutputPath = Path.Combine(vpkPath, vpkFileNameWithoutExtension)
-	'		Else
-	'			tempVpkOutputPath = vpkPath
-	'		End If
-
-	'		'If FileManager.PathExistsAfterTryToCreate(vpkOutputPath) Then
-	'		If FileManager.PathExistsAfterTryToCreate(tempVpkOutputPath) Then
-	'			Dim copiedVpkFileName As String
-	'			'copiedVpkFileName = Path.Combine(vpkOutputPath, vpkFileName)
-	'			'======
-	'			' Because hard link has to be on same drive as the target file, create the hard link in same folder as the target using a temp name.
-	'			Do
-	'				copiedVpkFileName = Guid.NewGuid().ToString() + Path.GetExtension(vpkFileName)
-	'			Loop Until Not File.Exists(copiedVpkFileName)
-
-	'			Try
-	'				'If File.Exists(copiedVpkFileName) Then
-	'				'	File.Delete(copiedVpkFileName)
-	'				'End If
-
-	'				'NOTE: Create hard link instead of copying so it is quick and does not take up more disk space. Only available on WinXP and later.
-	'				Dim hardLinkWasCreated As Boolean
-	'				hardLinkWasCreated = Win32Api.CreateHardLink(copiedVpkFileName, vpkFileName, IntPtr.Zero)
-	'				If Not hardLinkWasCreated Then
-	'					'TODO: Use GetLastError and FormatMessage as indicated here: https://msdn.microsoft.com/en-us/library/windows/desktop/ms680582(v=vs.85).aspx
-	'					Me.WriteErrorMessage("Crowbar tried to hard-link to the file """ + Path.Combine(vpkPath, vpkFileName) + """ from """ + copiedVpkFileName + """ but Windows gave this message: " + Runtime.InteropServices.Marshal.GetLastWin32Error().ToString())
-	'				End If
-	'			Catch ex As Exception
-	'				Me.WriteErrorMessage("Crowbar tried to hard-link to the file """ + Path.Combine(vpkPath, vpkFileName) + """ from """ + copiedVpkFileName + """ but Windows gave this message: " + ex.Message)
-	'			End Try
-
-	'			If File.Exists(copiedVpkFileName) Then
-	'				'Directory.SetCurrentDirectory(vpkOutputPath)
-
-	'				If vpkAppAction = AppEnums.VpkAppAction.Extract Then
-	'					Dim extractPath As String
-	'					extractPath = FileManager.GetPath(packInternalPathFileName)
-	'					If extractPath = packInternalPathFileName OrElse FileManager.PathExistsAfterTryToCreate(extractPath) Then
-	'						'Me.RunVpkAppInternal(vpkPath, vpkFileName, vpkAppAction, packInternalPathFileName)
-	'						Me.RunVpkAppInternal(vpkPath, copiedVpkFileName, vpkAppAction, packInternalPathFileName)
-
-	'						Dim packPathFileName As String
-	'						'packPathFileName = Path.Combine(vpkOutputPath, packInternalPathFileName)
-	'						packPathFileName = Path.Combine(vpkPath, packInternalPathFileName)
-	'						Me.theUnpackedFiles.Add(FileManager.GetRelativePathFileName(Me.theOutputPath, packPathFileName))
-	'					End If
-	'				Else
-	'					'Me.RunVpkAppInternal(vpkPath, vpkFileName, vpkAppAction, packInternalPathFileName)
-	'					Me.RunVpkAppInternal(vpkPath, copiedVpkFileName, vpkAppAction, packInternalPathFileName)
-	'				End If
-
-	'				Try
-	'					If File.Exists(copiedVpkFileName) Then
-	'						File.Delete(copiedVpkFileName)
-	'					End If
-
-	'					'TODO: Then move the new folder to output folder.
-	'					Dim vpkOutputPath As String
-	'					vpkOutputPath = Me.theOutputPath
-
-	'					If vpkAppAction = AppEnums.VpkAppAction.Extract Then
-	'						vpkOutputPath = Path.Combine(vpkOutputPath, vpkFileNameWithoutExtension)
-	'					End If
-
-	'					Directory.Move(Path.Combine(tempVpkOutputPath, vpkFileNameWithoutExtension), vpkOutputPath)
-	'				Catch ex As Exception
-	'					'TODO: Write a warning message.
-	'				End Try
-	'			End If
-	'		Else
-	'			'Me.WriteErrorMessage("Crowbar tried to create """ + vpkOutputPath + """, but it failed.")
-	'			Me.WriteErrorMessage("Crowbar tried to create """ + tempVpkOutputPath + """, but it failed.")
-	'		End If
-	'	Else
-	'		Me.RunVpkAppInternal(vpkPath, vpkFileName, vpkAppAction, packInternalPathFileName)
-	'	End If
-
-	'	Directory.SetCurrentDirectory(currentPath)
-	'End Sub
-
-	Private Function GetHardLinkFileName(ByVal vpkFileName As String) As String
-		' Because hard-link has to be on same drive as the target file, create the hard-link in same folder as the target file using an unused filename.
-		Dim hardLinkFileName As String
-
-		If Me.theGivenHardLinkFileName Is Nothing Then
-			Do
-				hardLinkFileName = Guid.NewGuid().ToString() + Path.GetExtension(vpkFileName)
-			Loop Until Not File.Exists(hardLinkFileName)
-		Else
-			hardLinkFileName = Me.theGivenHardLinkFileName
+	Private Sub DoUnpackAction(ByVal vpkPath As String, ByVal vpkFileName As String, ByVal packInternalEntryIndexes As List(Of Integer))
+		If Me.theVpkFileData Is Nothing Then
+			Exit Sub
 		End If
 
-		Return hardLinkFileName
-	End Function
+		'Dim currentPath As String
+		'currentPath = Directory.GetCurrentDirectory()
+		'Directory.SetCurrentDirectory(vpkPath)
 
-	Private Sub DoUnpackAction(ByVal vpkPath As String, ByVal vpkFileName As String, ByVal vpkAppAction As VpkAppAction, ByVal packInternalPathFileNames As List(Of String))
-		'TODO: Create a temp unpack folder because both gmad.exe and vpk.exe output to same folder as the gma or vpk. [Hard-link must be on same drive as original file, so make the temp unpack folder in same folder as the vpk.]
-		'      Hard-link the gma or vpk files to temp unpack folder.
-		'      Unpack.
-		'      Delete the hard-link.
-		'      Move the temp unpack folder to output folder.
+		If packInternalEntryIndexes Is Nothing Then
+			packInternalEntryIndexes = New List(Of Integer)(Me.theVpkFileData.theEntries.Count)
+			For entryIndex As Integer = 0 To Me.theVpkFileData.theEntries.Count - 1
+				packInternalEntryIndexes.Add(entryIndex)
+			Next
+		End If
 
-		Dim currentPath As String
-		currentPath = Directory.GetCurrentDirectory()
-		Directory.SetCurrentDirectory(vpkPath)
+		Dim vpkPathFileName As String
+		vpkPathFileName = Path.Combine(vpkPath, vpkFileName)
+		Dim vpkFileNameWithoutExtension As String
+		vpkFileNameWithoutExtension = Path.GetFileNameWithoutExtension(vpkFileName)
+		Dim extractPath As String
+		extractPath = Path.Combine(Me.theOutputPath, vpkFileNameWithoutExtension)
 
-		If vpkAppAction = AppEnums.VpkAppAction.List Then
-			Me.RunVpkAppInternal(vpkPath, vpkFileName, vpkAppAction, Nothing)
+		If vpkFileNameWithoutExtension.EndsWith("_dir") Then
+			Dim vpkFileNameWithoutIndex As String
+			vpkFileNameWithoutIndex = vpkFileNameWithoutExtension.Substring(0, vpkFileNameWithoutExtension.LastIndexOf("_dir"))
+
+			Dim entry As VpkDirectoryEntry
+			For Each entryIndex As Integer In packInternalEntryIndexes
+				entry = Me.theVpkFileData.theEntries(entryIndex)
+				If entry.archiveIndex <> &H7FFF Then
+					vpkPathFileName = Path.Combine(vpkPath, vpkFileNameWithoutIndex + "_" + entry.archiveIndex.ToString("000") + ".vpk")
+				End If
+				Me.UnpackEntryDatasToFiles(vpkPathFileName, packInternalEntryIndexes, extractPath)
+			Next
 		Else
-			Dim hardLinkFileName As String
-			hardLinkFileName = Me.GetHardLinkFileName(vpkFileName)
+			Me.UnpackEntryDatasToFiles(vpkPathFileName, packInternalEntryIndexes, extractPath)
+		End If
 
-			Dim hardLinkFileNameWithoutExtension As String
-			hardLinkFileNameWithoutExtension = Path.GetFileNameWithoutExtension(hardLinkFileName)
+		'Directory.SetCurrentDirectory(currentPath)
+	End Sub
 
-			Dim hardLinkOutputPath As String
-			If vpkAppAction = AppEnums.VpkAppAction.Unpack Then
-				hardLinkOutputPath = vpkPath
-			Else
-				hardLinkOutputPath = Path.Combine(vpkPath, hardLinkFileNameWithoutExtension)
-			End If
+	Private Sub UnpackEntryDatasToFiles(ByVal vpkPathFileName As String, ByVal entryIndexes As List(Of Integer), ByVal extractPath As String)
+		Dim inputFileStream As FileStream = Nothing
+		Me.theInputFileReader = Nothing
 
-			If vpkAppAction = AppEnums.VpkAppAction.ExtractToTemp Then
-				'For Each aPath As String In Directory.GetDirectories(hardLinkOutputPath)
-				'	Me.theUnpackedFiles.Add(aPath)
-				'Next
-				'For Each aPath As String In Directory.GetFiles(hardLinkOutputPath)
-				'	Me.theUnpackedFiles.Add(aPath)
-				'Next
-				'For Each packInternalPathFileName As String In packInternalPathFileNames
-				'	Me.theUnpackedFiles.Add(Path.Combine(hardLinkOutputPath, packInternalPathFileName))
-				'Next
-				'Me.ReportProgress(75, Me.theUnpackedFiles)
-				Me.theTempUnpackPath = hardLinkOutputPath
-			End If
-
-			If FileManager.PathExistsAfterTryToCreate(hardLinkOutputPath) Then
+		Try
+			inputFileStream = New FileStream(vpkPathFileName, FileMode.Open, FileAccess.Read, FileShare.Read)
+			If inputFileStream IsNot Nothing Then
 				Try
-					'NOTE: Create hard link instead of copying so it is quick and does not take up more disk space. Only available on WinXP and later.
-					Dim hardLinkWasCreated As Boolean
-					hardLinkWasCreated = Win32Api.CreateHardLink(Path.Combine(hardLinkOutputPath, hardLinkFileName), vpkFileName, IntPtr.Zero)
-					If Not hardLinkWasCreated Then
-						'TODO: Use GetLastError and FormatMessage as indicated here: https://msdn.microsoft.com/en-us/library/windows/desktop/ms680582(v=vs.85).aspx
-						Me.WriteErrorMessage("Crowbar tried to hard-link to the file """ + Path.Combine(vpkPath, vpkFileName) + """ from """ + Path.Combine(hardLinkOutputPath, hardLinkFileName) + """ but Windows gave this message: " + Runtime.InteropServices.Marshal.GetLastWin32Error().ToString())
-					End If
+					Me.theInputFileReader = New BinaryReader(inputFileStream, System.Text.Encoding.ASCII)
+
+					Dim vpkFile As New VpkFile(Me.theInputFileReader, Me.theVpkFileData)
+
+					For Each entryIndex As Integer In entryIndexes
+						Me.UnpackEntryDataToFile(vpkFile, entryIndex, extractPath)
+					Next
 				Catch ex As Exception
-					Me.WriteErrorMessage("Crowbar tried to hard-link to the file """ + Path.Combine(vpkPath, vpkFileName) + """ from """ + Path.Combine(hardLinkOutputPath, hardLinkFileName) + """ but Windows gave this message: " + ex.Message)
-				End Try
-
-				Directory.SetCurrentDirectory(hardLinkOutputPath)
-
-				If File.Exists(hardLinkFileName) Then
-					If vpkAppAction = AppEnums.VpkAppAction.Unpack Then
-						Me.RunVpkAppInternal(hardLinkOutputPath, hardLinkFileName, vpkAppAction, Nothing)
-					Else
-						For Each packInternalPathFileName As String In packInternalPathFileNames
-							Directory.SetCurrentDirectory(hardLinkOutputPath)
-
-							Dim extractPath As String
-							extractPath = FileManager.GetPath(packInternalPathFileName)
-							If extractPath = packInternalPathFileName OrElse FileManager.PathExistsAfterTryToCreate(extractPath) Then
-								Me.RunVpkAppInternal(hardLinkOutputPath, hardLinkFileName, vpkAppAction, packInternalPathFileName)
-							End If
-
-							Try
-								If vpkAppAction = AppEnums.VpkAppAction.ExtractAndOpen Then
-									Dim packInternalFileName As String
-									packInternalFileName = Path.GetFileName(packInternalPathFileName)
-									My.Computer.FileSystem.MoveFile(packInternalPathFileName, Path.Combine(Me.theOutputPath, packInternalFileName), True)
-									'ElseIf vpkAppAction = AppEnums.VpkAppAction.ExtractToTemp Then
-									'	Dim packPathFileName As String
-									'	packPathFileName = Path.Combine(hardLinkOutputPath, packInternalPathFileName)
-									'	If File.Exists(packPathFileName) Then
-									'		Me.theUnpackedFiles.Add(packPathFileName)
-									'	End If
-									'	Me.theTempUnpackPath = hardLinkOutputPath
-								End If
-							Catch ex As Exception
-								'TODO: Write a warning message.
-								Dim debug As Integer = 4242
-							End Try
-						Next
+					Throw
+				Finally
+					If Me.theInputFileReader IsNot Nothing Then
+						Me.theInputFileReader.Close()
 					End If
-
-					Try
-						Directory.SetCurrentDirectory(hardLinkOutputPath)
-
-						If File.Exists(hardLinkFileName) Then
-							File.Delete(hardLinkFileName)
-						End If
-					Catch ex As Exception
-						'TODO: Write a warning message.
-						Dim debug As Integer = 4242
-					End Try
-
-					Try
-						Directory.SetCurrentDirectory(vpkPath)
-
-						If vpkAppAction = AppEnums.VpkAppAction.Unpack OrElse vpkAppAction = AppEnums.VpkAppAction.Extract Then
-							Dim vpkFileNameWithoutExtension As String
-							vpkFileNameWithoutExtension = Path.GetFileNameWithoutExtension(vpkFileName)
-							Dim vpkOutputPath As String
-							vpkOutputPath = Me.theOutputPath
-							vpkOutputPath = Path.Combine(vpkOutputPath, vpkFileNameWithoutExtension)
-
-							''NOTE: Does not move folder if target folder exists.
-							'Directory.Move(Path.GetFileNameWithoutExtension(copiedVpkFileName), vpkOutputPath)
-							'NOTE: The True argument allows move of folder even if target folder exists.
-							My.Computer.FileSystem.MoveDirectory(hardLinkFileNameWithoutExtension, vpkOutputPath, True)
-
-							If vpkAppAction = AppEnums.VpkAppAction.Extract Then
-								Dim packPathFileName As String
-								For Each packInternalPathFileName As String In packInternalPathFileNames
-									packPathFileName = Path.Combine(vpkOutputPath, packInternalPathFileName)
-									If File.Exists(packPathFileName) Then
-										Me.theUnpackedFiles.Add(FileManager.GetRelativePathFileName(Me.theOutputPath, packPathFileName))
-									End If
-								Next
-							End If
-						ElseIf vpkAppAction = AppEnums.VpkAppAction.ExtractAndOpen Then
-							My.Computer.FileSystem.DeleteDirectory(hardLinkFileNameWithoutExtension, FileIO.DeleteDirectoryOption.DeleteAllContents)
-							'ElseIf vpkAppAction = AppEnums.VpkAppAction.ExtractToTemp Then
-							'	For Each aPath As String In Directory.GetDirectories(hardLinkOutputPath)
-							'		Me.theUnpackedFiles.Add(aPath)
-							'	Next
-							'	For Each aPath As String In Directory.GetFiles(hardLinkOutputPath)
-							'		Me.theUnpackedFiles.Add(aPath)
-							'	Next
-							'	Me.theTempUnpackPath = hardLinkOutputPath
-						End If
-					Catch ex As Exception
-						'TODO: Write a warning message.
-						Dim debug As Integer = 4242
-					End Try
-				Else
-					'NOTE: This SetCurrentDirectory() is needed before the DeleteDirectory() otherwise the delete will raise an exception due to the current folder being inisde the folder being deleted.
-					Directory.SetCurrentDirectory(currentPath)
-					My.Computer.FileSystem.DeleteDirectory(hardLinkOutputPath, FileIO.DeleteDirectoryOption.DeleteAllContents)
-				End If
-			Else
-				Me.WriteErrorMessage("Crowbar tried to create """ + hardLinkOutputPath + """, but it failed.")
-			End If
-		End If
-
-		Directory.SetCurrentDirectory(currentPath)
-	End Sub
-
-	'NOTE: To unpack a gma file:
-	'mkdir "%~d1%~p1%~n1"
-	'"gmad.exe" extract -file %1 -out "%~d1%~p1%~n1"
-	Private Sub RunVpkAppInternal(ByVal vpkPath As String, ByVal vpkFileName As String, ByVal vpkAppAction As VpkAppAction, ByVal pathFileName As String)
-		Dim currentPath As String
-		currentPath = Directory.GetCurrentDirectory()
-		Directory.SetCurrentDirectory(vpkPath)
-
-		Dim vpkAppActionString As String = ""
-		Dim outputArguments As String = ""
-		If TheApp.Settings.UnpackContainerType = ContainerType.GMA Then
-			If vpkAppAction = AppEnums.VpkAppAction.List Then
-				'vpkAppActionString = ""
-				Exit Sub
-			ElseIf vpkAppAction = AppEnums.VpkAppAction.Unpack Then
-				vpkAppActionString = "extract -file"
-				outputArguments = vpkPath
-			End If
-		ElseIf TheApp.Settings.UnpackContainerType = ContainerType.VPK Then
-			If vpkAppAction = AppEnums.VpkAppAction.List Then
-				vpkAppActionString = "L"
-				'ElseIf vpkAppAction = AppEnums.VpkAppAction.Unpack Then
-				'	vpkAppActionString = ""
-			ElseIf vpkAppAction = AppEnums.VpkAppAction.Extract OrElse vpkAppAction = AppEnums.VpkAppAction.ExtractAndOpen OrElse vpkAppAction = AppEnums.VpkAppAction.ExtractToTemp Then
-				vpkAppActionString = "x"
-				outputArguments = """" + pathFileName + """"
-			End If
-		End If
-
-		Dim gameUnpackerPathFileName As String
-		gameUnpackerPathFileName = Me.GetGameUnpackerPathFileName()
-
-		Dim arguments As String = ""
-		arguments += vpkAppActionString
-		arguments += " "
-		arguments += """"
-		arguments += vpkFileName
-		arguments += """"
-		arguments += " "
-		arguments += outputArguments
-
-		Dim myProcess As New Process()
-		Dim myProcessStartInfo As New ProcessStartInfo(gameUnpackerPathFileName, arguments)
-		myProcessStartInfo.UseShellExecute = False
-		myProcessStartInfo.RedirectStandardOutput = True
-		'myProcessStartInfo.RedirectStandardError = True
-		myProcessStartInfo.RedirectStandardInput = True
-		myProcessStartInfo.CreateNoWindow = True
-		myProcess.StartInfo = myProcessStartInfo
-		''NOTE: Need this line to make Me.myProcess_Exited be called.
-		'myProcess.EnableRaisingEvents = True
-		If vpkAppAction = AppEnums.VpkAppAction.List Then
-			AddHandler myProcess.OutputDataReceived, AddressOf Me.ListOneVpkProcess_OutputDataReceived
-			'AddHandler myProcess.ErrorDataReceived, AddressOf Me.ListOneVpkProcess_ErrorDataReceived
-		ElseIf vpkAppAction = AppEnums.VpkAppAction.Unpack OrElse vpkAppAction = AppEnums.VpkAppAction.Extract Then
-			AddHandler myProcess.OutputDataReceived, AddressOf Me.myProcess_OutputDataReceived
-			'AddHandler myProcess.ErrorDataReceived, AddressOf Me.myProcess_ErrorDataReceived
-		End If
-
-		myProcess.Start()
-		myProcess.StandardInput.AutoFlush = True
-		myProcess.BeginOutputReadLine()
-		'myProcess.BeginErrorReadLine()
-
-		myProcess.WaitForExit()
-
-		myProcess.Close()
-		If vpkAppAction = AppEnums.VpkAppAction.List Then
-			RemoveHandler myProcess.OutputDataReceived, AddressOf Me.ListOneVpkProcess_OutputDataReceived
-			'RemoveHandler myProcess.ErrorDataReceived, AddressOf Me.ListOneVpkProcess_ErrorDataReceived
-		ElseIf vpkAppAction = AppEnums.VpkAppAction.Unpack OrElse vpkAppAction = AppEnums.VpkAppAction.Extract Then
-			RemoveHandler myProcess.OutputDataReceived, AddressOf Me.myProcess_OutputDataReceived
-			'RemoveHandler myProcess.ErrorDataReceived, AddressOf Me.myProcess_ErrorDataReceived
-		End If
-
-		Directory.SetCurrentDirectory(currentPath)
-	End Sub
-
-	Private Sub ListOneVpkProcess_OutputDataReceived(ByVal sender As Object, ByVal e As System.Diagnostics.DataReceivedEventArgs)
-		Dim myProcess As Process = CType(sender, Process)
-		Dim line As String
-
-		Try
-			line = e.Data
-			If line IsNot Nothing Then
-				'NOTE: Ignore lines that start with "CDynamicFunction:" from L4D2's VPK.exe.
-				If Not line.StartsWith("CDynamicFunction:") Then
-					Me.UpdateProgress(0, line)
-				End If
-			End If
-
-			If Me.CancellationPending Then
-				myProcess.CancelOutputRead()
-				myProcess.Kill()
+				End Try
 			End If
 		Catch ex As Exception
-			Dim debug As Integer = 4242
-		End Try
-	End Sub
-
-	Private Sub ListOneVpkProcess_ErrorDataReceived(ByVal sender As Object, ByVal e As System.Diagnostics.DataReceivedEventArgs)
-		Dim myProcess As Process = CType(sender, Process)
-		Dim line As String
-
-		Try
-			line = e.Data
-			'If line IsNot Nothing Then
-			'	Me.UpdateProgress(2, line)
-			'End If
-		Catch ex As Exception
-			Dim debug As Integer = 4242
-		End Try
-	End Sub
-
-	Private Sub myProcess_OutputDataReceived(ByVal sender As Object, ByVal e As System.Diagnostics.DataReceivedEventArgs)
-		Dim myProcess As Process = CType(sender, Process)
-		Dim line As String
-
-		Try
-			line = e.Data
-			If line IsNot Nothing Then
-				'NOTE: Ignore lines that start with "CDynamicFunction:" from L4D2's VPK.exe.
-				If Not line.StartsWith("CDynamicFunction:") Then
-					Me.UpdateProgress(2, line)
-				End If
-
-				If line.StartsWith("Press any key to continue") Then
-					Me.StopUnpack(False, myProcess)
-				End If
-			End If
-		Catch ex As Exception
-			Dim debug As Integer = 4242
+			Throw
 		Finally
-			If Not Me.theSynchronousWorkerIsActive AndAlso Me.CancellationPending Then
-				Me.StopUnpack(True, myProcess)
-			ElseIf Me.theSkipCurrentPackIsActive Then
-				Me.StopUnpack(True, myProcess)
+			If inputFileStream IsNot Nothing Then
+				inputFileStream.Close()
 			End If
 		End Try
 	End Sub
 
-	Private Sub myProcess_ErrorDataReceived(ByVal sender As Object, ByVal e As System.Diagnostics.DataReceivedEventArgs)
-		Dim myProcess As Process = CType(sender, Process)
-		Dim line As String
+	Private Sub UnpackEntryDataToFile(ByVal vpkFile As VpkFile, ByVal entryIndex As Integer, ByVal extractPath As String)
+		Dim entry As VpkDirectoryEntry
+		entry = Me.theVpkFileData.theEntries(entryIndex)
+		Dim outputPathFileName As String
+		outputPathFileName = Path.Combine(extractPath, entry.thePathFileName)
+		Dim outputPath As String
+		outputPath = FileManager.GetPath(outputPathFileName)
 
-		Try
-			line = e.Data
-			If line IsNot Nothing Then
-				Me.UpdateProgress(2, line)
-			End If
-		Catch ex As Exception
-			Dim debug As Integer = 4242
-		Finally
-			If Me.CancellationPending Then
-				Me.StopUnpack(True, myProcess)
-			ElseIf Me.theSkipCurrentPackIsActive Then
-				Me.StopUnpack(True, myProcess)
-			End If
-		End Try
+		If FileManager.PathExistsAfterTryToCreate(outputPath) Then
+			vpkFile.UnpackEntryDataToFile(entry, outputPathFileName)
+		End If
+
+		If File.Exists(outputPathFileName) Then
+			Me.UpdateProgress(2, "Extracted: " + entry.thePathFileName)
+		Else
+			Me.UpdateProgress(2, "WARNING: Not extracted: " + entry.thePathFileName)
+		End If
 	End Sub
 
-	Private Sub StopUnpack(ByVal processIsCancelled As Boolean, ByVal myProcess As Process)
-		If myProcess IsNot Nothing AndAlso Not myProcess.HasExited Then
-			Try
-				myProcess.CancelOutputRead()
-				myProcess.CancelErrorRead()
-				myProcess.Kill()
-			Catch ex As Exception
-				Dim debug As Integer = 4242
-			End Try
-		End If
+	Private Sub StartFile(ByVal packInternalPathFileName As String)
+		Dim packInternalFileName As String
+		Dim pathFileName As String
+		packInternalFileName = Path.GetFileName(packInternalPathFileName)
+		pathFileName = TheApp.Unpacker.GetOutputPathFileName(packInternalFileName)
 
-		If processIsCancelled Then
-			Me.theLastLine = "...Unpacking cancelled."
-		End If
+		System.Diagnostics.Process.Start(pathFileName)
 	End Sub
 
 #End Region
@@ -1038,10 +617,13 @@ Public Class Unpacker
 	Private theLastLine As String
 
 	Private theUnpackedFiles As BindingListEx(Of String)
-	Private theUnpackedLogFiles As BindingListEx(Of String)
+	Private theLogFiles As BindingListEx(Of String)
+	Private theUnpackedTempFiles As BindingListEx(Of String)
 
-	Private theGivenHardLinkFileName As String
 	Private theTempUnpackPath As String
+
+	Private theVpkFileData As VpkFileData
+	Private theInputFileReader As BinaryReader
 
 #End Region
 

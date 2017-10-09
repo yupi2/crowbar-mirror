@@ -193,4 +193,6 @@
 
 	Public theBoneTransforms As List(Of SourceBoneTransform10)
 
+	Public theSmdFileNames As List(Of String)
+
 End Class

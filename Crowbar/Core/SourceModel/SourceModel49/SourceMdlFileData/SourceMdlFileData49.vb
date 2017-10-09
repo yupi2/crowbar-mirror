@@ -544,7 +544,7 @@
 	Public maxEyeDeflection As Double
 	Public linearBoneOffset As Integer
 
-	Public nameOffset As Integer
+	Public nameCopyOffset As Integer
 	Public boneFlexDriverCount As Integer
 	Public boneFlexDriverOffset As Integer
 
@@ -576,6 +576,7 @@
 	Public theLocalNodeNames As List(Of String)
 	Public theModelGroups As List(Of SourceMdlModelGroup)
 	Public theMouths As List(Of SourceMdlMouth)
+	Public theNameCopy As String
 	Public thePoseParamDescs As List(Of SourceMdlPoseParamDesc)
 	Public theSequenceDescs As List(Of SourceMdlSequenceDesc)
 	Public theSkinFamilies As List(Of List(Of Integer))
@@ -588,6 +589,7 @@
 
 	'Public theActualFileSize As Long
 	Public theModelCommandIsUsed As Boolean
+	Public theBodyPartIndexThatShouldUseModelCommand As Integer
 	Public theFlexFrames As List(Of FlexFrame)
 	Public theEyelidFlexFrameIndexes As List(Of Integer)
 	'Public theUpperEyelidFlexFrameIndexes As List(Of Integer)

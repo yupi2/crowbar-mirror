@@ -16,6 +16,21 @@ Public Class ViewUserControl
 		'End Try
 	End Sub
 
+	'UserControl overrides dispose to clean up the component list.
+	<System.Diagnostics.DebuggerNonUserCode()> _
+	Protected Overrides Sub Dispose(ByVal disposing As Boolean)
+		Try
+			If disposing Then
+				Me.Free()
+				If components IsNot Nothing Then
+					components.Dispose()
+				End If
+			End If
+		Finally
+			MyBase.Dispose(disposing)
+		End Try
+	End Sub
+
 #End Region
 
 #Region "Init and Free"
@@ -35,6 +50,10 @@ Public Class ViewUserControl
 		'RemoveHandler Me.MdlPathFileNameTextBox.DataBindings("Text").Parse, AddressOf Me.ParsePathFileName
 		RemoveHandler Me.MdlPathFileNameTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
 		Me.MdlPathFileNameTextBox.DataBindings.Clear()
+
+		Me.FreeDataViewer()
+		Me.FreeModelViewerWithModel()
+		Me.FreeModelViewer()
 	End Sub
 
 #End Region
@@ -133,8 +152,17 @@ Public Class ViewUserControl
 	Private Sub UseInDecompileButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles UseInDecompileButton.Click
 		TheApp.Settings.DecompileMdlPathFileName = Me.AppSettingMdlPathFileName
 	End Sub
+
 	Private Sub OpenViewerButton_Click(sender As Object, e As EventArgs) Handles OpenViewerButton.Click
 		Me.OpenViewer()
+	End Sub
+
+	Private Sub OpenMappingToolButton_Click(sender As Object, e As EventArgs) Handles OpenMappingToolButton.Click
+		Me.OpenMappingTool()
+	End Sub
+
+	Private Sub RunGameButton_Click(sender As Object, e As EventArgs) Handles RunGameButton.Click
+		Me.RunGame()
 	End Sub
 
 #End Region
@@ -164,9 +192,7 @@ Public Class ViewUserControl
 	End Sub
 
 	Private Sub DataViewerBackgroundWorker_RunWorkerCompleted(ByVal sender As System.Object, ByVal e As System.ComponentModel.RunWorkerCompletedEventArgs)
-		Dim dataViewer As Viewer = CType(sender, Viewer)
-		RemoveHandler dataViewer.ProgressChanged, AddressOf Me.DataViewerBackgroundWorker_ProgressChanged
-		RemoveHandler dataViewer.RunWorkerCompleted, AddressOf Me.DataViewerBackgroundWorker_RunWorkerCompleted
+		Me.FreeDataViewer()
 		Me.AppSettingDataViewerIsRunning = False
 	End Sub
 
@@ -187,7 +213,57 @@ Public Class ViewUserControl
 
 	Private Sub ViewerBackgroundWorker_RunWorkerCompleted(ByVal sender As System.Object, ByVal e As System.ComponentModel.RunWorkerCompletedEventArgs)
 		Dim modelViewer As Viewer = CType(sender, Viewer)
-		RemoveHandler modelViewer.RunWorkerCompleted, AddressOf Me.ViewerBackgroundWorker_RunWorkerCompleted
+		If modelViewer Is Me.theModelViewer Then
+			Me.FreeModelViewer()
+		Else
+			Me.FreeModelViewerWithModel()
+		End If
+
+		Me.UpdateWidgets(False)
+	End Sub
+
+	Private Sub MappingToolBackgroundWorker_ProgressChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.ProgressChangedEventArgs)
+		Dim line As String
+		line = CStr(e.UserState)
+
+		If e.ProgressPercentage = 0 Then
+			Me.MessageTextBox.Text = ""
+			Me.MessageTextBox.AppendText(line + vbCr)
+			Me.UpdateWidgets(True)
+		ElseIf e.ProgressPercentage = 1 Then
+			Me.MessageTextBox.AppendText(line + vbCr)
+		ElseIf e.ProgressPercentage = 100 Then
+			Me.MessageTextBox.AppendText(line + vbCr)
+		End If
+	End Sub
+
+	Private Sub MappingToolBackgroundWorker_RunWorkerCompleted(ByVal sender As System.Object, ByVal e As System.ComponentModel.RunWorkerCompletedEventArgs)
+		Dim mappingTool As MappingTool = CType(sender, MappingTool)
+		RemoveHandler mappingTool.ProgressChanged, AddressOf Me.MappingToolBackgroundWorker_ProgressChanged
+		RemoveHandler mappingTool.RunWorkerCompleted, AddressOf Me.MappingToolBackgroundWorker_RunWorkerCompleted
+
+		Me.UpdateWidgets(False)
+	End Sub
+
+	Private Sub GameAppBackgroundWorker_ProgressChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.ProgressChangedEventArgs)
+		Dim line As String
+		line = CStr(e.UserState)
+
+		If e.ProgressPercentage = 0 Then
+			Me.MessageTextBox.Text = ""
+			Me.MessageTextBox.AppendText(line + vbCr)
+			Me.UpdateWidgets(True)
+		ElseIf e.ProgressPercentage = 1 Then
+			Me.MessageTextBox.AppendText(line + vbCr)
+		ElseIf e.ProgressPercentage = 100 Then
+			Me.MessageTextBox.AppendText(line + vbCr)
+		End If
+	End Sub
+
+	Private Sub GameAppBackgroundWorker_RunWorkerCompleted(ByVal sender As System.Object, ByVal e As System.ComponentModel.RunWorkerCompletedEventArgs)
+		Dim gameApp As GameApp = CType(sender, GameApp)
+		RemoveHandler gameApp.ProgressChanged, AddressOf Me.GameAppBackgroundWorker_ProgressChanged
+		RemoveHandler gameApp.RunWorkerCompleted, AddressOf Me.GameAppBackgroundWorker_RunWorkerCompleted
 
 		Me.UpdateWidgets(False)
 	End Sub
@@ -287,9 +363,9 @@ Public Class ViewUserControl
 	Private ReadOnly Property ViewAsReplacementSubfolderName() As String
 		Get
 			If Me.theViewerType = AppEnums.ViewerType.Preview Then
-				Return "p"
+				Return "-preview"
 			Else
-				Return "v"
+				Return "-view"
 			End If
 		End Get
 	End Property
@@ -327,33 +403,77 @@ Public Class ViewUserControl
 	End Sub
 
 	Private Sub RunDataViewer()
-		Dim dataViewer As Viewer
-		dataViewer = New Viewer()
-		AddHandler dataViewer.ProgressChanged, AddressOf Me.DataViewerBackgroundWorker_ProgressChanged
-		AddHandler dataViewer.RunWorkerCompleted, AddressOf Me.DataViewerBackgroundWorker_RunWorkerCompleted
-		dataViewer.Run(Me.AppSettingMdlPathFileName)
+		theDataViewer = New Viewer()
+		AddHandler theDataViewer.ProgressChanged, AddressOf Me.DataViewerBackgroundWorker_ProgressChanged
+		AddHandler theDataViewer.RunWorkerCompleted, AddressOf Me.DataViewerBackgroundWorker_RunWorkerCompleted
+		theDataViewer.Run(Me.AppSettingMdlPathFileName)
 
 		'TODO: If viewer is not running, give user indication of what prevents viewing.
 	End Sub
 
 	Private Sub RunViewer(ByVal viewAsReplacement As Boolean)
-		Dim modelViewer As Viewer
-		modelViewer = New Viewer()
-		AddHandler modelViewer.ProgressChanged, AddressOf Me.ViewerBackgroundWorker_ProgressChanged
-		AddHandler modelViewer.RunWorkerCompleted, AddressOf Me.ViewerBackgroundWorker_RunWorkerCompleted
-		modelViewer.Run(Me.AppSettingGameSetupSelectedIndex, Me.AppSettingMdlPathFileName, viewAsReplacement, ViewAsReplacementSubfolderName)
+		Me.theModelViewerWithModel = New Viewer()
+		AddHandler Me.theModelViewerWithModel.ProgressChanged, AddressOf Me.ViewerBackgroundWorker_ProgressChanged
+		AddHandler Me.theModelViewerWithModel.RunWorkerCompleted, AddressOf Me.ViewerBackgroundWorker_RunWorkerCompleted
+		Me.theModelViewerWithModel.Run(Me.AppSettingGameSetupSelectedIndex, Me.AppSettingMdlPathFileName, viewAsReplacement, ViewAsReplacementSubfolderName)
 
 		'TODO: If viewer is not running, give user indication of what prevents viewing.
 	End Sub
 
 	Private Sub OpenViewer()
-		Dim modelViewer As Viewer
-		modelViewer = New Viewer()
-		AddHandler modelViewer.ProgressChanged, AddressOf Me.ViewerBackgroundWorker_ProgressChanged
-		AddHandler modelViewer.RunWorkerCompleted, AddressOf Me.ViewerBackgroundWorker_RunWorkerCompleted
-		modelViewer.Run(Me.AppSettingGameSetupSelectedIndex)
+		Me.theModelViewer = New Viewer()
+		AddHandler Me.theModelViewer.ProgressChanged, AddressOf Me.ViewerBackgroundWorker_ProgressChanged
+		AddHandler Me.theModelViewer.RunWorkerCompleted, AddressOf Me.ViewerBackgroundWorker_RunWorkerCompleted
+		Me.theModelViewer.Run(Me.AppSettingGameSetupSelectedIndex)
 
 		'TODO: If viewer is not running, give user indication of what prevents viewing.
+	End Sub
+
+	Private Sub OpenMappingTool()
+		Dim mappingTool As MappingTool
+		mappingTool = New MappingTool()
+		AddHandler mappingTool.ProgressChanged, AddressOf Me.MappingToolBackgroundWorker_ProgressChanged
+		AddHandler mappingTool.RunWorkerCompleted, AddressOf Me.MappingToolBackgroundWorker_RunWorkerCompleted
+		mappingTool.Run(Me.AppSettingGameSetupSelectedIndex)
+
+		'TODO: If viewer is not running, give user indication of what prevents viewing.
+	End Sub
+
+	Private Sub RunGame()
+		Dim gameApp As GameApp
+		gameApp = New GameApp()
+		AddHandler gameApp.ProgressChanged, AddressOf Me.GameAppBackgroundWorker_ProgressChanged
+		AddHandler gameApp.RunWorkerCompleted, AddressOf Me.GameAppBackgroundWorker_RunWorkerCompleted
+		gameApp.Run(Me.AppSettingGameSetupSelectedIndex)
+
+		'TODO: If gameApp is not running, give user indication of what prevents viewing.
+	End Sub
+
+	Private Sub FreeDataViewer()
+		If Me.theDataViewer IsNot Nothing Then
+			RemoveHandler Me.theDataViewer.ProgressChanged, AddressOf Me.DataViewerBackgroundWorker_ProgressChanged
+			RemoveHandler Me.theDataViewer.RunWorkerCompleted, AddressOf Me.DataViewerBackgroundWorker_RunWorkerCompleted
+			Me.theDataViewer.Dispose()
+			Me.theDataViewer = Nothing
+		End If
+	End Sub
+
+	Private Sub FreeModelViewerWithModel()
+		If Me.theModelViewerWithModel IsNot Nothing Then
+			RemoveHandler Me.theModelViewerWithModel.ProgressChanged, AddressOf Me.ViewerBackgroundWorker_ProgressChanged
+			RemoveHandler Me.theModelViewerWithModel.RunWorkerCompleted, AddressOf Me.ViewerBackgroundWorker_RunWorkerCompleted
+			Me.theModelViewerWithModel.Dispose()
+			Me.theModelViewerWithModel = Nothing
+		End If
+	End Sub
+
+	Private Sub FreeModelViewer()
+		If Me.theModelViewer IsNot Nothing Then
+			RemoveHandler Me.theModelViewer.ProgressChanged, AddressOf Me.ViewerBackgroundWorker_ProgressChanged
+			RemoveHandler Me.theModelViewer.RunWorkerCompleted, AddressOf Me.ViewerBackgroundWorker_RunWorkerCompleted
+			Me.theModelViewer.Dispose()
+			Me.theModelViewer = Nothing
+		End If
 	End Sub
 
 #End Region
@@ -361,6 +481,10 @@ Public Class ViewUserControl
 #Region "Data"
 
 	Dim theViewerType As ViewerType
+
+	Dim theDataViewer As Viewer
+	Dim theModelViewerWithModel As Viewer
+	Dim theModelViewer As Viewer
 
 #End Region
 

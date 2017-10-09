@@ -26,11 +26,7 @@ Public Class SourceSmdFile48
 #Region "Methods"
 
 	Public Sub WriteHeaderComment()
-		Dim line As String = ""
-
-		line = "// "
-		line += TheApp.GetHeaderComment()
-		Me.theOutputFileStreamWriter.WriteLine(line)
+		Common.WriteHeaderComment(Me.theOutputFileStreamWriter)
 	End Sub
 
 	Public Sub WriteHeaderSection()
@@ -484,8 +480,9 @@ Public Class SourceSmdFile48
 					'		VectorRotate( tmp, rootxform, pos );
 					'		// [...]
 					'	}
-					'If aFrameLine.position.debug_text.StartsWith("raw") OrElse aFrameLine.position.debug_text = "anim+bone" Then
-					If aFrameLine.position.debug_text.StartsWith("raw") Then
+					'NOTE: The change for "anim+bone" is needed for weapon view models in "No More Room in Hell".
+					If aFrameLine.position.debug_text.StartsWith("raw") OrElse aFrameLine.position.debug_text = "anim+bone" Then
+						'If aFrameLine.position.debug_text.StartsWith("raw") Then
 						position.x = aFrameLine.position.y
 						position.y = -aFrameLine.position.x
 					Else
@@ -496,8 +493,9 @@ Public Class SourceSmdFile48
 
 					rotation.x = aFrameLine.rotation.x
 					rotation.y = aFrameLine.rotation.y
-					'If aFrameLine.rotation.debug_text.StartsWith("raw") OrElse aFrameLine.rotation.debug_text = "anim+bone" Then
-					If aFrameLine.rotation.debug_text.StartsWith("raw") Then
+					'NOTE: The change for "anim+bone" is needed for weapon view models in "No More Room in Hell".
+					If aFrameLine.rotation.debug_text.StartsWith("raw") OrElse aFrameLine.rotation.debug_text = "anim+bone" Then
+						'If aFrameLine.rotation.debug_text.StartsWith("raw") Then
 						rotation.z = aFrameLine.rotation.z + MathModule.DegreesToRadians(-90)
 					Else
 						rotation.z = aFrameLine.rotation.z
@@ -512,33 +510,33 @@ Public Class SourceSmdFile48
 					rotation.z = aFrameLine.rotation.z
 				End If
 
-				line = "    "
-				line += boneIndex.ToString(TheApp.InternalNumberFormat)
+					line = "    "
+					line += boneIndex.ToString(TheApp.InternalNumberFormat)
 
-				line += " "
-				line += position.x.ToString("0.000000", TheApp.InternalNumberFormat)
-				line += " "
-				line += position.y.ToString("0.000000", TheApp.InternalNumberFormat)
-				line += " "
-				line += position.z.ToString("0.000000", TheApp.InternalNumberFormat)
+					line += " "
+					line += position.x.ToString("0.000000", TheApp.InternalNumberFormat)
+					line += " "
+					line += position.y.ToString("0.000000", TheApp.InternalNumberFormat)
+					line += " "
+					line += position.z.ToString("0.000000", TheApp.InternalNumberFormat)
 
-				line += " "
-				line += rotation.x.ToString("0.000000", TheApp.InternalNumberFormat)
-				line += " "
-				line += rotation.y.ToString("0.000000", TheApp.InternalNumberFormat)
-				line += " "
-				line += rotation.z.ToString("0.000000", TheApp.InternalNumberFormat)
+					line += " "
+					line += rotation.x.ToString("0.000000", TheApp.InternalNumberFormat)
+					line += " "
+					line += rotation.y.ToString("0.000000", TheApp.InternalNumberFormat)
+					line += " "
+					line += rotation.z.ToString("0.000000", TheApp.InternalNumberFormat)
 
-				If TheApp.Settings.DecompileDebugInfoFilesIsChecked Then
-					line += "   # "
-					line += "pos: "
-					line += aFrameLine.position.debug_text
-					line += "   "
-					line += "rot: "
-					line += aFrameLine.rotation.debug_text
-				End If
+					If TheApp.Settings.DecompileDebugInfoFilesIsChecked Then
+						line += "   # "
+						line += "pos: "
+						line += aFrameLine.position.debug_text
+						line += "   "
+						line += "rot: "
+						line += aFrameLine.rotation.debug_text
+					End If
 
-				Me.theOutputFileStreamWriter.WriteLine(line)
+					Me.theOutputFileStreamWriter.WriteLine(line)
 			Next
 		Next
 

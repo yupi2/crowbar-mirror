@@ -42,8 +42,12 @@ Public Class SourceAniFrameAnim
 	Public Const STUDIO_FRAME_ANIMPOS As Integer = &H4
 	Public Const STUDIO_FRAME_ANIMROT As Integer = &H8
 	Public Const STUDIO_FRAME_FULLANIMPOS As Integer = &H10
-	Public Const STUDIO_FRAME_UNKNOWN01 As Integer = &H40	' Quaternion64 in framedata?
-	Public Const STUDIO_FRAME_UNKNOWN02 As Integer = &H80	' Quaternion64 in framedata?
+	Public Const STUDIO_FRAME_UNKNOWN01 As Integer = &H40	' Seems to be 6 rotation bytes in constants based on tests. New format that is not Quaternion48. Maybe Quaternion48Smallest3?
+	Public Const STUDIO_FRAME_UNKNOWN02 As Integer = &H80	' Seems to be 6 rotation bytes in framedata based on tests. New format that is not Quaternion48. Maybe Quaternion48Smallest3?
+
+	'FROM: Kerry at Valve via Splinks on 24-Apr-2017
+	'#define STUDIO_FRAME_CONST_ROT2   0x40 // Quaternion48S in constants
+	'#define STUDIO_FRAME_ANIM_ROT2    0x80 // Quaternion48S in framedata
 
 
 End Class

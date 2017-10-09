@@ -141,6 +141,138 @@ Public Class FileManager
 		Return False
 	End Function
 
+	'const char *KeyValues::ReadToken( CUtlBuffer &buf, bool &wasQuoted, bool &wasConditional )
+	'{
+	'	wasQuoted = false;
+	'	wasConditional = false;
+	'
+	'	if ( !buf.IsValid() )
+	'		return NULL; 
+	'
+	'	// eating white spaces and remarks loop
+	'	while ( true )
+	'	{
+	'		buf.EatWhiteSpace();
+	'		if ( !buf.IsValid() )
+	'			return NULL;	// file ends after reading whitespaces
+	'
+	'		// stop if it's not a comment; a new token starts here
+	'		if ( !buf.EatCPPComment() )
+	'			break;
+	'	}
+	'
+	'	const char *c = (const char*)buf.PeekGet( sizeof(char), 0 );
+	'	if ( !c )
+	'		return NULL;
+	'
+	'	// read quoted strings specially
+	'	if ( *c == '\"' )
+	'	{
+	'		wasQuoted = true;
+	'		buf.GetDelimitedString( m_bHasEscapeSequences ? GetCStringCharConversion() : GetNoEscCharConversion(), 
+	'			s_pTokenBuf, KEYVALUES_TOKEN_SIZE );
+	'		return s_pTokenBuf;
+	'	}
+	'
+	'	if ( *c == '{' || *c == '}' )
+	'	{
+	'		// it's a control char, just add this one char and stop reading
+	'		s_pTokenBuf[0] = *c;
+	'		s_pTokenBuf[1] = 0;
+	'		buf.SeekGet( CUtlBuffer::SEEK_CURRENT, 1 );
+	'		return s_pTokenBuf;
+	'	}
+	'
+	'	// read in the token until we hit a whitespace or a control character
+	'	bool bReportedError = false;
+	'	bool bConditionalStart = false;
+	'	int nCount = 0;
+	'	while ( ( c = (const char*)buf.PeekGet( sizeof(char), 0 ) ) )
+	'	{
+	'		// end of file
+	'		if ( *c == 0 )
+	'			break;
+	'
+	'		// break if any control character appears in non quoted tokens
+	'		if ( *c == '"' || *c == '{' || *c == '}' )
+	'			break;
+	'
+	'		if ( *c == '[' )
+	'			bConditionalStart = true;
+	'
+	'		if ( *c == ']' && bConditionalStart )
+	'		{
+	'			wasConditional = true;
+	'		}
+	'
+	'		// break on whitespace
+	'		if ( isspace(*c) )
+	'			break;
+	'
+	'		if (nCount < (KEYVALUES_TOKEN_SIZE-1) )
+	'		{
+	'			s_pTokenBuf[nCount++] = *c;	// add char to buffer
+	'		}
+	'		else if ( !bReportedError )
+	'		{
+	'			bReportedError = true;
+	'			g_KeyValuesErrorStack.ReportError(" ReadToken overflow" );
+	'		}
+	'
+	'		buf.SeekGet( CUtlBuffer::SEEK_CURRENT, 1 );
+	'	}
+	'	s_pTokenBuf[ nCount ] = 0;
+	'	return s_pTokenBuf;
+	'}
+	Public Shared Function ReadKeyValueToken(ByRef buffer As String) As String
+		Dim token As String
+
+		Do
+			buffer = buffer.TrimStart()
+			If buffer.StartsWith("/") Then
+				Dim pos As Integer
+				pos = buffer.IndexOf(Chr(&HA), 1)
+				If pos > -1 Then
+					buffer = buffer.Substring(pos + 1)
+				Else
+					buffer = ""
+					Exit Do
+				End If
+			Else
+				Exit Do
+			End If
+		Loop Until buffer = ""
+
+		If buffer = "" Then
+			token = ""
+		ElseIf buffer.StartsWith("""") Then
+			Dim pos As Integer
+			pos = buffer.IndexOf("""", 1)
+			If pos > -1 Then
+				'NOTE: Remove the double-quotes.
+				token = buffer.Substring(1, pos - 1)
+				buffer = buffer.Substring(pos + 1)
+			Else
+				token = ""
+			End If
+		ElseIf buffer.StartsWith("{") OrElse buffer.StartsWith("}") Then
+			token = buffer.Substring(0, 1)
+			buffer = buffer.Substring(1)
+		Else
+			' Read in the token characters until a control character.
+			Dim delimiters As Char() = {""""c, "{"c, "}"c}
+			Dim tokens As String() = {""}
+			tokens = buffer.Split(delimiters)
+			token = tokens(0)
+
+			tokens = token.Split()
+			token = tokens(0)
+			buffer = buffer.Substring(token.Length)
+		End If
+
+		Return token
+	End Function
+
 	Public Shared Function ReadTextLine(ByVal inputFileReader As BinaryReader) As String
 		Dim line As New StringBuilder()
 		Dim aChar As Char = " "c
@@ -306,6 +438,15 @@ Public Class FileManager
 		End If
 
 		Return cleanPathFileName
+	End Function
+
+	Public Shared Function GetLongestExistingPath(ByVal pathFileName As String) As String
+		If Not Directory.Exists(pathFileName) Then
+			Dim shorterPath As String
+			shorterPath = FileManager.GetPath(pathFileName)
+			Return FileManager.GetLongestExistingPath(shorterPath)
+		End If
+		Return pathFileName
 	End Function
 
 	'This is the code that works like GetTempFileName, but instead creates a folder:

@@ -2,17 +2,17 @@
 Partial Class ViewUserControl
 	Inherits System.Windows.Forms.UserControl
 
-	'UserControl overrides dispose to clean up the component list.
-	<System.Diagnostics.DebuggerNonUserCode()> _
-	Protected Overrides Sub Dispose(ByVal disposing As Boolean)
-		Try
-			If disposing AndAlso components IsNot Nothing Then
-				components.Dispose()
-			End If
-		Finally
-			MyBase.Dispose(disposing)
-		End Try
-	End Sub
+	''UserControl overrides dispose to clean up the component list.
+	'<System.Diagnostics.DebuggerNonUserCode()> _
+	'Protected Overrides Sub Dispose(ByVal disposing As Boolean)
+	'	Try
+	'		If disposing AndAlso components IsNot Nothing Then
+	'			components.Dispose()
+	'		End If
+	'	Finally
+	'		MyBase.Dispose(disposing)
+	'	End Try
+	'End Sub
 
 	'Required by the Windows Form Designer
 	Private components As System.ComponentModel.IContainer
@@ -32,6 +32,8 @@ Partial Class ViewUserControl
 		Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
 		Me.GroupBox1 = New System.Windows.Forms.GroupBox()
 		Me.InfoRichTextBox = New Crowbar.RichTextBoxEx()
+		Me.OpenMappingToolButton = New System.Windows.Forms.Button()
+		Me.RunGameButton = New System.Windows.Forms.Button()
 		Me.Label3 = New System.Windows.Forms.Label()
 		Me.GameSetupComboBox = New System.Windows.Forms.ComboBox()
 		Me.EditGameSetupButton = New System.Windows.Forms.Button()
@@ -125,6 +127,8 @@ Partial Class ViewUserControl
 		'
 		'SplitContainer1.Panel2
 		'
+		Me.SplitContainer1.Panel2.Controls.Add(Me.OpenMappingToolButton)
+		Me.SplitContainer1.Panel2.Controls.Add(Me.RunGameButton)
 		Me.SplitContainer1.Panel2.Controls.Add(Me.Label3)
 		Me.SplitContainer1.Panel2.Controls.Add(Me.GameSetupComboBox)
 		Me.SplitContainer1.Panel2.Controls.Add(Me.EditGameSetupButton)
@@ -159,6 +163,26 @@ Partial Class ViewUserControl
 		Me.InfoRichTextBox.TabIndex = 0
 		Me.InfoRichTextBox.Text = ""
 		Me.InfoRichTextBox.WordWrap = False
+		'
+		'OpenMappingToolButton
+		'
+		Me.OpenMappingToolButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.OpenMappingToolButton.Location = New System.Drawing.Point(572, 32)
+		Me.OpenMappingToolButton.Name = "OpenMappingToolButton"
+		Me.OpenMappingToolButton.Size = New System.Drawing.Size(110, 23)
+		Me.OpenMappingToolButton.TabIndex = 14
+		Me.OpenMappingToolButton.Text = "Open Mapping Tool"
+		Me.OpenMappingToolButton.UseVisualStyleBackColor = True
+		'
+		'RunGameButton
+		'
+		Me.RunGameButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.RunGameButton.Location = New System.Drawing.Point(688, 32)
+		Me.RunGameButton.Name = "RunGameButton"
+		Me.RunGameButton.Size = New System.Drawing.Size(90, 23)
+		Me.RunGameButton.TabIndex = 13
+		Me.RunGameButton.Text = "Run Game"
+		Me.RunGameButton.UseVisualStyleBackColor = True
 		'
 		'Label3
 		'
@@ -197,7 +221,7 @@ Partial Class ViewUserControl
 		Me.ViewAsReplacementButton.Name = "ViewAsReplacementButton"
 		Me.ViewAsReplacementButton.Size = New System.Drawing.Size(120, 23)
 		Me.ViewAsReplacementButton.TabIndex = 9
-		Me.ViewAsReplacementButton.Text = "View As Replacement"
+		Me.ViewAsReplacementButton.Text = "View as Replacement"
 		Me.ViewAsReplacementButton.UseVisualStyleBackColor = True
 		'
 		'UseInDecompileButton
@@ -213,7 +237,7 @@ Partial Class ViewUserControl
 		'OpenViewerButton
 		'
 		Me.OpenViewerButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.OpenViewerButton.Location = New System.Drawing.Point(688, 32)
+		Me.OpenViewerButton.Location = New System.Drawing.Point(476, 32)
 		Me.OpenViewerButton.Name = "OpenViewerButton"
 		Me.OpenViewerButton.Size = New System.Drawing.Size(90, 23)
 		Me.OpenViewerButton.TabIndex = 11
@@ -266,5 +290,7 @@ Partial Class ViewUserControl
 	Friend WithEvents OpenViewerButton As System.Windows.Forms.Button
 	Friend WithEvents MessageTextBox As Crowbar.TextBoxEx
 	Friend WithEvents SplitContainer1 As System.Windows.Forms.SplitContainer
+	Friend WithEvents RunGameButton As System.Windows.Forms.Button
+	Friend WithEvents OpenMappingToolButton As System.Windows.Forms.Button
 
 End Class

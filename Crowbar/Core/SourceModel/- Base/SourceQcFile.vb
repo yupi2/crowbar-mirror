@@ -40,7 +40,11 @@ Public Class SourceQcFile
 
 					outputFileStream.WriteLine()
 
-					line += "$Include"
+					If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+						line += "$Include"
+					Else
+						line += "$include"
+					End If
 					line += " "
 					line += """"
 					line += FileManager.GetRelativePathFileName(qcPathFileName, includedPathFileName)
@@ -83,7 +87,11 @@ Public Class SourceQcFile
 
 	'	'$modelname "survivors/survivor_producer.mdl"
 	'	'$modelname "custom/survivor_producer.mdl"
+	'If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
 	'	line = "$ModelName "
+	'Else
+	'	line = "$modelname "
+	'End If
 	'	line += """"
 	'	line += modelPathFileName
 	'	line += """"

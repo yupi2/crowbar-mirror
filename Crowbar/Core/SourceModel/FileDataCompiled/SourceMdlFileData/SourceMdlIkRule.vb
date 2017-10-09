@@ -93,4 +93,21 @@ Public Class SourceMdlIkRule
 
 	Public theAttachmentName As String
 
+
+
+	' For the 'type' field:
+	'FROM: se2007_src\src_main\public\studio.h
+	'#define IK_SELF 1
+	'#define IK_WORLD 2
+	'#define IK_GROUND 3
+	'#define IK_RELEASE 4
+	'#define IK_ATTACHMENT 5
+	'#define IK_UNLATCH 6
+	Public Const IK_SELF As Integer = 1
+	Public Const IK_WORLD As Integer = 2
+	Public Const IK_GROUND As Integer = 3
+	Public Const IK_RELEASE As Integer = 4
+	Public Const IK_ATTACHMENT As Integer = 5
+	Public Const IK_UNLATCH As Integer = 6
+
 End Class

@@ -33,10 +33,10 @@ Public MustInherit Class SourceModel
 				'NOT IMPLEMENTED YET.
 				'model = New SourceModel35(mdlPathFileName, version)
 			ElseIf version = 36 Then
-				'NOT IMPLEMENTED YET.
+				'NOT FULLY IMPLEMENTED YET.
 				model = New SourceModel36(mdlPathFileName, version)
 			ElseIf version = 37 Then
-				'NOT IMPLEMENTED YET.
+				'NOT FULLY IMPLEMENTED YET.
 				model = New SourceModel37(mdlPathFileName, version)
 			ElseIf version = 38 Then
 				'NOT IMPLEMENTED YET.
@@ -525,6 +525,26 @@ Public MustInherit Class SourceModel
 		Return textLines
 	End Function
 
+	Public Overridable Function GetTextureFolders(ByVal mdlPathFileName As String) As List(Of String)
+		Dim textureFolders As List(Of String) = Nothing
+
+		Try
+			Me.ReadFile(mdlPathFileName, AddressOf Me.ReadMdlFileForViewer_Internal)
+
+			If Me.HasTextureData Then
+				If Me.theMdlFileDataGeneric.version <= 10 Then
+				Else
+					textureFolders = Me.GetTextureFolders()
+				End If
+			Else
+			End If
+		Catch ex As Exception
+			Throw
+		End Try
+
+		Return textureFolders
+	End Function
+
 	Public Overridable Function GetTextureFolders() As List(Of String)
 		Return New List(Of String)()
 	End Function
@@ -734,7 +754,7 @@ Public MustInherit Class SourceModel
 
 			Dim debugFile As New AccessedBytesDebugFile(Me.theOutputFileTextWriter)
 			debugFile.WriteHeaderComment()
-			debugFile.WriteFileSeekLog(fileSeekLog, Me.theMdlFileDataGeneric.theActualFileSize)
+			debugFile.WriteFileSeekLog(fileSeekLog)
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		Finally

@@ -94,10 +94,21 @@ Public Class SourceQuaternion48bits
 		End Get
 	End Property
 
-	<StructLayout(LayoutKind.Explicit)> _
-	Public Structure IntegerAndSingleUnion
-		<FieldOffset(0)> Public i As Integer
-		<FieldOffset(0)> Public s As Single
-	End Structure
+	Public ReadOnly Property quaternion() As SourceQuaternion
+		Get
+			Dim aQuaternion As New SourceQuaternion()
+			aQuaternion.x = Me.x
+			aQuaternion.y = Me.y
+			aQuaternion.z = Me.z
+			aQuaternion.w = Me.w
+			Return aQuaternion
+		End Get
+	End Property
+
+	'<StructLayout(LayoutKind.Explicit)> _
+	'Public Structure IntegerAndSingleUnion
+	'	<FieldOffset(0)> Public i As Integer
+	'	<FieldOffset(0)> Public s As Single
+	'End Structure
 
 End Class

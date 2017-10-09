@@ -14,11 +14,7 @@ Public Class SourceSmdFile10
 #Region "Methods"
 
 	Public Sub WriteHeaderComment()
-		Dim line As String = ""
-
-		line = "// "
-		line += TheApp.GetHeaderComment()
-		Me.theOutputFileStreamWriter.WriteLine(line)
+		Common.WriteHeaderComment(Me.theOutputFileStreamWriter)
 	End Sub
 
 	Public Sub WriteHeaderSection()
@@ -324,8 +320,22 @@ Public Class SourceSmdFile10
 			'      void TextureCoordRanges( s_mesh_t *pmesh, s_texture_t *ptexture  )
 			'	pmesh->triangle[i][j].s = pmesh->triangle[i][j].u * (ptexture->srcwidth - 1);
 			'	pmesh->triangle[i][j].t = pmesh->triangle[i][j].v * (ptexture->srcheight - 1);
-			texCoordX = aVertexInfo.s / (aTexture.width - 1)
-			texCoordY = aVertexInfo.t / (aTexture.height - 1)
+			If aTexture.width = 1 OrElse aTexture.height = 1 Then
+				If aTexture.theFileName(0) = "#" Then
+					Dim width As UInteger
+					Dim height As UInteger
+					width = CUInt(aTexture.theFileName.Substring(1, 3))
+					height = CUInt(aTexture.theFileName.Substring(4, 3))
+					texCoordX = aVertexInfo.s / width
+					texCoordY = aVertexInfo.t / height
+				Else
+					texCoordX = aVertexInfo.s
+					texCoordY = aVertexInfo.t
+				End If
+			Else
+				texCoordX = aVertexInfo.s / (aTexture.width - 1)
+				texCoordY = aVertexInfo.t / (aTexture.height - 1)
+			End If
 
 			line = "  "
 			line += boneIndex.ToString(TheApp.InternalNumberFormat)

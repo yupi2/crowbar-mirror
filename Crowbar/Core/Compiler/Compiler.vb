@@ -150,7 +150,7 @@ Public Class Compiler
 
 		If Not File.Exists(gameCompilerPathFileName) Then
 			inputsAreValid = False
-			Me.WriteErrorMessage("The game's model compiler, """ + gameCompilerPathFileName + """, does not exist.")
+			Me.WriteErrorMessage("The model compiler, """ + gameCompilerPathFileName + """, does not exist.")
 			Me.UpdateProgress(1, My.Resources.ErrorMessageSDKMissingCause)
 		End If
 		If Not File.Exists(gamePathFileName) Then
@@ -335,7 +335,11 @@ Public Class Compiler
 
 			Me.RunStudioMdlApp(qcPathName, qcFileName)
 
-			If TheApp.Settings.CompileOptionDefineBonesIsChecked Then
+			If Not Me.theProcessHasOutputData Then
+				Me.UpdateProgress(2, "ERROR: The compiler did not return any status messages.")
+				Me.UpdateProgress(2, "CAUSE: The studiomdl.exe is not the correct one for the selected game.")
+				Me.UpdateProgress(2, "SOLUTION: Verify integrity of game files via Steam so that the correct studiomdl.exe file is installed.")
+			ElseIf TheApp.Settings.CompileOptionDefineBonesIsChecked Then
 				If Me.theDefineBonesFileStream IsNot Nothing Then
 					If TheApp.Settings.CompileOptionDefineBonesModifyQcFileIsChecked Then
 						Me.InsertAnIncludeDefineBonesFileCommandIntoQcFile()
@@ -398,6 +402,7 @@ Public Class Compiler
 		myProcess.StandardInput.AutoFlush = True
 		myProcess.BeginOutputReadLine()
 		myProcess.BeginErrorReadLine()
+		Me.theProcessHasOutputData = False
 
 		'myProcess.StandardOutput.ReadToEnd()
 		''NOTE: Do this to handle "hit a key to continue" at the end of Dota 2's compiler.
@@ -432,26 +437,32 @@ Public Class Compiler
 		sourcePathName = FileManager.GetPath(compiledMdlPathFileName)
 		sourceFileNameWithoutExtension = Path.GetFileNameWithoutExtension(compiledMdlPathFileName)
 		For Each sourcePathFileName As String In Directory.GetFiles(sourcePathName, sourceFileNameWithoutExtension + ".*")
-			Try
-				If TheApp.Settings.CompileOutputFolderIsChecked Then
-					targetPathFileName = Path.Combine(Me.theModelOutputPath, Path.GetFileName(sourcePathFileName))
-					If String.Compare(sourcePathFileName, targetPathFileName, True) <> 0 Then
+			If TheApp.Settings.CompileOutputFolderIsChecked Then
+				targetPathFileName = Path.Combine(Me.theModelOutputPath, Path.GetFileName(sourcePathFileName))
+				If String.Compare(sourcePathFileName, targetPathFileName, True) <> 0 Then
+					Try
 						If File.Exists(targetPathFileName) Then
 							File.Delete(targetPathFileName)
 						End If
+					Catch ex As Exception
+						Dim debug As Integer = 4242
+					End Try
+					Try
 						File.Move(sourcePathFileName, targetPathFileName)
-					End If
-				Else
-					targetPathFileName = sourcePathFileName
+					Catch ex As Exception
+						Me.UpdateProgress()
+						Me.UpdateProgress(2, "WARNING: Crowbar tried to move the file, """ + sourcePathFileName + """, to the output folder, but Windows complained with this message: " + ex.Message.Trim())
+						Me.UpdateProgress(2, "SOLUTION: Compile the model again (and hope Windows does not complain again) or move the file yourself.")
+						Me.UpdateProgress()
+					End Try
 				End If
+			Else
+				targetPathFileName = sourcePathFileName
+			End If
 
-				If Path.GetExtension(targetPathFileName) = ".mdl" Then
-					Me.theCompiledMdlFiles.Add(FileManager.GetRelativePathFileName(Me.theOutputPath, targetPathFileName))
-				End If
-			Catch ex As Exception
-				'TODO: Write a warning message.
-				Dim debug As Integer = 4242
-			End Try
+			If Path.GetExtension(targetPathFileName) = ".mdl" Then
+				Me.theCompiledMdlFiles.Add(FileManager.GetRelativePathFileName(Me.theOutputPath, targetPathFileName))
+			End If
 		Next
 	End Sub
 
@@ -462,6 +473,7 @@ Public Class Compiler
 		Try
 			line = e.Data
 			If line IsNot Nothing Then
+				Me.theProcessHasOutputData = True
 				Me.UpdateProgress(2, line)
 
 				If Me.theDefineBonesFileStream IsNot Nothing Then
@@ -642,6 +654,8 @@ Public Class Compiler
 	Private theCompiledMdlFiles As BindingListEx(Of String)
 
 	Private theDefineBonesFileStream As StreamWriter
+
+	Private theProcessHasOutputData As Boolean
 
 #End Region
 

@@ -11,6 +11,8 @@ Public Class SourceAniFile48
 		Me.theMdlFileData = CType(aniFileData, SourceMdlFileData48)
 		Me.theRealMdlFileData = CType(mdlFileData, SourceMdlFileData48)
 
+		Me.theMdlFileData.theFileSeekLog.FileSize = Me.theInputFileReader.BaseStream.Length
+
 		'NOTE: Need the bone data from the real MDL file because SourceAniFile inherits SourceMdlFile.ReadMdlAnimation() that uses the data.
 		Me.theMdlFileData.theBones = Me.theRealMdlFileData.theBones
 	End Sub
@@ -109,15 +111,15 @@ Public Class SourceAniFile48
 		'Public Sub ReadAniBlocks(ByVal delegateReadAniAnimation As ReadAniAnimationDelegate)
 		If Me.theRealMdlFileData.theAnimationDescs IsNot Nothing Then
 			'Dim inputFileStreamPosition As Long
-			Dim fileOffsetStart As Long
-			Dim fileOffsetEnd As Long
+			'Dim fileOffsetStart As Long
+			'Dim fileOffsetEnd As Long
 			Dim animInputFileStreamPosition As Long
 			Dim animBlockInputFileStreamPosition As Long
 			Dim animBlockInputFileStreamEndPosition As Long
 			Dim anAnimationDesc As SourceMdlAnimationDesc48
 			'Dim aSectionOfAnimation As List(Of SourceMdlAnimation)
 
-			fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+			'fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
 			For anAnimDescIndex As Integer = 0 To Me.theRealMdlFileData.theAnimationDescs.Count - 1
 				'animInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
@@ -142,10 +144,17 @@ Public Class SourceAniFile48
 							Dim sectionFrameCount As Integer
 
 							For sectionIndex = 0 To sectionCount - 1
-								If sectionIndex < sectionCount - 1 Then
+								'If sectionIndex < sectionCount - 1 Then
+								'	sectionFrameCount = anAnimationDesc.sectionFrameCount
+								'Else
+								'	sectionFrameCount = anAnimationDesc.frameCount - ((sectionCount - 1) * anAnimationDesc.sectionFrameCount)
+								'End If
+								If sectionIndex < sectionCount - 2 Then
 									sectionFrameCount = anAnimationDesc.sectionFrameCount
 								Else
-									sectionFrameCount = anAnimationDesc.frameCount - ((sectionCount - 1) * anAnimationDesc.sectionFrameCount)
+									'NOTE: Due to the weird calculation of sectionCount in studiomdl, this line is called twice, which means there are two "last" sections.
+									'      This also likely means that the last section is bogus unused data.
+									sectionFrameCount = anAnimationDesc.frameCount - ((sectionCount - 2) * anAnimationDesc.sectionFrameCount)
 								End If
 
 								animBlockInputFileStreamPosition = Me.theRealMdlFileData.theAnimBlocks(anAnimationDesc.theSections(sectionIndex).animBlock).dataStart
@@ -173,8 +182,8 @@ Public Class SourceAniFile48
 
 				'Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
 
-				fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-				Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theAniFileData (animation block data) [this includes other logged data offsets]")
+				'fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+				'Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theAniFileData (animation block data) [this includes other logged data offsets]")
 			Next
 		End If
 	End Sub

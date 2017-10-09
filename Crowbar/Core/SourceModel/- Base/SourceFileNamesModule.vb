@@ -162,26 +162,43 @@ Module SourceFileNamesModule
 
 	'TODO: Call *after* both ReadTextures() and ReadTexturePaths() are called.
 	Public Sub CopyPathsFromTextureFileNamesToTexturePaths(ByVal texturePaths As List(Of String), ByVal texturePathFileNames As List(Of String))
-		For textureIndex As Integer = 0 To texturePathFileNames.Count - 1
+		' Make all lowercase list copy of texturePaths.
+		Dim texturePathsLowercase As List(Of String)
+		texturePathsLowercase = New List(Of String)(texturePaths.Count)
+		For Each aTexturePath As String In texturePaths
+			texturePathsLowercase.Add(aTexturePath.ToLower())
+		Next
+
+		For texturePathFileNameIndex As Integer = 0 To texturePathFileNames.Count - 1
 			Dim aTexturePathFileName As String
-			aTexturePathFileName = texturePathFileNames(textureIndex)
+			Dim aTexturePathFileNameLowercase As String
+			aTexturePathFileName = texturePathFileNames(texturePathFileNameIndex)
+			aTexturePathFileNameLowercase = aTexturePathFileName.ToLower()
 
-			' Check if the texturePathFileName starts with a path that is in the texturePaths list.
-			For texturePathIndex As Integer = 0 To texturePaths.Count - 1
-				Dim aTexturePath As String
-				aTexturePath = texturePaths(texturePathIndex)
+			' If the texturePathFileName starts with a path that is in the texturePaths list, then remove the texturePath from the texturePathFileName.
+			For texturePathIndex As Integer = 0 To texturePathsLowercase.Count - 1
+				Dim aTexturePathLowercase As String
+				aTexturePathLowercase = texturePathsLowercase(texturePathIndex)
 
-				If aTexturePath <> "" AndAlso aTexturePathFileName.StartsWith(aTexturePath) Then
-					texturePathFileNames(textureIndex) = texturePathFileNames(textureIndex).Replace(aTexturePath, "")
+				If aTexturePathLowercase <> "" AndAlso aTexturePathFileNameLowercase.StartsWith(aTexturePathLowercase) Then
+					Dim startOffsetAfterPathSeparator As Integer
+					If aTexturePathLowercase.EndsWith(Path.DirectorySeparatorChar) OrElse aTexturePathLowercase.EndsWith(Path.AltDirectorySeparatorChar) Then
+						startOffsetAfterPathSeparator = aTexturePathLowercase.Length
+					Else
+						startOffsetAfterPathSeparator = aTexturePathLowercase.Length + 1
+					End If
+					texturePathFileNames(texturePathFileNameIndex) = aTexturePathFileName.Substring(startOffsetAfterPathSeparator)
 					Exit For
 				End If
 			Next
 
 			Dim texturePath As String
+			Dim texturePathLowercase As String
 			Dim textureFileName As String
 			texturePath = FileManager.GetPath(aTexturePathFileName)
+			texturePathLowercase = texturePath.ToLower()
 			textureFileName = Path.GetFileName(aTexturePathFileName)
-			If aTexturePathFileName <> textureFileName Then
+			If aTexturePathFileName <> textureFileName AndAlso Not texturePathsLowercase.Contains(texturePathLowercase) AndAlso Not texturePathsLowercase.Contains(texturePathLowercase + Path.DirectorySeparatorChar) AndAlso Not texturePathsLowercase.Contains(texturePathLowercase + Path.AltDirectorySeparatorChar) Then
 				'NOTE: Place first because it should override whatever is already in list.
 				texturePaths.Insert(0, texturePath)
 			End If

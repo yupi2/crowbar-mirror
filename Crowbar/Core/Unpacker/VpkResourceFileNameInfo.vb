@@ -65,6 +65,16 @@ Public Class VpkResourceFileNameInfo
 		End Set
 	End Property
 
+	Public Property EntryIndex() As Integer
+		Get
+			Return Me.theEntryIndex
+		End Get
+		Set(ByVal value As Integer)
+			Me.theEntryIndex = value
+			NotifyPropertyChanged("EntryIndex")
+		End Set
+	End Property
+
 #End Region
 
 #Region "Events"
@@ -91,6 +101,8 @@ Public Class VpkResourceFileNameInfo
 	Private theExtension As String
 
 	Private theResourceFileIsFolder As Boolean
+
+	Private theEntryIndex As Integer
 
 #End Region
 

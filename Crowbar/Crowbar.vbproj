@@ -77,11 +77,14 @@
     <Compile Include="Core\- General\Bitmap\BitmapFileHeader.vb" />
     <Compile Include="Core\- General\Bitmap\BitmapInfoHeader.vb" />
     <Compile Include="Core\- General\Bitmap\BitmapRgbQuad.vb" />
+    <Compile Include="Core\- General\DuplicateKeyComparer.vb" />
     <Compile Include="Core\- General\EnumHelper.vb" />
     <Compile Include="Core\- General\GenericsModule.vb" />
     <Compile Include="Core\- General\StringClass.vb" />
     <Compile Include="Core\Compiler\CompilerOutputInfo.vb" />
-    <Compile Include="Core\Compiler\GameSetupFormInfo.vb" />
+    <Compile Include="Core\GameSetup\GameInfoTxtFile.vb" />
+    <Compile Include="Core\GameSetup\SteamLibraryPath.vb" />
+    <Compile Include="Core\GameSetup\GameSetupFormInfo.vb" />
     <Compile Include="Core\Debug\AppDebug1File.vb" />
     <Compile Include="Core\Debug\AppDebug2File.vb" />
     <Compile Include="Core\Debug\AppDebug3File.vb" />
@@ -92,7 +95,7 @@
     <Compile Include="Core\Compiler\CompilerInputInfo.vb" />
     <Compile Include="Core\Debug\DebugFormatModule.vb" />
     <Compile Include="Core\Debug\FileSeekLog.vb" />
-    <Compile Include="Core\Compiler\GameSetup.vb" />
+    <Compile Include="Core\GameSetup\GameSetup.vb" />
     <Compile Include="Core\Debug\UnknownValue.vb" />
     <Compile Include="Core\- General\BindingListEx.vb" />
     <Compile Include="Core\- General\BindingListExAutoSort.vb" />
@@ -107,6 +110,14 @@
     <Compile Include="Core\Decompiler\Decompiler.vb">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Core\MappingTool\MappingTool.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Core\MappingTool\MappingToolInfo.vb" />
+    <Compile Include="Core\GameApp\GameApp.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Core\GameApp\GameAppInfo.vb" />
     <Compile Include="Core\SourceModel\- Base\Common.vb" />
     <Compile Include="Core\SourceModel\- Base\SourceMdlAnimationDescBase.vb" />
     <Compile Include="Core\SourceModel\- Base\SourceMdlFileDataBase.vb" />
@@ -120,6 +131,9 @@
     <Compile Include="Core\SourceModel\FileDataCompiled\SourceMdlFileData\SourceMdlCompressedIkError.vb" />
     <Compile Include="Core\SourceModel\- Base\SourceFileData.vb" />
     <Compile Include="Core\SourceModel\SourceGlobal\SourceFloat8bits.vb" />
+    <Compile Include="Core\SourceModel\SourceGlobal\SourceQuaternion48bitsAssumedW.vb" />
+    <Compile Include="Core\SourceModel\SourceGlobal\SourceQuaternion48bitsViaBytes.vb" />
+    <Compile Include="Core\SourceModel\SourceGlobal\SourceQuaternion48bitsSmallest3.vb" />
     <Compile Include="Core\SourceModel\SourceGlobal\SourceVector4D.vb" />
     <Compile Include="Core\SourceModel\SourceModel04\SourceMdlFileData\SourceMdlBodyPart04.vb" />
     <Compile Include="Core\SourceModel\SourceModel04\SourceMdlFileData\SourceMdlFaceVertexInfo04.vb" />
@@ -234,6 +248,16 @@
     <Compile Include="Core\SourceModel\SourceModel31\SourceModule31.vb" />
     <Compile Include="Core\SourceModel\SourceModel31\SourceQcFile31.vb" />
     <Compile Include="Core\SourceModel\SourceModel31\SourceSmdFile31.vb" />
+    <Compile Include="Core\SourceModel\SourceModel32\SourceMdlFile32.vb" />
+    <Compile Include="Core\SourceModel\SourceModel32\SourceMdlFileData\SourceMdlAnimationDesc32.vb" />
+    <Compile Include="Core\SourceModel\SourceModel32\SourceMdlFileData\SourceMdlBoneController32.vb" />
+    <Compile Include="Core\SourceModel\SourceModel32\SourceMdlFileData\SourceMdlFileData32.vb" />
+    <Compile Include="Core\SourceModel\SourceModel32\SourceMdlFileData\SourceMdlHitbox32.vb" />
+    <Compile Include="Core\SourceModel\SourceModel32\SourceMdlFileData\SourceMdlHitboxSet32.vb" />
+    <Compile Include="Core\SourceModel\SourceModel32\SourceMdlFileData\SourceMdlSequenceDesc32.vb" />
+    <Compile Include="Core\SourceModel\SourceModel32\SourceModel32.vb" />
+    <Compile Include="Core\SourceModel\SourceModel32\SourceQcFile32.vb" />
+    <Compile Include="Core\SourceModel\SourceModel32\SourceSmdFile32.vb" />
     <Compile Include="Core\SourceModel\SourceModel36\SourceMdlFile36.vb" />
     <Compile Include="Core\SourceModel\SourceModel36\SourceMdlFileData\SourceMdlAnimationDesc36.vb" />
     <Compile Include="Core\SourceModel\SourceModel36\SourceMdlFileData\SourceMdlFileData36.vb" />
@@ -461,9 +485,15 @@
     <Compile Include="Core\SourceModel\FileDataCompiled\SourceVtxFileData\SourceVtxVertex.vb" />
     <Compile Include="Core\SourceModel\FileDataCompiled\SourceVtxFileData\SourceVtxFileData.vb" />
     <Compile Include="Core\SourceModel\FileDataCompiled\SourceVvdFileData\SourceVvdFixup.vb" />
+    <Compile Include="Core\VpkFormat\VpkDirectoryEntry.vb" />
+    <Compile Include="Core\VpkFormat\VpkFile.vb" />
+    <Compile Include="Core\VpkFormat\VpkFileData.vb" />
     <Compile Include="Widgets\- Application\FolderAndFileListViewItemComparer.vb" />
     <Compile Include="Widgets\- General\FileDragDropHelper.vb" />
     <Compile Include="Widgets\- General\RichTextBoxEx.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Widgets\- Application\MacroDataGridView.vb">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Widgets\- General\TextBoxEx.vb">
@@ -600,6 +630,9 @@
     <EmbeddedResource Include="Widgets\- Application\MainForm.de-DE.resx">
       <DependentUpon>MainForm.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Widgets\- Application\MacroDataGridView.resx">
+      <DependentUpon>MacroDataGridView.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Widgets\Main\AboutUserControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AboutUserControl.vb</DependentUpon>
@@ -692,7 +725,6 @@
     <None Include="resources\crowbar_icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Core\SourceModel\SourceModel32\" />
     <Folder Include="Core\SourceModel\SourceModel35\" />
     <Folder Include="Core\SourceModel\SourceModel52\" />
     <Folder Include="Core\SourceModel\SourceModel57\" />

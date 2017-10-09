@@ -36,11 +36,11 @@ Public Class App
 		Me.IsDisposed = True
 	End Sub
 
-	Protected Overrides Sub Finalize()
-		' Do not change this code.  Put cleanup code in Dispose(ByVal disposing As Boolean) above.
-		Dispose(False)
-		MyBase.Finalize()
-	End Sub
+	'Protected Overrides Sub Finalize()
+	'	' Do not change this code.  Put cleanup code in Dispose(ByVal disposing As Boolean) above.
+	'	Dispose(False)
+	'	MyBase.Finalize()
+	'End Sub
 
 #End Region
 
@@ -51,6 +51,11 @@ Public Class App
 	Public Sub Init()
 		Me.theAppPath = Application.StartupPath
 		Me.LoadAppSettings()
+
+		If Me.Settings.SteamLibraryPaths.Count = 0 Then
+			Dim libraryPath As New SteamLibraryPath()
+			Me.Settings.SteamLibraryPaths.Add(libraryPath)
+		End If
 
 		Me.theUnpacker = New Unpacker()
 		Me.theDecompiler = New Decompiler()
@@ -198,6 +203,9 @@ Public Class App
 		Dim gameSetup As New GameSetup()
 		Me.theSettings.GameSetups.Add(gameSetup)
 
+		Dim aPath As New SteamLibraryPath()
+		Me.theSettings.SteamLibraryPaths.Add(aPath)
+
 		Me.SaveAppSettings()
 	End Sub
 
@@ -252,6 +260,26 @@ Public Class App
 		result = My.Application.Info.ProductName
 		result += " "
 		result += My.Application.Info.Version.ToString()
+
+		Return result
+	End Function
+
+	Public Function GetProcessedPathFileName(ByVal pathFileName As String) As String
+		Dim result As String
+		Dim aMacro As String
+
+		result = pathFileName
+
+		For Each aSteamLibraryPath As SteamLibraryPath In Me.Settings.SteamLibraryPaths
+			aMacro = aSteamLibraryPath.Macro
+			If pathFileName.StartsWith(aMacro) Then
+				pathFileName = pathFileName.Remove(0, aMacro.Length)
+				If pathFileName.StartsWith("\") Then
+					pathFileName = pathFileName.Remove(0, 1)
+				End If
+				result = Path.Combine(aSteamLibraryPath.LibraryPath, pathFileName)
+			End If
+		Next
 
 		Return result
 	End Function

@@ -7,6 +7,8 @@ Public Class SourceMdlFile53
 	Public Sub New(ByVal mdlFileReader As BinaryReader, ByVal mdlFileData As SourceMdlFileData53)
 		Me.theInputFileReader = mdlFileReader
 		Me.theMdlFileData = mdlFileData
+
+		Me.theMdlFileData.theFileSeekLog.FileSize = Me.theInputFileReader.BaseStream.Length
 	End Sub
 
 	Public Sub New(ByVal mdlFileWriter As BinaryWriter, ByVal mdlFileData As SourceMdlFileData53)
@@ -1395,7 +1397,7 @@ Public Class SourceMdlFile53
 
 			anAniFrameAnim = New SourceAniFrameAnim()
 			'anAnimationDesc.theAniFrameAnims.Add(anAniFrameAnim)
-			anAnimationDesc.theAniFrameAnim = anAniFrameAnim
+			'anAnimationDesc.theAniFrameAnim = anAniFrameAnim
 
 			fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 

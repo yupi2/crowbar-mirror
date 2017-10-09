@@ -37,6 +37,7 @@ Partial Class DecompileUserControl
 		Me.OutputSubfolderNameRadioButton = New System.Windows.Forms.RadioButton()
 		Me.OptionsGroupBox = New System.Windows.Forms.GroupBox()
 		Me.Panel1 = New System.Windows.Forms.Panel()
+		Me.UseMixedCaseForKeywordsCheckBox = New System.Windows.Forms.CheckBox()
 		Me.RemovePathFromMaterialFileNamesCheckBox = New System.Windows.Forms.CheckBox()
 		Me.DeclareSequenceQciCheckBox = New System.Windows.Forms.CheckBox()
 		Me.SkinFamilyOnSingleLineCheckBox = New System.Windows.Forms.CheckBox()
@@ -224,6 +225,7 @@ Partial Class DecompileUserControl
 		'Panel1
 		'
 		Me.Panel1.AutoScroll = True
+		Me.Panel1.Controls.Add(Me.UseMixedCaseForKeywordsCheckBox)
 		Me.Panel1.Controls.Add(Me.RemovePathFromMaterialFileNamesCheckBox)
 		Me.Panel1.Controls.Add(Me.DeclareSequenceQciCheckBox)
 		Me.Panel1.Controls.Add(Me.SkinFamilyOnSingleLineCheckBox)
@@ -252,15 +254,27 @@ Partial Class DecompileUserControl
 		Me.Panel1.Size = New System.Drawing.Size(772, 237)
 		Me.Panel1.TabIndex = 11
 		'
+		'UseMixedCaseForKeywordsCheckBox
+		'
+		Me.UseMixedCaseForKeywordsCheckBox.AutoSize = True
+		Me.UseMixedCaseForKeywordsCheckBox.Location = New System.Drawing.Point(20, 72)
+		Me.UseMixedCaseForKeywordsCheckBox.Name = "UseMixedCaseForKeywordsCheckBox"
+		Me.UseMixedCaseForKeywordsCheckBox.Size = New System.Drawing.Size(163, 17)
+		Me.UseMixedCaseForKeywordsCheckBox.TabIndex = 42
+		Me.UseMixedCaseForKeywordsCheckBox.Text = "Use MixedCase for keywords"
+		Me.ToolTip1.SetToolTip(Me.UseMixedCaseForKeywordsCheckBox, "$CommandLikeThis instead of $commandlikethis")
+		Me.UseMixedCaseForKeywordsCheckBox.UseVisualStyleBackColor = True
+		'
 		'RemovePathFromMaterialFileNamesCheckBox
 		'
 		Me.RemovePathFromMaterialFileNamesCheckBox.AutoSize = True
-		Me.RemovePathFromMaterialFileNamesCheckBox.Location = New System.Drawing.Point(20, 95)
+		Me.RemovePathFromMaterialFileNamesCheckBox.Location = New System.Drawing.Point(20, 118)
 		Me.RemovePathFromMaterialFileNamesCheckBox.Name = "RemovePathFromMaterialFileNamesCheckBox"
 		Me.RemovePathFromMaterialFileNamesCheckBox.Size = New System.Drawing.Size(202, 17)
 		Me.RemovePathFromMaterialFileNamesCheckBox.TabIndex = 41
 		Me.RemovePathFromMaterialFileNamesCheckBox.Text = "Remove path from material file names"
-		Me.ToolTip1.SetToolTip(Me.RemovePathFromMaterialFileNamesCheckBox, "Write the decompile log to a file.")
+		Me.ToolTip1.SetToolTip(Me.RemovePathFromMaterialFileNamesCheckBox, "Write only the file name in the SMD, even if a path was stored. This might cause " & _
+		"problem with $CDMaterials in QC file.")
 		Me.RemovePathFromMaterialFileNamesCheckBox.UseVisualStyleBackColor = True
 		'
 		'DeclareSequenceQciCheckBox
@@ -337,7 +351,7 @@ Partial Class DecompileUserControl
 		'PlaceInAnimsSubfolderCheckBox
 		'
 		Me.PlaceInAnimsSubfolderCheckBox.AutoSize = True
-		Me.PlaceInAnimsSubfolderCheckBox.Location = New System.Drawing.Point(20, 164)
+		Me.PlaceInAnimsSubfolderCheckBox.Location = New System.Drawing.Point(20, 187)
 		Me.PlaceInAnimsSubfolderCheckBox.Name = "PlaceInAnimsSubfolderCheckBox"
 		Me.PlaceInAnimsSubfolderCheckBox.Size = New System.Drawing.Size(150, 17)
 		Me.PlaceInAnimsSubfolderCheckBox.TabIndex = 9
@@ -409,7 +423,7 @@ Partial Class DecompileUserControl
 		'BoneAnimationSmdFilesCheckBox
 		'
 		Me.BoneAnimationSmdFilesCheckBox.AutoSize = True
-		Me.BoneAnimationSmdFilesCheckBox.Location = New System.Drawing.Point(3, 141)
+		Me.BoneAnimationSmdFilesCheckBox.Location = New System.Drawing.Point(3, 164)
 		Me.BoneAnimationSmdFilesCheckBox.Name = "BoneAnimationSmdFilesCheckBox"
 		Me.BoneAnimationSmdFilesCheckBox.Size = New System.Drawing.Size(147, 17)
 		Me.BoneAnimationSmdFilesCheckBox.TabIndex = 8
@@ -450,7 +464,7 @@ Partial Class DecompileUserControl
 		'ReferenceMeshSmdFileCheckBox
 		'
 		Me.ReferenceMeshSmdFileCheckBox.AutoSize = True
-		Me.ReferenceMeshSmdFileCheckBox.Location = New System.Drawing.Point(3, 72)
+		Me.ReferenceMeshSmdFileCheckBox.Location = New System.Drawing.Point(3, 95)
 		Me.ReferenceMeshSmdFileCheckBox.Name = "ReferenceMeshSmdFileCheckBox"
 		Me.ReferenceMeshSmdFileCheckBox.Size = New System.Drawing.Size(147, 17)
 		Me.ReferenceMeshSmdFileCheckBox.TabIndex = 3
@@ -470,7 +484,7 @@ Partial Class DecompileUserControl
 		'ApplyRightHandFixCheckBox
 		'
 		Me.ApplyRightHandFixCheckBox.AutoSize = True
-		Me.ApplyRightHandFixCheckBox.Location = New System.Drawing.Point(20, 118)
+		Me.ApplyRightHandFixCheckBox.Location = New System.Drawing.Point(20, 141)
 		Me.ApplyRightHandFixCheckBox.Name = "ApplyRightHandFixCheckBox"
 		Me.ApplyRightHandFixCheckBox.Size = New System.Drawing.Size(263, 17)
 		Me.ApplyRightHandFixCheckBox.TabIndex = 4
@@ -706,5 +720,6 @@ Partial Class DecompileUserControl
 	Friend WithEvents SkinFamilyOnSingleLineCheckBox As System.Windows.Forms.CheckBox
 	Friend WithEvents DeclareSequenceQciCheckBox As System.Windows.Forms.CheckBox
 	Friend WithEvents RemovePathFromMaterialFileNamesCheckBox As System.Windows.Forms.CheckBox
+	Friend WithEvents UseMixedCaseForKeywordsCheckBox As System.Windows.Forms.CheckBox
 
 End Class

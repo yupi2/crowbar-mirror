@@ -413,6 +413,7 @@ Public Class SourceMdlFileData44
 
 	'Public theActualFileSize As Long
 	Public theModelCommandIsUsed As Boolean
+	Public theBodyPartIndexThatShouldUseModelCommand As Integer
 	Public theFlexFrames As List(Of FlexFrame)
 	Public theEyelidFlexFrameIndexes As List(Of Integer)
 	'Public theUpperEyelidFlexFrameIndexes As List(Of Integer)

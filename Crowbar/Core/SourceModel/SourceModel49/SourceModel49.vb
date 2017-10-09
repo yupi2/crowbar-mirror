@@ -441,12 +441,14 @@ Public Class SourceModel49
 			qcFile.WriteStaticPropCommand()
 			qcFile.WriteConstDirectionalLightCommand()
 
-			If Me.theMdlFileData.theModelCommandIsUsed Then
-				qcFile.WriteModelCommand()
-				qcFile.WriteBodyGroupCommand(1)
-			Else
-				qcFile.WriteBodyGroupCommand(0)
-			End If
+			'If Me.theMdlFileData.theModelCommandIsUsed Then
+			'	qcFile.WriteModelCommand()
+			'	qcFile.WriteBodyGroupCommand(1)
+			'Else
+			'	qcFile.WriteBodyGroupCommand(0)
+			'End If
+			qcFile.WriteModelCommand()
+			qcFile.WriteBodyGroupCommand()
 			qcFile.WriteGroup("lod", AddressOf qcFile.WriteGroupLod, False, False)
 
 			qcFile.WriteSurfacePropCommand()
@@ -684,6 +686,7 @@ Public Class SourceModel49
 		Dim mdlFile As New SourceMdlFile49(Me.theOutputFileBinaryWriter, Me.theMdlFileData)
 
 		mdlFile.WriteInternalMdlFileName(internalMdlFileName)
+		mdlFile.WriteInternalMdlFileNameCopy(internalMdlFileName)
 	End Sub
 
 	Protected Overrides Sub WriteAniFileNameToMdlFile(ByVal internalAniFileName As String)

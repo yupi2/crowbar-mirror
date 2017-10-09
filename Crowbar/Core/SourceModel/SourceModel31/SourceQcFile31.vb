@@ -57,8 +57,11 @@ Public Class SourceQcFile31
 
 	'				outputFileStream.WriteLine()
 
-	'				line += "$Include"
-	'				line += " "
+	'If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+	'	line += "$Include "
+	'Else
+	'	line += "$include "
+	'End If
 	'				line += """"
 	'				line += FileManager.GetRelativePathFileName(qcPathFileName, includedPathFileName)
 	'				line += """"
@@ -112,8 +115,11 @@ Public Class SourceQcFile31
 						If includeLineIsIndented Then
 							line += vbTab
 						End If
-						line += "$Include"
-						line += " "
+						If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+							line += "$Include "
+						Else
+							line += "$include "
+						End If
 						line += """"
 						line += qciFileName
 						line += """"
@@ -145,7 +151,11 @@ Public Class SourceQcFile31
 
 		'$modelname "survivors/survivor_producer.mdl"
 		'$modelname "custom/survivor_producer.mdl"
-		line = "$ModelName "
+		If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+			line = "$ModelName "
+		Else
+			line = "$modelname "
+		End If
 		line += """"
 		line += modelPathFileName
 		line += """"
@@ -158,7 +168,11 @@ Public Class SourceQcFile31
 		Me.theOutputFileStreamWriter.WriteLine()
 
 		'$include "Rochelle_world.qci"
-		line = "$Include "
+		If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+			line += "$Include "
+		Else
+			line += "$include "
+		End If
 		line += """"
 		line += "decompiled.qci"
 		line += """"
@@ -166,11 +180,7 @@ Public Class SourceQcFile31
 	End Sub
 
 	Public Sub WriteHeaderComment()
-		Dim line As String = ""
-
-		line = "// "
-		line += TheApp.GetHeaderComment()
-		Me.theOutputFileStreamWriter.WriteLine(line)
+		Common.WriteHeaderComment(Me.theOutputFileStreamWriter)
 	End Sub
 
 	Public Sub WriteStaticPropCommand()
@@ -180,7 +190,11 @@ Public Class SourceQcFile31
 		If (Me.theMdlFileData.flags And SourceMdlFileData.STUDIOHDR_FLAGS_STATIC_PROP) > 0 Then
 			Me.theOutputFileStreamWriter.WriteLine()
 
-			line = "$StaticProp"
+			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+				line = "$StaticProp"
+			Else
+				line = "$staticprop"
+			End If
 			Me.theOutputFileStreamWriter.WriteLine(line)
 		End If
 	End Sub
@@ -1062,7 +1076,11 @@ Public Class SourceQcFile31
 	'		'		'newLOD.switchValue = -1.0f;
 	'		'		line += "$shadowlod"
 	'		'	Else
-	'		'		line += "$lod "
+	'If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+	'	line += "$LOD "
+	'Else
+	'	line += "$lod "
+	'End If
 	'		'		line += switchPoint.ToString("0.######", TheApp.InternalNumberFormat)
 	'		'	End If
 	'		'	Me.theOutputFileStreamWriter.WriteLine(line)
@@ -1156,7 +1174,11 @@ Public Class SourceQcFile31
 
 	'			aLodQcInfoList = aLodList.Values(lodListIndex)
 
-	'			line = "$LOD "
+	'If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+	'	line = "$LOD "
+	'Else
+	'	line = "$lod "
+	'End If
 	'			line += switchPoint.ToString("0.######", TheApp.InternalNumberFormat)
 	'			Me.theOutputFileStreamWriter.WriteLine(line)
 
@@ -1185,7 +1207,11 @@ Public Class SourceQcFile31
 	'			'// Shadow lod reserves -1 as switch value
 	'			'// which uniquely identifies a shadow lod
 	'			'newLOD.switchValue = -1.0f;
-	'			line = "$ShadowLOD"
+	'If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+	'	line = "$ShadowLOD"
+	'Else
+	'	line = "$shadowlod"
+	'End If
 	'			Me.theOutputFileStreamWriter.WriteLine(line)
 
 	'			line = "{"
@@ -1318,7 +1344,11 @@ Public Class SourceQcFile31
 	'			aTexturePath = Me.theMdlFileData.theTexturePaths(i)
 	'			'NOTE: Write out null or empty strings, because Crowbar should show what was stored.
 	'			'If Not String.IsNullOrEmpty(aTexturePath) Then
-	'			line = "$CDMaterials "
+	'If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+	'	line = "$CDMaterials "
+	'Else
+	'	line = "$cdmaterials "
+	'End If
 	'			line += """"
 	'			line += aTexturePath
 	'			line += """"
@@ -1348,7 +1378,11 @@ Public Class SourceQcFile31
 	'		line = ""
 	'		Me.theOutputFileStreamWriter.WriteLine(line)
 
-	'		line = "$TextureGroup ""skinfamilies"""
+	'If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+	'	line = "$TextureGroup ""skinfamilies"""
+	'Else
+	'	line = "$texturegroup ""skinfamilies"""
+	'End If
 	'		Me.theOutputFileStreamWriter.WriteLine(line)
 	'		line = "{"
 	'		Me.theOutputFileStreamWriter.WriteLine(line)
@@ -1482,7 +1516,11 @@ Public Class SourceQcFile31
 	'		For i As Integer = 0 To Me.theMdlFileData.theAttachments.Count - 1
 	'			Dim anAttachment As SourceMdlAttachment37
 	'			anAttachment = Me.theMdlFileData.theAttachments(i)
-	'			line = "$Attachment "
+	'If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+	'	line = "$Attachment "
+	'Else
+	'	line = "$attachment "
+	'End If
 	'			If anAttachment.theName = "" Then
 	'				line += i.ToString(TheApp.InternalNumberFormat)
 	'			Else
@@ -1540,7 +1578,11 @@ Public Class SourceQcFile31
 	'		For i As Integer = 0 To Me.theMdlFileData.theSequenceGroups.Count - 1
 	'			Dim aModelGroup As SourceMdlSequenceGroup37
 	'			aModelGroup = Me.theMdlFileData.theSequenceGroups(i)
-	'			line = "$IncludeModel "
+	'If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+	'	line = "$IncludeModel "
+	'Else
+	'	line = "$includemodel "
+	'End If
 	'			line += """"
 	'			If aModelGroup.theFileName.StartsWith("models/") Then
 	'				line += aModelGroup.theFileName.Substring(7)
@@ -1561,7 +1603,11 @@ Public Class SourceQcFile31
 	'		Me.theOutputFileStreamWriter.WriteLine(line)
 
 	'		'$surfaceprop "flesh"
-	'		line = "$SurfaceProp "
+	'If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+	'	line = "$SurfaceProp "
+	'Else
+	'	line = "$surfaceprop "
+	'End If
 	'		line += """"
 	'		line += Me.theMdlFileData.theSurfacePropName
 	'		line += """"
@@ -1742,7 +1788,11 @@ Public Class SourceQcFile31
 	'	'eyeposition[1] = verify_atof (token);
 	'	'eyeposition[0] = -verify_atof (token);
 	'	'eyeposition[2] = verify_atof (token);
+	'If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
 	'	line = "$EyePosition "
+	'Else
+	'	line = "$eyeposition "
+	'End If
 	'	line += offsetX.ToString("0.######", TheApp.InternalNumberFormat)
 	'	line += " "
 	'	line += offsetY.ToString("0.######", TheApp.InternalNumberFormat)
@@ -1787,6 +1837,7 @@ Public Class SourceQcFile31
 
 	'Public Sub WriteGroupAnimation()
 	'	Me.WritePoseParameterCommand()
+	'	Me.WriteIkChainCommand()
 	'	Me.FillInWeightLists()
 	'	'NOTE: Must write $WeightList lines before animations or sequences that use them.
 	'	Me.WriteWeightListCommand()
@@ -1800,7 +1851,6 @@ Public Class SourceQcFile31
 	'	Catch ex As Exception
 	'	End Try
 	'	Me.WriteIncludeModelCommands()
-	'	Me.WriteIkChainCommand()
 	'	Me.WriteIkAutoPlayLockCommand()
 	'	Me.WriteBoneSaveFrameCommand()
 	'End Sub
@@ -1896,7 +1946,11 @@ Public Class SourceQcFile31
 	'	For Each aWeightList As SourceMdlWeightList In Me.theMdlFileData.theWeightLists
 	'		Me.theOutputFileStreamWriter.WriteLine()
 
-	'		line = "$WeightList "
+	'If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+	'	line = "$WeightList "
+	'Else
+	'	line = "$weightlist "
+	'End If
 	'		line += """"
 	'		line += aWeightList.theName
 	'		line += """"
@@ -1989,8 +2043,12 @@ Public Class SourceQcFile31
 	'		Me.theOutputFileStreamWriter.WriteLine(line)
 	'	Else
 	'		If aSequenceDesc.theAnimDescIndexes IsNot Nothing OrElse aSequenceDesc.theAnimDescIndexes.Count > 0 Then
-	'			line = "$Sequence"
-	'			line += " """
+	'If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+	'	line = "$Sequence "
+	'Else
+	'	line = "$sequence "
+	'End If
+	'			line += """"
 	'			line += aSequenceDesc.theName
 	'			line += """"
 	'			'NOTE: Opening brace must be on same line as the command.
@@ -3143,7 +3201,11 @@ Public Class SourceQcFile31
 	'	maxX = Math.Round(Me.theMdlFileData.viewBoundingBoxMaxPosition.x, 3)
 	'	maxY = Math.Round(Me.theMdlFileData.viewBoundingBoxMaxPosition.y, 3)
 	'	maxZ = Math.Round(Me.theMdlFileData.viewBoundingBoxMaxPosition.z, 3)
+	'If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
 	'	line = "$CBox "
+	'Else
+	'	line = "$cbox "
+	'End If
 	'	line += minX.ToString("0.######", TheApp.InternalNumberFormat)
 	'	line += " "
 	'	line += minY.ToString("0.######", TheApp.InternalNumberFormat)
@@ -3185,7 +3247,11 @@ Public Class SourceQcFile31
 	'	maxY = Math.Round(Me.theMdlFileData.hullMaxPosition.y, 3)
 	'	maxZ = Math.Round(Me.theMdlFileData.hullMaxPosition.z, 3)
 	'	line = ""
+	'If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
 	'	line += "$BBox "
+	'Else
+	'	line += "$bbox "
+	'End If
 	'	line += minX.ToString("0.######", TheApp.InternalNumberFormat)
 	'	line += " "
 	'	line += minY.ToString("0.######", TheApp.InternalNumberFormat)
@@ -3257,7 +3323,11 @@ Public Class SourceQcFile31
 	'	For i As Integer = 0 To Me.theMdlFileData.theHitboxSets.Count - 1
 	'		aHitboxSet = Me.theMdlFileData.theHitboxSets(i)
 
-	'		line = "$HBoxSet "
+	'If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+	'	line = "$HBoxSet "
+	'Else
+	'	line = "$hboxset "
+	'End If
 	'		line += """"
 	'		line += aHitboxSet.theName
 	'		line += """"
@@ -3282,7 +3352,11 @@ Public Class SourceQcFile31
 
 	'	For j As Integer = 0 To theHitboxes.Count - 1
 	'		aHitbox = theHitboxes(j)
-	'		line = "$HBox "
+	'If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+	'	line = "$HBox "
+	'Else
+	'	line = "$hbox "
+	'End If
 	'		line += aHitbox.groupIndex.ToString(TheApp.InternalNumberFormat)
 	'		line += " "
 	'		line += """"
@@ -3352,7 +3426,11 @@ Public Class SourceQcFile31
 	'			aBodyPart = Me.theMdlFileData.theBodyParts(bodyPartIndex)
 	'			aVtxBodyPart = Me.theVtxFileData.theVtxBodyParts(bodyPartIndex)
 
-	'			line = "$BodyGroup "
+	'If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+	'	line = "$BodyGroup "
+	'Else
+	'	line = "$bodygroup "
+	'End If
 	'			line += """"
 	'			line += aBodyPart.theName
 	'			line += """"
@@ -3401,7 +3479,11 @@ Public Class SourceQcFile31
 	'			For i As Integer = 0 To Me.theMdlFileData.theBoneControllers.Count - 1
 	'				boneController = Me.theMdlFileData.theBoneControllers(i)
 
-	'				line = "$Controller "
+	'If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+	'	line = "$Controller "
+	'Else
+	'	line = "$controller "
+	'End If
 	'				line += boneController.inputField.ToString(TheApp.InternalNumberFormat)
 	'				line += " """
 	'				line += Me.theMdlFileData.theBones(boneController.boneIndex).theName

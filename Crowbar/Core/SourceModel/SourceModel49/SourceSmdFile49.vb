@@ -26,11 +26,7 @@ Public Class SourceSmdFile49
 #Region "Methods"
 
 	Public Sub WriteHeaderComment()
-		Dim line As String = ""
-
-		line = "// "
-		line += TheApp.GetHeaderComment()
-		Me.theOutputFileStreamWriter.WriteLine(line)
+		Common.WriteHeaderComment(Me.theOutputFileStreamWriter)
 	End Sub
 
 	Public Sub WriteHeaderSection()
@@ -44,6 +40,7 @@ Public Class SourceSmdFile49
 	Public Sub WriteNodesSection(ByVal lodIndex As Integer)
 		Dim line As String = ""
 		Dim name As String
+		Dim boneCount As Integer
 
 		Me.theWeaponBoneIndex = -1
 
@@ -51,7 +48,12 @@ Public Class SourceSmdFile49
 		line = "nodes"
 		Me.theOutputFileStreamWriter.WriteLine(line)
 
-		For boneIndex As Integer = 0 To Me.theMdlFileData.theBones.Count - 1
+		If Me.theMdlFileData.theBones Is Nothing Then
+			boneCount = 0
+		Else
+			boneCount = Me.theMdlFileData.theBones.Count
+		End If
+		For boneIndex As Integer = 0 To boneCount - 1
 			name = Me.theMdlFileData.theBones(boneIndex).theName
 			If TheApp.Settings.DecompileApplyRightHandFixIsChecked AndAlso lodIndex = 0 AndAlso name = "ValveBiped.weapon_bone" Then
 				Me.theWeaponBoneIndex = boneIndex
@@ -154,14 +156,14 @@ Public Class SourceSmdFile49
 					materialPathFileName = Me.theMdlFileData.theTextures(materialIndex).thePathFileName
 					materialFileName = Me.theMdlFileData.theModifiedTextureFileNames(materialIndex)
 
-					If TheApp.Settings.DecompileDebugInfoFilesIsChecked AndAlso materialPathFileName <> materialFileName Then
-						materialLine = "// In the MDL file as: " + materialPathFileName
-						Me.theOutputFileStreamWriter.WriteLine(materialLine)
-					End If
-
 					meshVertexIndexStart = aModel.theMeshes(meshIndex).vertexIndexStart
 
 					If aVtxMesh.theVtxStripGroups IsNot Nothing Then
+						If TheApp.Settings.DecompileDebugInfoFilesIsChecked AndAlso materialPathFileName <> materialFileName Then
+							materialLine = "// In the MDL file as: " + materialPathFileName
+							Me.theOutputFileStreamWriter.WriteLine(materialLine)
+						End If
+
 						For groupIndex As Integer = 0 To aVtxMesh.theVtxStripGroups.Count - 1
 							aStripGroup = aVtxMesh.theVtxStripGroups(groupIndex)
 
@@ -353,6 +355,10 @@ Public Class SourceSmdFile49
 		Dim tempRotation As New SourceVector()
 		Dim aSequenceDesc As SourceMdlSequenceDesc
 		Dim anAnimationDesc As SourceMdlAnimationDesc49
+		Dim beforeMovementFrameRotation As New SourceVector()
+		Dim previousFrameRotation As New SourceVector()
+		Dim beforeMovementFramePosition As New SourceVector()
+		Dim previousFramePosition As New SourceVector()
 
 		aSequenceDesc = CType(aSequenceDescBase, SourceMdlSequenceDesc)
 		anAnimationDesc = CType(anAnimationDescBase, SourceMdlAnimationDesc49)
@@ -361,231 +367,453 @@ Public Class SourceSmdFile49
 		line = "skeleton"
 		Me.theOutputFileStreamWriter.WriteLine(line)
 
-		Me.theAnimationFrameLines = New SortedList(Of Integer, AnimationFrameLine)()
-		''NOTE: MDL Decompiler uses 0 to frameCount, which is not what I would expect.
-		'For frameIndex As Integer = 0 To anAnimationDesc.frameCount
-		For frameIndex As Integer = 0 To anAnimationDesc.frameCount - 1
-			Me.theAnimationFrameLines.Clear()
-			If (anAnimationDesc.flags And SourceMdlAnimationDesc.STUDIO_ALLZEROS) = 0 Then
-				Me.CalcAnimation(aSequenceDesc, anAnimationDesc, frameIndex)
-			End If
+		If Me.theMdlFileData.theBones IsNot Nothing Then
+			Me.theAnimationFrameLines = New SortedList(Of Integer, AnimationFrameLine)()
+			For frameIndex As Integer = 0 To anAnimationDesc.frameCount - 1
+				Me.theAnimationFrameLines.Clear()
 
-			If TheApp.Settings.DecompileStricterFormatIsChecked Then
-				line = "time "
-			Else
-				line = "  time "
-			End If
-			line += CStr(frameIndex)
-			Me.theOutputFileStreamWriter.WriteLine(line)
+				If (anAnimationDesc.flags And SourceMdlAnimationDesc.STUDIO_ALLZEROS) = 0 Then
+					If ((anAnimationDesc.flags And SourceMdlAnimationDesc.STUDIO_FRAMEANIM) <> 0) Then
+						Dim sectionFrameIndex As Integer
+						Dim sectionIndex As Integer
+						Dim aSectionOfFrameAnimation As List(Of SourceAniFrameAnim)
+						Dim anAniFrameAnim As SourceAniFrameAnim
+						If anAnimationDesc.sectionFrameCount = 0 Then
+							sectionIndex = 0
+							sectionFrameIndex = frameIndex
+						Else
+							sectionIndex = CInt(Math.Truncate(frameIndex / anAnimationDesc.sectionFrameCount))
+							sectionFrameIndex = frameIndex - (sectionIndex * anAnimationDesc.sectionFrameCount)
+						End If
+						aSectionOfFrameAnimation = Nothing
+						'If anAnimationDesc.theAniFrameAnims IsNot Nothing Then
+						'	aSectionOfFrameAnimation = anAnimationDesc.theAniFrameAnims(sectionIndex)
+						'	'anAnimation = aSectionOfFrameAnimation(animIndex)
+						'	anAniFrameAnim = aSectionOfFrameAnimation(0)
+						'End If
+						aSectionOfFrameAnimation = anAnimationDesc.theSectionsOfFrameAnims(sectionIndex)
+						'anAnimation = aSectionOfFrameAnimation(animIndex)
+						anAniFrameAnim = aSectionOfFrameAnimation(0)
+						'anAniFrameAnim = aSectionOfFrameAnimation(sectionFrameIndex)
 
-			'DEBUG:
-			'If anAnimationDesc.theName = "Flinch_01" OrElse anAnimationDesc.theName = "@Flinch_01" Then
-			'	Dim debug As Integer = 4242
-			'End If
+						Dim aBoneConstantInfo As BoneConstantInfo
+						Dim aBoneFrameDataInfo As BoneFrameDataInfo
 
-			For i As Integer = 0 To Me.theAnimationFrameLines.Count - 1
-				boneIndex = Me.theAnimationFrameLines.Keys(i)
-				aFrameLine = Me.theAnimationFrameLines.Values(i)
+						For boneIndex = 0 To Me.theMdlFileData.theBones.Count - 1
+							Dim aBone As SourceMdlBone
+							aBone = Me.theMdlFileData.theBones(boneIndex)
 
-				'TODO: Decompile blended anims.
-				' Doesn't seem to be direct way to get the animDesc's subtractFrameIndex.
-				' For now, do what MDL Decompiler seems to do; use zero for the animDesc's subtractFrameIndex.
-				If ((anAnimationDesc.flags And SourceMdlAnimationDesc.STUDIO_DELTA) > 0) AndAlso frameIndex = 0 AndAlso Me.theMdlFileData.theFirstAnimationDescFrameLines IsNot Nothing AndAlso Me.theMdlFileData.theFirstAnimationDescFrameLines.ContainsKey(boneIndex) Then
-					Dim aFirstAnimationDescFrameLine As AnimationFrameLine
-					aFirstAnimationDescFrameLine = Me.theMdlFileData.theFirstAnimationDescFrameLines(boneIndex)
+							aFrameLine = New AnimationFrameLine()
+							Me.theAnimationFrameLines.Add(boneIndex, aFrameLine)
 
-					If aFrameLine.position.debug_text = "desc_delta" OrElse aFrameLine.position.debug_text.StartsWith("raw") Then
-						position.x = aFrameLine.position.x + aFirstAnimationDescFrameLine.position.x
-						position.y = aFrameLine.position.y + aFirstAnimationDescFrameLine.position.y
-						position.z = aFrameLine.position.z + aFirstAnimationDescFrameLine.position.z
-						'If aFrameLine.position.debug_text.StartsWith("raw") OrElse aFrameLine.position.debug_text = "anim+bone" Then
-						'	'TEST: Try this version, because of "sequence_blend from Game Zombie" model.
-						'	position.x = aFrameLine.position.y + aFirstAnimationDescFrameLine.position.x
-						'	position.y = -aFrameLine.position.x + aFirstAnimationDescFrameLine.position.y
-						'	position.z = aFrameLine.position.z + aFirstAnimationDescFrameLine.position.z
-						'ElseIf aFrameLine.position.debug_text = "delta" Then
-						'	position.x = aFrameLine.position.x + aFirstAnimationDescFrameLine.position.x
-						'	position.y = aFrameLine.position.y + aFirstAnimationDescFrameLine.position.y
-						'	position.z = aFrameLine.position.z + aFirstAnimationDescFrameLine.position.z
+							aFrameLine.position = New SourceVector()
+							aFrameLine.position.x = 0
+							aFrameLine.position.y = 0
+							aFrameLine.position.z = 0
+							aFrameLine.position.debug_text = ""
+							'aFrameLine.position.x = aBone.position.x
+							'aFrameLine.position.y = aBone.position.y
+							'aFrameLine.position.z = aBone.position.z
+							'aFrameLine.position.debug_text = "bone"
+							aFrameLine.rotation = New SourceVector()
+							aFrameLine.rotation.x = 0
+							aFrameLine.rotation.y = 0
+							aFrameLine.rotation.z = 0
+							aFrameLine.rotation.debug_text = ""
+							'aFrameLine.rotation.x = aBone.rotation.x
+							'aFrameLine.rotation.y = aBone.rotation.y
+							'aFrameLine.rotation.z = aBone.rotation.z
+							'aFrameLine.rotation.debug_text = "bone"
+
+							Dim boneFlag As Byte
+							boneFlag = anAniFrameAnim.theBoneFlags(boneIndex)
+							If anAniFrameAnim.theBoneConstantInfos IsNot Nothing Then
+								aBoneConstantInfo = anAniFrameAnim.theBoneConstantInfos(boneIndex)
+								If (boneFlag And SourceAniFrameAnim.STUDIO_FRAME_RAWROT) > 0 Then
+									aFrameLine.rotation = MathModule.ToEulerAngles(aBoneConstantInfo.theConstantRawRot.quaternion)
+									aFrameLine.rotation.debug_text = ""
+								End If
+								If (boneFlag And SourceAniFrameAnim.STUDIO_FRAME_RAWPOS) > 0 Then
+									aFrameLine.position.x = aBoneConstantInfo.theConstantRawPos.x
+									aFrameLine.position.y = aBoneConstantInfo.theConstantRawPos.y
+									aFrameLine.position.z = aBoneConstantInfo.theConstantRawPos.z
+									aFrameLine.position.debug_text = ""
+								End If
+								If (boneFlag And SourceAniFrameAnim.STUDIO_FRAME_UNKNOWN01) > 0 Then
+									aFrameLine.rotation = MathModule.ToEulerAngles(aBoneConstantInfo.theConstantRotationUnknown.quaternion)
+									'aFrameLine.rotation.debug_text = ""
+									'aFrameLine.rotation.z = aFrameLine.rotation.z + MathModule.DegreesToRadians(90)
+									aFrameLine.rotation.debug_text = ""
+								End If
+							End If
+							If anAniFrameAnim.theBoneFrameDataInfos IsNot Nothing Then
+								aBoneFrameDataInfo = anAniFrameAnim.theBoneFrameDataInfos(sectionFrameIndex)(boneIndex)
+								If (boneFlag And SourceAniFrameAnim.STUDIO_FRAME_ANIMROT) > 0 Then
+									aFrameLine.rotation = MathModule.ToEulerAngles(aBoneFrameDataInfo.theAnimRotation.quaternion)
+									aFrameLine.rotation.debug_text = ""
+								End If
+								If (boneFlag And SourceAniFrameAnim.STUDIO_FRAME_ANIMPOS) > 0 Then
+									aFrameLine.position.x = aBoneFrameDataInfo.theAnimPosition.x
+									aFrameLine.position.y = aBoneFrameDataInfo.theAnimPosition.y
+									aFrameLine.position.z = aBoneFrameDataInfo.theAnimPosition.z
+									aFrameLine.position.debug_text = ""
+								End If
+								If (boneFlag And SourceAniFrameAnim.STUDIO_FRAME_FULLANIMPOS) > 0 Then
+									'aBoneFrameDataInfo.theFullAnimPosition = New SourceVector()
+									Dim unknownFlagIsUsed As Integer = 4242
+								End If
+								If (boneFlag And &H20) > 0 Then
+									Dim unknownFlagIsUsed As Integer = 4242
+								End If
+								If (boneFlag And SourceAniFrameAnim.STUDIO_FRAME_UNKNOWN02) > 0 Then
+									aFrameLine.rotation = MathModule.ToEulerAngles(aBoneFrameDataInfo.theAnimRotationUnknown.quaternion)
+									'aFrameLine.rotation.debug_text = ""
+									aFrameLine.rotation.debug_text = ""
+									'aFrameLine.rotation.z = aFrameLine.rotation.z + MathModule.DegreesToRadians(90)
+								End If
+							End If
+						Next
 					Else
-						position.x = aFrameLine.position.x
-						position.y = aFrameLine.position.y
-						position.z = aFrameLine.position.z
+						Me.CalcAnimation(aSequenceDesc, anAnimationDesc, frameIndex)
 					End If
+				End If
 
-					If aFrameLine.rotation.debug_text = "desc_delta" OrElse aFrameLine.rotation.debug_text.StartsWith("raw") Then
-						rotation.x = aFrameLine.rotation.x
-						rotation.y = aFrameLine.rotation.y
-						rotation.z = aFrameLine.rotation.z
-
-						Dim quat As New SourceQuaternion()
-						Dim quat2 As New SourceQuaternion()
-						Dim quatResult As New SourceQuaternion()
-						Dim magnitude As Double
-						quat = MathModule.EulerAnglesToQuaternion(rotation)
-						quat2 = MathModule.EulerAnglesToQuaternion(aFirstAnimationDescFrameLine.rotation)
-
-						quat.x *= -1
-						quat.y *= -1
-						quat.z *= -1
-						quatResult.x = quat.w * quat2.x + quat.x * quat2.w + quat.y * quat2.z - quat.z * quat2.y
-						quatResult.y = quat.w * quat2.y - quat.x * quat2.z + quat.y * quat2.w + quat.z * quat2.x
-						quatResult.z = quat.w * quat2.z + quat.x * quat2.y - quat.y * quat2.x + quat.z * quat2.w
-						quatResult.w = quat.w * quat2.w + quat.x * quat2.x + quat.y * quat2.y - quat.z * quat2.z
-
-						magnitude = Math.Sqrt(quatResult.w * quatResult.w + quatResult.x * quatResult.x + quatResult.y * quatResult.y + quatResult.z * quatResult.z)
-						quatResult.x /= magnitude
-						quatResult.y /= magnitude
-						quatResult.z /= magnitude
-						quatResult.w /= magnitude
-
-						'rotation = MathModule.ToEulerAngles(quatResult)
-						tempRotation = MathModule.ToEulerAngles(quatResult)
-						rotation.x = tempRotation.y
-						rotation.y = tempRotation.z
-						rotation.z = tempRotation.x
-						'If aFrameLine.rotation.debug_text.StartsWith("raw") OrElse aFrameLine.rotation.debug_text = "anim+bone" Then
-						'	rotation.x = aFrameLine.rotation.x
-						'	rotation.y = aFrameLine.rotation.y
-						'	rotation.z = aFrameLine.rotation.z
-						'	'rotation.z = aFrameLine.rotation.z + MathModule.DegreesToRadians(-90)
-
-						'	'TODO: Reverse this, which is probably the same as doing it forward, because of scale by -1.
-						'	'QuaternionScale( p, s, p1 );
-						'	'QuaternionMult( p1, q, q1 );
-						'	'	(Q1 * Q2).w = (w1w2 - x1x2 - y1y2 - z1z2)
-						'	'	(Q1 * Q2).x = (w1x2 + x1w2 + y1z2 - z1y2)
-						'	'	(Q1 * Q2).y = (w1y2 - x1z2 + y1w2 + z1x2)
-						'	'	(Q1 * Q2).z = (w1z2 + x1y2 - y1x2 + z1w2
-						'	'QuaternionNormalize( q1 );
-						'	'	magnitude = sqrt(w^2 + x^2 + y^2 + z^2)
-						'	'	w = w / magnitude
-						'	'	x = x / magnitude
-						'	'	y = y / magnitude
-						'	'	z = z / magnitude
-						'	Dim quat As New SourceQuaternion()
-						'	Dim quat2 As New SourceQuaternion()
-						'	Dim quatResult As New SourceQuaternion()
-						'	Dim magnitude As Double
-						'	quat = MathModule.EulerAnglesToQuaternion(rotation)
-						'	quat2 = MathModule.EulerAnglesToQuaternion(aFirstAnimationDescFrameLine.rotation)
-						'	'quat2 = MathModule.EulerAnglesToQuaternion(rotation)
-						'	'quat = MathModule.EulerAnglesToQuaternion(aFirstAnimationDescFrameLine.rotation)
-
-						'	quat.x *= -1
-						'	quat.y *= -1
-						'	quat.z *= -1
-						'	'quat.w *= -1
-						'	quatResult.x = quat.w * quat2.x + quat.x * quat2.w + quat.y * quat2.z - quat.z * quat2.y
-						'	quatResult.y = quat.w * quat2.y - quat.x * quat2.z + quat.y * quat2.w + quat.z * quat2.x
-						'	quatResult.z = quat.w * quat2.z + quat.x * quat2.y - quat.y * quat2.x + quat.z * quat2.w
-						'	quatResult.w = quat.w * quat2.w + quat.x * quat2.x + quat.y * quat2.y - quat.z * quat2.z
-
-						'	magnitude = Math.Sqrt(quatResult.w * quatResult.w + quatResult.x * quatResult.x + quatResult.y * quatResult.y + quatResult.z * quatResult.z)
-						'	quatResult.x /= magnitude
-						'	quatResult.y /= magnitude
-						'	quatResult.z /= magnitude
-						'	quatResult.w /= magnitude
-
-						'	rotation = MathModule.ToEulerAngles(quatResult)
-						'ElseIf aFrameLine.rotation.debug_text = "desc_bone" Then
-						'	rotation.x = aFrameLine.rotation.x
-						'	rotation.y = aFrameLine.rotation.y
-						'	rotation.z = aFrameLine.rotation.z
-
-						'	Dim quat As New SourceQuaternion()
-						'	Dim quat2 As New SourceQuaternion()
-						'	Dim quatResult As New SourceQuaternion()
-						'	Dim magnitude As Double
-						'	quat = MathModule.EulerAnglesToQuaternion(rotation)
-						'	quat2 = MathModule.EulerAnglesToQuaternion(aFirstAnimationDescFrameLine.rotation)
-
-						'	quat.x *= -1
-						'	quat.y *= -1
-						'	quat.z *= -1
-						'	quatResult.x = quat.w * quat2.x + quat.x * quat2.w + quat.y * quat2.z - quat.z * quat2.y
-						'	quatResult.y = quat.w * quat2.y - quat.x * quat2.z + quat.y * quat2.w + quat.z * quat2.x
-						'	quatResult.z = quat.w * quat2.z + quat.x * quat2.y - quat.y * quat2.x + quat.z * quat2.w
-						'	quatResult.w = quat.w * quat2.w + quat.x * quat2.x + quat.y * quat2.y - quat.z * quat2.z
-
-						'	magnitude = Math.Sqrt(quatResult.w * quatResult.w + quatResult.x * quatResult.x + quatResult.y * quatResult.y + quatResult.z * quatResult.z)
-						'	quatResult.x /= magnitude
-						'	quatResult.y /= magnitude
-						'	quatResult.z /= magnitude
-						'	quatResult.w /= magnitude
-
-						'	'NOTE: This gives closer match to values in the source SMD file than trying to use a different ToEulerAngles().
-						'	tempRotation = MathModule.ToEulerAngles(quatResult)
-						'	rotation.x = tempRotation.y
-						'	rotation.y = tempRotation.z
-						'	rotation.z = tempRotation.x
-					Else
-						rotation.x = aFrameLine.rotation.x
-						rotation.y = aFrameLine.rotation.y
-						rotation.z = aFrameLine.rotation.z
-					End If
-				ElseIf Me.theMdlFileData.theBones(boneIndex).parentBoneIndex = -1 Then
-					'If Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).parentBoneIndex = -1 Then
-					'NOTE: Only adjust position if bone is a root bone. Do not know why.
-
-					If aFrameLine.position.debug_text.StartsWith("raw") OrElse aFrameLine.position.debug_text = "anim+bone" Then
-						'TEST: Try this because of "sequence_blend from Game Zombie" model.
-						position.x = aFrameLine.position.y
-						position.y = -aFrameLine.position.x
-						position.z = aFrameLine.position.z
-					Else
-						position.x = aFrameLine.position.x
-						position.y = aFrameLine.position.y
-						position.z = aFrameLine.position.z
-					End If
-
-					rotation.x = aFrameLine.rotation.x
-					rotation.y = aFrameLine.rotation.y
-					If aFrameLine.rotation.debug_text.StartsWith("raw") OrElse aFrameLine.rotation.debug_text = "anim+bone" Then
-						'TEST: Try this because of "sequence_blend from Game Zombie" model.
-						rotation.z = aFrameLine.rotation.z + MathModule.DegreesToRadians(-90)
-					Else
-						rotation.z = aFrameLine.rotation.z
-					End If
+				If TheApp.Settings.DecompileStricterFormatIsChecked Then
+					line = "time "
 				Else
-					position.x = aFrameLine.position.x
-					position.y = aFrameLine.position.y
-					position.z = aFrameLine.position.z
-
-					rotation.x = aFrameLine.rotation.x
-					rotation.y = aFrameLine.rotation.y
-					rotation.z = aFrameLine.rotation.z
+					line = "  time "
 				End If
-
-				line = "    "
-				line += boneIndex.ToString(TheApp.InternalNumberFormat)
-
-				line += " "
-				line += position.x.ToString("0.000000", TheApp.InternalNumberFormat)
-				line += " "
-				line += position.y.ToString("0.000000", TheApp.InternalNumberFormat)
-				line += " "
-				line += position.z.ToString("0.000000", TheApp.InternalNumberFormat)
-
-				line += " "
-				line += rotation.x.ToString("0.000000", TheApp.InternalNumberFormat)
-				line += " "
-				line += rotation.y.ToString("0.000000", TheApp.InternalNumberFormat)
-				line += " "
-				line += rotation.z.ToString("0.000000", TheApp.InternalNumberFormat)
-
-				If TheApp.Settings.DecompileDebugInfoFilesIsChecked Then
-					line += "   # "
-					line += "pos: "
-					line += aFrameLine.position.debug_text
-					line += "   "
-					line += "rot: "
-					line += aFrameLine.rotation.debug_text
-				End If
-
+				line += CStr(frameIndex)
 				Me.theOutputFileStreamWriter.WriteLine(line)
+
+				'DEBUG:
+				'If anAnimationDesc.theName = "Flinch_01" OrElse anAnimationDesc.theName = "@Flinch_01" Then
+				'	Dim debug As Integer = 4242
+				'End If
+
+				For i As Integer = 0 To Me.theAnimationFrameLines.Count - 1
+					boneIndex = Me.theAnimationFrameLines.Keys(i)
+					aFrameLine = Me.theAnimationFrameLines.Values(i)
+
+					'TODO: Decompile blended anims.
+					' Doesn't seem to be direct way to get the animDesc's subtractFrameIndex.
+					' For now, do what MDL Decompiler seems to do; use zero for the animDesc's subtractFrameIndex.
+					If ((anAnimationDesc.flags And SourceMdlAnimationDesc.STUDIO_DELTA) > 0) AndAlso frameIndex = 0 AndAlso Me.theMdlFileData.theFirstAnimationDescFrameLines IsNot Nothing AndAlso Me.theMdlFileData.theFirstAnimationDescFrameLines.ContainsKey(boneIndex) Then
+						Dim aFirstAnimationDescFrameLine As AnimationFrameLine
+						aFirstAnimationDescFrameLine = Me.theMdlFileData.theFirstAnimationDescFrameLines(boneIndex)
+
+						If aFrameLine.position.debug_text = "desc_delta" OrElse aFrameLine.position.debug_text.StartsWith("raw") Then
+							position.x = aFrameLine.position.x + aFirstAnimationDescFrameLine.position.x
+							position.y = aFrameLine.position.y + aFirstAnimationDescFrameLine.position.y
+							position.z = aFrameLine.position.z + aFirstAnimationDescFrameLine.position.z
+							'If aFrameLine.position.debug_text.StartsWith("raw") OrElse aFrameLine.position.debug_text = "anim+bone" Then
+							'	'TEST: Try this version, because of "sequence_blend from Game Zombie" model.
+							'	position.x = aFrameLine.position.y + aFirstAnimationDescFrameLine.position.x
+							'	position.y = -aFrameLine.position.x + aFirstAnimationDescFrameLine.position.y
+							'	position.z = aFrameLine.position.z + aFirstAnimationDescFrameLine.position.z
+							'ElseIf aFrameLine.position.debug_text = "delta" Then
+							'	position.x = aFrameLine.position.x + aFirstAnimationDescFrameLine.position.x
+							'	position.y = aFrameLine.position.y + aFirstAnimationDescFrameLine.position.y
+							'	position.z = aFrameLine.position.z + aFirstAnimationDescFrameLine.position.z
+						Else
+							position.x = aFrameLine.position.x
+							position.y = aFrameLine.position.y
+							position.z = aFrameLine.position.z
+						End If
+
+						If aFrameLine.rotation.debug_text = "desc_delta" OrElse aFrameLine.rotation.debug_text.StartsWith("raw") Then
+							rotation.x = aFrameLine.rotation.x
+							rotation.y = aFrameLine.rotation.y
+							rotation.z = aFrameLine.rotation.z
+
+							Dim quat As New SourceQuaternion()
+							Dim quat2 As New SourceQuaternion()
+							Dim quatResult As New SourceQuaternion()
+							Dim magnitude As Double
+							quat = MathModule.EulerAnglesToQuaternion(rotation)
+							quat2 = MathModule.EulerAnglesToQuaternion(aFirstAnimationDescFrameLine.rotation)
+
+							quat.x *= -1
+							quat.y *= -1
+							quat.z *= -1
+							quatResult.x = quat.w * quat2.x + quat.x * quat2.w + quat.y * quat2.z - quat.z * quat2.y
+							quatResult.y = quat.w * quat2.y - quat.x * quat2.z + quat.y * quat2.w + quat.z * quat2.x
+							quatResult.z = quat.w * quat2.z + quat.x * quat2.y - quat.y * quat2.x + quat.z * quat2.w
+							quatResult.w = quat.w * quat2.w + quat.x * quat2.x + quat.y * quat2.y - quat.z * quat2.z
+
+							magnitude = Math.Sqrt(quatResult.w * quatResult.w + quatResult.x * quatResult.x + quatResult.y * quatResult.y + quatResult.z * quatResult.z)
+							quatResult.x /= magnitude
+							quatResult.y /= magnitude
+							quatResult.z /= magnitude
+							quatResult.w /= magnitude
+
+							'rotation = MathModule.ToEulerAngles(quatResult)
+							tempRotation = MathModule.ToEulerAngles(quatResult)
+							rotation.x = tempRotation.y
+							rotation.y = tempRotation.z
+							rotation.z = tempRotation.x
+							'If aFrameLine.rotation.debug_text.StartsWith("raw") OrElse aFrameLine.rotation.debug_text = "anim+bone" Then
+							'	rotation.x = aFrameLine.rotation.x
+							'	rotation.y = aFrameLine.rotation.y
+							'	rotation.z = aFrameLine.rotation.z
+							'	'rotation.z = aFrameLine.rotation.z + MathModule.DegreesToRadians(-90)
+
+							'	'TODO: Reverse this, which is probably the same as doing it forward, because of scale by -1.
+							'	'QuaternionScale( p, s, p1 );
+							'	'QuaternionMult( p1, q, q1 );
+							'	'	(Q1 * Q2).w = (w1w2 - x1x2 - y1y2 - z1z2)
+							'	'	(Q1 * Q2).x = (w1x2 + x1w2 + y1z2 - z1y2)
+							'	'	(Q1 * Q2).y = (w1y2 - x1z2 + y1w2 + z1x2)
+							'	'	(Q1 * Q2).z = (w1z2 + x1y2 - y1x2 + z1w2
+							'	'QuaternionNormalize( q1 );
+							'	'	magnitude = sqrt(w^2 + x^2 + y^2 + z^2)
+							'	'	w = w / magnitude
+							'	'	x = x / magnitude
+							'	'	y = y / magnitude
+							'	'	z = z / magnitude
+							'	Dim quat As New SourceQuaternion()
+							'	Dim quat2 As New SourceQuaternion()
+							'	Dim quatResult As New SourceQuaternion()
+							'	Dim magnitude As Double
+							'	quat = MathModule.EulerAnglesToQuaternion(rotation)
+							'	quat2 = MathModule.EulerAnglesToQuaternion(aFirstAnimationDescFrameLine.rotation)
+							'	'quat2 = MathModule.EulerAnglesToQuaternion(rotation)
+							'	'quat = MathModule.EulerAnglesToQuaternion(aFirstAnimationDescFrameLine.rotation)
+
+							'	quat.x *= -1
+							'	quat.y *= -1
+							'	quat.z *= -1
+							'	'quat.w *= -1
+							'	quatResult.x = quat.w * quat2.x + quat.x * quat2.w + quat.y * quat2.z - quat.z * quat2.y
+							'	quatResult.y = quat.w * quat2.y - quat.x * quat2.z + quat.y * quat2.w + quat.z * quat2.x
+							'	quatResult.z = quat.w * quat2.z + quat.x * quat2.y - quat.y * quat2.x + quat.z * quat2.w
+							'	quatResult.w = quat.w * quat2.w + quat.x * quat2.x + quat.y * quat2.y - quat.z * quat2.z
+
+							'	magnitude = Math.Sqrt(quatResult.w * quatResult.w + quatResult.x * quatResult.x + quatResult.y * quatResult.y + quatResult.z * quatResult.z)
+							'	quatResult.x /= magnitude
+							'	quatResult.y /= magnitude
+							'	quatResult.z /= magnitude
+							'	quatResult.w /= magnitude
+
+							'	rotation = MathModule.ToEulerAngles(quatResult)
+							'ElseIf aFrameLine.rotation.debug_text = "desc_bone" Then
+							'	rotation.x = aFrameLine.rotation.x
+							'	rotation.y = aFrameLine.rotation.y
+							'	rotation.z = aFrameLine.rotation.z
+
+							'	Dim quat As New SourceQuaternion()
+							'	Dim quat2 As New SourceQuaternion()
+							'	Dim quatResult As New SourceQuaternion()
+							'	Dim magnitude As Double
+							'	quat = MathModule.EulerAnglesToQuaternion(rotation)
+							'	quat2 = MathModule.EulerAnglesToQuaternion(aFirstAnimationDescFrameLine.rotation)
+
+							'	quat.x *= -1
+							'	quat.y *= -1
+							'	quat.z *= -1
+							'	quatResult.x = quat.w * quat2.x + quat.x * quat2.w + quat.y * quat2.z - quat.z * quat2.y
+							'	quatResult.y = quat.w * quat2.y - quat.x * quat2.z + quat.y * quat2.w + quat.z * quat2.x
+							'	quatResult.z = quat.w * quat2.z + quat.x * quat2.y - quat.y * quat2.x + quat.z * quat2.w
+							'	quatResult.w = quat.w * quat2.w + quat.x * quat2.x + quat.y * quat2.y - quat.z * quat2.z
+
+							'	magnitude = Math.Sqrt(quatResult.w * quatResult.w + quatResult.x * quatResult.x + quatResult.y * quatResult.y + quatResult.z * quatResult.z)
+							'	quatResult.x /= magnitude
+							'	quatResult.y /= magnitude
+							'	quatResult.z /= magnitude
+							'	quatResult.w /= magnitude
+
+							'	'NOTE: This gives closer match to values in the source SMD file than trying to use a different ToEulerAngles().
+							'	tempRotation = MathModule.ToEulerAngles(quatResult)
+							'	rotation.x = tempRotation.y
+							'	rotation.y = tempRotation.z
+							'	rotation.z = tempRotation.x
+						Else
+							rotation.x = aFrameLine.rotation.x
+							rotation.y = aFrameLine.rotation.y
+							rotation.z = aFrameLine.rotation.z
+						End If
+					ElseIf Me.theMdlFileData.theBones(boneIndex).parentBoneIndex = -1 Then
+						'If Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).parentBoneIndex = -1 Then
+						'NOTE: Only adjust position if bone is a root bone. Do not know why.
+
+						If aFrameLine.position.debug_text.StartsWith("raw") OrElse aFrameLine.position.debug_text = "anim+bone" Then
+							'TEST: Try this because of "sequence_blend from Game Zombie" model.
+							position.x = aFrameLine.position.y
+							position.y = -aFrameLine.position.x
+							position.z = aFrameLine.position.z
+						Else
+							position.x = aFrameLine.position.x
+							position.y = aFrameLine.position.y
+							position.z = aFrameLine.position.z
+						End If
+
+						rotation.x = aFrameLine.rotation.x
+						rotation.y = aFrameLine.rotation.y
+						If aFrameLine.rotation.debug_text.StartsWith("raw") OrElse aFrameLine.rotation.debug_text = "anim+bone" Then
+							'TEST: Try this because of "sequence_blend from Game Zombie" model.
+							rotation.z = aFrameLine.rotation.z + MathModule.DegreesToRadians(-90)
+						Else
+							rotation.z = aFrameLine.rotation.z
+						End If
+					Else
+						position.x = aFrameLine.position.x
+						position.y = aFrameLine.position.y
+						position.z = aFrameLine.position.z
+
+						rotation.x = aFrameLine.rotation.x
+						rotation.y = aFrameLine.rotation.y
+						rotation.z = aFrameLine.rotation.z
+					End If
+
+					If anAnimationDesc.theMovements IsNot Nothing AndAlso Me.theMdlFileData.theBones(boneIndex).parentBoneIndex = -1 Then
+						beforeMovementFramePosition.x = position.x
+						beforeMovementFramePosition.y = position.y
+						beforeMovementFramePosition.z = position.z
+
+						Dim perFrameMovement As Double
+						Dim startFrameIndex As Integer = 0
+						For Each aMovement As SourceMdlMovement In anAnimationDesc.theMovements
+							If frameIndex <= aMovement.endframeIndex Then
+								beforeMovementFrameRotation.x = rotation.x
+								beforeMovementFrameRotation.y = rotation.y
+								beforeMovementFrameRotation.z = rotation.z
+
+								''NOTE: LY means x position in the SMD.
+								'If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LY) > 0 Then
+								'	perFrameMovement = aMovement.position.y / aMovement.endframeIndex
+								'	position.x = position.x + (perFrameMovement * frameIndex)
+								'End If
+								''NOTE: LX means -y position in the SMD.
+								'If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LX) > 0 Then
+								'	perFrameMovement = aMovement.position.x / aMovement.endframeIndex
+								'	position.y = position.y - (perFrameMovement * frameIndex)
+								'End If
+								'If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LZ) > 0 Then
+								'	perFrameMovement = aMovement.position.z / aMovement.endframeIndex
+								'	position.z = position.z + (perFrameMovement * frameIndex)
+								'End If
+								'------
+								'TEST: See if motion is based on positions between two frames rather than evenly spread through all frames.
+								'TODO: Reverse this scaling: v0 * t + 0.5 * (v1 - v0) * t * t
+								'      		t = frameIndex / (aMovement.endframeIndex - startFrameIndex);
+								Dim t As Double
+								Dim scale As Double
+								t = frameIndex / (aMovement.endframeIndex - startFrameIndex)
+								scale = aMovement.v0 * t + 0.5 * (aMovement.v1 - aMovement.v0) * t * t
+								If scale <> 0 Then
+									scale = 1 / scale
+								End If
+								'NOTE: LY means x position in the SMD.
+								If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LY) > 0 Then
+									position.x = position.x + scale * aMovement.position.y
+								End If
+								'NOTE: LX means -y position in the SMD.
+								If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LX) > 0 Then
+									'position.y = position.y - scale * aMovement.position.x
+									'position.y = position.y + scale * aMovement.position.x
+									'position.y = position.y - scale
+									'position.y = position.y - scale * aMovement.position.x + previousFramePosition.y
+									'position.y = -(scale * aMovement.position.x * position.y)
+									'position.y = -(scale * aMovement.position.x / position.y)
+									'position.y = scale * (position.y - aMovement.position.x)
+									'position.y = position.y * scale
+									'position.y = scale * aMovement.position.x
+									'position.y = position.y * scale * aMovement.position.x
+									'position.y = position.y * scale - aMovement.position.x
+									'position.y = scale * aMovement.position.x
+									'position.y = position.y - scale * aMovement.position.x - aMovement.position.x
+									perFrameMovement = aMovement.position.x / (aMovement.endframeIndex + 1)
+									position.y = position.y - (perFrameMovement * frameIndex)
+									''position.y = position.y - (perFrameMovement * scale)
+									''position.y = position.y - (perFrameMovement * scale * aMovement.position.x)
+									''position.y = (position.y - perFrameMovement) * scale * aMovement.position.x
+									'position.y = (position.y - perFrameMovement) * scale
+									'position.y = position.y - (perFrameMovement * frameIndex * scale)
+									'position.y = position.y - (perFrameMovement * frameIndex) - scale * aMovement.position.x
+									'position.y = -(perFrameMovement * frameIndex) - scale * position.y
+									'position.y = -(perFrameMovement * frameIndex)
+									'position.y = -(perFrameMovement * frameIndex) + scale * position.y
+								End If
+								If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LZ) > 0 Then
+									position.z = position.z + scale * aMovement.position.z
+								End If
+
+								'NOTE: Even if the original QC had an LXR, LYR, or LZR that was not actually used,
+								' the compiler still stores the flag. 
+								'------
+								'TEST: [WORKS, except with the situation described in note above.] 
+								'If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LXR) > 0 Then
+								'	perFrameMovement = MathModule.DegreesToRadians(aMovement.angle) / aMovement.endframeIndex
+								'	rotation.x = rotation.x + (perFrameMovement * frameIndex)
+								'End If
+								'If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LYR) > 0 Then
+								'	perFrameMovement = MathModule.DegreesToRadians(aMovement.angle) / aMovement.endframeIndex
+								'	rotation.y = rotation.y + (perFrameMovement * frameIndex)
+								'End If
+								'If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LZR) > 0 Then
+								'	perFrameMovement = MathModule.DegreesToRadians(aMovement.angle) / aMovement.endframeIndex
+								'	rotation.z = rotation.z + (perFrameMovement * frameIndex)
+								'End If
+								'TEST: [WORKS] Maybe only change x, y, or z if this frame's value changed from previous frame's value.
+								'------
+								'				pmove[j].angle			= RAD2DEG( anim->piecewisemove[j].rot[2] );
+								If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LXR) > 0 AndAlso (frameIndex = 0 OrElse previousFrameRotation.x <> rotation.x) Then
+									perFrameMovement = MathModule.DegreesToRadians(aMovement.angle) / aMovement.endframeIndex
+									rotation.x = rotation.x + (perFrameMovement * frameIndex)
+								End If
+								If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LYR) > 0 AndAlso (frameIndex = 0 OrElse previousFrameRotation.y <> rotation.y) Then
+									perFrameMovement = MathModule.DegreesToRadians(aMovement.angle) / aMovement.endframeIndex
+									rotation.y = rotation.y + (perFrameMovement * frameIndex)
+								End If
+								If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LZR) > 0 AndAlso (frameIndex = 0 OrElse previousFrameRotation.z <> rotation.z) Then
+									perFrameMovement = MathModule.DegreesToRadians(aMovement.angle) / aMovement.endframeIndex
+									rotation.z = rotation.z + (perFrameMovement * frameIndex)
+								End If
+
+								previousFrameRotation.x = beforeMovementFrameRotation.x
+								previousFrameRotation.y = beforeMovementFrameRotation.y
+								previousFrameRotation.z = beforeMovementFrameRotation.z
+							End If
+						Next
+
+						'previousFramePosition.x = beforeMovementFramePosition.x
+						'previousFramePosition.y = beforeMovementFramePosition.y
+						'previousFramePosition.z = beforeMovementFramePosition.z
+						previousFramePosition.x = position.x
+						previousFramePosition.y = position.y
+						previousFramePosition.z = position.z
+					End If
+
+					line = "    "
+					line += boneIndex.ToString(TheApp.InternalNumberFormat)
+
+					line += " "
+					line += position.x.ToString("0.000000", TheApp.InternalNumberFormat)
+					line += " "
+					line += position.y.ToString("0.000000", TheApp.InternalNumberFormat)
+					line += " "
+					line += position.z.ToString("0.000000", TheApp.InternalNumberFormat)
+
+					line += " "
+					line += rotation.x.ToString("0.000000", TheApp.InternalNumberFormat)
+					line += " "
+					line += rotation.y.ToString("0.000000", TheApp.InternalNumberFormat)
+					line += " "
+					line += rotation.z.ToString("0.000000", TheApp.InternalNumberFormat)
+
+					If TheApp.Settings.DecompileDebugInfoFilesIsChecked Then
+						line += "   # "
+						line += "pos: "
+						line += aFrameLine.position.debug_text
+						line += "   "
+						line += "rot: "
+						line += aFrameLine.rotation.debug_text
+					End If
+
+					Me.theOutputFileStreamWriter.WriteLine(line)
+				Next
 			Next
-		Next
+		End If
 
 		line = "end"
 		Me.theOutputFileStreamWriter.WriteLine(line)
@@ -598,6 +826,44 @@ Public Class SourceSmdFile49
 #End Region
 
 #Region "Private Methods"
+
+	Private Sub GetFrameInfo(ByVal frameIndex As Integer, ByVal boneIndex As Integer)
+		'Me.theAnimationFrameLines.Clear()
+		'If (anAnimationDesc.flags And SourceMdlAnimationDesc.STUDIO_ALLZEROS) = 0 Then
+		'	If ((anAnimationDesc.flags And SourceMdlAnimationDesc.STUDIO_FRAMEANIM) <> 0) Then
+		'	Else
+		'		Me.CalcAnimation(aSequenceDesc, anAnimationDesc, frameIndex)
+		'	End If
+		'End If
+
+		'boneIndex = Me.theAnimationFrameLines.Keys(0)
+		'aFrameLine = Me.theAnimationFrameLines.Values(0)
+
+		'If Me.theMdlFileData.theBones(boneIndex).parentBoneIndex = -1 Then
+		'	'If Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).parentBoneIndex = -1 Then
+		'	'NOTE: Only adjust position if bone is a root bone. Do not know why.
+
+		'	If aFrameLine.position.debug_text.StartsWith("raw") OrElse aFrameLine.position.debug_text = "anim+bone" Then
+		'		'TEST: Try this because of "sequence_blend from Game Zombie" model.
+		'		position.x = aFrameLine.position.y
+		'		position.y = -aFrameLine.position.x
+		'		position.z = aFrameLine.position.z
+		'	Else
+		'		position.x = aFrameLine.position.x
+		'		position.y = aFrameLine.position.y
+		'		position.z = aFrameLine.position.z
+		'	End If
+
+		'	rotation.x = aFrameLine.rotation.x
+		'	rotation.y = aFrameLine.rotation.y
+		'	If aFrameLine.rotation.debug_text.StartsWith("raw") OrElse aFrameLine.rotation.debug_text = "anim+bone" Then
+		'		'TEST: Try this because of "sequence_blend from Game Zombie" model.
+		'		rotation.z = aFrameLine.rotation.z + MathModule.DegreesToRadians(-90)
+		'	Else
+		'		rotation.z = aFrameLine.rotation.z
+		'	End If
+		'End If
+	End Sub
 
 	Private Function WriteVertexLine(ByVal aStripGroup As SourceVtxStripGroup, ByVal aVtxIndexIndex As Integer, ByVal lodIndex As Integer, ByVal meshVertexIndexStart As Integer, ByVal bodyPartVertexIndexStart As Integer) As String
 		Dim aVtxVertexIndex As UShort
@@ -909,6 +1175,10 @@ Public Class SourceSmdFile49
 
 		Return aVectorTransformed
 	End Function
+
+	Private Sub CreateAnimationFrameLines(ByVal aSequenceDesc As SourceMdlSequenceDesc, ByVal anAnimationDesc As SourceMdlAnimationDesc49, ByVal frameIndex As Integer)
+
+	End Sub
 
 	'static void CalcAnimation( const CStudioHdr *pStudioHdr,	Vector *pos, Quaternion *q, 
 	'	mstudioseqdesc_t &seqdesc,

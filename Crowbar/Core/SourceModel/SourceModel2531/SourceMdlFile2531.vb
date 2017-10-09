@@ -7,6 +7,8 @@ Public Class SourceMdlFile2531
 	Public Sub New(ByVal mdlFileReader As BinaryReader, ByVal mdlFileData As SourceMdlFileData2531)
 		Me.theInputFileReader = mdlFileReader
 		Me.theMdlFileData = mdlFileData
+
+		Me.theMdlFileData.theFileSeekLog.FileSize = Me.theInputFileReader.BaseStream.Length
 	End Sub
 
 	Public Sub New(ByVal mdlFileWriter As BinaryWriter, ByVal mdlFileData As SourceMdlFileData2531)

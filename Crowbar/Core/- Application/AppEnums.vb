@@ -46,7 +46,7 @@ Public Module AppEnums
 		VPK
 	End Enum
 
-	Public Enum VpkAppAction
+	Public Enum ArchiveAction
 		Undefined
 		Extract
 		ExtractAndOpen
@@ -85,6 +85,12 @@ Public Module AppEnums
 	Public Enum FindDirection
 		Previous
 		[Next]
+	End Enum
+
+	Public Enum GameEngine
+		<Description("GoldSource")> GoldSource
+		<Description("Source")> Source
+		<Description("Source 2")> Source2
 	End Enum
 
 End Module

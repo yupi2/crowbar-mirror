@@ -357,6 +357,10 @@ Public Class Decompiler
 				Me.UpdateProgress(2, "... Reading data finished.")
 			End If
 
+			Me.UpdateProgress(2, "Processinging data ...")
+			status = Me.ProcessData(model)
+			Me.UpdateProgress(2, "... Processinging data finished.")
+
 			'NOTE: Write log files before data files, in case something goes wrong with writing data files.
 			If TheApp.Settings.DecompileDebugInfoFilesIsChecked Then
 				Me.UpdateProgress(2, "Writing decompile-info files ...")
@@ -498,6 +502,16 @@ Public Class Decompiler
 				Me.UpdateProgress(3, "... Reading VVD file FAILED. (Probably unexpected format.)")
 			End If
 		End If
+
+		Return status
+	End Function
+
+	Private Function ProcessData(ByVal model As SourceModel) As AppEnums.StatusMessage
+		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+
+		'TODO: Create all possible SMD file names before using them, so can handle any name collisions.
+		'      Store mesh SMD file names in list in SourceMdlModel where the index is lodIndex.
+		'      Store anim SMD file name in SourceMdlAnimationDesc48.
 
 		Return status
 	End Function
@@ -922,6 +936,7 @@ Public Class Decompiler
 			fileName = Path.GetFileName(pathFileName)
 			'TODO: Figure out how to rename SMD file if already written in a previous step, which might happen if, for example, an anim is named "<modelname>_reference" or "<modelname>_physics".
 			'      Could also happen if the loop through SequenceDescs has already created the SMD file before the loop through AnimationDescs.
+			'      The same name can be used by multiple sequences, as is the case for 3 "frontkick" sequences in Half-Life Opposing Force "massn.mdl".
 			If TheApp.SmdFilesWritten.Contains(pathFileName) Then
 				Dim model As SourceModel
 				model = CType(sender, SourceModel)

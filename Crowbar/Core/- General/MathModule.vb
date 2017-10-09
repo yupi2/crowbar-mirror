@@ -451,6 +451,19 @@ Module MathModule
 		Return MathModule.VectorITransform(input, poseToBoneColumn0, poseToBoneColumn1, poseToBoneColumn2, poseToBoneColumn3)
 	End Function
 
+	'Public Function NormalizeQuaternion(ByVal quat As SourceQuaternion) As SourceQuaternion
+	'	Dim resultQuat As New SourceQuaternion()
+	'	Dim magnitude As Double
+
+	'	magnitude = Math.Sqrt(quat.w ^ 2 + quat.x ^ 2 + quat.y ^ 2 + quat.z ^ 2)
+	'	resultQuat.w = quat.w / magnitude
+	'	resultQuat.x = quat.x / magnitude
+	'	resultQuat.y = quat.y / magnitude
+	'	resultQuat.z = quat.z / magnitude
+
+	'	Return resultQuat
+	'End Function
+
 	'TODO: Why did I not use Valve's code?
 	'FROM: https://github.com/ValveSoftware/source-sdk-2013/blob/master/sp/src/mathlib/mathlib_base.cpp
 	'//-----------------------------------------------------------------------------

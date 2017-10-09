@@ -137,8 +137,8 @@ Public Class SourceMdlAnimationDesc49
 
 	'Public theAnimations As List(Of SourceMdlAnimation)
 	Public theSectionsOfAnimations As List(Of List(Of SourceMdlAnimation))
-	'Public theAniFrameAnims As List(Of SourceAniFrameAnim)
-	Public theAniFrameAnim As SourceAniFrameAnim
+	Public theSectionsOfFrameAnims As List(Of List(Of SourceAniFrameAnim))
+	'Public theAniFrameAnim As SourceAniFrameAnim
 	Public theIkRules As List(Of SourceMdlIkRule)
 	Public theSections As List(Of SourceMdlAnimationSection)
 	Public theMovements As List(Of SourceMdlMovement)

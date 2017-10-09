@@ -41,8 +41,6 @@ Public Class AppSettings
 		Me.SetDefaultDecompileOptions()
 		Me.theDecompileMode = ActionMode.File
 
-		Me.theGameSetups = New BindingListExAutoSort(Of GameSetup)("GameName")
-
 		Me.theCompileQcPathFileName = ""
 		Me.theCompileOutputFolderIsChecked = True
 		Me.theCompileOutputFolderOption = OutputFolderOptions.SubfolderName
@@ -58,6 +56,12 @@ Public Class AppSettings
 		Me.SetDefaultOptionsAutoOpenOptions()
 		Me.SetDefaultOptionsDragAndDropOptions()
 		Me.SetDefaultOptionsContextMenuOptions()
+
+		Me.theGameSetups = New BindingListExAutoSort(Of GameSetup)("GameName")
+		Me.theSteamAppPathFileName = "C:\Program Files (x86)\Steam\Steam.exe"
+		Me.theSteamLibraryPaths = New BindingListEx(Of SteamLibraryPath)()
+
+		'Me.Init()
 	End Sub
 
 #End Region
@@ -344,6 +348,16 @@ Public Class AppSettings
 		Set(ByVal value As Boolean)
 			Me.theDecompileQcSkinFamilyOnSingleLineIsChecked = value
 			NotifyPropertyChanged("DecompileQcSkinFamilyOnSingleLineIsChecked")
+		End Set
+	End Property
+
+	Public Property DecompileQcUseMixedCaseForKeywordsIsChecked() As Boolean
+		Get
+			Return Me.theDecompileQcUseMixedCaseForKeywordsIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theDecompileQcUseMixedCaseForKeywordsIsChecked = value
+			NotifyPropertyChanged("DecompileQcUseMixedCaseForKeywordsIsChecked")
 		End Set
 	End Property
 
@@ -766,6 +780,42 @@ Public Class AppSettings
 		End Set
 	End Property
 
+	Public Property OptionsAutoOpenMdlFileForPreviewIsChecked() As Boolean
+		Get
+			Return Me.theOptionsAutoOpenMdlFileForPreviewIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			If Me.theOptionsAutoOpenMdlFileForPreviewIsChecked <> value Then
+				Me.theOptionsAutoOpenMdlFileForPreviewIsChecked = value
+				NotifyPropertyChanged("OptionsAutoOpenMdlFileForPreviewIsChecked")
+			End If
+		End Set
+	End Property
+
+	Public Property OptionsAutoOpenMdlFileForDecompileIsChecked() As Boolean
+		Get
+			Return Me.theOptionsAutoOpenMdlFileForDecompileIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			If Me.theOptionsAutoOpenMdlFileForDecompileIsChecked <> value Then
+				Me.theOptionsAutoOpenMdlFileForDecompileIsChecked = value
+				NotifyPropertyChanged("OptionsAutoOpenMdlFileForDecompileIsChecked")
+			End If
+		End Set
+	End Property
+
+	Public Property OptionsAutoOpenMdlFileForViewIsChecked() As Boolean
+		Get
+			Return Me.theOptionsAutoOpenMdlFileForViewIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			If Me.theOptionsAutoOpenMdlFileForViewIsChecked <> value Then
+				Me.theOptionsAutoOpenMdlFileForViewIsChecked = value
+				NotifyPropertyChanged("OptionsAutoOpenMdlFileForViewIsChecked")
+			End If
+		End Set
+	End Property
+
 	Public Property OptionsAutoOpenMdlFileOption() As ActionType
 		Get
 			Return Me.theOptionsAutoOpenMdlFileOption
@@ -803,6 +853,42 @@ Public Class AppSettings
 		Set(ByVal value As Boolean)
 			Me.theOptionsDragAndDropMdlFileIsChecked = value
 			NotifyPropertyChanged("OptionsDragAndDropMdlFileIsChecked")
+		End Set
+	End Property
+
+	Public Property OptionsDragAndDropMdlFileForPreviewIsChecked() As Boolean
+		Get
+			Return Me.theOptionsDragAndDropMdlFileForPreviewIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			If Me.theOptionsDragAndDropMdlFileForPreviewIsChecked <> value Then
+				Me.theOptionsDragAndDropMdlFileForPreviewIsChecked = value
+				NotifyPropertyChanged("OptionsDragAndDropMdlFileForPreviewIsChecked")
+			End If
+		End Set
+	End Property
+
+	Public Property OptionsDragAndDropMdlFileForDecompileIsChecked() As Boolean
+		Get
+			Return Me.theOptionsDragAndDropMdlFileForDecompileIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			If Me.theOptionsDragAndDropMdlFileForDecompileIsChecked <> value Then
+				Me.theOptionsDragAndDropMdlFileForDecompileIsChecked = value
+				NotifyPropertyChanged("OptionsDragAndDropMdlFileForDecompileIsChecked")
+			End If
+		End Set
+	End Property
+
+	Public Property OptionsDragAndDropMdlFileForViewIsChecked() As Boolean
+		Get
+			Return Me.theOptionsDragAndDropMdlFileForViewIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			If Me.theOptionsDragAndDropMdlFileForViewIsChecked <> value Then
+				Me.theOptionsDragAndDropMdlFileForViewIsChecked = value
+				NotifyPropertyChanged("OptionsDragAndDropMdlFileForViewIsChecked")
+			End If
 		End Set
 	End Property
 
@@ -956,6 +1042,43 @@ Public Class AppSettings
 		End Set
 	End Property
 
+	<XmlIgnore()> _
+	Public ReadOnly Property SteamAppPathFileName() As String
+		Get
+			Return TheApp.GetProcessedPathFileName(Me.theSteamAppPathFileName)
+		End Get
+		'Set(ByVal value As String)
+		'	Me.theSteamAppPathFileName = value
+		'	NotifyPropertyChanged("SteamAppPathFileName")
+		'End Set
+	End Property
+
+	<XmlElement("SteamAppPathFileName")> _
+	Public Property SteamAppPathFileNameUnprocessed() As String
+		Get
+			Return Me.theSteamAppPathFileName
+		End Get
+		Set(ByVal value As String)
+			Me.theSteamAppPathFileName = value
+			NotifyPropertyChanged("SteamAppPathFileName")
+			NotifyPropertyChanged("SteamAppPathFileNameUnprocessed")
+		End Set
+	End Property
+
+	Public Property SteamLibraryPaths() As BindingListEx(Of SteamLibraryPath)
+		Get
+			Return Me.theSteamLibraryPaths
+		End Get
+		Set(ByVal value As BindingListEx(Of SteamLibraryPath))
+			Me.theSteamLibraryPaths = value
+			NotifyPropertyChanged("SteamLibraryPaths")
+		End Set
+	End Property
+
+#End Region
+
+#Region "Core Event Handlers"
+
 #End Region
 
 #Region "Methods"
@@ -982,8 +1105,11 @@ Public Class AppSettings
 		Me.DecompileGroupIntoQciFilesIsChecked = False
 		Me.DecompileQcIncludeDefineBoneLinesIsChecked = False
 		Me.DecompileQcSkinFamilyOnSingleLineIsChecked = True
+		Me.DecompileQcUseMixedCaseForKeywordsIsChecked = False
+
 		Me.DecompileReferenceMeshSmdFileIsChecked = True
 		Me.DecompileApplyRightHandFixIsChecked = False
+
 		Me.DecompileBoneAnimationSmdFilesIsChecked = True
 		Me.DecompileBoneAnimationPlaceInSubfolderIsChecked = True
 
@@ -1022,17 +1148,28 @@ Public Class AppSettings
 	Public Sub SetDefaultOptionsAutoOpenOptions()
 		'NOTE: Call the properties so the NotifyPropertyChanged events are raised.
 		Me.OptionsAutoOpenVpkFileIsChecked = False
+
 		Me.OptionsAutoOpenMdlFileIsChecked = False
+		Me.OptionsAutoOpenMdlFileForPreviewIsChecked = True
+		Me.OptionsAutoOpenMdlFileForDecompileIsChecked = True
+		Me.OptionsAutoOpenMdlFileForViewIsChecked = True
 		Me.OptionsAutoOpenMdlFileOption = ActionType.Decompile
+
 		Me.OptionsAutoOpenQcFileIsChecked = False
 	End Sub
 
 	Public Sub SetDefaultOptionsDragAndDropOptions()
 		'NOTE: Call the properties so the NotifyPropertyChanged events are raised.
 		Me.OptionsDragAndDropVpkFileIsChecked = True
+
 		Me.OptionsDragAndDropMdlFileIsChecked = True
+		Me.OptionsDragAndDropMdlFileForPreviewIsChecked = True
+		Me.OptionsDragAndDropMdlFileForDecompileIsChecked = True
+		Me.OptionsDragAndDropMdlFileForViewIsChecked = True
 		Me.OptionsDragAndDropMdlFileOption = ActionType.Decompile
+
 		Me.OptionsDragAndDropQcFileIsChecked = True
+
 		Me.OptionsDragAndDropFolderIsChecked = True
 		Me.OptionsDragAndDropFolderOption = ActionType.Decompile
 	End Sub
@@ -1114,8 +1251,11 @@ Public Class AppSettings
 	Private theDecompileGroupIntoQciFilesIsChecked As Boolean
 	Private theDecompileQcIncludeDefineBoneLinesIsChecked As Boolean
 	Private theDecompileQcSkinFamilyOnSingleLineIsChecked As Boolean
+	Private theDecompileQcUseMixedCaseForKeywordsIsChecked As Boolean
+
 	Private theDecompileReferenceMeshSmdFileIsChecked As Boolean
 	Private theDecompileApplyRightHandFixIsChecked As Boolean
+
 	Private theDecompileBoneAnimationSmdFilesIsChecked As Boolean
 	Private theDecompileBoneAnimationPlaceInSubfolderIsChecked As Boolean
 
@@ -1173,16 +1313,27 @@ Public Class AppSettings
 	' Options tab
 
 	Private theOptionsAutoOpenVpkFileIsChecked As Boolean
+
 	Private theOptionsAutoOpenMdlFileIsChecked As Boolean
+	Private theOptionsAutoOpenMdlFileForPreviewIsChecked As Boolean
+	Private theOptionsAutoOpenMdlFileForDecompileIsChecked As Boolean
+	Private theOptionsAutoOpenMdlFileForViewIsChecked As Boolean
 	Private theOptionsAutoOpenMdlFileOption As ActionType
+
 	Private theOptionsAutoOpenQcFileIsChecked As Boolean
 	'Private theOptionsAutoOpenQcFileOption As ActionType
 
 	Private theOptionsDragAndDropVpkFileIsChecked As Boolean
+
 	Private theOptionsDragAndDropMdlFileIsChecked As Boolean
+	Private theOptionsDragAndDropMdlFileForPreviewIsChecked As Boolean
+	Private theOptionsDragAndDropMdlFileForDecompileIsChecked As Boolean
+	Private theOptionsDragAndDropMdlFileForViewIsChecked As Boolean
 	Private theOptionsDragAndDropMdlFileOption As ActionType
+
 	Private theOptionsDragAndDropQcFileIsChecked As Boolean
 	'Private theOptionsDragAndDropQcFileOption As ActionType
+
 	Private theOptionsDragAndDropFolderIsChecked As Boolean
 	Private theOptionsDragAndDropFolderOption As ActionType
 
@@ -1201,6 +1352,8 @@ Public Class AppSettings
 	' Set Up Games window
 
 	Private theGameSetups As BindingListExAutoSort(Of GameSetup)
+	Private theSteamAppPathFileName As String
+	Private theSteamLibraryPaths As BindingListEx(Of SteamLibraryPath)
 
 #End Region
 

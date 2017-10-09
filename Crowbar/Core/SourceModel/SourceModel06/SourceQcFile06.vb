@@ -71,11 +71,7 @@ Public Class SourceQcFile06
 #Region "Methods"
 
 	Public Sub WriteHeaderComment()
-		Dim line As String = ""
-
-		line = "// "
-		line += TheApp.GetHeaderComment()
-		Me.theOutputFileStreamWriter.WriteLine(line)
+		Common.WriteHeaderComment(Me.theOutputFileStreamWriter)
 	End Sub
 
 	Public Sub WriteBodyGroupCommand()
@@ -89,7 +85,11 @@ Public Class SourceQcFile06
 			For bodyPartIndex As Integer = 0 To Me.theMdlFileData.theBodyParts.Count - 1
 				aBodyPart = Me.theMdlFileData.theBodyParts(bodyPartIndex)
 
-				line = "$BodyGroup "
+				If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+					line = "$BodyGroup "
+				Else
+					line = "$bodygroup "
+				End If
 				line += """"
 				line += aBodyPart.theName
 				line += """"
@@ -134,7 +134,11 @@ Public Class SourceQcFile06
 				For boneControllerIndex As Integer = 0 To Me.theMdlFileData.theBoneControllers.Count - 1
 					boneController = Me.theMdlFileData.theBoneControllers(boneControllerIndex)
 
-					line = "$Controller "
+					If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+						line = "$Controller "
+					Else
+						line = "$controller "
+					End If
 					line += boneControllerIndex.ToString(TheApp.InternalNumberFormat)
 					line += " """
 					line += Me.theMdlFileData.theBones(boneController.boneIndex).theName
@@ -160,7 +164,11 @@ Public Class SourceQcFile06
 
 		Me.theOutputFileStreamWriter.WriteLine()
 
-		line = "$ModelName "
+		If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+			line = "$ModelName "
+		Else
+			line = "$modelname "
+		End If
 		line += """"
 		line += modelPathFileName
 		line += """"
@@ -177,7 +185,11 @@ Public Class SourceQcFile06
 			For sequenceGroupIndex As Integer = 0 To Me.theMdlFileData.theSequences.Count - 1
 				aSequence = Me.theMdlFileData.theSequences(sequenceGroupIndex)
 
-				line = "$Sequence "
+				If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+					line = "$Sequence "
+				Else
+					line = "$sequence "
+				End If
 				line += """"
 				line += aSequence.theName
 				line += """"

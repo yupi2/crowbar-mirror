@@ -109,62 +109,9 @@ Public Class BindingListEx(Of T)
 		MyBase.EndNew(itemIndex)
 	End Sub
 
-	'Public Function FindByName(ByVal name As String) As T
-	'	'TODO: Make this more general than using a RotorLab type.
-	'	If Me.Items.Count = 0 Then
-	'		Return Nothing
-	'	End If
-	'	If TypeOf Me.Items(0) Is RotorLabNamedObject Then
-	'		For i As Integer = 0 To Me.Items.Count - 1
-	'			Dim item As RotorLabNamedObject
-	'			item = CType(Me.Items(i), RotorLabNamedObject)
-	'			If item.Name = name Then
-	'				Return item
-	'			End If
-	'		Next
-	'	End If
-	'	Return Nothing
-	'End Function
-
-	'Public Overloads Sub ResetItem(ByVal index As Integer)
-	'	MyBase.ResetItem(index)
-	'End Sub
-
-	'Public Sub ReadXml(ByVal reader As Xml.XmlReader) Implements IXmlSerializable.ReadXml
-	'	reader.ReadStartElement()
-	'	'for
-	'	'    this.parameters = (t) new 
-	'	'	XmlSerializer(Type).Deserialize(reader)
-	'	reader.ReadEndElement()
-	'End Sub
-
-	'Public Sub WriteXml(ByVal writer As Xml.XmlWriter) Implements IXmlSerializable.WriteXml
-	'	'Dim item As t
-	'	'writer.WriteStartElement(item.ToString())
-	'	'writer.WriteEndElement()
-	'End Sub
-
-	'Public Function GetSchema() As Xml.Schema.XmlSchema Implements IXmlSerializable.GetSchema
-	'	Throw New System.NotImplementedException()
-	'End Function
-
 #End Region
 
 #Region "Event Handlers"
-
-	'Protected Overrides Sub OnAddingNew(ByVal e As System.ComponentModel.AddingNewEventArgs)
-	'	'If e.NewObject Is Nothing Then
-	'	'	failedToAdd = True
-	'	'End If
-	'	MyBase.OnAddingNew(e)
-	'End Sub
-
-	'Protected Overrides Sub OnListChanged(ByVal e As System.ComponentModel.ListChangedEventArgs)
-	'	'If Not failedToAdd Then
-	'	MyBase.OnListChanged(e)
-	'	'End If
-	'	'failedToAdd = False
-	'End Sub
 
 #End Region
 

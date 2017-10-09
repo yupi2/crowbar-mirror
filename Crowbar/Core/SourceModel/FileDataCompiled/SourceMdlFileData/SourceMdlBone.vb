@@ -143,6 +143,14 @@ Public Class SourceMdlBone
 	'#define BONE_HAS_SAVEFRAME_ROT		0x00400000
 	Public Const BONE_SCREEN_ALIGN_SPHERE As Integer = &H8
 	Public Const BONE_SCREEN_ALIGN_CYLINDER As Integer = &H10
+	Public Const BONE_USED_BY_VERTEX_LOD0 As Integer = &H400
+	Public Const BONE_USED_BY_VERTEX_LOD1 As Integer = &H800
+	Public Const BONE_USED_BY_VERTEX_LOD2 As Integer = &H1000
+	Public Const BONE_USED_BY_VERTEX_LOD3 As Integer = &H2000
+	Public Const BONE_USED_BY_VERTEX_LOD4 As Integer = &H4000
+	Public Const BONE_USED_BY_VERTEX_LOD5 As Integer = &H8000
+	Public Const BONE_USED_BY_VERTEX_LOD6 As Integer = &H10000
+	Public Const BONE_USED_BY_VERTEX_LOD7 As Integer = &H20000
 	Public Const BONE_USED_BY_BONE_MERGE As Integer = &H40000
 	Public Const BONE_HAS_SAVEFRAME_POS As Integer = &H200000
 	Public Const BONE_HAS_SAVEFRAME_ROT As Integer = &H400000

@@ -189,58 +189,89 @@ Public Class MainForm
 			'	Me.MainTabControl.SelectTab(Me.UnpackTabPage)
 			'End If
 		ElseIf extension = ".mdl" Then
-			Dim mdlAction As ActionType = ActionType.Unknown
-			If setViaAutoOpen Then
-				If TheApp.Settings.OptionsAutoOpenMdlFileIsChecked Then
-					mdlAction = TheApp.Settings.OptionsAutoOpenMdlFileOption
-				End If
-			Else
-				If TheApp.Settings.OptionsDragAndDropMdlFileIsChecked Then
-					mdlAction = TheApp.Settings.OptionsDragAndDropMdlFileOption
-				End If
-			End If
-			If mdlAction = ActionType.Preview Then
-				TheApp.Settings.PreviewMdlPathFileName = pathFileName
-				Me.MainTabControl.SelectTab(Me.PreviewTabPage)
-			ElseIf mdlAction = ActionType.Decompile Then
-				TheApp.Settings.DecompileMdlPathFileName = pathFileName
-				Me.MainTabControl.SelectTab(Me.DecompileTabPage)
-			ElseIf mdlAction = ActionType.View Then
-				TheApp.Settings.ViewMdlPathFileName = pathFileName
-				Me.MainTabControl.SelectTab(Me.ViewTabPage)
-			End If
+			Me.SetMdlDrop(setViaAutoOpen, pathFileName)
 			'ElseIf extension = ".exe" Then
 			'	Me.SetCompilerExePathFileName(pathFileName)
-			ElseIf extension = ".qc" Then
-				Dim qcAction As ActionType = ActionType.Unknown
-				If setViaAutoOpen Then
-					If TheApp.Settings.OptionsAutoOpenQcFileIsChecked Then
-						qcAction = ActionType.Compile
-					End If
-				Else
-					If TheApp.Settings.OptionsDragAndDropQcFileIsChecked Then
-						qcAction = ActionType.Compile
-					End If
-				End If
-				If qcAction = ActionType.Compile Then
-					TheApp.Settings.CompileQcPathFileName = pathFileName
-					Me.MainTabControl.SelectTab(Me.CompileTabPage)
+		ElseIf extension = ".qc" Then
+			Dim qcAction As ActionType = ActionType.Unknown
+			If setViaAutoOpen Then
+				If TheApp.Settings.OptionsAutoOpenQcFileIsChecked Then
+					qcAction = ActionType.Compile
 				End If
 			Else
-				Dim folderAction As ActionType = ActionType.Unknown
-				If Not setViaAutoOpen Then
-					If TheApp.Settings.OptionsDragAndDropFolderIsChecked Then
-						folderAction = TheApp.Settings.OptionsDragAndDropFolderOption
-					End If
-				End If
-				If folderAction = ActionType.Decompile Then
-					TheApp.Settings.DecompileMdlPathFileName = pathFileName
-					Me.MainTabControl.SelectTab(Me.DecompileTabPage)
-				ElseIf folderAction = ActionType.Compile Then
-					TheApp.Settings.CompileQcPathFileName = pathFileName
-					Me.MainTabControl.SelectTab(Me.CompileTabPage)
+				If TheApp.Settings.OptionsDragAndDropQcFileIsChecked Then
+					qcAction = ActionType.Compile
 				End If
 			End If
+			If qcAction = ActionType.Compile Then
+				TheApp.Settings.CompileQcPathFileName = pathFileName
+				Me.MainTabControl.SelectTab(Me.CompileTabPage)
+			End If
+		Else
+			Dim folderAction As ActionType = ActionType.Unknown
+			If Not setViaAutoOpen Then
+				If TheApp.Settings.OptionsDragAndDropFolderIsChecked Then
+					folderAction = TheApp.Settings.OptionsDragAndDropFolderOption
+				End If
+			End If
+			If folderAction = ActionType.Decompile Then
+				TheApp.Settings.DecompileMdlPathFileName = pathFileName
+				Me.MainTabControl.SelectTab(Me.DecompileTabPage)
+			ElseIf folderAction = ActionType.Compile Then
+				TheApp.Settings.CompileQcPathFileName = pathFileName
+				Me.MainTabControl.SelectTab(Me.CompileTabPage)
+			End If
+		End If
+	End Sub
+
+	Private Sub SetMdlDrop(ByVal setViaAutoOpen As Boolean, ByVal pathFileName As String)
+		Dim mdlAction As ActionType = ActionType.Unknown
+
+		If setViaAutoOpen Then
+			If TheApp.Settings.OptionsAutoOpenMdlFileIsChecked Then
+				mdlAction = TheApp.Settings.OptionsAutoOpenMdlFileOption
+
+				If TheApp.Settings.OptionsAutoOpenMdlFileForPreviewIsChecked Then
+					TheApp.Settings.PreviewMdlPathFileName = pathFileName
+				End If
+				If TheApp.Settings.OptionsAutoOpenMdlFileForDecompileIsChecked Then
+					TheApp.Settings.DecompileMdlPathFileName = pathFileName
+				End If
+				If TheApp.Settings.OptionsAutoOpenMdlFileForViewIsChecked Then
+					TheApp.Settings.ViewMdlPathFileName = pathFileName
+				End If
+			End If
+		Else
+			If TheApp.Settings.OptionsDragAndDropMdlFileIsChecked Then
+				If Me.MainTabControl.SelectedTab Is Me.PreviewTabPage Then
+					mdlAction = ActionType.Preview
+				ElseIf Me.MainTabControl.SelectedTab Is Me.DecompileTabPage Then
+					mdlAction = ActionType.Decompile
+				ElseIf Me.MainTabControl.SelectedTab Is Me.ViewTabPage Then
+					mdlAction = ActionType.View
+				Else
+					mdlAction = TheApp.Settings.OptionsDragAndDropMdlFileOption
+				End If
+
+				If TheApp.Settings.OptionsDragAndDropMdlFileForPreviewIsChecked Then
+					TheApp.Settings.PreviewMdlPathFileName = pathFileName
+				End If
+				If TheApp.Settings.OptionsDragAndDropMdlFileForDecompileIsChecked Then
+					TheApp.Settings.DecompileMdlPathFileName = pathFileName
+				End If
+				If TheApp.Settings.OptionsDragAndDropMdlFileForViewIsChecked Then
+					TheApp.Settings.ViewMdlPathFileName = pathFileName
+				End If
+			End If
+		End If
+
+		If mdlAction = ActionType.Preview Then
+			Me.MainTabControl.SelectTab(Me.PreviewTabPage)
+		ElseIf mdlAction = ActionType.Decompile Then
+			Me.MainTabControl.SelectTab(Me.DecompileTabPage)
+		ElseIf mdlAction = ActionType.View Then
+			Me.MainTabControl.SelectTab(Me.ViewTabPage)
+		End If
 	End Sub
 
 #End Region

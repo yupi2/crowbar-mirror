@@ -8,6 +8,8 @@ Public Class SourceMdlFile44
 	Public Sub New(ByVal mdlFileReader As BinaryReader, ByVal mdlFileData As SourceMdlFileData44)
 		Me.theInputFileReader = mdlFileReader
 		Me.theMdlFileData = mdlFileData
+
+		Me.theMdlFileData.theFileSeekLog.FileSize = Me.theInputFileReader.BaseStream.Length
 	End Sub
 
 	Public Sub New(ByVal mdlFileWriter As BinaryWriter, ByVal mdlFileData As SourceMdlFileData44)
@@ -832,17 +834,18 @@ Public Class SourceMdlFile44
 				inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 
 				If aHitbox.nameOffset <> 0 Then
-					'NOTE: Contrary to the studiomdl source code for MDL v44, the nameOffset is absolute offset for the following tested models from HL2:
-					'      agrunt, scientist
-					'Me.theInputFileReader.BaseStream.Seek(hitboxInputFileStreamPosition + aHitbox.nameOffset, SeekOrigin.Begin)
+					'NOTE: Contrary to the studiomdl source code for MDL v44, the nameOffset is absolute offset for the following tested models 
+					'      from Half-Life 2\hl1\hl1_pak_dir\models: agrunt, scientist
 					Me.theInputFileReader.BaseStream.Seek(aHitbox.nameOffset, SeekOrigin.Begin)
+					'NOTE: For Vindictus pet_succubus_tiny.mdl, relative offset is correct.
+					'Me.theInputFileReader.BaseStream.Seek(hitboxInputFileStreamPosition + aHitbox.nameOffset, SeekOrigin.Begin)
 					fileOffsetStart2 = Me.theInputFileReader.BaseStream.Position
 
 					aHitbox.theName = FileManager.ReadNullTerminatedString(Me.theInputFileReader)
 
 					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aHitbox.theName")
+						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aHitbox.theName = " + aHitbox.theName)
 					End If
 				Else
 					aHitbox.theName = ""
@@ -2184,7 +2187,7 @@ Public Class SourceMdlFile44
 			fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
 			Me.theMdlFileData.theBodyParts = New List(Of SourceMdlBodyPart)(Me.theMdlFileData.bodyPartCount)
-			For i As Integer = 0 To Me.theMdlFileData.bodyPartCount - 1
+			For bodyPartIndex As Integer = 0 To Me.theMdlFileData.bodyPartCount - 1
 				bodyPartInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 				Dim aBodyPart As New SourceMdlBodyPart()
 				aBodyPart.nameOffset = Me.theInputFileReader.ReadInt32()
@@ -2203,15 +2206,15 @@ Public Class SourceMdlFile44
 
 					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aBodyPart.theName")
+						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aBodyPart.theName = " + aBodyPart.theName)
 					End If
 				Else
 					aBodyPart.theName = ""
 				End If
 
-				Me.ReadModels(bodyPartInputFileStreamPosition, aBodyPart)
+				Me.ReadModels(bodyPartInputFileStreamPosition, aBodyPart, bodyPartIndex)
 				'NOTE: Aligned here because studiomdl aligns after reserving space for bodyparts and models.
-				If i = Me.theMdlFileData.bodyPartCount - 1 Then
+				If bodyPartIndex = Me.theMdlFileData.bodyPartCount - 1 Then
 					Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, Me.theInputFileReader.BaseStream.Position - 1, 4, "theMdlFileData.theBodyParts + aBodyPart.theModels alignment")
 				End If
 
@@ -2219,11 +2222,11 @@ Public Class SourceMdlFile44
 			Next
 
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theBodyParts")
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theBodyParts " + theMdlFileData.theBodyParts.Count.ToString())
 		End If
 	End Sub
 
-	Private Sub ReadModels(ByVal bodyPartInputFileStreamPosition As Long, ByVal aBodyPart As SourceMdlBodyPart)
+	Private Sub ReadModels(ByVal bodyPartInputFileStreamPosition As Long, ByVal aBodyPart As SourceMdlBodyPart, ByVal bodyPartIndex As Integer)
 		If aBodyPart.modelCount > 0 Then
 			Dim modelInputFileStreamPosition As Long
 			Dim inputFileStreamPosition As Long
@@ -2231,13 +2234,16 @@ Public Class SourceMdlFile44
 			Dim fileOffsetEnd As Long
 			'Dim fileOffsetStart2 As Long
 			'Dim fileOffsetEnd2 As Long
+			Dim modelName As String
 
 			Me.theInputFileReader.BaseStream.Seek(bodyPartInputFileStreamPosition + aBodyPart.modelOffset, SeekOrigin.Begin)
-			fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+			'fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
 			aBodyPart.theModels = New List(Of SourceMdlModel)(aBodyPart.modelCount)
 			For j As Integer = 0 To aBodyPart.modelCount - 1
 				modelInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+				fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+
 				Dim aModel As New SourceMdlModel()
 
 				aModel.name = Me.theInputFileReader.ReadChars(64)
@@ -2265,14 +2271,18 @@ Public Class SourceMdlFile44
 				inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 
 				'NOTE: Call ReadEyeballs() before ReadMeshes() so that ReadMeshes can fill-in the eyeball.theTextureIndex values.
-				Me.ReadEyeballs(modelInputFileStreamPosition, aModel)
+				Me.ReadEyeballs(modelInputFileStreamPosition, aModel, bodyPartIndex)
 				Me.ReadMeshes(modelInputFileStreamPosition, aModel)
 
 				Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
+
+				modelName = CStr(aModel.name).Trim(Chr(0))
+				fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+				Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aModel Name = " + modelName)
 			Next
 
-			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aBodyPart.theModels")
+			'fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+			'Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aBodyPart.theModels " + aBodyPart.theModels.Count.ToString())
 		End If
 	End Sub
 
@@ -2332,13 +2342,13 @@ Public Class SourceMdlFile44
 			Next
 
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aModel.theMeshes")
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aModel.theMeshes " + aModel.theMeshes.Count.ToString())
 
 			Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "aModel.theMeshes alignment")
 		End If
 	End Sub
 
-	Private Sub ReadEyeballs(ByVal modelInputFileStreamPosition As Long, ByVal aModel As SourceMdlModel)
+	Private Sub ReadEyeballs(ByVal modelInputFileStreamPosition As Long, ByVal aModel As SourceMdlModel, ByVal bodyPartIndex As Integer)
 		If aModel.eyeballCount > 0 AndAlso aModel.eyeballOffset <> 0 Then
 			aModel.theEyeballs = New List(Of SourceMdlEyeball)(aModel.eyeballCount)
 			Dim eyeballInputFileStreamPosition As Long
@@ -2433,6 +2443,7 @@ Public Class SourceMdlFile44
 
 			If aModel.theEyeballs.Count > 0 Then
 				Me.theMdlFileData.theModelCommandIsUsed = True
+				Me.theMdlFileData.theBodyPartIndexThatShouldUseModelCommand = bodyPartIndex
 			End If
 
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
