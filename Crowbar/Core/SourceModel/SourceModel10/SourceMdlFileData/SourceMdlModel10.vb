@@ -43,6 +43,7 @@
 	Public groupOffset As Integer
 
 
+	Public theSmdFileName As String
 	Public theName As String
 	Public theMeshes As List(Of SourceMdlMesh10)
 	Public theNormals As List(Of SourceVector)

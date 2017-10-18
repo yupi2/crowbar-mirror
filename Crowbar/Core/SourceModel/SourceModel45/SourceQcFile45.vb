@@ -6,7 +6,7 @@ Public Class SourceQcFile45
 
 #Region "Creation and Destruction"
 
-	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal outputPathFileName As String, ByVal mdlFileData As SourceMdlFileData45, ByVal vtxFileData As SourceVtxFileData45, ByVal phyFileData As SourcePhyFileData45, ByVal aniFileData As SourceAniFileData45, ByVal modelName As String)
+	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal outputPathFileName As String, ByVal mdlFileData As SourceMdlFileData45, ByVal vtxFileData As SourceVtxFileData45, ByVal phyFileData As SourcePhyFileData, ByVal aniFileData As SourceAniFileData45, ByVal modelName As String)
 		Me.theOutputFileStreamWriter = outputFileStream
 		Me.theMdlFileData = mdlFileData
 		Me.thePhyFileData = phyFileData
@@ -268,7 +268,9 @@ Public Class SourceQcFile45
 
 	Public Sub WriteModelCommand()
 		Dim line As String = ""
-		Dim referenceSmdFileName As String
+		Dim aBodyPart As SourceMdlBodyPart
+		Dim aBodyModel As SourceMdlModel
+		'Dim referenceSmdFileName As String
 		'Dim aBone As SourceMdlBone
 		Dim eyeballNames As List(Of String)
 
@@ -283,9 +285,11 @@ Public Class SourceQcFile45
 			line = ""
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
+			aBodyPart = Me.theMdlFileData.theBodyParts(0)
+			aBodyModel = aBodyPart.theModels(0)
 			'referenceSmdFileName = Me.GetModelPathFileName(Me.theSourceEngineModel.theMdlFileHeader.theBodyParts(0).theModels(0))
 			'referenceSmdFileName = theSourceEngineModel.GetLodSmdFileName(0)
-			referenceSmdFileName = SourceFileNamesModule.GetBodyGroupSmdFileName(0, 0, 0, Me.theMdlFileData.theModelCommandIsUsed, Me.theModelName, Me.theMdlFileData.theBodyParts(0).theModels(0).name, Me.theMdlFileData.theBodyParts.Count, Me.theMdlFileData.theBodyParts(0).theModels.Count)
+			aBodyModel.theSmdFileNames(0) = SourceFileNamesModule.CreateBodyGroupSmdFileName(aBodyModel.theSmdFileNames(0), 0, 0, 0, Me.theModelName, aBodyModel.name)
 
 			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
 				line = "$Model "
@@ -293,9 +297,9 @@ Public Class SourceQcFile45
 				line = "$model "
 			End If
 			line += """"
-			line += Me.theMdlFileData.theBodyParts(0).theName
+			line += aBodyPart.theName
 			line += """ """
-			line += referenceSmdFileName
+			line += aBodyModel.theSmdFileNames(0)
 			line += """"
 
 			line += " {"
@@ -1164,7 +1168,7 @@ Public Class SourceQcFile45
 			'======
 			Dim aBodyPart As SourceVtxBodyPart
 			Dim aVtxModel As SourceVtxModel
-			Dim aModel As SourceMdlModel
+			Dim aBodyModel As SourceMdlModel
 			Dim aLodQcInfo As LodQcInfo
 			Dim aLodQcInfoList As List(Of LodQcInfo)
 			Dim aLodList As SortedList(Of Single, List(Of LodQcInfo))
@@ -1179,8 +1183,8 @@ Public Class SourceQcFile45
 						aVtxModel = aBodyPart.theVtxModels(modelIndex)
 
 						If aVtxModel.theVtxModelLods IsNot Nothing Then
-							aModel = Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex)
-							If aModel.name(0) = ChrW(0) AndAlso aVtxModel.theVtxModelLods(0).theVtxMeshes Is Nothing Then
+							aBodyModel = Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex)
+							If aBodyModel.name(0) = ChrW(0) AndAlso aVtxModel.theVtxModelLods(0).theVtxMeshes Is Nothing Then
 								Continue For
 							End If
 
@@ -1209,9 +1213,11 @@ Public Class SourceQcFile45
 									aLodQcInfoList = aLodList(switchPoint)
 								End If
 
+								aBodyModel.theSmdFileNames(0) = SourceFileNamesModule.CreateBodyGroupSmdFileName(aBodyModel.theSmdFileNames(0), bodyPartIndex, modelIndex, 0, Me.theModelName, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).name)
+								aBodyModel.theSmdFileNames(lodIndex) = SourceFileNamesModule.CreateBodyGroupSmdFileName(aBodyModel.theSmdFileNames(lodIndex), bodyPartIndex, modelIndex, lodIndex, Me.theModelName, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).name)
 								aLodQcInfo = New LodQcInfo()
-								aLodQcInfo.referenceFileName = SourceFileNamesModule.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, 0, Me.theMdlFileData.theModelCommandIsUsed, Me.theModelName, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).name, Me.theMdlFileData.theBodyParts.Count, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels.Count)
-								aLodQcInfo.lodFileName = SourceFileNamesModule.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, lodIndex, Me.theMdlFileData.theModelCommandIsUsed, Me.theModelName, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).name, Me.theMdlFileData.theBodyParts.Count, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels.Count)
+								aLodQcInfo.referenceFileName = aBodyModel.theSmdFileNames(0)
+								aLodQcInfo.lodFileName = aBodyModel.theSmdFileNames(lodIndex)
 								aLodQcInfoList.Add(aLodQcInfo)
 							Next
 						End If
@@ -1456,56 +1462,54 @@ Public Class SourceQcFile45
 
 		textureFileNames = Me.theMdlFileData.theModifiedTextureFileNames
 
-		'$texturegroup skinfamilies
-		'{
-		'	{"producer_head.vmt"
-		' "producer_body.vmt"
-		' "producer_head_it.vmt"
-		' "producer_body_it.vmt"
-		'}
-		' 	{"producer_head_it.vmt"
-		' "producer_body_it.vmt"
-		' "producer_head_it.vmt"
-		' "producer_body_it.vmt"
-		'}
-		' }
 		If Me.theMdlFileData.theSkinFamilies IsNot Nothing AndAlso Me.theMdlFileData.theSkinFamilies.Count > 0 AndAlso textureFileNames IsNot Nothing AndAlso textureFileNames.Count > 0 AndAlso Me.theMdlFileData.skinReferenceCount > 0 Then
-			line = ""
-			Me.theOutputFileStreamWriter.WriteLine(line)
-
-			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
-				line = "$TextureGroup ""skinfamilies"""
+			Dim processedSkinFamilies As List(Of List(Of Short))
+			If TheApp.Settings.DecompileQcOnlyChangedMaterialsInTextureGroupLinesIsChecked Then
+				processedSkinFamilies = Me.GetSkinFamiliesOfChangedMaterials(Me.theMdlFileData.theSkinFamilies)
 			Else
-				line = "$texturegroup ""skinfamilies"""
+				processedSkinFamilies = Me.theMdlFileData.theSkinFamilies
 			End If
-			Me.theOutputFileStreamWriter.WriteLine(line)
-			line = "{"
-			Me.theOutputFileStreamWriter.WriteLine(line)
 
-			Dim skinFamilies As New List(Of List(Of String))(Me.theMdlFileData.theSkinFamilies.Count)
-			For i As Integer = 0 To Me.theMdlFileData.theSkinFamilies.Count - 1
-				Dim aSkinFamily As List(Of Integer)
-				aSkinFamily = Me.theMdlFileData.theSkinFamilies(i)
+			Dim skinFamiliesOfTextureFileNames As List(Of List(Of String))
+			skinFamiliesOfTextureFileNames = New List(Of List(Of String))(processedSkinFamilies.Count)
+			Dim skinReferenceCount As Integer
+			skinReferenceCount = processedSkinFamilies(0).Count
+			For i As Integer = 0 To processedSkinFamilies.Count - 1
+				Dim aSkinFamily As List(Of Short)
+				aSkinFamily = processedSkinFamilies(i)
 
-				Dim textureFileNamesForSkinFamily As New List(Of String)(Me.theMdlFileData.skinReferenceCount)
-				For j As Integer = 0 To Me.theMdlFileData.skinReferenceCount - 1
+				Dim textureFileNamesForSkinFamily As New List(Of String)(skinReferenceCount)
+				For j As Integer = 0 To skinReferenceCount - 1
 					Dim aTextureFileName As String
 					aTextureFileName = textureFileNames(aSkinFamily(j))
 
 					textureFileNamesForSkinFamily.Add(aTextureFileName)
 				Next
 
-				skinFamilies.Add(textureFileNamesForSkinFamily)
+				skinFamiliesOfTextureFileNames.Add(textureFileNamesForSkinFamily)
 			Next
 
-			Dim skinFamilyLines As List(Of String)
-			skinFamilyLines = Me.GetTextureGroupSkinFamilyLines(skinFamilies)
-			For skinFamilyLineIndex As Integer = 0 To skinFamilyLines.Count - 1
-				Me.theOutputFileStreamWriter.WriteLine(skinFamilyLines(skinFamilyLineIndex))
-			Next
+			If (Not TheApp.Settings.DecompileQcOnlyChangedMaterialsInTextureGroupLinesIsChecked) OrElse (skinFamiliesOfTextureFileNames.Count > 1) Then
+				Me.theOutputFileStreamWriter.WriteLine()
 
-			line = "}"
-			Me.theOutputFileStreamWriter.WriteLine(line)
+				If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+					line = "$TextureGroup ""skinfamilies"""
+				Else
+					line = "$texturegroup ""skinfamilies"""
+				End If
+				Me.theOutputFileStreamWriter.WriteLine(line)
+				line = "{"
+				Me.theOutputFileStreamWriter.WriteLine(line)
+
+				Dim skinFamilyLines As List(Of String)
+				skinFamilyLines = Me.GetTextureGroupSkinFamilyLines(skinFamiliesOfTextureFileNames)
+				For skinFamilyLineIndex As Integer = 0 To skinFamilyLines.Count - 1
+					Me.theOutputFileStreamWriter.WriteLine(skinFamilyLines(skinFamilyLineIndex))
+				Next
+
+				line = "}"
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			End If
 		End If
 	End Sub
 
@@ -2164,10 +2168,11 @@ Public Class SourceQcFile45
 			Else
 				line = "$animation"
 			End If
+			anAnimationDesc.theSmdRelativePathFileName = SourceFileNamesModule.CreateAnimationSmdRelativePathFileName(anAnimationDesc.theSmdRelativePathFileName, Me.theModelName, anAnimationDesc.theName)
 			line += " """
 			line += anAnimationDesc.theName
 			line += """ """
-			line += SourceFileNamesModule.GetAnimationSmdRelativePathFileName(Me.theModelName, anAnimationDesc.theName)
+			line += anAnimationDesc.theSmdRelativePathFileName
 			line += """"
 			'NOTE: Opening brace must be on same line as the command.
 			line += " {"
@@ -2280,7 +2285,8 @@ Public Class SourceQcFile45
 			If name(0) = "@" Then
 				'NOTE: There should only be one implied anim desc.
 				impliedAnimDesc = anAnimationDesc
-				line += SourceFileNamesModule.GetAnimationSmdRelativePathFileName(Me.theModelName, anAnimationDesc.theName)
+				anAnimationDesc.theSmdRelativePathFileName = SourceFileNamesModule.CreateAnimationSmdRelativePathFileName(anAnimationDesc.theSmdRelativePathFileName, Me.theModelName, anAnimationDesc.theName)
+				line += anAnimationDesc.theSmdRelativePathFileName
 			Else
 				line += name
 			End If
@@ -3060,7 +3066,8 @@ Public Class SourceQcFile45
 			End If
 			'line += """phymodel.smd"""
 			line += """"
-			line += SourceFileNamesModule.GetPhysicsSmdFileName(Me.theModelName)
+			Me.thePhyFileData.thePhysicsMeshSmdFileName = SourceFileNamesModule.CreatePhysicsSmdFileName(Me.thePhyFileData.thePhysicsMeshSmdFileName, Me.theModelName)
+			line += Me.thePhyFileData.thePhysicsMeshSmdFileName
 			line += """"
 			Me.theOutputFileStreamWriter.WriteLine(line)
 			line = "{"
@@ -3938,7 +3945,7 @@ Public Class SourceQcFile45
 		Dim line As String = ""
 		Dim aBodyPart As SourceMdlBodyPart
 		Dim aVtxBodyPart As SourceVtxBodyPart
-		Dim aModel As SourceMdlModel
+		Dim aBodyModel As SourceMdlModel
 		Dim aVtxModel As SourceVtxModel
 
 		'$bodygroup "belt"
@@ -3981,17 +3988,18 @@ Public Class SourceQcFile45
 
 				If aBodyPart.theModels IsNot Nothing AndAlso aBodyPart.theModels.Count > 0 Then
 					For modelIndex As Integer = 0 To aBodyPart.theModels.Count - 1
-						aModel = aBodyPart.theModels(modelIndex)
+						aBodyModel = aBodyPart.theModels(modelIndex)
 						aVtxModel = aVtxBodyPart.theVtxModels(modelIndex)
 
 						line = vbTab
 						'If aModel.name(0) = ChrW(0) Then
-						If aModel.name(0) = ChrW(0) AndAlso aVtxModel.theVtxModelLods(0).theVtxMeshes Is Nothing Then
+						If aBodyModel.name(0) = ChrW(0) AndAlso aVtxModel.theVtxModelLods(0).theVtxMeshes Is Nothing Then
 							line += "blank"
 						Else
+							aBodyModel.theSmdFileNames(0) = SourceFileNamesModule.CreateBodyGroupSmdFileName(aBodyModel.theSmdFileNames(0), bodyPartIndex, modelIndex, 0, Me.theModelName, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).name)
 							line += "studio "
 							line += """"
-							line += SourceFileNamesModule.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, 0, Me.theMdlFileData.theModelCommandIsUsed, Me.theModelName, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).name, Me.theMdlFileData.theBodyParts.Count, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels.Count)
+							line += aBodyModel.theSmdFileNames(0)
 							line += """"
 						End If
 						Me.theOutputFileStreamWriter.WriteLine(line)
@@ -4311,7 +4319,7 @@ Public Class SourceQcFile45
 	Private theOutputFileStreamWriter As StreamWriter
 	Private theAniFileData As SourceAniFileData45
 	Private theMdlFileData As SourceMdlFileData45
-	Private thePhyFileData As SourcePhyFileData45
+	Private thePhyFileData As SourcePhyFileData
 	Private theVtxFileData As SourceVtxFileData45
 	Private theModelName As String
 

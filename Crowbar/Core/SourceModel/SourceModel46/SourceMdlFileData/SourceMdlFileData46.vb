@@ -551,7 +551,7 @@ Public Class SourceMdlFileData46
 	Public theMouths As List(Of SourceMdlMouth)
 	Public thePoseParamDescs As List(Of SourceMdlPoseParamDesc)
 	Public theSequenceDescs As List(Of SourceMdlSequenceDesc)
-	Public theSkinFamilies As List(Of List(Of Integer))
+	Public theSkinFamilies As List(Of List(Of Short))
 	Public theSurfacePropName As String
 	Public theTexturePaths As List(Of String)
 	Public theTextures As List(Of SourceMdlTexture)

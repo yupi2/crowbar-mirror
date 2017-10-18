@@ -16,10 +16,9 @@
 
 
 
-    Public scale(5) As Single
+	Public scale(5) As Double
     Public offset(5) As Short
 
-
-    Public theAnimValues As List(Of SourceMdlAnimationValue)
+	Public theAnimValues(5) As List(Of SourceMdlAnimationValue)
 
 End Class

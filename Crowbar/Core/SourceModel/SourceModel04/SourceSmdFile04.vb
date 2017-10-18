@@ -266,9 +266,9 @@ Public Class SourceSmdFile04
 			boneIndex = aBodyModel.theVertexes(aVertexInfo.vertexIndex).index
 			aBone = Me.theMdlFileData.theBones(boneIndex)
 
-			'position.x = aBone.position.x + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.x
-			'position.y = aBone.position.y + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.y
-			'position.z = aBone.position.z + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.z
+			position.x = aBone.position.x + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.x
+			position.y = aBone.position.y + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.y
+			position.z = aBone.position.z + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.z
 
 			'position.x = aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.x
 			'position.y = aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.y

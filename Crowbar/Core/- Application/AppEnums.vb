@@ -2,22 +2,37 @@ Imports System.ComponentModel
 
 Public Module AppEnums
 
-	Public Enum OutputFolderOptions
-		SubfolderName
-		PathName
-	End Enum
-
-	Public Enum ActionMode
+	Public Enum InputOptions
 		<Description("File")> File
 		<Description("Folder")> Folder
-		<Description("Folder and Subfolders")> FolderRecursion
+		<Description("Folder and subfolders")> FolderRecursion
+	End Enum
+
+	Public Enum UnpackOutputPathOptions
+		<Description("Game's addons folder")> GameAddonsFolder
+		<Description("Work folder")> WorkFolder
+		<Description("Subfolder (of VPK input)")> Subfolder
+	End Enum
+
+	Public Enum DecompileOutputPathOptions
+		<Description("Work folder")> WorkFolder
+		<Description("Subfolder (of MDL input)")> Subfolder
+	End Enum
+
+	Public Enum CompileOutputPathOptions
+		<Description("Game's ""models"" folder")> GameModelsFolder
+		<Description("Work folder")> WorkFolder
+		<Description("Subfolder (of QC input)")> Subfolder
 	End Enum
 
 	Public Enum StatusMessage
 		<Description("Success")> Success
 		<Description("Error")> [Error]
-		<Description("Cancelled")> Canceled
+		<Description("Canceled")> Canceled
 		<Description("Skipped")> Skipped
+
+		<Description("ErrorRequiredSequenceGroupMdlFileNotFound")> ErrorRequiredSequenceGroupMdlFileNotFound
+		<Description("ErrorRequiredTextureMdlFileNotFound")> ErrorRequiredTextureMdlFileNotFound
 
 		<Description("ErrorRequiredMdlFileNotFound")> ErrorRequiredMdlFileNotFound
 		<Description("ErrorRequiredAniFileNotFound")> ErrorRequiredAniFileNotFound
@@ -51,6 +66,7 @@ Public Module AppEnums
 		Extract
 		ExtractAndOpen
 		ExtractToTemp
+		ExtractFolderTree
 		Insert
 		List
 		Pack

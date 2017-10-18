@@ -5,10 +5,10 @@ Public Class SourceQcFile
 
 #Region "Methods"
 
-	Public Function GetMdlRelativePathFileName(ByVal qcPathFileName As String) As String
-		Dim modelRelativePathFileName As String
+	Public Function GetQcModelName(ByVal qcPathFileName As String) As String
+		Dim qcModelName As String
 
-		modelRelativePathFileName = ""
+		qcModelName = ""
 
 		Using inputFileStream As StreamReader = New StreamReader(qcPathFileName)
 			Dim inputLine As String
@@ -21,14 +21,29 @@ Public Class SourceQcFile
 				If temp.StartsWith("$modelname") Then
 					temp = temp.Replace("$modelname", "")
 					temp = temp.Trim()
-					temp = temp.Trim(Chr(34))
-					modelRelativePathFileName = temp.Replace("/", "\")
+
+					' Need to remove any comment after the file name token (which may or may not be double-quoted).
+					Dim pos As Integer
+					If temp.StartsWith("""") Then
+						pos = temp.IndexOf("""", 1)
+						If pos >= 0 Then
+							temp = temp.Substring(1, pos - 1)
+						End If
+					Else
+						pos = temp.IndexOf(" ")
+						If pos >= 0 Then
+							temp = temp.Substring(0, pos)
+						End If
+					End If
+
+					'temp = temp.Trim(Chr(34))
+					qcModelName = temp.Replace("/", "\")
 					Exit While
 				End If
 			End While
 		End Using
 
-		Return modelRelativePathFileName
+		Return qcModelName
 	End Function
 
 	Public Sub InsertAnIncludeFileCommand(ByVal qcPathFileName As String, ByVal includedPathFileName As String)
@@ -160,6 +175,47 @@ Public Class SourceQcFile
 	'		writeGroupAction.Invoke()
 	'	End If
 	'End Sub
+
+	Protected Function GetSkinFamiliesOfChangedMaterials(ByVal iSkinFamilies As List(Of List(Of Short))) As List(Of List(Of Short))
+		Dim skinFamilies As List(Of List(Of Short))
+		Dim skinReferenceCount As Integer
+		Dim firstSkinFamily As List(Of Short)
+		Dim aSkinFamily As List(Of Short)
+		Dim textureFileNameIndexes As List(Of Short)
+
+		skinReferenceCount = iSkinFamilies(0).Count
+		skinFamilies = New List(Of List(Of Short))(iSkinFamilies.Count)
+
+		Try
+			For skinFamilyIndex As Integer = 0 To iSkinFamilies.Count - 1
+				textureFileNameIndexes = New List(Of Short)(skinReferenceCount)
+				skinFamilies.Add(textureFileNameIndexes)
+			Next
+
+			firstSkinFamily = iSkinFamilies(0)
+			For j As Integer = 0 To skinReferenceCount - 1
+				'NOTE: Start at second skin family because comparing first with all others.
+				For i As Integer = 1 To iSkinFamilies.Count - 1
+					aSkinFamily = iSkinFamilies(i)
+
+					If firstSkinFamily(j) <> aSkinFamily(j) Then
+						For skinFamilyIndex As Integer = 0 To iSkinFamilies.Count - 1
+							aSkinFamily = iSkinFamilies(skinFamilyIndex)
+
+							textureFileNameIndexes = skinFamilies(skinFamilyIndex)
+							textureFileNameIndexes.Add(aSkinFamily(j))
+						Next
+
+						Exit For
+					End If
+				Next
+			Next
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		End Try
+
+		Return skinFamilies
+	End Function
 
 	Protected Function GetTextureGroupSkinFamilyLines(ByVal skinFamilies As List(Of List(Of String))) As List(Of String)
 		Dim lines As New List(Of String)()

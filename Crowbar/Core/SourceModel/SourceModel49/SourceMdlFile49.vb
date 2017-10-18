@@ -179,7 +179,7 @@ Public Class SourceMdlFile49
 
 			fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 			If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-				Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "theSurfacePropName")
+				Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "theSurfacePropName = " + Me.theMdlFileData.theSurfacePropName)
 			End If
 			Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
 		Else
@@ -815,7 +815,7 @@ Public Class SourceMdlFile49
 
 					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "anAttachment.theName")
+						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "anAttachment.theName = " + anAttachment.theName)
 					End If
 				Else
 					anAttachment.theName = ""
@@ -862,7 +862,7 @@ Public Class SourceMdlFile49
 
 					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aHitboxSet.theName")
+						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aHitboxSet.theName = " + aHitboxSet.theName)
 					End If
 				Else
 					aHitboxSet.theName = ""
@@ -975,9 +975,14 @@ Public Class SourceMdlFile49
 		Dim aSectionOfAnimation As List(Of SourceMdlAnimation)
 		Dim aSectionOfFrameAnimation As List(Of SourceAniFrameAnim)
 		Dim animationDescSize As Long
+		Dim fileOffsetEndOfAnimDescDataExceptForSpanData As Long
+		Dim fileOffsetEndOfAnimDescDataIncludingSpanData As Long
 
 		Me.theInputFileReader.BaseStream.Seek(Me.theMdlFileData.localAnimationOffset, SeekOrigin.Begin)
 		fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+
+		fileOffsetEndOfAnimDescDataExceptForSpanData = -1
+		fileOffsetEndOfAnimDescDataIncludingSpanData = -1
 
 		Me.theMdlFileData.theAnimationDescs = New List(Of SourceMdlAnimationDesc49)(Me.theMdlFileData.localAnimationCount)
 		For i As Integer = 0 To Me.theMdlFileData.localAnimationCount - 1
@@ -1012,12 +1017,6 @@ Public Class SourceMdlFile49
 			anAnimationDesc.spanCount = Me.theInputFileReader.ReadInt16()
 			anAnimationDesc.spanOffset = Me.theInputFileReader.ReadInt32()
 			anAnimationDesc.spanStallTime = Me.theInputFileReader.ReadSingle()
-			'TODO: Get this data.
-			If anAnimationDesc.spanFrameCount <> 0 OrElse anAnimationDesc.spanCount <> 0 OrElse anAnimationDesc.spanOffset <> 0 OrElse anAnimationDesc.spanStallTime <> 0 Then
-				'NOTE: This code is reached by L4D2's pak01_dir.vpk\models\v_models\v_huntingrifle.mdl and v_snip_awp.mdl.
-				'NOTE: This code is reached by DoI's doi_models_dir_vpk\models\weapons\v_g43.mdl and v_vickers.mdl.
-				Dim debug As Integer = 4242
-			End If
 
 			'For x As Integer = 0 To anAnimationDesc.unknown.Length - 1
 			'	anAnimationDesc.unknown(x) = Me.theInputFileReader.ReadInt32()
@@ -1051,6 +1050,53 @@ Public Class SourceMdlFile49
 			Else
 				anAnimationDesc.theName = ""
 			End If
+			' Get this data, or at least find the used bytes. The data seems to be copy of first several anim frames in the ANI file.
+			If anAnimationDesc.spanFrameCount <> 0 OrElse anAnimationDesc.spanCount <> 0 OrElse anAnimationDesc.spanOffset <> 0 OrElse anAnimationDesc.spanStallTime <> 0 Then
+				'			for (j = 0; j < g_numbones; j++)
+				'			{
+				'				if (g_bonetable[j].flags & BONE_HAS_SAVEFRAME_POS)
+				'				{
+				'					for (int n = 0; n < panimdesc[i].zeroframecount; n++)
+				'					{
+				'						*(Vector48 *)pData = anim->sanim[panimdesc[i].zeroframespan*n][j].pos;
+				'						pData += sizeof( Vector48 );
+				'					}
+				'				}
+				'				if (g_bonetable[j].flags & BONE_HAS_SAVEFRAME_ROT)
+				'				{
+				'					for (int n = 0; n < panimdesc[i].zeroframecount; n++)
+				'					{
+				'						Quaternion q;
+				'						AngleQuaternion( anim->sanim[panimdesc[i].zeroframespan*n][j].rot, q );
+				'						*((Quaternion64 *)pData) = q;
+				'						pData += sizeof( Quaternion64 );
+				'					}
+				'				}
+				'			}
+				'NOTE: This code is reached by L4D2's pak01_dir.vpk\models\v_models\v_huntingrifle.mdl and v_snip_awp.mdl.
+				'NOTE: This code is reached by DoI's doi_models_dir_vpk\models\weapons\v_g43.mdl and v_vickers.mdl.
+				fileOffsetStart2 = animInputFileStreamPosition + anAnimationDesc.spanOffset
+				fileOffsetEnd2 = animInputFileStreamPosition + anAnimationDesc.spanOffset - 1
+				Dim aBone As SourceMdlBone
+				For boneIndex As Integer = 0 To Me.theMdlFileData.theBones.Count - 1
+					aBone = Me.theMdlFileData.theBones(boneIndex)
+					If (aBone.flags And SourceMdlBone.BONE_HAS_SAVEFRAME_POS) > 0 Then
+						'SourceVector48bits (6 bytes)
+						fileOffsetEnd2 += anAnimationDesc.spanCount * 6
+					End If
+					If (aBone.flags And SourceMdlBone.BONE_HAS_SAVEFRAME_ROT) > 0 Then
+						'SourceQuaternion64bits (8 bytes)
+						fileOffsetEnd2 += anAnimationDesc.spanCount * 8
+					End If
+				Next
+				If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
+					Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "anAnimationDesc.spanOffset (zeroframes/saveframes) [" + anAnimationDesc.theName + "] [spanFrameCount = " + anAnimationDesc.spanFrameCount.ToString() + "] [spanCount = " + anAnimationDesc.spanCount.ToString() + "]")
+				End If
+
+				If fileOffsetEndOfAnimDescDataIncludingSpanData < fileOffsetEnd2 Then
+					fileOffsetEndOfAnimDescDataIncludingSpanData = fileOffsetEnd2
+				End If
+			End If
 
 			Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
 		Next
@@ -1059,6 +1105,13 @@ Public Class SourceMdlFile49
 		Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theAnimationDescs " + Me.theMdlFileData.theAnimationDescs.Count.ToString())
 
 		Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "theMdlFileData.theAnimationDescs alignment")
+
+		If fileOffsetEndOfAnimDescDataExceptForSpanData < fileOffsetEnd Then
+			fileOffsetEndOfAnimDescDataExceptForSpanData = fileOffsetEnd
+		End If
+		If fileOffsetEndOfAnimDescDataIncludingSpanData < fileOffsetEnd Then
+			fileOffsetEndOfAnimDescDataIncludingSpanData = fileOffsetEnd
+		End If
 
 		' Fill-in the byte alignments. Can not be done in the previous loop because need to read all AnimationDescs first.
 		For i As Integer = 0 To Me.theMdlFileData.localAnimationCount - 1
@@ -1123,24 +1176,26 @@ Public Class SourceMdlFile49
 
 						If anAnimationDesc.animBlock = 0 Then
 							For sectionIndex As Integer = 0 To sectionCount - 1
-								aSectionOfFrameAnimation = anAnimationDesc.theSectionsOfFrameAnims(sectionIndex)
-								Me.theInputFileReader.BaseStream.Seek(animInputFileStreamPosition + anAnimationDesc.theSections(sectionIndex).animOffset, SeekOrigin.Begin)
+								If anAnimationDesc.theSections(sectionIndex).animBlock = 0 Then
+									aSectionOfFrameAnimation = anAnimationDesc.theSectionsOfFrameAnims(sectionIndex)
+									Me.theInputFileReader.BaseStream.Seek(animInputFileStreamPosition + anAnimationDesc.theSections(sectionIndex).animOffset, SeekOrigin.Begin)
 
-								'If sectionIndex < sectionCount - 1 Then
-								'	sectionFrameCount = anAnimationDesc.sectionFrameCount
-								'Else
-								'	sectionFrameCount = anAnimationDesc.frameCount - ((sectionCount - 1) * anAnimationDesc.sectionFrameCount)
-								'End If
-								If sectionIndex < sectionCount - 2 Then
-									sectionFrameCount = anAnimationDesc.sectionFrameCount
-								Else
-									'NOTE: Due to the weird calculation of sectionCount in studiomdl, this line is called twice, which means there are two "last" sections.
-									'      This also likely means that the last section is bogus unused data.
-									sectionFrameCount = anAnimationDesc.frameCount - ((sectionCount - 2) * anAnimationDesc.sectionFrameCount)
+									'If sectionIndex < sectionCount - 1 Then
+									'	sectionFrameCount = anAnimationDesc.sectionFrameCount
+									'Else
+									'	sectionFrameCount = anAnimationDesc.frameCount - ((sectionCount - 1) * anAnimationDesc.sectionFrameCount)
+									'End If
+									If sectionIndex < sectionCount - 2 Then
+										sectionFrameCount = anAnimationDesc.sectionFrameCount
+									Else
+										'NOTE: Due to the weird calculation of sectionCount in studiomdl, this line is called twice, which means there are two "last" sections.
+										'      This also likely means that the last section is bogus unused data.
+										sectionFrameCount = anAnimationDesc.frameCount - ((sectionCount - 2) * anAnimationDesc.sectionFrameCount)
+									End If
+
+									'Me.ReadAnimationFrameByBone(Me.theInputFileReader.BaseStream.Position, anAnimationDesc, anAnimationDesc.frameCount, anAnimationDesc.theSectionsOfAnimations(0))
+									Me.ReadAnimationFrameByBone(Me.theInputFileReader.BaseStream.Position, anAnimationDesc, sectionFrameCount, aSectionOfFrameAnimation)
 								End If
-
-								'Me.ReadAnimationFrameByBone(Me.theInputFileReader.BaseStream.Position, anAnimationDesc, anAnimationDesc.frameCount, anAnimationDesc.theSectionsOfAnimations(0))
-								Me.ReadAnimationFrameByBone(Me.theInputFileReader.BaseStream.Position, anAnimationDesc, sectionFrameCount, aSectionOfFrameAnimation)
 							Next
 						End If
 					ElseIf anAnimationDesc.animBlock = 0 Then
@@ -1227,11 +1282,29 @@ Public Class SourceMdlFile49
 					'NOTE: This seems to align on 4 even though source code indicates otherwise.
 					Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "anAnimationDesc.theIkRules pre-alignment")
 
-					Me.ReadMdlIkRules(animInputFileStreamPosition, anAnimationDesc)
+					Dim ikRulesEndOffset As Long
+
+					ikRulesEndOffset = Me.ReadMdlIkRules(animInputFileStreamPosition, anAnimationDesc)
+
+					If fileOffsetEndOfAnimDescDataExceptForSpanData < ikRulesEndOffset Then
+						fileOffsetEndOfAnimDescDataExceptForSpanData = ikRulesEndOffset
+					End If
+					If fileOffsetEndOfAnimDescDataIncludingSpanData < ikRulesEndOffset Then
+						fileOffsetEndOfAnimDescDataIncludingSpanData = ikRulesEndOffset
+					End If
 				End If
 
 				If anAnimationDesc.animBlock = 0 AndAlso anAnimationDesc.localHierarchyCount > 0 Then
-					Me.ReadLocalHierarchies(animInputFileStreamPosition, anAnimationDesc)
+					Dim hierarchiesEndOffset As Long
+
+					hierarchiesEndOffset = Me.ReadLocalHierarchies(animInputFileStreamPosition, anAnimationDesc)
+
+					If fileOffsetEndOfAnimDescDataExceptForSpanData < hierarchiesEndOffset Then
+						fileOffsetEndOfAnimDescDataExceptForSpanData = hierarchiesEndOffset
+					End If
+					If fileOffsetEndOfAnimDescDataIncludingSpanData < hierarchiesEndOffset Then
+						fileOffsetEndOfAnimDescDataIncludingSpanData = hierarchiesEndOffset
+					End If
 				End If
 
 				'ElseIf anAnimationDesc.animBlock > 0 Then
@@ -1241,7 +1314,16 @@ Public Class SourceMdlFile49
 			inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 
 			If anAnimationDesc.movementCount > 0 Then
-				Me.ReadMdlMovements(animInputFileStreamPosition, anAnimationDesc)
+				Dim movementsEndOffset As Long
+
+				movementsEndOffset = Me.ReadMdlMovements(animInputFileStreamPosition, anAnimationDesc)
+
+				If fileOffsetEndOfAnimDescDataExceptForSpanData < movementsEndOffset Then
+					fileOffsetEndOfAnimDescDataExceptForSpanData = movementsEndOffset
+				End If
+				If fileOffsetEndOfAnimDescDataIncludingSpanData < movementsEndOffset Then
+					fileOffsetEndOfAnimDescDataIncludingSpanData = movementsEndOffset
+				End If
 			End If
 
 			'If anAnimationDesc.localHierarchyCount > 0 Then
@@ -1250,6 +1332,9 @@ Public Class SourceMdlFile49
 
 			Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
 		Next
+
+		Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEndOfAnimDescDataExceptForSpanData, 4, "anAnimationDesc.spanOffset pre-alignment")
+		Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEndOfAnimDescDataIncludingSpanData, 4, "anAnimationDesc.spanOffset post-alignment")
 	End Sub
 
 	Protected Sub ReadMdlAnimation(ByVal animInputFileStreamPosition As Long, ByVal anAnimationDesc As SourceMdlAnimationDesc49, ByVal sectionFrameCount As Integer, ByVal aSectionOfAnimation As List(Of SourceMdlAnimation))
@@ -1512,7 +1597,7 @@ Public Class SourceMdlFile49
 			Next
 
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAnimationDesc.theAniFrameAnim " + anAnimationDesc.theName)
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAnimationDesc.theAniFrameAnim [" + anAnimationDesc.theName + "] (frameCount = " + CStr(anAnimationDesc.frameCount) + "; sectionFrameCount = " + CStr(sectionFrameCount) + ")")
 
 			fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
@@ -1564,9 +1649,11 @@ Public Class SourceMdlFile49
 					End If
 				Next
 
-				fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-				Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAniFrameAnim.theBoneConstantInfos " + anAniFrameAnim.theBoneConstantInfos.Count.ToString())
-				Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "anAniFrameAnim.theBoneConstantInfos alignment")
+				If Me.theInputFileReader.BaseStream.Position > fileOffsetStart Then
+					fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+					Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAniFrameAnim.theBoneConstantInfos " + anAniFrameAnim.theBoneConstantInfos.Count.ToString())
+					Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "anAniFrameAnim.theBoneConstantInfos alignment")
+				End If
 			End If
 
 			If anAniFrameAnim.frameLength > 0 AndAlso anAniFrameAnim.frameOffset <> 0 Then
@@ -1854,19 +1941,24 @@ Public Class SourceMdlFile49
 
 	'End Sub
 
-	Protected Sub ReadMdlIkRules(ByVal animInputFileStreamPosition As Long, ByVal anAnimationDesc As SourceMdlAnimationDesc49)
+	Protected Function ReadMdlIkRules(ByVal animInputFileStreamPosition As Long, ByVal anAnimationDesc As SourceMdlAnimationDesc49) As Long
+		If anAnimationDesc.animBlock > 0 AndAlso anAnimationDesc.animblockIkRuleOffset = 0 Then
+			Return 0
+		End If
+
 		Dim ikRuleInputFileStreamPosition As Long
 		Dim inputFileStreamPosition As Long
 		Dim fileOffsetStart As Long
 		Dim fileOffsetEnd As Long
 		Dim fileOffsetStart2 As Long
 		Dim fileOffsetEnd2 As Long
+		Dim fileOffsetEndOfAnimDescDataIncludingExtraData As Long
 
 		Me.theInputFileReader.BaseStream.Seek(animInputFileStreamPosition + anAnimationDesc.ikRuleOffset, SeekOrigin.Begin)
 		fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
 		anAnimationDesc.theIkRules = New List(Of SourceMdlIkRule)(anAnimationDesc.ikRuleCount)
-		For j As Integer = 0 To anAnimationDesc.ikRuleCount - 1
+		For ikRuleIndex As Integer = 0 To anAnimationDesc.ikRuleCount - 1
 			ikRuleInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 			Dim anIkRule As New SourceMdlIkRule()
 
@@ -1927,10 +2019,28 @@ Public Class SourceMdlFile49
 
 				fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 				If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-					Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "anIkRule.theAttachmentName")
+					Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "anIkRule.theAttachmentName = " + anIkRule.theAttachmentName)
+				End If
+
+				If fileOffsetEndOfAnimDescDataIncludingExtraData < (fileOffsetStart2 + 127) Then
+					fileOffsetEndOfAnimDescDataIncludingExtraData = (fileOffsetStart2 + 127)
 				End If
 			Else
 				anIkRule.theAttachmentName = ""
+			End If
+
+			If anIkRule.compressedIkErrorOffset <> 0 Then
+				Dim compressedIkErrorsEndOffset As Long
+
+				compressedIkErrorsEndOffset = Me.ReadCompressedIkErrors(ikRuleInputFileStreamPosition, ikRuleIndex, anAnimationDesc)
+
+				If fileOffsetEndOfAnimDescDataIncludingExtraData < compressedIkErrorsEndOffset Then
+					fileOffsetEndOfAnimDescDataIncludingExtraData = compressedIkErrorsEndOffset
+				End If
+			End If
+
+			If anIkRule.ikErrorOffset <> 0 Then
+				Dim debug As Integer = 4242
 			End If
 
 			Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
@@ -1940,7 +2050,74 @@ Public Class SourceMdlFile49
 		Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAnimationDesc.theIkRules " + anAnimationDesc.theIkRules.Count.ToString())
 
 		Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "anAnimationDesc.theIkRules alignment")
-	End Sub
+
+		If fileOffsetEndOfAnimDescDataIncludingExtraData > 0 Then
+			Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEndOfAnimDescDataIncludingExtraData, 4, "anAnimationDesc.theIkRules extra-data alignment")
+		End If
+
+		Return Me.theInputFileReader.BaseStream.Position - 1
+	End Function
+
+	Private Function ReadCompressedIkErrors(ByVal ikRuleInputFileStreamPosition As Long, ByVal ikRuleIndex As Integer, ByVal anAnimationDesc As SourceMdlAnimationDesc49) As Long
+		Dim anIkRule As SourceMdlIkRule
+		anIkRule = anAnimationDesc.theIkRules(ikRuleIndex)
+
+		Dim compressedIkErrorInputFileStreamPosition As Long
+		Dim kInputFileStreamPosition As Long
+		'Dim inputFileStreamPosition As Long
+		Dim fileOffsetStart As Long
+		Dim fileOffsetEnd As Long
+
+		Me.theInputFileReader.BaseStream.Seek(ikRuleInputFileStreamPosition + anIkRule.compressedIkErrorOffset, SeekOrigin.Begin)
+		fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+		compressedIkErrorInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+
+		anIkRule.theCompressedIkError = New SourceMdlCompressedIkError()
+
+		' First, read the scale data.
+		For k As Integer = 0 To anIkRule.theCompressedIkError.scale.Length - 1
+			kInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+			anIkRule.theCompressedIkError.scale(k) = Me.theInputFileReader.ReadSingle()
+
+			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+			Me.theMdlFileData.theFileSeekLog.Add(kInputFileStreamPosition, fileOffsetEnd, "anIkRule.theCompressedIkError [ikRuleIndex = " + ikRuleIndex.ToString() + "] [scale = " + anIkRule.theCompressedIkError.scale(k).ToString() + "]")
+		Next
+
+		' Second, read the offset data.
+		For k As Integer = 0 To anIkRule.theCompressedIkError.offset.Length - 1
+			kInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+			anIkRule.theCompressedIkError.offset(k) = Me.theInputFileReader.ReadInt16()
+
+			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+			Me.theMdlFileData.theFileSeekLog.Add(kInputFileStreamPosition, fileOffsetEnd, "anIkRule.theCompressedIkError [ikRuleIndex = " + ikRuleIndex.ToString() + "] [offset = " + anIkRule.theCompressedIkError.offset(k).ToString() + "]")
+		Next
+
+		'fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+		'Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anIkRule.theCompressedIkError (scale and offset data)")
+
+		'inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+
+		' Third, read the anim values.
+		For k As Integer = 0 To anIkRule.theCompressedIkError.scale.Length - 1
+			'compressedIkErrorInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+			' Read the mstudioanimvalue_t.
+			'int size = srcanim->ikrule[j].errorData.numanim[k] * sizeof( mstudioanimvalue_t );
+			'memmove( pData, srcanim->ikrule[j].errorData.anim[k], size );
+			'TODO: Figure out what frameCount should be.
+			If anIkRule.theCompressedIkError.offset(k) > 0 Then
+				'Dim frameCount As Integer = 1
+				anIkRule.theCompressedIkError.theAnimValues(k) = New List(Of SourceMdlAnimationValue)()
+				Me.ReadMdlAnimValues(compressedIkErrorInputFileStreamPosition + anIkRule.theCompressedIkError.offset(k), anAnimationDesc.frameCount, anIkRule.theCompressedIkError.theAnimValues(k), "anIkRule.theCompressedIkError.theAnimValues(" + k.ToString() + ")")
+			End If
+		Next
+
+		'Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
+
+		'fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+		'Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anIkRule.theCompressedIkError ")
+
+		Return Me.theInputFileReader.BaseStream.Position - 1
+	End Function
 
 	Protected Sub ReadMdlAnimationSection(ByVal animInputFileStreamPosition As Long, ByVal anAnimationDesc As SourceMdlAnimationDesc49, ByVal aFileSeekLog As FileSeekLog)
 		'Dim animSectionInputFileStreamPosition As Long
@@ -1964,10 +2141,10 @@ Public Class SourceMdlFile49
 		'Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
 
 		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-		aFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAnimSection")
+		aFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAnimSection [" + anAnimationDesc.theName + "] [animBlock = " + anAnimSection.animBlock.ToString() + "] [calculated ANI file Offset = " + (Me.theMdlFileData.theAnimBlocks(anAnimSection.animBlock).dataStart + anAnimSection.animOffset).ToString() + "]")
 	End Sub
 
-	Protected Sub ReadMdlMovements(ByVal animInputFileStreamPosition As Long, ByVal anAnimationDesc As SourceMdlAnimationDesc49)
+	Protected Function ReadMdlMovements(ByVal animInputFileStreamPosition As Long, ByVal anAnimationDesc As SourceMdlAnimationDesc49) As Long
 		Dim movementInputFileStreamPosition As Long
 		Dim fileOffsetStart As Long
 		Dim fileOffsetEnd As Long
@@ -2002,9 +2179,11 @@ Public Class SourceMdlFile49
 		Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAnimationDesc.theMovements " + anAnimationDesc.theMovements.Count.ToString())
 
 		Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "anAnimationDesc.theMovements alignment")
-	End Sub
 
-	Protected Sub ReadLocalHierarchies(ByVal animInputFileStreamPosition As Long, ByVal anAnimationDesc As SourceMdlAnimationDesc49)
+		Return Me.theInputFileReader.BaseStream.Position - 1
+	End Function
+
+	Protected Function ReadLocalHierarchies(ByVal animInputFileStreamPosition As Long, ByVal anAnimationDesc As SourceMdlAnimationDesc49) As Long
 		Dim localHieararchyInputFileStreamPosition As Long
 		Dim fileOffsetStart As Long
 		Dim fileOffsetEnd As Long
@@ -2036,7 +2215,9 @@ Public Class SourceMdlFile49
 		Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAnimationDesc.theLocalHierarchies " + anAnimationDesc.theLocalHierarchies.Count.ToString())
 
 		Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "anAnimationDesc.theLocalHierarchies alignment")
-	End Sub
+
+		Return Me.theInputFileReader.BaseStream.Position - 1
+	End Function
 
 	Public Sub ReadSequenceDescs()
 		If Me.theMdlFileData.localSequenceCount > 0 Then
@@ -2263,7 +2444,7 @@ Public Class SourceMdlFile49
 
 				fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 				If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-					Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "anEvent.theName")
+					Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "anEvent.theName = " + anEvent.theName)
 				End If
 			Else
 				'anEvent.theName = ""
@@ -2428,7 +2609,7 @@ Public Class SourceMdlFile49
 		aSeqDesc.theKeyValues = FileManager.ReadNullTerminatedString(Me.theInputFileReader)
 
 		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-		Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aSeqDesc.theKeyValues")
+		Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aSeqDesc.theKeyValues = " + aSeqDesc.theKeyValues)
 
 		Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "aSeqDesc.theKeyValues alignment")
 	End Sub
@@ -2463,7 +2644,7 @@ Public Class SourceMdlFile49
 
 				fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 				If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-					Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "anActivityModifier.theName")
+					Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "anActivityModifier.theName = " + anActivityModifier.theName)
 				End If
 			Else
 				anActivityModifier.theName = ""
@@ -2473,7 +2654,7 @@ Public Class SourceMdlFile49
 		Next
 
 		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-		Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aSeqDesc.theActivityModifiers")
+		Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aSeqDesc.theActivityModifiers " + aSeqDesc.theActivityModifiers.Count.ToString())
 
 		'Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "aSeqDesc.theActivityModifiers alignment")
 	End Sub
@@ -2518,7 +2699,7 @@ Public Class SourceMdlFile49
 
 					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aLocalNodeName")
+						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aLocalNodeName = " + aLocalNodeName)
 					End If
 				Else
 					aLocalNodeName = ""
@@ -2529,7 +2710,7 @@ Public Class SourceMdlFile49
 			Next
 
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theLocalNodeNames")
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theLocalNodeNames " + Me.theMdlFileData.theLocalNodeNames.Count.ToString())
 
 			Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "theMdlFileData.theLocalNodeNames alignment")
 		End If
@@ -2552,6 +2733,35 @@ Public Class SourceMdlFile49
 		'		}
 		'//		printf("\n" );
 		'	}
+		If Me.theMdlFileData.localNodeCount > 0 AndAlso Me.theMdlFileData.localNodeOffset <> 0 Then
+			'Dim localNodeInputFileStreamPosition As Long
+			'Dim inputFileStreamPosition As Long
+			Dim fileOffsetStart As Long
+			Dim fileOffsetEnd As Long
+			'Dim fileOffsetStart2 As Long
+			'Dim fileOffsetEnd2 As Long
+
+			Me.theInputFileReader.BaseStream.Seek(Me.theMdlFileData.localNodeOffset, SeekOrigin.Begin)
+			fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+
+			Me.theMdlFileData.theLocalNodes = New List(Of List(Of Byte))(Me.theMdlFileData.localNodeCount)
+			For i As Integer = 0 To Me.theMdlFileData.localNodeCount - 1
+				Dim exitNodes As New List(Of Byte)(Me.theMdlFileData.localNodeCount)
+
+				For j As Integer = 0 To Me.theMdlFileData.localNodeCount - 1
+					Dim nodeValue As Byte
+					nodeValue = Me.theInputFileReader.ReadByte()
+					exitNodes.Add(nodeValue)
+				Next
+
+				Me.theMdlFileData.theLocalNodes.Add(exitNodes)
+			Next
+
+			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theLocalNodes " + Me.theMdlFileData.theLocalNodes.Count.ToString())
+
+			Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "theMdlFileData.theLocalNodes alignment")
+		End If
 	End Sub
 
 	Public Sub ReadBodyParts()
@@ -2586,7 +2796,7 @@ Public Class SourceMdlFile49
 
 					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aBodyPart.theName")
+						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aBodyPart.theName = " + aBodyPart.theName)
 					End If
 				Else
 					aBodyPart.theName = ""
@@ -2805,7 +3015,7 @@ Public Class SourceMdlFile49
 
 					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "anEyeball.theName")
+						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "anEyeball.theName = " + anEyeball.theName)
 					End If
 				Else
 					anEyeball.theName = ""
@@ -2877,7 +3087,7 @@ Public Class SourceMdlFile49
 		Next
 
 		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-		Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aMesh.theFlexes")
+		Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aMesh.theFlexes " + aMesh.theFlexes.Count.ToString())
 
 		Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "aMesh.theFlexes alignment")
 	End Sub
@@ -2928,7 +3138,7 @@ Public Class SourceMdlFile49
 		'aFlex.theVertAnims.Sort(AddressOf Me.SortVertAnims)
 
 		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-		Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aFlex.theVertAnims")
+		Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aFlex.theVertAnims " + aFlex.theVertAnims.Count.ToString())
 
 		Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "aFlex.theVertAnims alignment")
 	End Sub
@@ -2966,7 +3176,7 @@ Public Class SourceMdlFile49
 
 					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aFlexDesc.theName")
+						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aFlexDesc.theName = " + aFlexDesc.theName)
 					End If
 				Else
 					aFlexDesc.theName = ""
@@ -2976,7 +3186,7 @@ Public Class SourceMdlFile49
 			Next
 
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theFlexDescs")
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theFlexDescs " + Me.theMdlFileData.theFlexDescs.Count.ToString())
 		End If
 	End Sub
 
@@ -3013,7 +3223,7 @@ Public Class SourceMdlFile49
 
 					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aFlexController.theType")
+						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aFlexController.theType = " + aFlexController.theType)
 					End If
 				Else
 					aFlexController.theType = ""
@@ -3026,7 +3236,7 @@ Public Class SourceMdlFile49
 
 					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aFlexController.theName")
+						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aFlexController.theName = " + aFlexController.theName)
 					End If
 				Else
 					aFlexController.theName = ""
@@ -3040,7 +3250,7 @@ Public Class SourceMdlFile49
 			End If
 
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theFlexControllers")
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theFlexControllers " + Me.theMdlFileData.theFlexControllers.Count.ToString())
 		End If
 	End Sub
 
@@ -3081,7 +3291,7 @@ Public Class SourceMdlFile49
 			End If
 
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theFlexRules")
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theFlexRules " + Me.theMdlFileData.theFlexRules.Count.ToString())
 		End If
 	End Sub
 
@@ -3117,7 +3327,7 @@ Public Class SourceMdlFile49
 		Next
 
 		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-		Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aFlexRule.theFlexOps")
+		Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aFlexRule.theFlexOps " + aFlexRule.theFlexOps.Count.ToString())
 	End Sub
 
 	Public Sub ReadIkChains()
@@ -3152,7 +3362,7 @@ Public Class SourceMdlFile49
 
 					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "anIkChain.theName")
+						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "anIkChain.theName = " + anIkChain.theName)
 					End If
 				Else
 					anIkChain.theName = ""
@@ -3163,7 +3373,7 @@ Public Class SourceMdlFile49
 			Next
 
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theIkChains")
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theIkChains " + Me.theMdlFileData.theIkChains.Count.ToString())
 		End If
 	End Sub
 
@@ -3198,7 +3408,7 @@ Public Class SourceMdlFile49
 			Next
 
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anIkChain.theLinks")
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anIkChain.theLinks " + anIkChain.theLinks.Count.ToString())
 		End If
 	End Sub
 
@@ -3233,7 +3443,7 @@ Public Class SourceMdlFile49
 			Next
 
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theIkLocks")
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theIkLocks " + Me.theMdlFileData.theIkLocks.Count.ToString())
 		End If
 	End Sub
 
@@ -3272,7 +3482,7 @@ Public Class SourceMdlFile49
 			End If
 
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theMouths")
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theMouths " + Me.theMdlFileData.theMouths.Count.ToString())
 		End If
 	End Sub
 
@@ -3309,7 +3519,7 @@ Public Class SourceMdlFile49
 
 					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aPoseParamDesc.theName")
+						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aPoseParamDesc.theName = " + aPoseParamDesc.theName)
 					End If
 				Else
 					aPoseParamDesc.theName = ""
@@ -3319,7 +3529,7 @@ Public Class SourceMdlFile49
 			Next
 
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.thePoseParamDescs")
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.thePoseParamDescs " + Me.theMdlFileData.thePoseParamDescs.Count.ToString())
 		End If
 	End Sub
 
@@ -3364,7 +3574,7 @@ Public Class SourceMdlFile49
 
 					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aTexture.theName")
+						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aTexture.thePathFileName = " + aTexture.thePathFileName)
 					End If
 				Else
 					aTexture.thePathFileName = ""
@@ -3374,7 +3584,7 @@ Public Class SourceMdlFile49
 			Next
 
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theTextures")
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theTextures " + Me.theMdlFileData.theTextures.Count.ToString())
 
 			Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "theMdlFileData.theTextures alignment")
 		End If
@@ -3412,7 +3622,7 @@ Public Class SourceMdlFile49
 
 					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aTexturePath")
+						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aTexturePath = " + aTexturePath)
 					End If
 				Else
 					aTexturePath = ""
@@ -3423,7 +3633,7 @@ Public Class SourceMdlFile49
 			Next
 
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theTexturePaths")
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theTexturePaths " + Me.theMdlFileData.theTexturePaths.Count.ToString())
 
 			Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "theMdlFileData.theTexturePaths alignment")
 		End If
@@ -3441,13 +3651,13 @@ Public Class SourceMdlFile49
 			Me.theInputFileReader.BaseStream.Seek(Me.theMdlFileData.skinFamilyOffset, SeekOrigin.Begin)
 			fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
-			Me.theMdlFileData.theSkinFamilies = New List(Of List(Of Integer))(Me.theMdlFileData.skinFamilyCount)
+			Me.theMdlFileData.theSkinFamilies = New List(Of List(Of Short))(Me.theMdlFileData.skinFamilyCount)
 			For i As Integer = 0 To Me.theMdlFileData.skinFamilyCount - 1
 				skinFamilyInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
-				Dim aSkinFamily As New List(Of Integer)()
+				Dim aSkinFamily As New List(Of Short)()
 
 				For j As Integer = 0 To Me.theMdlFileData.skinReferenceCount - 1
-					Dim aSkinRef As Integer
+					Dim aSkinRef As Short
 					aSkinRef = Me.theInputFileReader.ReadInt16()
 					aSkinFamily.Add(aSkinRef)
 				Next
@@ -3464,27 +3674,27 @@ Public Class SourceMdlFile49
 				'End If
 			Next
 
-			'TEST: Remove skinRef from each skinFamily, if it is at same skinRef index in all skinFamilies. 
-			'      Start with the last skinRef index (Me.theMdlFileData.skinReferenceCount)
-			'      and step -1 to 0 until skinRefs are different between skinFamilies.
-			Dim index As Integer = -1
-			For currentSkinRef As Integer = Me.theMdlFileData.skinReferenceCount - 1 To 0 Step -1
-				For index = 0 To Me.theMdlFileData.skinFamilyCount - 1
-					Dim aSkinRef As Integer
-					aSkinRef = Me.theMdlFileData.theSkinFamilies(index)(currentSkinRef)
+			''TEST: Remove skinRef from each skinFamily, if it is at same skinRef index in all skinFamilies. 
+			''      Start with the last skinRef index (Me.theMdlFileData.skinReferenceCount)
+			''      and step -1 to 0 until skinRefs are different between skinFamilies.
+			'Dim index As Integer = -1
+			'For currentSkinRef As Integer = Me.theMdlFileData.skinReferenceCount - 1 To 0 Step -1
+			'	For index = 0 To Me.theMdlFileData.skinFamilyCount - 1
+			'		Dim aSkinRef As Integer
+			'		aSkinRef = Me.theMdlFileData.theSkinFamilies(index)(currentSkinRef)
 
-					If aSkinRef <> currentSkinRef Then
-						Exit For
-					End If
-				Next
+			'		If aSkinRef <> currentSkinRef Then
+			'			Exit For
+			'		End If
+			'	Next
 
-				If index = Me.theMdlFileData.skinFamilyCount Then
-					For index = 0 To Me.theMdlFileData.skinFamilyCount - 1
-						Me.theMdlFileData.theSkinFamilies(index).RemoveAt(currentSkinRef)
-					Next
-					Me.theMdlFileData.skinReferenceCount -= 1
-				End If
-			Next
+			'	If index = Me.theMdlFileData.skinFamilyCount Then
+			'		For index = 0 To Me.theMdlFileData.skinFamilyCount - 1
+			'			Me.theMdlFileData.theSkinFamilies(index).RemoveAt(currentSkinRef)
+			'		Next
+			'		Me.theMdlFileData.skinReferenceCount -= 1
+			'	End If
+			'Next
 
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
 			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theSkinFamilies " + Me.theMdlFileData.theSkinFamilies.Count.ToString())
@@ -3523,7 +3733,7 @@ Public Class SourceMdlFile49
 
 					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aModelGroup.theLabel")
+						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aModelGroup.theLabel = " + aModelGroup.theLabel)
 					End If
 				Else
 					aModelGroup.theLabel = ""
@@ -3536,7 +3746,7 @@ Public Class SourceMdlFile49
 
 					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aModelGroup.theFileName")
+						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aModelGroup.theFileName = " + aModelGroup.theFileName)
 					End If
 				Else
 					aModelGroup.theFileName = ""
@@ -3546,7 +3756,7 @@ Public Class SourceMdlFile49
 			Next
 
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theModelGroups")
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theModelGroups " + Me.theMdlFileData.theModelGroups.Count.ToString())
 		End If
 	End Sub
 
@@ -3587,7 +3797,7 @@ Public Class SourceMdlFile49
 
 					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aFlexControllerUi.theName")
+						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aFlexControllerUi.theName = " + aFlexControllerUi.theName)
 					End If
 				Else
 					aFlexControllerUi.theName = ""
@@ -3597,7 +3807,7 @@ Public Class SourceMdlFile49
 			Next
 
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theFlexControllerUis")
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theFlexControllerUis " + Me.theMdlFileData.theFlexControllerUis.Count.ToString())
 		End If
 	End Sub
 
@@ -3616,7 +3826,7 @@ Public Class SourceMdlFile49
 			nullChar = Me.theInputFileReader.ReadChar()
 
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theKeyValuesText")
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theKeyValuesText = " + Me.theMdlFileData.theKeyValuesText)
 
 			Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "theMdlFileData.theKeyValuesText alignment")
 		End If
@@ -3746,7 +3956,7 @@ Public Class SourceMdlFile49
 
 					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aBoneTransform.theName")
+						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aBoneTransform.theName = " + aBoneTransform.theName)
 					End If
 				ElseIf aBoneTransform.theName Is Nothing Then
 					aBoneTransform.theName = ""

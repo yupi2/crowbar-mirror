@@ -16,4 +16,6 @@
 	Public name(63) As Char
 	Public fileSize As Integer
 
+	Public theActualFileSize As Long
+
 End Class

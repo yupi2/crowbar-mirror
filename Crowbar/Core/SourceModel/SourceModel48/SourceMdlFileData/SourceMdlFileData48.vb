@@ -547,11 +547,12 @@ Public Class SourceMdlFileData48
 	Public theIkLocks As List(Of SourceMdlIkLock)
 	Public theKeyValuesText As String
 	Public theLocalNodeNames As List(Of String)
+	Public theLocalNodes As List(Of List(Of Byte))
 	Public theModelGroups As List(Of SourceMdlModelGroup)
 	Public theMouths As List(Of SourceMdlMouth)
 	Public thePoseParamDescs As List(Of SourceMdlPoseParamDesc)
 	Public theSequenceDescs As List(Of SourceMdlSequenceDesc)
-	Public theSkinFamilies As List(Of List(Of Integer))
+	Public theSkinFamilies As List(Of List(Of Short))
 	Public theSurfacePropName As String
 	Public theTexturePaths As List(Of String)
 	Public theTextures As List(Of SourceMdlTexture)

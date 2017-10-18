@@ -406,10 +406,10 @@ Public Class Win32Api
 	Private Const SHGFI_USEFILEATTRIBUTES As Int32 = &H10
 	Private Const SHGFI_ICON As Int32 = &H100
 	Public Const FILE_ATTRIBUTE_DIRECTORY As Integer = &H10
-	Public Const CFSTR_FILEDESCRIPTORW As String = "FileGroupDescriptorW"
-	Public Const CFSTR_PREFERREDDROPEFFECT As String = "Preferred DropEffect"
-	Public Const CFSTR_PERFORMEDDROPEFFECT As String = "Performed DropEffect"
-	Public Const FD_PROGRESSUI As Int32 = &H4000
+	'Public Const CFSTR_FILEDESCRIPTORW As String = "FileGroupDescriptorW"
+	'Public Const CFSTR_PREFERREDDROPEFFECT As String = "Preferred DropEffect"
+	'Public Const CFSTR_PERFORMEDDROPEFFECT As String = "Performed DropEffect"
+	'Public Const FD_PROGRESSUI As Int32 = &H4000
 
 	<StructLayout(LayoutKind.Sequential)>
 	Private Structure SHFILEINFO
@@ -538,6 +538,38 @@ Public Class Win32Api
 		Return True
 	End Function
 
+	Public Shared Function FileAssociationIsAlreadyAssigned(ByVal extension As String, ByVal className As String, ByVal description As String, ByVal exeProgram As String) As Boolean
+		' ensure that there is a leading dot
+		If extension.Substring(0, 1) <> "." Then
+			extension = "." + extension
+		End If
+
+		Dim currentUser As Microsoft.Win32.RegistryKey = Microsoft.Win32.Registry.CurrentUser
+		Dim classesKey As Microsoft.Win32.RegistryKey = Nothing
+		Dim shellOpenCommandKey As Microsoft.Win32.RegistryKey = Nothing
+		Try
+			classesKey = currentUser.OpenSubKey("Software\Classes", True)
+			shellOpenCommandKey = classesKey.OpenSubKey(className + "\Shell\Open\Command")
+			If shellOpenCommandKey IsNot Nothing Then
+				If shellOpenCommandKey.GetValueKind("") = Microsoft.Win32.RegistryValueKind.String Then
+					Dim keyValueString3 As String = CType(shellOpenCommandKey.GetValue(""), String)
+					If keyValueString3 = (exeProgram + " ""%1""") Then
+						Return True
+					End If
+				End If
+			End If
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		Finally
+			If Not classesKey Is Nothing Then classesKey.Close()
+			'If Not key1 Is Nothing Then key1.Close()
+			'If Not key2 Is Nothing Then key2.Close()
+			If Not shellOpenCommandKey Is Nothing Then shellOpenCommandKey.Close()
+		End Try
+
+		Return False
+	End Function
+
 	Public Shared Function DeleteFileAssociation(ByVal extension As String, ByVal className As String, ByVal description As String, ByVal exeProgram As String) As Boolean
 		Const SHCNE_ASSOCCHANGED As Integer = &H8000000
 		Const SHCNF_IDLIST As Integer = 0
@@ -580,5 +612,39 @@ Public Class Win32Api
 
 		Return True
 	End Function
+
+	<DllImport("kernel32.dll", CharSet:=CharSet.Auto, ExactSpelling:=True)> _
+	Public Shared Function GlobalAlloc(uFlags As Integer, dwBytes As Integer) As IntPtr
+	End Function
+
+	<DllImport("kernel32.dll", CharSet:=CharSet.Auto, ExactSpelling:=True)> _
+	Public Shared Function GlobalFree(handle As HandleRef) As IntPtr
+	End Function
+
+	' Clipboard formats used for cut/copy/drag operations
+	Public Const CFSTR_PREFERREDDROPEFFECT As String = "Preferred DropEffect"
+	Public Const CFSTR_PERFORMEDDROPEFFECT As String = "Performed DropEffect"
+	Public Const CFSTR_FILEDESCRIPTORW As String = "FileGroupDescriptorW"
+	Public Const CFSTR_FILECONTENTS As String = "FileContents"
+
+	' File Descriptor Flags
+	Public Const FD_CLSID As Int32 = &H1
+	Public Const FD_SIZEPOINT As Int32 = &H2
+	Public Const FD_ATTRIBUTES As Int32 = &H4
+	Public Const FD_CREATETIME As Int32 = &H8
+	Public Const FD_ACCESSTIME As Int32 = &H10
+	Public Const FD_WRITESTIME As Int32 = &H20
+	Public Const FD_FILESIZE As Int32 = &H40
+	Public Const FD_PROGRESSUI As Int32 = &H4000
+	Public Const FD_LINKUI As Int32 = &H8000
+
+	' Global Memory Flags
+	Public Const GMEM_MOVEABLE As Int32 = &H2
+	Public Const GMEM_ZEROINIT As Int32 = &H40
+	Public Const GHND As Int32 = (GMEM_MOVEABLE Or GMEM_ZEROINIT)
+	Public Const GMEM_DDESHARE As Int32 = &H2000
+
+	' IDataObject constants
+	Public Const DV_E_TYMED As Int32 = &H80040069
 
 End Class

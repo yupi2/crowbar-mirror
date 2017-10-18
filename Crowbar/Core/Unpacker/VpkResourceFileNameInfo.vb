@@ -65,6 +65,16 @@ Public Class VpkResourceFileNameInfo
 		End Set
 	End Property
 
+	Public Property ArchivePathFileName() As String
+		Get
+			Return Me.theArchivePathFileName
+		End Get
+		Set(ByVal value As String)
+			Me.theArchivePathFileName = value
+			NotifyPropertyChanged("ArchivePathFileName")
+		End Set
+	End Property
+
 	Public Property EntryIndex() As Integer
 		Get
 			Return Me.theEntryIndex
@@ -92,6 +102,8 @@ Public Class VpkResourceFileNameInfo
 #End Region
 
 #Region "Data"
+
+	Private theArchivePathFileName As String
 
 	Private thePathFileName As String
 

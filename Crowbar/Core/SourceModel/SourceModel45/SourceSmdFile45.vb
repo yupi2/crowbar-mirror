@@ -15,7 +15,7 @@ Public Class SourceSmdFile45
 		Me.theVvdFileData = vvdFileData
 	End Sub
 
-	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal mdlFileData As SourceMdlFileData45, ByVal phyFileData As SourcePhyFileData45)
+	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal mdlFileData As SourceMdlFileData45, ByVal phyFileData As SourcePhyFileData)
 		Me.theOutputFileStreamWriter = outputFileStream
 		Me.theMdlFileData = mdlFileData
 		Me.thePhyFileData = phyFileData
@@ -1824,7 +1824,7 @@ Public Class SourceSmdFile45
 	Private theOutputFileStreamWriter As StreamWriter
 	'Private theAniFileData As SourceAniFileData45
 	Private theMdlFileData As SourceMdlFileData45
-	Private thePhyFileData As SourcePhyFileData45
+	Private thePhyFileData As SourcePhyFileData
 	'Private theVtxFileData As SourceVtxFileData45
 	Private theVvdFileData As SourceVvdFileData45
 	'Private theModelName As String

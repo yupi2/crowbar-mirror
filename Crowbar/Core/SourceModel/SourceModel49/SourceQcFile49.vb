@@ -6,7 +6,7 @@ Public Class SourceQcFile49
 
 #Region "Creation and Destruction"
 
-	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal outputPathFileName As String, ByVal mdlFileData As SourceMdlFileData49, ByVal vtxFileData As SourceVtxFileData49, ByVal phyFileData As SourcePhyFileData49, ByVal aniFileData As SourceAniFileData49, ByVal modelName As String)
+	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal outputPathFileName As String, ByVal mdlFileData As SourceMdlFileData49, ByVal vtxFileData As SourceVtxFileData49, ByVal phyFileData As SourcePhyFileData, ByVal aniFileData As SourceAniFileData49, ByVal modelName As String)
 		Me.theOutputFileStreamWriter = outputFileStream
 		Me.theMdlFileData = mdlFileData
 		Me.thePhyFileData = phyFileData
@@ -215,7 +215,9 @@ Public Class SourceQcFile49
 
 	Public Sub WriteModelCommand()
 		Dim line As String = ""
-		Dim referenceSmdFileName As String
+		Dim aBodyPart As SourceMdlBodyPart
+		Dim aBodyModel As SourceMdlModel
+		'Dim referenceSmdFileName As String
 		'Dim aBone As SourceMdlBone
 		Dim eyeballNames As List(Of String)
 		Dim bodyPart As SourceMdlBodyPart = Nothing
@@ -237,9 +239,11 @@ Public Class SourceQcFile49
 			line = ""
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
+			aBodyPart = Me.theMdlFileData.theBodyParts(Me.theMdlFileData.theBodyPartIndexThatShouldUseModelCommand)
+			aBodyModel = aBodyPart.theModels(0)
 			'referenceSmdFileName = Me.GetModelPathFileName(Me.theSourceEngineModel.theMdlFileHeader.theBodyParts(0).theModels(0))
 			'referenceSmdFileName = theSourceEngineModel.GetLodSmdFileName(0)
-			referenceSmdFileName = SourceFileNamesModule.GetBodyGroupSmdFileName(Me.theMdlFileData.theBodyPartIndexThatShouldUseModelCommand, 0, 0, Me.theMdlFileData.theModelCommandIsUsed, Me.theModelName, bodyPart.theModels(0).name, Me.theMdlFileData.theBodyParts.Count, bodyPart.theModels.Count)
+			aBodyModel.theSmdFileNames(0) = SourceFileNamesModule.CreateBodyGroupSmdFileName(aBodyModel.theSmdFileNames(0), Me.theMdlFileData.theBodyPartIndexThatShouldUseModelCommand, 0, 0, Me.theModelName, bodyPart.theModels(0).name)
 
 			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
 				line = "$Model "
@@ -249,7 +253,7 @@ Public Class SourceQcFile49
 			line += """"
 			line += bodyPart.theName
 			line += """ """
-			line += referenceSmdFileName
+			line += aBodyModel.theSmdFileNames(0)
 			line += """"
 
 			line += " {"
@@ -1118,7 +1122,8 @@ Public Class SourceQcFile49
 			'======
 			Dim aBodyPart As SourceVtxBodyPart
 			Dim aVtxModel As SourceVtxModel
-			Dim aModel As SourceMdlModel
+			Dim aBodyModel As SourceMdlModel
+			Dim lodIndex As Integer
 			Dim aLodQcInfo As LodQcInfo
 			Dim aLodQcInfoList As List(Of LodQcInfo)
 			Dim aLodList As SortedList(Of Single, List(Of LodQcInfo))
@@ -1133,16 +1138,16 @@ Public Class SourceQcFile49
 						aVtxModel = aBodyPart.theVtxModels(modelIndex)
 
 						If aVtxModel.theVtxModelLods IsNot Nothing Then
-							aModel = Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex)
+							aBodyModel = Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex)
 							'NOTE: This check is for skipping "blank" bodygroup. Example: the third boygroup of L4D2's "infected/common_female_tshirt_skirt.mdl".
-							If aModel.name(0) = ChrW(0) AndAlso aVtxModel.theVtxModelLods(0).theVtxMeshes Is Nothing Then
+							If aBodyModel.name(0) = ChrW(0) AndAlso aVtxModel.theVtxModelLods(0).theVtxMeshes Is Nothing Then
 								Continue For
 							End If
 
 							'NOTE: Start loop at 1 to skip first LOD, which isn't needed for the $lod command.
-							For vtxModelLodIndex As Integer = 1 To Me.theVtxFileData.lodCount - 1
+							For lodIndex = 1 To Me.theVtxFileData.lodCount - 1
 								'TODO: Why would this count be different than the file header count?
-								If vtxModelLodIndex >= aVtxModel.theVtxModelLods.Count Then
+								If lodIndex >= aVtxModel.theVtxModelLods.Count Then
 									Exit For
 								End If
 
@@ -1156,7 +1161,7 @@ Public Class SourceQcFile49
 								'    End If
 								'End If
 
-								switchPoint = aVtxModel.theVtxModelLods(vtxModelLodIndex).switchPoint
+								switchPoint = aVtxModel.theVtxModelLods(lodIndex).switchPoint
 								If Not aLodList.ContainsKey(switchPoint) Then
 									aLodQcInfoList = New List(Of LodQcInfo)()
 									aLodList.Add(switchPoint, aLodQcInfoList)
@@ -1164,9 +1169,11 @@ Public Class SourceQcFile49
 									aLodQcInfoList = aLodList(switchPoint)
 								End If
 
+								aBodyModel.theSmdFileNames(0) = SourceFileNamesModule.CreateBodyGroupSmdFileName(aBodyModel.theSmdFileNames(0), bodyPartIndex, modelIndex, 0, Me.theModelName, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).name)
+								aBodyModel.theSmdFileNames(lodIndex) = SourceFileNamesModule.CreateBodyGroupSmdFileName(aBodyModel.theSmdFileNames(lodIndex), bodyPartIndex, modelIndex, lodIndex, Me.theModelName, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).name)
 								aLodQcInfo = New LodQcInfo()
-								aLodQcInfo.referenceFileName = SourceFileNamesModule.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, 0, Me.theMdlFileData.theModelCommandIsUsed, Me.theModelName, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).name, Me.theMdlFileData.theBodyParts.Count, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels.Count)
-								aLodQcInfo.lodFileName = SourceFileNamesModule.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, vtxModelLodIndex, Me.theMdlFileData.theModelCommandIsUsed, Me.theModelName, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).name, Me.theMdlFileData.theBodyParts.Count, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels.Count)
+								aLodQcInfo.referenceFileName = aBodyModel.theSmdFileNames(0)
+								aLodQcInfo.lodFileName = aBodyModel.theSmdFileNames(lodIndex)
 								aLodQcInfoList.Add(aLodQcInfo)
 							Next
 						End If
@@ -1180,7 +1187,6 @@ Public Class SourceQcFile49
 			Dim lodQcInfoListOfShadowLod As List(Of LodQcInfo)
 			lodQcInfoListOfShadowLod = Nothing
 
-			Dim lodIndex As Integer
 			lodIndex = 0
 			For lodListIndex As Integer = 0 To aLodList.Count - 1
 				switchPoint = aLodList.Keys(lodListIndex)
@@ -1466,56 +1472,54 @@ Public Class SourceQcFile49
 
 		textureFileNames = Me.theMdlFileData.theModifiedTextureFileNames
 
-		'$texturegroup skinfamilies
-		'{
-		'	{"producer_head.vmt"
-		' "producer_body.vmt"
-		' "producer_head_it.vmt"
-		' "producer_body_it.vmt"
-		'}
-		' 	{"producer_head_it.vmt"
-		' "producer_body_it.vmt"
-		' "producer_head_it.vmt"
-		' "producer_body_it.vmt"
-		'}
-		' }
 		If Me.theMdlFileData.theSkinFamilies IsNot Nothing AndAlso Me.theMdlFileData.theSkinFamilies.Count > 0 AndAlso textureFileNames IsNot Nothing AndAlso textureFileNames.Count > 0 AndAlso Me.theMdlFileData.skinReferenceCount > 0 Then
-			line = ""
-			Me.theOutputFileStreamWriter.WriteLine(line)
-
-			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
-				line = "$TextureGroup ""skinfamilies"""
+			Dim processedSkinFamilies As List(Of List(Of Short))
+			If TheApp.Settings.DecompileQcOnlyChangedMaterialsInTextureGroupLinesIsChecked Then
+				processedSkinFamilies = Me.GetSkinFamiliesOfChangedMaterials(Me.theMdlFileData.theSkinFamilies)
 			Else
-				line = "$texturegroup ""skinfamilies"""
+				processedSkinFamilies = Me.theMdlFileData.theSkinFamilies
 			End If
-			Me.theOutputFileStreamWriter.WriteLine(line)
-			line = "{"
-			Me.theOutputFileStreamWriter.WriteLine(line)
 
-			Dim skinFamilies As New List(Of List(Of String))(Me.theMdlFileData.theSkinFamilies.Count)
-			For i As Integer = 0 To Me.theMdlFileData.theSkinFamilies.Count - 1
-				Dim aSkinFamily As List(Of Integer)
-				aSkinFamily = Me.theMdlFileData.theSkinFamilies(i)
+			Dim skinFamiliesOfTextureFileNames As List(Of List(Of String))
+			skinFamiliesOfTextureFileNames = New List(Of List(Of String))(processedSkinFamilies.Count)
+			Dim skinReferenceCount As Integer
+			skinReferenceCount = processedSkinFamilies(0).Count
+			For i As Integer = 0 To processedSkinFamilies.Count - 1
+				Dim aSkinFamily As List(Of Short)
+				aSkinFamily = processedSkinFamilies(i)
 
-				Dim textureFileNamesForSkinFamily As New List(Of String)(Me.theMdlFileData.skinReferenceCount)
-				For j As Integer = 0 To Me.theMdlFileData.skinReferenceCount - 1
+				Dim textureFileNamesForSkinFamily As New List(Of String)(skinReferenceCount)
+				For j As Integer = 0 To skinReferenceCount - 1
 					Dim aTextureFileName As String
 					aTextureFileName = textureFileNames(aSkinFamily(j))
 
 					textureFileNamesForSkinFamily.Add(aTextureFileName)
 				Next
 
-				skinFamilies.Add(textureFileNamesForSkinFamily)
+				skinFamiliesOfTextureFileNames.Add(textureFileNamesForSkinFamily)
 			Next
 
-			Dim skinFamilyLines As List(Of String)
-			skinFamilyLines = Me.GetTextureGroupSkinFamilyLines(skinFamilies)
-			For skinFamilyLineIndex As Integer = 0 To skinFamilyLines.Count - 1
-				Me.theOutputFileStreamWriter.WriteLine(skinFamilyLines(skinFamilyLineIndex))
-			Next
+			If (Not TheApp.Settings.DecompileQcOnlyChangedMaterialsInTextureGroupLinesIsChecked) OrElse (skinFamiliesOfTextureFileNames.Count > 1) Then
+				Me.theOutputFileStreamWriter.WriteLine()
 
-			line = "}"
-			Me.theOutputFileStreamWriter.WriteLine(line)
+				If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+					line = "$TextureGroup ""skinfamilies"""
+				Else
+					line = "$texturegroup ""skinfamilies"""
+				End If
+				Me.theOutputFileStreamWriter.WriteLine(line)
+				line = "{"
+				Me.theOutputFileStreamWriter.WriteLine(line)
+
+				Dim skinFamilyLines As List(Of String)
+				skinFamilyLines = Me.GetTextureGroupSkinFamilyLines(skinFamiliesOfTextureFileNames)
+				For skinFamilyLineIndex As Integer = 0 To skinFamilyLines.Count - 1
+					Me.theOutputFileStreamWriter.WriteLine(skinFamilyLines(skinFamilyLineIndex))
+				Next
+
+				line = "}"
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			End If
 		End If
 	End Sub
 
@@ -2184,10 +2188,11 @@ Public Class SourceQcFile49
 			Else
 				line = "$animation"
 			End If
+			anAnimationDesc.theSmdRelativePathFileName = SourceFileNamesModule.CreateAnimationSmdRelativePathFileName(anAnimationDesc.theSmdRelativePathFileName, Me.theModelName, anAnimationDesc.theName)
 			line += " """
 			line += anAnimationDesc.theName
 			line += """ """
-			line += SourceFileNamesModule.GetAnimationSmdRelativePathFileName(Me.theModelName, anAnimationDesc.theName)
+			line += anAnimationDesc.theSmdRelativePathFileName
 			line += """"
 			'NOTE: Opening brace must be on same line as the command.
 			line += " {"
@@ -2300,7 +2305,8 @@ Public Class SourceQcFile49
 			If name(0) = "@" Then
 				'NOTE: There should only be one implied anim desc.
 				impliedAnimDesc = anAnimationDesc
-				line += SourceFileNamesModule.GetAnimationSmdRelativePathFileName(Me.theModelName, anAnimationDesc.theName)
+				anAnimationDesc.theSmdRelativePathFileName = SourceFileNamesModule.CreateAnimationSmdRelativePathFileName(anAnimationDesc.theSmdRelativePathFileName, Me.theModelName, anAnimationDesc.theName)
+				line += anAnimationDesc.theSmdRelativePathFileName
 			Else
 				line += name
 			End If
@@ -2564,10 +2570,134 @@ Public Class SourceQcFile49
 					line += " "
 					line += "unlatch"
 				End If
+
+				'	while (TokenAvailable())
+				'	{
+				'		GetToken( false );
+				'		if (stricmp( token, "height" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->height = verify_atof( token );
+				'		}
+				'		else if (stricmp( token, "target" ) == 0)
+				'		{
+				'			// slot
+				'			GetToken( false );
+				'			pRule->slot = verify_atoi( token );
+				'		}
+				'		else if (stricmp( token, "range" ) == 0)
+				'		{
+				'			// ramp
+				'			GetToken( false );
+				'			if (token[0] == '.')
+				'				pRule->start = -1;
+				'			else
+				'				pRule->start = verify_atoi( token );
+				'
+				'			GetToken( false );
+				'			if (token[0] == '.')
+				'				pRule->peak = -1;
+				'			else
+				'				pRule->peak = verify_atoi( token );
+				'	
+				'			GetToken( false );
+				'			if (token[0] == '.')
+				'				pRule->tail = -1;
+				'			else
+				'				pRule->tail = verify_atoi( token );
+				'
+				'			GetToken( false );
+				'			if (token[0] == '.')
+				'				pRule->end = -1;
+				'			else
+				'				pRule->end = verify_atoi( token );
+				'		}
+				'		else if (stricmp( token, "floor" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->floor = verify_atof( token );
+				'		}
+				'		else if (stricmp( token, "pad" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->radius = verify_atof( token ) / 2.0f;
+				'		}
+				'		else if (stricmp( token, "radius" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->radius = verify_atof( token );
+				'		}
+				'		else if (stricmp( token, "contact" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->contact = verify_atoi( token );
+				'		}
+				'		else if (stricmp( token, "usesequence" ) == 0)
+				'		{
+				'			pRule->usesequence = true;
+				'			pRule->usesource = false;
+				'		}
+				'		else if (stricmp( token, "usesource" ) == 0)
+				'		{
+				'			pRule->usesequence = false;
+				'			pRule->usesource = true;
+				'		}
+				'		else if (stricmp( token, "fakeorigin" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->pos.x = verify_atof( token );
+				'			GetToken( false );
+				'			pRule->pos.y = verify_atof( token );
+				'			GetToken( false );
+				'			pRule->pos.z = verify_atof( token );
+				'
+				'			pRule->bone = -1;
+				'		}
+				'		else if (stricmp( token, "fakerotate" ) == 0)
+				'		{
+				'			QAngle ang;
+				'
+				'			GetToken( false );
+				'			ang.x = verify_atof( token );
+				'			GetToken( false );
+				'			ang.y = verify_atof( token );
+				'			GetToken( false );
+				'			ang.z = verify_atof( token );
+				'
+				'			AngleQuaternion( ang, pRule->q );
+				'
+				'			pRule->bone = -1;
+				'		}
+				'		else if (stricmp( token, "bone" ) == 0)
+				'		{
+				'			strcpy( pRule->bonename, token );
+				'		}
+				'		else
+				'		{
+				'			UnGetToken();
+				'			return;
+				'		}
+				'	}
+				'TODO: Other sub-options for ikrule option.
+				'	height
+				'	target
+				'	range
+				'	floor
+				'	pad
+				'	radius
+				'	contact
+				'	usesequence   [converted into mstudiocompressedikerror_t?]
+				'	usesource     [converted into mstudiocompressedikerror_t?]
+				'	fakeorigin
+				'	fakerotate
+				'	bone
+				'If anIkRule.type = SourceMdlIkRule.IK_UNLATCH Then
+				'	line += " "
+				'	line += "usesource"
+				'End If
+
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			Next
-
-			'TODO: Other sub-options for ikrule option.
 		End If
 
 		'$sequence taunt01 "taunt01.dmx" fps 30 localhierarchy "weapon_bone" "bip_hand_L" range 0 5 80 90 {
@@ -3156,7 +3286,8 @@ Public Class SourceQcFile49
 			End If
 			'line += """phymodel.smd"""
 			line += """"
-			line += SourceFileNamesModule.GetPhysicsSmdFileName(Me.theModelName)
+			Me.thePhyFileData.thePhysicsMeshSmdFileName = SourceFileNamesModule.CreatePhysicsSmdFileName(Me.thePhyFileData.thePhysicsMeshSmdFileName, Me.theModelName)
+			line += Me.thePhyFileData.thePhysicsMeshSmdFileName
 			line += """"
 			Me.theOutputFileStreamWriter.WriteLine(line)
 			line = "{"
@@ -4035,7 +4166,7 @@ Public Class SourceQcFile49
 		Dim line As String = ""
 		Dim aBodyPart As SourceMdlBodyPart
 		Dim aVtxBodyPart As SourceVtxBodyPart
-		Dim aModel As SourceMdlModel
+		Dim aBodyModel As SourceMdlModel
 		Dim aVtxModel As SourceVtxModel
 
 		'$bodygroup "belt"
@@ -4082,17 +4213,18 @@ Public Class SourceQcFile49
 
 				If aBodyPart.theModels IsNot Nothing AndAlso aBodyPart.theModels.Count > 0 Then
 					For modelIndex As Integer = 0 To aBodyPart.theModels.Count - 1
-						aModel = aBodyPart.theModels(modelIndex)
+						aBodyModel = aBodyPart.theModels(modelIndex)
 						aVtxModel = aVtxBodyPart.theVtxModels(modelIndex)
 
 						line = vbTab
 						'If aModel.name(0) = ChrW(0) Then
-						If aModel.name(0) = ChrW(0) AndAlso aVtxModel.theVtxModelLods(0).theVtxMeshes Is Nothing Then
+						If aBodyModel.name(0) = ChrW(0) AndAlso aVtxModel.theVtxModelLods(0).theVtxMeshes Is Nothing Then
 							line += "blank"
 						Else
+							aBodyModel.theSmdFileNames(0) = SourceFileNamesModule.CreateBodyGroupSmdFileName(aBodyModel.theSmdFileNames(0), bodyPartIndex, modelIndex, 0, Me.theModelName, aBodyModel.name)
 							line += "studio "
 							line += """"
-							line += SourceFileNamesModule.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, 0, Me.theMdlFileData.theModelCommandIsUsed, Me.theModelName, aModel.name, Me.theMdlFileData.theBodyParts.Count, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels.Count)
+							line += aBodyModel.theSmdFileNames(0)
 							line += """"
 						End If
 						Me.theOutputFileStreamWriter.WriteLine(line)
@@ -4412,7 +4544,7 @@ Public Class SourceQcFile49
 	Private theOutputFileStreamWriter As StreamWriter
 	Private theAniFileData As SourceAniFileData49
 	Private theMdlFileData As SourceMdlFileData49
-	Private thePhyFileData As SourcePhyFileData49
+	Private thePhyFileData As SourcePhyFileData
 	Private theVtxFileData As SourceVtxFileData49
 	Private theModelName As String
 

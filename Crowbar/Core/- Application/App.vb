@@ -139,7 +139,7 @@ Public Class App
 		End Get
 	End Property
 
-	Public Property SmdFilesWritten() As List(Of String)
+	Public Property SmdFileNames() As List(Of String)
 		Get
 			Return Me.theSmdFilesWritten
 		End Get

@@ -15,7 +15,7 @@ Public Class SourceSmdFile44
 		Me.theVvdFileData = vvdFileData
 	End Sub
 
-	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal mdlFileData As SourceMdlFileData44, ByVal phyFileData As SourcePhyFileData44)
+	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal mdlFileData As SourceMdlFileData44, ByVal phyFileData As SourcePhyFileData)
 		Me.theOutputFileStreamWriter = outputFileStream
 		Me.theMdlFileData = mdlFileData
 		Me.thePhyFileData = phyFileData
@@ -520,6 +520,8 @@ Public Class SourceSmdFile44
 					'NOTE: Only adjust position if bone is a root bone. Do not know why.
 
 					If aFrameLine.position.debug_text.StartsWith("raw") OrElse aFrameLine.position.debug_text = "anim+bone" Then
+						'TEST: This works for CSS "weapons\v_pist_p228".
+						'If aFrameLine.position.debug_text.StartsWith("raw") OrElse aFrameLine.position.debug_text = "anim+bone" OrElse aFrameLine.rotation.debug_text = "desc_bone" Then
 						'TEST: Try this because of "sequence_blend from Game Zombie" model.
 						position.x = aFrameLine.position.y
 						position.y = -aFrameLine.position.x
@@ -533,6 +535,8 @@ Public Class SourceSmdFile44
 					rotation.x = aFrameLine.rotation.x
 					rotation.y = aFrameLine.rotation.y
 					If aFrameLine.rotation.debug_text.StartsWith("raw") OrElse aFrameLine.rotation.debug_text = "anim+bone" Then
+						'TEST: This works for CSS "weapons\v_pist_p228".
+						'If aFrameLine.rotation.debug_text.StartsWith("raw") OrElse aFrameLine.rotation.debug_text = "anim+bone" OrElse aFrameLine.rotation.debug_text = "desc_bone" Then
 						'TEST: Try this because of "sequence_blend from Game Zombie" model.
 						rotation.z = aFrameLine.rotation.z + MathModule.DegreesToRadians(-90)
 					Else
@@ -1807,7 +1811,7 @@ Public Class SourceSmdFile44
 	Private theOutputFileStreamWriter As StreamWriter
 	'Private theAniFileData As SourceAniFileData44
 	Private theMdlFileData As SourceMdlFileData44
-	Private thePhyFileData As SourcePhyFileData44
+	Private thePhyFileData As SourcePhyFileData
 	'Private theVtxFileData As SourceVtxFileData44
 	Private theVvdFileData As SourceVvdFileData44
 	'Private theModelName As String

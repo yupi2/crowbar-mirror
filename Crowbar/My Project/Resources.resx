@@ -153,15 +153,15 @@
 	Splinks
 	Stiffy360
 	Stay Puft
-	Vincentor
-</value>
+	The303
+	Vincentor</value>
   </data>
   <data name="About_ProductDescription" xml:space="preserve">
     <value>GoldSource and Source Engine Model Toolset:
-	Decompiler of Valve's MDL and related files.
-	Compiler interface to Valve's StudioMDL.exe tool.
-	Model viewer interface to Valve's Half-Life Model Viewer tool.
-</value>
+	* Decompiler of Valve's MDL and related files.
+	* Compiler interface to Valve's StudioMDL.exe tool.
+	* Model viewer interface to Valve's Half-Life Model Viewer tool.
+	* Unpacker of Valve's VPK files.</value>
   </data>
   <data name="Decompile_DebugAniFileNameSuffix" xml:space="preserve">
     <value>decompile-ANI.txt</value>
@@ -187,10 +187,10 @@
   <data name="Decompile_LogFileNameSuffix" xml:space="preserve">
     <value>decompile-log.txt</value>
   </data>
-  <data name="AboutAuthorLink" xml:space="preserve">
+  <data name="About_AuthorLink" xml:space="preserve">
     <value>http://steamcommunity.com/id/zeqmacaw</value>
   </data>
-  <data name="AboutProductLink" xml:space="preserve">
+  <data name="About_ProductLink" xml:space="preserve">
     <value>http://steamcommunity.com/groups/CrowbarTool</value>
   </data>
   <data name="ErrorMessageSDKMissingCause" xml:space="preserve">
@@ -207,5 +207,23 @@
   </data>
   <data name="EnterArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\EnterArrow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Find" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\Find.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Refresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\Refresh.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="About_GotoSteamGroupText" xml:space="preserve">
+    <value>Goto Steam Group</value>
+  </data>
+  <data name="About_GotoSteamProfileText" xml:space="preserve">
+    <value>Goto Steam Profile</value>
+  </data>
+  <data name="CrowbarGuideBanner" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\CrowbarGuideBanner.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Help_CrowbarGuideLink" xml:space="preserve">
+    <value>http://steamcommunity.com/sharedfiles/filedetails/?id=791755353</value>
   </data>
 </root>

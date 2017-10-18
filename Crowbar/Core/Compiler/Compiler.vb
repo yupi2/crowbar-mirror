@@ -97,11 +97,35 @@ Public Class Compiler
 		Return gameModelsPath
 	End Function
 
+	'Private Function GetOutputPath() As String
+	'	Dim outputPath As String
+
+	'	If TheApp.Settings.CompileOutputFolderIsChecked Then
+	'		If TheApp.Settings.CompileOutputFolderOption = OutputFolderOptions.SubfolderName Then
+	'			If File.Exists(TheApp.Settings.CompileQcPathFileName) Then
+	'				outputPath = Path.Combine(FileManager.GetPath(TheApp.Settings.CompileQcPathFileName), TheApp.Settings.CompileOutputSubfolderName)
+	'			ElseIf Directory.Exists(TheApp.Settings.CompileQcPathFileName) Then
+	'				outputPath = Path.Combine(TheApp.Settings.CompileQcPathFileName, TheApp.Settings.CompileOutputSubfolderName)
+	'			Else
+	'				outputPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+	'			End If
+	'		Else
+	'			outputPath = TheApp.Settings.CompileOutputFullPath
+	'		End If
+	'	Else
+	'		outputPath = Me.GetGameModelsPath()
+	'	End If
+
+	'	'This will change a relative path to an absolute path.
+	'	outputPath = Path.GetFullPath(outputPath)
+	'	Return outputPath
+	'End Function
+
 	Private Function GetOutputPath() As String
 		Dim outputPath As String
 
-		If TheApp.Settings.CompileOutputFolderIsChecked Then
-			If TheApp.Settings.CompileOutputFolderOption = OutputFolderOptions.SubfolderName Then
+		If TheApp.Settings.CompileOutputFolderOption <> CompileOutputPathOptions.GameModelsFolder Then
+			If TheApp.Settings.CompileOutputFolderOption = CompileOutputPathOptions.Subfolder Then
 				If File.Exists(TheApp.Settings.CompileQcPathFileName) Then
 					outputPath = Path.Combine(FileManager.GetPath(TheApp.Settings.CompileQcPathFileName), TheApp.Settings.CompileOutputSubfolderName)
 				ElseIf Directory.Exists(TheApp.Settings.CompileQcPathFileName) Then
@@ -161,7 +185,7 @@ Public Class Compiler
 		If String.IsNullOrEmpty(TheApp.Settings.CompileQcPathFileName) Then
 			inputsAreValid = False
 			Me.WriteErrorMessage("QC file or folder has not been selected.")
-		ElseIf TheApp.Settings.CompileMode = ActionMode.File AndAlso Not File.Exists(TheApp.Settings.CompileQcPathFileName) Then
+		ElseIf TheApp.Settings.CompileMode = InputOptions.File AndAlso Not File.Exists(TheApp.Settings.CompileQcPathFileName) Then
 			inputsAreValid = False
 			Me.WriteErrorMessage("The QC file, """ + TheApp.Settings.CompileQcPathFileName + """, does not exist.")
 		End If
@@ -175,7 +199,8 @@ Public Class Compiler
 				End If
 			End If
 		End If
-		If TheApp.Settings.CompileOutputFolderIsChecked Then
+		'If TheApp.Settings.CompileOutputFolderIsChecked Then
+		If TheApp.Settings.CompileOutputFolderOption <> CompileOutputPathOptions.GameModelsFolder Then
 			If Not FileManager.OutputPathIsUsable(Me.theOutputPath) Then
 				inputsAreValid = False
 				Me.WriteErrorMessage("The Output Folder, """ + Me.theOutputPath + """ could not be created.")
@@ -190,9 +215,14 @@ Public Class Compiler
 
 		compileResultInfo.theStatus = status
 
+		Dim gameSetup As GameSetup
+		gameSetup = TheApp.Settings.GameSetups(TheApp.Settings.CompileGameSetupSelectedIndex)
+
 		If Me.theCompiledMdlFiles.Count > 0 Then
 			compileResultInfo.theCompiledRelativePathFileNames = Me.theCompiledMdlFiles
-		ElseIf TheApp.Settings.CompileLogFileIsChecked Then
+		ElseIf gameSetup.GameEngine = GameEngine.GoldSource AndAlso TheApp.Settings.CompileGoldSourceLogFileIsChecked Then
+			compileResultInfo.theCompiledRelativePathFileNames = Me.theCompiledLogFiles
+		ElseIf gameSetup.GameEngine = GameEngine.Source AndAlso TheApp.Settings.CompileSourceLogFileIsChecked Then
 			compileResultInfo.theCompiledRelativePathFileNames = Me.theCompiledLogFiles
 		End If
 
@@ -230,21 +260,38 @@ Public Class Compiler
 		progressDescriptionText = "Compiling with " + TheApp.GetProductNameAndVersion() + ": "
 
 		Try
-			If TheApp.Settings.CompileMode = ActionMode.FolderRecursion Then
+			If TheApp.Settings.CompileMode = InputOptions.FolderRecursion Then
 				progressDescriptionText += """" + Me.theInputQcPath + """ (folder + subfolders)"
 				Me.UpdateProgressStart(progressDescriptionText + " ...")
+
+				status = Me.CreateLogTextFile("")
+				'If status = StatusMessage.Error Then
+				'	Return status
+				'End If
+
 				Me.CompileModelsInFolderRecursively(Me.theInputQcPath)
-			ElseIf TheApp.Settings.CompileMode = ActionMode.Folder Then
+			ElseIf TheApp.Settings.CompileMode = InputOptions.Folder Then
 				progressDescriptionText += """" + Me.theInputQcPath + """ (folder)"
 				Me.UpdateProgressStart(progressDescriptionText + " ...")
+
+				status = Me.CreateLogTextFile("")
+				'If status = StatusMessage.Error Then
+				'	Return status
+				'End If
+
 				Me.CompileModelsInFolder(Me.theInputQcPath)
 			Else
 				progressDescriptionText += """" + qcPathFileName + """"
 				Me.UpdateProgressStart(progressDescriptionText + " ...")
-				Me.CompileOneModel(qcPathFileName)
+				status = Me.CompileOneModel(qcPathFileName)
 			End If
 		Catch ex As Exception
 			status = StatusMessage.Error
+		Finally
+			If Me.theLogFileStream IsNot Nothing Then
+				Me.theLogFileStream.Flush()
+				Me.theLogFileStream.Close()
+			End If
 		End Try
 
 		Me.UpdateProgressStop("... " + progressDescriptionText + " finished.")
@@ -285,16 +332,18 @@ Public Class Compiler
 	'SET StudiomdlParams=-game "%Left4Dead2PathSubFolder%" -nop4 -verbose -nox360
 	'SET FileName=%ModelName%_%TargetApp%
 	'"%StudiomdlPathName%" %StudiomdlParams% .\%FileName%.qc > .\%FileName%.log
-	Private Sub CompileOneModel(ByVal qcPathFileName As String)
+	Private Function CompileOneModel(ByVal qcPathFileName As String) As AppEnums.StatusMessage
+		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+
 		Try
-			Dim qcPathName As String
+			Dim qcPath As String
 			Dim qcFileName As String
-			Dim qcRelativePathName As String
+			Dim qcRelativePath As String
 			Dim qcRelativePathFileName As String
-			qcPathName = FileManager.GetPath(qcPathFileName)
+			qcPath = FileManager.GetPath(qcPathFileName)
 			qcFileName = Path.GetFileName(qcPathFileName)
-			qcRelativePathName = FileManager.GetRelativePathFileName(Me.theInputQcPath, FileManager.GetPath(qcPathFileName))
-			qcRelativePathFileName = Path.Combine(qcRelativePathName, qcFileName)
+			qcRelativePath = FileManager.GetRelativePathFileName(Me.theInputQcPath, FileManager.GetPath(qcPathFileName))
+			qcRelativePathFileName = Path.Combine(qcRelativePath, qcFileName)
 
 			'Dim gameSetup As GameSetup
 			'Dim gamePath As String
@@ -305,13 +354,41 @@ Public Class Compiler
 			Dim gameModelsPath As String
 			gameModelsPath = Me.GetGameModelsPath()
 
+			Dim gameSetup As GameSetup
+			gameSetup = TheApp.Settings.GameSetups(TheApp.Settings.CompileGameSetupSelectedIndex)
+
 			Dim qcFile As SourceQcFile
-			Dim modelRelativePathFileName As String
+			Dim qcModelName As String
+			Dim qcModelTopFolderPath As String
 			Dim compiledMdlPathFileName As String
 			qcFile = New SourceQcFile()
-			modelRelativePathFileName = qcFile.GetMdlRelativePathFileName(qcPathFileName)
-			compiledMdlPathFileName = Path.Combine(gameModelsPath, modelRelativePathFileName)
-			compiledMdlPathFileName = Path.GetFullPath(compiledMdlPathFileName)
+			qcModelName = qcFile.GetQcModelName(qcPathFileName)
+			compiledMdlPathFileName = Path.GetFullPath(qcModelName)
+			qcModelTopFolderPath = FileManager.GetTopFolderPath(qcModelName)
+			If compiledMdlPathFileName <> qcModelName Then
+				If gameSetup.GameEngine = GameEngine.GoldSource Then
+					'	- The compiler does not create folders, so Crowbar needs to create the relative or absolute path found in $modelname, 
+					'		starting in the "current folder" [SetCurrentDirectory()].
+					'		* For example, with $modelname "C:\valve/models/barney.mdl", need to create "C:\valve\models" path.
+					'		* For example, with $modelname "valve/models/barney.mdl", need to create "[current folder]\valve\models" path.
+					compiledMdlPathFileName = Path.Combine(qcPath, qcModelName)
+					If qcModelTopFolderPath <> "" Then
+						qcModelTopFolderPath = Path.Combine(qcPath, qcModelTopFolderPath)
+					End If
+				Else
+					compiledMdlPathFileName = Path.Combine(gameModelsPath, qcModelName)
+					If qcModelTopFolderPath <> "" Then
+						qcModelTopFolderPath = Path.Combine(gameModelsPath, qcModelTopFolderPath)
+					End If
+				End If
+				compiledMdlPathFileName = Path.GetFullPath(compiledMdlPathFileName)
+				If qcModelTopFolderPath <> "" Then
+					qcModelTopFolderPath = Path.GetFullPath(qcModelTopFolderPath)
+				End If
+			End If
+			'If gameSetup.GameEngine = GameEngine.GoldSource Then
+			FileManager.CreatePath(FileManager.GetPath(compiledMdlPathFileName))
+			'End If
 
 			'Me.theModelOutputPath = Path.Combine(Me.theOutputPath, qcRelativePathName)
 			'Me.theModelOutputPath = Path.GetFullPath(Me.theModelOutputPath)
@@ -324,7 +401,13 @@ Public Class Compiler
 
 			'FileManager.CreatePath(Me.theModelOutputPath)
 
-			Me.CreateLogTextFile(qcPathFileName)
+			'Me.CreateLogTextFile(qcPathFileName)
+			If TheApp.Settings.CompileMode = InputOptions.File Then
+				status = Me.CreateLogTextFile(qcPathFileName)
+				'If status = StatusMessage.Error Then
+				'	Return status
+				'End If
+			End If
 
 			Me.UpdateProgress()
 			Me.UpdateProgress(1, "Compiling """ + qcRelativePathFileName + """ ...")
@@ -333,12 +416,13 @@ Public Class Compiler
 				Me.OpenDefineBonesFile()
 			End If
 
-			Me.RunStudioMdlApp(qcPathName, qcFileName)
+			Me.UpdateProgress(2, "Output from compiler """ + Me.GetGameCompilerPathFileName() + """: ")
+			Me.RunStudioMdlApp(qcPath, qcFileName)
 
 			If Not Me.theProcessHasOutputData Then
 				Me.UpdateProgress(2, "ERROR: The compiler did not return any status messages.")
-				Me.UpdateProgress(2, "CAUSE: The studiomdl.exe is not the correct one for the selected game.")
-				Me.UpdateProgress(2, "SOLUTION: Verify integrity of game files via Steam so that the correct studiomdl.exe file is installed.")
+				Me.UpdateProgress(2, "CAUSE: The compiler is not the correct one for the selected game.")
+				Me.UpdateProgress(2, "SOLUTION: Verify integrity of game files via Steam so that the correct compiler is installed.")
 			ElseIf TheApp.Settings.CompileOptionDefineBonesIsChecked Then
 				If Me.theDefineBonesFileStream IsNot Nothing Then
 					If TheApp.Settings.CompileOptionDefineBonesModifyQcFileIsChecked Then
@@ -349,20 +433,31 @@ Public Class Compiler
 				End If
 			Else
 				If File.Exists(compiledMdlPathFileName) Then
-					Me.ProcessCompiledModel(qcRelativePathName, modelRelativePathFileName, compiledMdlPathFileName)
+					Me.ProcessCompiledModel(compiledMdlPathFileName, qcModelName)
+				End If
+			End If
+
+			'TODO: Clean up any created folders.
+			If qcModelTopFolderPath <> "" Then
+				Dim fullPathDeleted As String
+				fullPathDeleted = FileManager.DeleteEmptySubpath(qcModelTopFolderPath)
+				If fullPathDeleted <> "" Then
+					Me.UpdateProgress(2, "Crowbar: Deleted empty temporary compile folder """ + fullPathDeleted + """")
 				End If
 			End If
 
 			Me.UpdateProgress(1, "... Compiling """ + qcRelativePathFileName + """ finished. Check above for any errors.")
 		Catch ex As Exception
 			Dim debug As Integer = 4242
-		Finally
-			If Me.theLogFileStream IsNot Nothing Then
-				Me.theLogFileStream.Flush()
-				Me.theLogFileStream.Close()
-			End If
+			'Finally
+			'	If Me.theLogFileStream IsNot Nothing Then
+			'		Me.theLogFileStream.Flush()
+			'		Me.theLogFileStream.Close()
+			'	End If
 		End Try
-	End Sub
+
+		Return status
+	End Function
 
 	Private Sub RunStudioMdlApp(ByVal qcPath As String, ByVal qcFileName As String)
 		Dim currentFolder As String
@@ -373,12 +468,16 @@ Public Class Compiler
 		gameCompilerPathFileName = Me.GetGameCompilerPathFileName()
 
 		Dim arguments As String = ""
-		arguments += "-game"
-		arguments += " "
-		arguments += """"
-		arguments += Me.GetGamePath()
-		arguments += """"
-		arguments += " "
+		Dim gameSetup As GameSetup
+		gameSetup = TheApp.Settings.GameSetups(TheApp.Settings.CompileGameSetupSelectedIndex)
+		If gameSetup.GameEngine = GameEngine.Source Then
+			arguments += "-game"
+			arguments += " "
+			arguments += """"
+			arguments += Me.GetGamePath()
+			arguments += """"
+			arguments += " "
+		End If
 		arguments += TheApp.Settings.CompileOptionsText
 		arguments += " "
 		arguments += """"
@@ -418,53 +517,133 @@ Public Class Compiler
 		Directory.SetCurrentDirectory(currentFolder)
 	End Sub
 
-	Private Sub ProcessCompiledModel(ByVal qcRelativePathName As String, ByVal modelRelativePathFileName As String, ByVal compiledMdlPathFileName As String)
-		Dim sourcePathName As String
+	' Possible source and target paths:
+	' mdlRelativePathFileName = qcFile.GetMdlRelativePathFileName(qcPathFileName)
+	' GoldSource:
+	'     source (compile) path  : FileManager.GetPath(compiledMdlPathFileName)
+	'     Game's "models" folder : Me.theOutputPath + modelsSubpath
+	'     Work folder            : Me.theOutputPath + mdlRelativePathStartingAtModels
+	'     Subfolder (of QC input): Me.theOutputPath + mdlRelativePathStartingAtModels
+	' Source:
+	'     source (compile) path  : FileManager.GetPath(compiledMdlPathFileName)
+	'     Game's "models" folder : Me.theOutputPath + modelsSubpath OR source (compile) path
+	'     Work folder            : Me.theOutputPath + mdlRelativePathStartingAtModels
+	'     Subfolder (of QC input): Me.theOutputPath + mdlRelativePathStartingAtModels
+	' Examples of $modelname and output target:
+	'     C:\model.mdl                         [Every Source model compiler I have tested stops compile with error for absolute path as $modelname.]
+	'     C:\test\model.mdl                    [Every Source model compiler I have tested stops compile with error for absolute path as $modelname.]
+	'     C:\test\models\model.mdl             [Every Source model compiler I have tested stops compile with error for absolute path as $modelname.]
+	'     C:\test\models\subfolder\model.mdl   [Every Source model compiler I have tested stops compile with error for absolute path as $modelname.]
+	'     model.mdl                            => <output folder>\models\model.mdl             [no "models" so assume relative to it, like with Source]
+	'     test\model.mdl                       => <output folder>\models\test\model.mdl        [no "models" so assume relative to it, like with Source]
+	'     test\models\model.mdl                => <output folder>\models\model.mdl             [has "models" so ignore path before it]
+	'     test\models\subfolder\model.mdl      => <output folder>\models\subfolder\model.mdl   [has "models" so ignore path before it]
+	Private Sub ProcessCompiledModel(ByVal compiledMdlPathFileName As String, ByVal qcModelName As String)
+		Dim sourcePath As String
 		Dim sourceFileNameWithoutExtension As String
 		Dim targetPathFileName As String
+		Dim createdFolders As New List(Of String)
+		Dim outputPathModelsFolder As String
+		Dim modelsSubpath As String
+		Dim targetPath As String
 
-		If TheApp.Settings.CompileOutputFolderIsChecked Then
-			Me.theModelOutputPath = Path.Combine(Me.theOutputPath, qcRelativePathName)
-			Me.theModelOutputPath = Path.GetFullPath(Me.theModelOutputPath)
-			If TheApp.Settings.CompileFolderForEachModelIsChecked Then
-				Dim modelName As String
-				modelName = Path.GetFileNameWithoutExtension(modelRelativePathFileName)
-				Me.theModelOutputPath = Path.Combine(Me.theModelOutputPath, modelName)
-			End If
-			FileManager.CreatePath(Me.theModelOutputPath)
-		End If
+		Dim gameSetup As GameSetup
+		gameSetup = TheApp.Settings.GameSetups(TheApp.Settings.CompileGameSetupSelectedIndex)
 
-		sourcePathName = FileManager.GetPath(compiledMdlPathFileName)
+		sourcePath = FileManager.GetPath(compiledMdlPathFileName)
 		sourceFileNameWithoutExtension = Path.GetFileNameWithoutExtension(compiledMdlPathFileName)
-		For Each sourcePathFileName As String In Directory.GetFiles(sourcePathName, sourceFileNameWithoutExtension + ".*")
-			If TheApp.Settings.CompileOutputFolderIsChecked Then
-				targetPathFileName = Path.Combine(Me.theModelOutputPath, Path.GetFileName(sourcePathFileName))
-				If String.Compare(sourcePathFileName, targetPathFileName, True) <> 0 Then
-					Try
-						If File.Exists(targetPathFileName) Then
-							File.Delete(targetPathFileName)
-						End If
-					Catch ex As Exception
-						Dim debug As Integer = 4242
-					End Try
-					Try
-						File.Move(sourcePathFileName, targetPathFileName)
-					Catch ex As Exception
-						Me.UpdateProgress()
-						Me.UpdateProgress(2, "WARNING: Crowbar tried to move the file, """ + sourcePathFileName + """, to the output folder, but Windows complained with this message: " + ex.Message.Trim())
-						Me.UpdateProgress(2, "SOLUTION: Compile the model again (and hope Windows does not complain again) or move the file yourself.")
-						Me.UpdateProgress()
-					End Try
-				End If
-			Else
-				targetPathFileName = sourcePathFileName
+
+		If TheApp.Settings.CompileOutputFolderOption = CompileOutputPathOptions.GameModelsFolder Then
+			outputPathModelsFolder = Me.theOutputPath
+		Else
+			outputPathModelsFolder = Path.Combine(Me.theOutputPath, "models")
+		End If
+		modelsSubpath = Me.GetModelsSubpath(FileManager.GetPath(qcModelName), gameSetup.GameEngine)
+		targetPath = Path.Combine(outputPathModelsFolder, modelsSubpath)
+		FileManager.CreatePath(targetPath)
+
+		Dim searchPattern As String
+		Dim listOfCompiledExtensions As List(Of String)
+		If gameSetup.GameEngine = GameEngine.GoldSource Then
+			searchPattern = sourceFileNameWithoutExtension + "*.mdl"
+			listOfCompiledExtensions = New List(Of String)(New String() {".mdl"})
+		Else
+			searchPattern = sourceFileNameWithoutExtension + ".*"
+			listOfCompiledExtensions = New List(Of String)(New String() {".ani", ".mdl", ".phy", ".vtx", ".vvd"})
+		End If
+		For Each sourcePathFileName As String In Directory.EnumerateFiles(sourcePath, searchPattern)
+			If Not listOfCompiledExtensions.Contains(Path.GetExtension(sourcePathFileName).ToLower()) Then
+				Continue For
 			End If
 
-			If Path.GetExtension(targetPathFileName) = ".mdl" Then
+			targetPathFileName = Path.Combine(targetPath, Path.GetFileName(sourcePathFileName))
+
+			If String.Compare(sourcePathFileName, targetPathFileName, True) <> 0 Then
+				'If TheApp.Settings.CompileOutputFolderOption <> CompileOutputPathOptions.GameModelsFolder OrElse gameSetup.GameEngine = GameEngine.GoldSource Then
+				Try
+					If File.Exists(targetPathFileName) Then
+						File.Delete(targetPathFileName)
+					End If
+				Catch ex As Exception
+					Dim debug As Integer = 4242
+				End Try
+				Try
+					File.Move(sourcePathFileName, targetPathFileName)
+					Me.UpdateProgress(2, "Crowbar: Moved compiled model file """ + sourcePathFileName + """ to """ + targetPath + """")
+				Catch ex As Exception
+					Me.UpdateProgress()
+					Me.UpdateProgress(2, "WARNING: Crowbar tried to move the file, """ + sourcePathFileName + """, to the output folder, but Windows complained with this message: " + ex.Message.Trim())
+					Me.UpdateProgress(2, "SOLUTION: Compile the model again (and hope Windows does not complain again) or move the file yourself.")
+					Me.UpdateProgress()
+				End Try
+				'End If
+			End If
+
+			'NOTE: Make list of main MDL files compiled.
+			If String.Compare(Path.GetFileName(targetPathFileName), Path.GetFileName(compiledMdlPathFileName), True) = 0 Then
 				Me.theCompiledMdlFiles.Add(FileManager.GetRelativePathFileName(Me.theOutputPath, targetPathFileName))
 			End If
 		Next
 	End Sub
+
+	' GoldSource:
+	'     "C:\"                   => ""            [absolute path is same as if the path were relative]
+	'     ""                      => ""            [no "models" so assume relative to it, like with Source]
+	'     "test"                  => "test"        [no "models" so assume relative to it, like with Source]
+	'     "test\models"           => ""            [has "models" so ignore path before it]
+	'     "test\models\subfolder" => "subfolder"   [has "models" so ignore path before it]
+	' Source:
+	'     "C:\"                   => ""            [absolute path is same as GoldSource method]
+	'     "test"                  => "test"        [relative path is always "models" subfolder]
+	Private Function GetModelsSubpath(ByVal iPath As String, ByVal iGameEngine As GameEngine) As String
+		Dim modelsSubpath As String = ""
+		Dim tempSubpath As String
+		Dim lastFolderInPath As String
+
+		If iPath = "" Then
+			Return ""
+		End If
+
+		Dim fullPath As String
+		fullPath = Path.GetFullPath(iPath)
+
+		If iGameEngine = GameEngine.GoldSource OrElse iPath = fullPath Then
+			tempSubpath = iPath
+			While tempSubpath <> ""
+				lastFolderInPath = Path.GetFileName(tempSubpath)
+				If lastFolderInPath = "models" Then
+					Exit While
+				Else
+					modelsSubpath = Path.Combine(lastFolderInPath, modelsSubpath)
+				End If
+				tempSubpath = FileManager.GetPath(tempSubpath)
+			End While
+		Else
+			modelsSubpath = iPath
+		End If
+
+		Return modelsSubpath
+	End Function
 
 	Private Sub myProcess_OutputDataReceived(ByVal sender As Object, ByVal e As System.Diagnostics.DataReceivedEventArgs)
 		Dim myProcess As Process = CType(sender, Process)
@@ -474,7 +653,7 @@ Public Class Compiler
 			line = e.Data
 			If line IsNot Nothing Then
 				Me.theProcessHasOutputData = True
-				Me.UpdateProgress(2, line)
+				Me.UpdateProgress(3, line)
 
 				If Me.theDefineBonesFileStream IsNot Nothing Then
 					line = line.Trim()
@@ -507,7 +686,7 @@ Public Class Compiler
 		Try
 			line = e.Data
 			If line IsNot Nothing Then
-				Me.UpdateProgress(2, line)
+				Me.UpdateProgress(3, line)
 			End If
 		Catch
 		Finally
@@ -519,7 +698,7 @@ Public Class Compiler
 		End Try
 	End Sub
 
-	Private Sub StopCompile(ByVal processIsCancelled As Boolean, ByVal myProcess As Process)
+	Private Sub StopCompile(ByVal processIsCanceled As Boolean, ByVal myProcess As Process)
 		If myProcess IsNot Nothing AndAlso Not myProcess.HasExited Then
 			Try
 				myProcess.CancelOutputRead()
@@ -530,38 +709,55 @@ Public Class Compiler
 			End Try
 		End If
 
-		If processIsCancelled Then
-			Me.theLastLine = "...Compiling cancelled."
+		If processIsCanceled Then
+			Me.theLastLine = "...Compiling canceled."
 		End If
 	End Sub
 
-	Private Sub CreateLogTextFile(ByVal qcPathFileName As String)
-		If TheApp.Settings.CompileLogFileIsChecked Then
+	Private Function CreateLogTextFile(ByVal qcPathFileName As String) As AppEnums.StatusMessage
+		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+		Dim gameSetup As GameSetup
+		gameSetup = TheApp.Settings.GameSetups(TheApp.Settings.CompileGameSetupSelectedIndex)
+
+		If (gameSetup.GameEngine = GameEngine.GoldSource AndAlso TheApp.Settings.CompileGoldSourceLogFileIsChecked) OrElse (gameSetup.GameEngine = GameEngine.Source AndAlso TheApp.Settings.CompileSourceLogFileIsChecked) Then
 			Dim qcFileName As String
 			Dim logPath As String
 			Dim logFileName As String
 			Dim logPathFileName As String
 
-			qcFileName = Path.GetFileNameWithoutExtension(qcPathFileName)
-			logPath = FileManager.GetPath(qcPathFileName)
-			FileManager.CreatePath(logPath)
-			logFileName = qcFileName + " compile-log.txt"
-			logPathFileName = Path.Combine(logPath, logFileName)
+			Try
+				If qcPathFileName <> "" Then
+					logPath = FileManager.GetPath(qcPathFileName)
+					qcFileName = Path.GetFileNameWithoutExtension(qcPathFileName)
+					logFileName = qcFileName + " compile-log.txt"
+				Else
+					logPath = Me.theInputQcPath
+					logFileName = "compile-log.txt"
+				End If
+				FileManager.CreatePath(logPath)
+				logPathFileName = Path.Combine(logPath, logFileName)
 
-			Me.theLogFileStream = File.CreateText(logPathFileName)
-			Me.theLogFileStream.AutoFlush = True
+				Me.theLogFileStream = File.CreateText(logPathFileName)
+				Me.theLogFileStream.AutoFlush = True
 
-			If File.Exists(logPathFileName) Then
-				'Me.theCompiledLogFiles.Add(FileManager.GetRelativePath(Me.theOutputPath, logPathFileName))
-				Me.theCompiledLogFiles.Add(FileManager.GetRelativePathFileName(Me.theInputQcPath, logPathFileName))
-			End If
+				If File.Exists(logPathFileName) Then
+					'Me.theCompiledLogFiles.Add(FileManager.GetRelativePath(Me.theOutputPath, logPathFileName))
+					Me.theCompiledLogFiles.Add(FileManager.GetRelativePathFileName(Me.theInputQcPath, logPathFileName))
+				End If
 
-			Me.theLogFileStream.WriteLine("// " + TheApp.GetHeaderComment())
-			Me.theLogFileStream.Flush()
+				Me.theLogFileStream.WriteLine("// " + TheApp.GetHeaderComment())
+				Me.theLogFileStream.Flush()
+			Catch ex As Exception
+				Me.UpdateProgress()
+				Me.UpdateProgress(2, "ERROR: Crowbar tried to write the compile log file but the system gave this message: " + ex.Message)
+				status = StatusMessage.Error
+			End Try
 		Else
 			Me.theLogFileStream = Nothing
 		End If
-	End Sub
+
+		Return status
+	End Function
 
 	Private Sub UpdateProgressStart(ByVal line As String)
 		Me.UpdateProgressInternal(0, line)
@@ -645,7 +841,7 @@ Public Class Compiler
 	Private theSkipCurrentModelIsActive As Boolean
 	Private theInputQcPath As String
 	Private theOutputPath As String
-	Private theModelOutputPath As String
+	'Private theModelOutputPath As String
 
 	Private theLogFileStream As StreamWriter
 	Private theLastLine As String

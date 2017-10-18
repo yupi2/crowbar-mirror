@@ -6,6 +6,8 @@ Public Class MainForm
 #Region "Creation and Destruction"
 
 	Public Sub New()
+		MyBase.New()
+
 		''DEBUG: Be sure to comment this out before release.
 		'' Set the culture and UI culture before 
 		'' the call to InitializeComponent.
@@ -16,7 +18,8 @@ Public Class MainForm
 		InitializeComponent()
 
 		' Add any initialization after the InitializeComponent() call.
-
+		'Me.InitWidgets(Me)
+		'Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
 	End Sub
 
 #End Region
@@ -58,9 +61,13 @@ Public Class MainForm
 			'Next
 			'MessageBox.Show(text.ToString())
 		End If
+		Me.UnpackUserControl1.RunUnpackerToGetListOfVpkContents()
+		Me.PreviewViewUserControl.RunDataViewer()
+		Me.ViewViewUserControl.RunDataViewer()
 
-		'AddHandler Me.UnpackUserControl1.UseInPreviewButton.Click, AddressOf Me.UnpackUserControl_UseInPreviewButton_Click
-		'AddHandler Me.UnpackUserControl1.UseInDecompileButton.Click, AddressOf Me.UnpackUserControl_UseInDecompileButton_Click
+		AddHandler Me.UnpackUserControl1.UseAllInDecompileButton.Click, AddressOf Me.UnpackUserControl_UseAllInDecompileButton_Click
+		AddHandler Me.UnpackUserControl1.UseInPreviewButton.Click, AddressOf Me.UnpackUserControl_UseInPreviewButton_Click
+		AddHandler Me.UnpackUserControl1.UseInDecompileButton.Click, AddressOf Me.UnpackUserControl_UseInDecompileButton_Click
 		AddHandler Me.PreviewViewUserControl.UseInDecompileButton.Click, AddressOf Me.ViewUserControl_UseInDecompileButton_Click
 		AddHandler Me.DecompilerUserControl1.UseAllInCompileButton.Click, AddressOf Me.DecompilerUserControl1_UseAllInCompileButton_Click
 		'AddHandler Me.DecompilerUserControl1.UseInEditButton.Click, AddressOf Me.DecompilerUserControl1_UseInEditButton_Click
@@ -72,8 +79,9 @@ Public Class MainForm
 	End Sub
 
 	Private Sub Free()
-		'RemoveHandler Me.UnpackUserControl1.UseInPreviewButton.Click, AddressOf Me.UnpackUserControl_UseInPreviewButton_Click
-		'RemoveHandler Me.UnpackUserControl1.UseInDecompileButton.Click, AddressOf Me.UnpackUserControl_UseInDecompileButton_Click
+		RemoveHandler Me.UnpackUserControl1.UseAllInDecompileButton.Click, AddressOf Me.UnpackUserControl_UseAllInDecompileButton_Click
+		RemoveHandler Me.UnpackUserControl1.UseInPreviewButton.Click, AddressOf Me.UnpackUserControl_UseInPreviewButton_Click
+		RemoveHandler Me.UnpackUserControl1.UseInDecompileButton.Click, AddressOf Me.UnpackUserControl_UseInDecompileButton_Click
 		RemoveHandler Me.PreviewViewUserControl.UseInDecompileButton.Click, AddressOf Me.ViewUserControl_UseInDecompileButton_Click
 		RemoveHandler Me.DecompilerUserControl1.UseAllInCompileButton.Click, AddressOf Me.DecompilerUserControl1_UseAllInCompileButton_Click
 		'RemoveHandler Me.DecompilerUserControl1.UseInEditButton.Click, AddressOf Me.DecompilerUserControl1_UseInEditButton_Click
@@ -124,6 +132,10 @@ Public Class MainForm
 #End Region
 
 #Region "Child Widget Event Handlers"
+
+	Private Sub UnpackUserControl_UseAllInDecompileButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
+		Me.MainTabControl.SelectTab(Me.DecompileTabPage)
+	End Sub
 
 	Private Sub UnpackUserControl_UseInPreviewButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
 		Me.MainTabControl.SelectTab(Me.PreviewTabPage)
@@ -180,14 +192,12 @@ Public Class MainForm
 					vpkAction = ActionType.Unpack
 				End If
 			Else
-				If TheApp.Settings.OptionsDragAndDropVpkFileIsChecked Then
-					vpkAction = ActionType.Unpack
-				End If
+				vpkAction = ActionType.Unpack
 			End If
-			'If vpkAction = ActionType.Unpack Then
-			'	TheApp.Settings.UnpackVpkPathFolderOrFileName = pathFileName
-			'	Me.MainTabControl.SelectTab(Me.UnpackTabPage)
-			'End If
+			If vpkAction = ActionType.Unpack Then
+				TheApp.Settings.UnpackVpkPathFolderOrFileName = pathFileName
+				Me.MainTabControl.SelectTab(Me.UnpackTabPage)
+			End If
 		ElseIf extension = ".mdl" Then
 			Me.SetMdlDrop(setViaAutoOpen, pathFileName)
 			'ElseIf extension = ".exe" Then
@@ -199,28 +209,14 @@ Public Class MainForm
 					qcAction = ActionType.Compile
 				End If
 			Else
-				If TheApp.Settings.OptionsDragAndDropQcFileIsChecked Then
-					qcAction = ActionType.Compile
-				End If
+				qcAction = ActionType.Compile
 			End If
 			If qcAction = ActionType.Compile Then
 				TheApp.Settings.CompileQcPathFileName = pathFileName
 				Me.MainTabControl.SelectTab(Me.CompileTabPage)
 			End If
 		Else
-			Dim folderAction As ActionType = ActionType.Unknown
-			If Not setViaAutoOpen Then
-				If TheApp.Settings.OptionsDragAndDropFolderIsChecked Then
-					folderAction = TheApp.Settings.OptionsDragAndDropFolderOption
-				End If
-			End If
-			If folderAction = ActionType.Decompile Then
-				TheApp.Settings.DecompileMdlPathFileName = pathFileName
-				Me.MainTabControl.SelectTab(Me.DecompileTabPage)
-			ElseIf folderAction = ActionType.Compile Then
-				TheApp.Settings.CompileQcPathFileName = pathFileName
-				Me.MainTabControl.SelectTab(Me.CompileTabPage)
-			End If
+			Me.SetFolderDrop(setViaAutoOpen, pathFileName)
 		End If
 	End Sub
 
@@ -242,26 +238,27 @@ Public Class MainForm
 				End If
 			End If
 		Else
-			If TheApp.Settings.OptionsDragAndDropMdlFileIsChecked Then
-				If Me.MainTabControl.SelectedTab Is Me.PreviewTabPage Then
-					mdlAction = ActionType.Preview
-				ElseIf Me.MainTabControl.SelectedTab Is Me.DecompileTabPage Then
-					mdlAction = ActionType.Decompile
-				ElseIf Me.MainTabControl.SelectedTab Is Me.ViewTabPage Then
-					mdlAction = ActionType.View
-				Else
-					mdlAction = TheApp.Settings.OptionsDragAndDropMdlFileOption
-				End If
-
+			If Me.MainTabControl.SelectedTab Is Me.PreviewTabPage Then
+				mdlAction = ActionType.Preview
+				TheApp.Settings.PreviewMdlPathFileName = pathFileName
 				If TheApp.Settings.OptionsDragAndDropMdlFileForPreviewIsChecked Then
-					TheApp.Settings.PreviewMdlPathFileName = pathFileName
+					Me.SetMdlDropSetUp(pathFileName)
 				End If
+			ElseIf Me.MainTabControl.SelectedTab Is Me.DecompileTabPage Then
+				mdlAction = ActionType.Decompile
+				TheApp.Settings.DecompileMdlPathFileName = pathFileName
 				If TheApp.Settings.OptionsDragAndDropMdlFileForDecompileIsChecked Then
-					TheApp.Settings.DecompileMdlPathFileName = pathFileName
+					Me.SetMdlDropSetUp(pathFileName)
 				End If
+			ElseIf Me.MainTabControl.SelectedTab Is Me.ViewTabPage Then
+				mdlAction = ActionType.View
+				TheApp.Settings.ViewMdlPathFileName = pathFileName
 				If TheApp.Settings.OptionsDragAndDropMdlFileForViewIsChecked Then
-					TheApp.Settings.ViewMdlPathFileName = pathFileName
+					Me.SetMdlDropSetUp(pathFileName)
 				End If
+			Else
+				mdlAction = TheApp.Settings.OptionsDragAndDropMdlFileOption
+				Me.SetMdlDropSetUp(pathFileName)
 			End If
 		End If
 
@@ -271,6 +268,68 @@ Public Class MainForm
 			Me.MainTabControl.SelectTab(Me.DecompileTabPage)
 		ElseIf mdlAction = ActionType.View Then
 			Me.MainTabControl.SelectTab(Me.ViewTabPage)
+		End If
+	End Sub
+
+	Private Sub SetMdlDropSetUp(ByVal pathFileName As String)
+		If TheApp.Settings.OptionsDragAndDropMdlFileForPreviewIsChecked Then
+			TheApp.Settings.PreviewMdlPathFileName = pathFileName
+		End If
+		If TheApp.Settings.OptionsDragAndDropMdlFileForDecompileIsChecked Then
+			TheApp.Settings.DecompileMdlPathFileName = pathFileName
+		End If
+		If TheApp.Settings.OptionsDragAndDropMdlFileForViewIsChecked Then
+			TheApp.Settings.ViewMdlPathFileName = pathFileName
+		End If
+	End Sub
+
+	Private Sub SetFolderDrop(ByVal setViaAutoOpen As Boolean, ByVal pathFileName As String)
+		Dim folderAction As ActionType = ActionType.Unknown
+		Dim selectedTab As TabPage = Nothing
+
+		Try
+			If setViaAutoOpen Then
+				folderAction = TheApp.Settings.OptionsAutoOpenFolderOption
+			Else
+				folderAction = TheApp.Settings.OptionsDragAndDropFolderOption
+				selectedTab = Me.MainTabControl.SelectedTab
+				If selectedTab Is Me.UnpackTabPage Then
+					folderAction = ActionType.Unpack
+				ElseIf selectedTab Is Me.DecompileTabPage Then
+					folderAction = ActionType.Decompile
+				ElseIf selectedTab Is Me.CompileTabPage Then
+					folderAction = ActionType.Compile
+				Else
+					selectedTab = Nothing
+				End If
+			End If
+
+			If selectedTab Is Nothing AndAlso Directory.Exists(pathFileName) Then
+				If Directory.GetFiles(pathFileName, "*.vpk").Length > 0 Then
+					folderAction = ActionType.Unpack
+				Else
+					If Directory.GetFiles(pathFileName, "*.mdl").Length > 0 Then
+						folderAction = ActionType.Decompile
+					Else
+						If Directory.GetFiles(pathFileName, "*.qc").Length > 0 Then
+							folderAction = ActionType.Compile
+						End If
+					End If
+				End If
+			End If
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		End Try
+
+		If folderAction = ActionType.Unpack Then
+			TheApp.Settings.UnpackVpkPathFolderOrFileName = pathFileName
+			Me.MainTabControl.SelectTab(Me.UnpackTabPage)
+		ElseIf folderAction = ActionType.Decompile Then
+			TheApp.Settings.DecompileMdlPathFileName = pathFileName
+			Me.MainTabControl.SelectTab(Me.DecompileTabPage)
+		ElseIf folderAction = ActionType.Compile Then
+			TheApp.Settings.CompileQcPathFileName = pathFileName
+			Me.MainTabControl.SelectTab(Me.CompileTabPage)
 		End If
 	End Sub
 

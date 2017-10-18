@@ -7,7 +7,7 @@ Public Class CompilerInputInfo
 	Public gamePathFileName As String
 	Public qcPathFileName As String
 	Public customModelFolder As String
-	Public theCompileMode As ActionMode
+	Public theCompileMode As InputOptions
 	Public modelAbsolutePathFileName As String
 	Public result As String
 

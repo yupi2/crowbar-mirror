@@ -2,20 +2,20 @@
 
 Module SourceModule2531
 
-	Public Function GetBodyGroupSmdFileName(ByVal bodyPartIndex As Integer, ByVal modelIndex As Integer, ByVal lodIndex As Integer, ByVal theModelCommandIsUsed As Boolean, ByVal modelName As String, ByVal bodyModelName As String, ByVal bodyPartCount As Integer, ByVal bodyModelCount As Integer, ByVal sequenceGroupFileName As String) As String
-		Dim bodyGroupSmdFileName As String
+	'Public Function GetBodyGroupSmdFileName(ByVal bodyPartIndex As Integer, ByVal modelIndex As Integer, ByVal lodIndex As Integer, ByVal theModelCommandIsUsed As Boolean, ByVal modelName As String, ByVal bodyModelName As String, ByVal bodyPartCount As Integer, ByVal bodyModelCount As Integer, ByVal sequenceGroupFileName As String) As String
+	'	Dim bodyGroupSmdFileName As String
 
-		If bodyPartIndex = 0 AndAlso modelIndex = 0 AndAlso lodIndex = 0 AndAlso Not String.IsNullOrEmpty(sequenceGroupFileName) AndAlso Not FileManager.FilePathHasInvalidChars(sequenceGroupFileName) Then
-			bodyGroupSmdFileName = Path.GetFileName(sequenceGroupFileName.Trim(Chr(0))).ToLower(TheApp.InternalCultureInfo)
-			If Not bodyGroupSmdFileName.StartsWith(modelName) Then
-				bodyGroupSmdFileName = modelName + "_" + bodyGroupSmdFileName
-			End If
-		Else
-			bodyGroupSmdFileName = SourceFileNamesModule.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, lodIndex, theModelCommandIsUsed, modelName, bodyModelName, bodyPartCount, bodyModelCount)
-		End If
+	'	If bodyPartIndex = 0 AndAlso modelIndex = 0 AndAlso lodIndex = 0 AndAlso Not String.IsNullOrEmpty(sequenceGroupFileName) AndAlso Not FileManager.FilePathHasInvalidChars(sequenceGroupFileName) Then
+	'		bodyGroupSmdFileName = Path.GetFileName(sequenceGroupFileName.Trim(Chr(0))).ToLower(TheApp.InternalCultureInfo)
+	'		If Not bodyGroupSmdFileName.StartsWith(modelName) Then
+	'			bodyGroupSmdFileName = modelName + "_" + bodyGroupSmdFileName
+	'		End If
+	'	Else
+	'		bodyGroupSmdFileName = SourceFileNamesModule.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, lodIndex, theModelCommandIsUsed, modelName, bodyModelName, bodyPartCount, bodyModelCount)
+	'	End If
 
-		Return bodyGroupSmdFileName
-	End Function
+	'	Return bodyGroupSmdFileName
+	'End Function
 
 	Public Function GetControlText(ByVal type As Integer) As String
 		If type = STUDIO_X Then

@@ -77,7 +77,7 @@ Public Class SourceQcFile06
 	Public Sub WriteBodyGroupCommand()
 		Dim line As String = ""
 		Dim aBodyPart As SourceMdlBodyPart06
-		Dim aModel As SourceMdlModel06
+		Dim aBodyModel As SourceMdlModel06
 
 		If Me.theMdlFileData.theBodyParts IsNot Nothing AndAlso Me.theMdlFileData.theBodyParts.Count > 0 Then
 			Me.theOutputFileStreamWriter.WriteLine()
@@ -100,15 +100,16 @@ Public Class SourceQcFile06
 
 				If aBodyPart.theModels IsNot Nothing AndAlso aBodyPart.theModels.Count > 0 Then
 					For modelIndex As Integer = 0 To aBodyPart.theModels.Count - 1
-						aModel = aBodyPart.theModels(modelIndex)
+						aBodyModel = aBodyPart.theModels(modelIndex)
 
 						line = vbTab
-						If aModel.theName = "blank" Then
+						If aBodyModel.theName = "blank" Then
 							line += "blank"
 						Else
+							aBodyModel.theSmdFileName = SourceFileNamesModule.CreateBodyGroupSmdFileName(aBodyModel.theSmdFileName, bodyPartIndex, modelIndex, 0, Me.theModelName, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).theName)
 							line += "studio "
 							line += """"
-							line += SourceFileNamesModule.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, 0, False, Me.theModelName, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).theName, Me.theMdlFileData.theBodyParts.Count, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels.Count)
+							line += aBodyModel.theSmdFileName
 							line += """"
 						End If
 						Me.theOutputFileStreamWriter.WriteLine(line)
@@ -289,21 +290,19 @@ Public Class SourceQcFile06
 	Private Sub WriteSequenceOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc06)
 		Dim line As String = ""
 
-		If aSequenceDesc.blendCount = 1 Then
+		For blendIndex As Integer = 0 To aSequenceDesc.blendCount - 1
+			If aSequenceDesc.blendCount = 1 Then
+				aSequenceDesc.theSmdRelativePathFileName = SourceFileNamesModule.CreateAnimationSmdRelativePathFileName(aSequenceDesc.theSmdRelativePathFileName, Me.theModelName, aSequenceDesc.theName, -1)
+			Else
+				aSequenceDesc.theSmdRelativePathFileName = SourceFileNamesModule.CreateAnimationSmdRelativePathFileName(aSequenceDesc.theSmdRelativePathFileName, Me.theModelName, aSequenceDesc.theName, blendIndex)
+			End If
+
 			line = vbTab
 			line += """"
-			line += SourceModule06.GetAnimationSmdRelativePathFileName(Me.theModelName, aSequenceDesc.theName, -1)
+			line += aSequenceDesc.theSmdRelativePathFileName
 			line += """"
 			Me.theOutputFileStreamWriter.WriteLine(line)
-		Else
-			For blendIndex As Integer = 0 To aSequenceDesc.blendCount - 1
-				line = vbTab
-				line += """"
-				line += SourceModule06.GetAnimationSmdRelativePathFileName(Me.theModelName, aSequenceDesc.theName, blendIndex)
-				line += """"
-				Me.theOutputFileStreamWriter.WriteLine(line)
-			Next
-		End If
+		Next
 
 		'For i As Integer = 0 To 1
 		'	If aSequenceDesc.blendType(i) <> 0 Then

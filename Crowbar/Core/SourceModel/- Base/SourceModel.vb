@@ -31,7 +31,7 @@ Public MustInherit Class SourceModel
 				'model = New SourceModel32(mdlPathFileName, version)
 			ElseIf version = 35 Then
 				'NOT IMPLEMENTED YET.
-				'model = New SourceModel35(mdlPathFileName, version)
+				model = New SourceModel35(mdlPathFileName, version)
 			ElseIf version = 36 Then
 				'NOT FULLY IMPLEMENTED YET.
 				model = New SourceModel36(mdlPathFileName, version)
@@ -209,14 +209,14 @@ Public MustInherit Class SourceModel
 		End Set
 	End Property
 
-	Public Property WritingSingleFileIsCanceled As Boolean
-		Get
-			Return Me.theWritingSingleFileIsCanceled
-		End Get
-		Set(value As Boolean)
-			Me.theWritingSingleFileIsCanceled = value
-		End Set
-	End Property
+	'Public Property WritingSingleFileIsCanceled As Boolean
+	'	Get
+	'		Return Me.theWritingSingleFileIsCanceled
+	'	End Get
+	'	Set(value As Boolean)
+	'		Me.theWritingSingleFileIsCanceled = value
+	'	End Set
+	'End Property
 
 #End Region
 
@@ -381,6 +381,12 @@ Public MustInherit Class SourceModel
 
 	'	Return status
 	'End Function
+
+	Public Overridable Function SetAllSmdPathFileNames() As AppEnums.StatusMessage
+		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+
+		Return status
+	End Function
 
 	Public Overridable Function WriteQcFile(ByVal qcPathFileName As String) As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
@@ -939,9 +945,11 @@ Public MustInherit Class SourceModel
 
 	Protected theVersion As Integer
 	Protected theName As String
+	'Protected thePhysicsMeshSmdFileName As String
 
 	Protected theMdlFileDataGeneric As SourceMdlFileDataBase
 	Protected theAniFileDataGeneric As SourceFileData
+	Protected thePhyFileDataGeneric As SourcePhyFileData
 
 	Protected theInputFileReader As BinaryReader
 	Protected theOutputFileBinaryWriter As BinaryWriter

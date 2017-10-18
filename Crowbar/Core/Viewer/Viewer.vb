@@ -242,7 +242,7 @@ Public Class Viewer
 		Dim tempGamePath As String
 		Dim gameFileName As String
 		Dim gameModelsPath As String
-		Dim currentFolder As String
+		Dim currentFolder As String = ""
 
 		If Me.theInputMdlIsViewedAsReplacement Then
 			tempGamePath = Me.GetTempGamePath()
@@ -254,10 +254,13 @@ Public Class Viewer
 		modelViewerPathFileName = Me.theGameSetup.ViewerPathFileName
 		gameModelsPath = Path.Combine(tempGamePath, "models")
 
-		'TODO: Portal game does not have a "models" folder, so probably should create it.
+		'TODO: Counter-Strike: Source and Portal (and maybe others) do not have a "models" folder.
+		'      Can Crowbar avoid SetCurrentDirectory() in these cases?
 
-		currentFolder = Directory.GetCurrentDirectory()
-		Directory.SetCurrentDirectory(gameModelsPath)
+		If Directory.Exists(gameModelsPath) Then
+			currentFolder = Directory.GetCurrentDirectory()
+			Directory.SetCurrentDirectory(gameModelsPath)
+		End If
 
 		Dim arguments As String = ""
 		If gameFileName.ToLower() = "gameinfo.txt" Then
@@ -292,34 +295,44 @@ Public Class Viewer
 		Me.theHlmvAppProcess.WaitForExit()
 		Me.Halt(True)
 
-		'TODO: Test if this line works if placed immediately after starting process, to prevent a second view from setting current folder to what the first view was using as a temp current folder.
-		Directory.SetCurrentDirectory(currentFolder)
+		'TODO: Test if this code works if placed immediately after starting process, to prevent a second view from setting current folder to what the first view was using as a temp current folder.
+		If currentFolder <> "" Then
+			Directory.SetCurrentDirectory(currentFolder)
+		End If
 	End Sub
 
 	Private Sub InitViewModel()
-		Me.ModifyGameInfoFile()
+		If Me.theGameSetup.GameEngine = GameEngine.Source Then
+			Dim gamePath As String
+			Dim gameModelsPath As String
 
-		If Me.theInputMdlIsViewedAsReplacement Then
-			Me.theInputMdlRelativePathName = Me.CreateReplacementModelFiles()
-			If String.IsNullOrEmpty(Me.theInputMdlRelativePathName) Then
-				Exit Sub
+			gamePath = FileManager.GetPath(Me.theGameSetup.GamePathFileName)
+			gameModelsPath = Path.Combine(gamePath, "models")
+
+			If Not Me.theInputMdlPathFileName.StartsWith(gameModelsPath) Then
+				Me.ModifyGameInfoFile()
+
+				If Me.theInputMdlIsViewedAsReplacement Then
+					Me.theInputMdlRelativePathName = Me.CreateReplacementModelFiles()
+					If String.IsNullOrEmpty(Me.theInputMdlRelativePathName) Then
+						Exit Sub
+					End If
+				End If
+
+				Me.CopyMaterialAndTextureFiles()
 			End If
 		End If
-
-		Me.CopyMaterialAndTextureFiles()
 	End Sub
 
 	Private Sub FreeViewModel()
-		If Me.theGameInfoFile IsNot Nothing Then
+		If Me.theGameSetup.GameEngine = GameEngine.Source Then
 			Me.RevertGameInfoFile()
 
-			If Me.theInputMdlIsViewedAsReplacement AndAlso Me.theModelFilesForViewAsReplacement IsNot Nothing Then
+			If Me.theInputMdlIsViewedAsReplacement Then
 				Me.DeleteReplacementModelFiles()
 			End If
 
 			Me.DeleteMaterialAndTextureFiles()
-
-			Me.theGameInfoFile = Nothing
 		End If
 	End Sub
 
@@ -426,6 +439,10 @@ Public Class Viewer
 	End Function
 
 	Private Sub DeleteReplacementModelFiles()
+		If Me.theModelFilesForViewAsReplacement Is Nothing Then
+			Exit Sub
+		End If
+
 		Dim pathFileName As String
 		For modelFileIndex As Integer = Me.theModelFilesForViewAsReplacement.Count - 1 To 0 Step -1
 			Try
@@ -481,7 +498,7 @@ Public Class Viewer
 		gamePath = Me.GetTempGamePath()
 		gameMaterialsPath = Path.Combine(gamePath, "materials")
 
-		If Directory.Exists(inputMaterialsPath) Then
+		If inputMaterialsPath <> gameMaterialsPath AndAlso Directory.Exists(inputMaterialsPath) Then
 			'Me.theGameMaterialsFolder = GameMaterialsFolder.Create()
 			'Me.theGameMaterialsFolder.CopyFolder(inputMaterialsPath, gameMaterialsPath)
 			Try

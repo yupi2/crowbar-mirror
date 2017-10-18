@@ -85,7 +85,7 @@ Public Class Decompiler
 	Private Function GetOutputPath() As String
 		Dim outputPath As String
 
-		If TheApp.Settings.DecompileOutputFolderOption = OutputFolderOptions.SubfolderName Then
+		If TheApp.Settings.DecompileOutputFolderOption = DecompileOutputPathOptions.Subfolder Then
 			If File.Exists(TheApp.Settings.DecompileMdlPathFileName) Then
 				outputPath = Path.Combine(FileManager.GetPath(TheApp.Settings.DecompileMdlPathFileName), TheApp.Settings.DecompileOutputSubfolderName)
 			ElseIf Directory.Exists(TheApp.Settings.DecompileMdlPathFileName) Then
@@ -141,10 +141,10 @@ Public Class Decompiler
 			decompileResultInfo.theDecompiledRelativePathFileNames = Me.theDecompiledFirstDebugFiles
 		End If
 
-		If decompileResultInfo.theDecompiledRelativePathFileNames.Count <= 0 Then
+		If decompileResultInfo.theDecompiledRelativePathFileNames.Count <= 0 OrElse Me.theDecompiledQcFiles.Count <= 0 Then
 			Me.theOutputPathOrModelOutputFileName = ""
-		ElseIf decompileResultInfo.theDecompiledRelativePathFileNames.Count = 1 Then
-			Me.theOutputPathOrModelOutputFileName = decompileResultInfo.theDecompiledRelativePathFileNames(0)
+			'ElseIf decompileResultInfo.theDecompiledRelativePathFileNames.Count = 1 Then
+			'	Me.theOutputPathOrModelOutputFileName = decompileResultInfo.theDecompiledRelativePathFileNames(0)
 		Else
 			Me.theOutputPathOrModelOutputFileName = Me.theOutputPath
 		End If
@@ -181,21 +181,38 @@ Public Class Decompiler
 		progressDescriptionText = "Decompiling with " + TheApp.GetProductNameAndVersion() + ": "
 
 		Try
-			If TheApp.Settings.DecompileMode = ActionMode.FolderRecursion Then
+			If TheApp.Settings.DecompileMode = InputOptions.FolderRecursion Then
 				progressDescriptionText += """" + Me.theInputMdlPathName + """ (folder + subfolders)"
 				Me.UpdateProgressStart(progressDescriptionText + " ...")
+
+				status = Me.CreateLogTextFile("")
+				'If status = StatusMessage.Error Then
+				'	Return status
+				'End If
+
 				Me.DecompileModelsInFolderRecursively(Me.theInputMdlPathName)
-			ElseIf TheApp.Settings.DecompileMode = ActionMode.Folder Then
+			ElseIf TheApp.Settings.DecompileMode = InputOptions.Folder Then
 				progressDescriptionText += """" + Me.theInputMdlPathName + """ (folder)"
 				Me.UpdateProgressStart(progressDescriptionText + " ...")
+
+				status = Me.CreateLogTextFile("")
+				'If status = StatusMessage.Error Then
+				'	Return status
+				'End If
+
 				Me.DecompileModelsInFolder(Me.theInputMdlPathName)
 			Else
 				progressDescriptionText += """" + mdlPathFileName + """"
 				Me.UpdateProgressStart(progressDescriptionText + " ...")
-				Me.DecompileOneModel(mdlPathFileName)
+				status = Me.DecompileOneModel(mdlPathFileName)
 			End If
 		Catch ex As Exception
 			status = StatusMessage.Error
+		Finally
+			If Me.theLogFileStream IsNot Nothing Then
+				Me.theLogFileStream.Flush()
+				Me.theLogFileStream.Close()
+			End If
 		End Try
 
 		Me.UpdateProgressStop("... " + progressDescriptionText + " finished.")
@@ -259,14 +276,20 @@ Public Class Decompiler
 
 			FileManager.CreatePath(Me.theModelOutputPath)
 
-			Try
-				Me.CreateLogTextFile(modelName)
-			Catch ex As Exception
-				Me.UpdateProgress()
-				Me.UpdateProgress(2, "ERROR: Crowbar tried to write the decompile log file but the system gave this message: " + ex.Message)
-				status = StatusMessage.Error
-				Return status
-			End Try
+			'Try
+			'	Me.CreateLogTextFile(mdlPathFileName)
+			'Catch ex As Exception
+			'	Me.UpdateProgress()
+			'	Me.UpdateProgress(2, "ERROR: Crowbar tried to write the decompile log file but the system gave this message: " + ex.Message)
+			'	status = StatusMessage.Error
+			'	Return status
+			'End Try
+			If TheApp.Settings.DecompileMode = InputOptions.File Then
+				status = Me.CreateLogTextFile(mdlPathFileName)
+				'If status = StatusMessage.Error Then
+				'	Return status
+				'End If
+			End If
 
 			Me.UpdateProgress()
 			Me.UpdateProgress(1, "Decompiling """ + mdlRelativePathFileName + """ ...")
@@ -314,7 +337,13 @@ Public Class Decompiler
 
 			Me.UpdateProgress(2, "Checking for required files ...")
 			status = model.CheckForRequiredFiles()
-			If status = StatusMessage.ErrorRequiredAniFileNotFound Then
+			If status = StatusMessage.ErrorRequiredSequenceGroupMdlFileNotFound Then
+				Me.UpdateProgress(2, "ERROR: Sequence Group MDL file not found.")
+				Return status
+			ElseIf status = StatusMessage.ErrorRequiredTextureMdlFileNotFound Then
+				Me.UpdateProgress(2, "ERROR: Texture MDL file not found.")
+				Return status
+			ElseIf status = StatusMessage.ErrorRequiredAniFileNotFound Then
 				Me.UpdateProgress(2, "ERROR: ANI file not found.")
 				Return status
 			ElseIf status = StatusMessage.ErrorRequiredVtxFileNotFound Then
@@ -347,7 +376,7 @@ Public Class Decompiler
 				Me.UpdateProgress(1, "... Decompiling """ + mdlRelativePathFileName + """ stopped due to error.")
 				Return status
 			ElseIf Me.CancellationPending Then
-				Me.UpdateProgress(1, "... Decompiling """ + mdlRelativePathFileName + """ cancelled.")
+				Me.UpdateProgress(1, "... Decompiling """ + mdlRelativePathFileName + """ canceled.")
 				status = StatusMessage.Canceled
 				Return status
 			ElseIf Me.theSkipCurrentModelIsActive Then
@@ -357,16 +386,16 @@ Public Class Decompiler
 				Me.UpdateProgress(2, "... Reading data finished.")
 			End If
 
-			Me.UpdateProgress(2, "Processinging data ...")
-			status = Me.ProcessData(model)
-			Me.UpdateProgress(2, "... Processinging data finished.")
+			'Me.UpdateProgress(2, "Processinging data ...")
+			'status = Me.ProcessData(model)
+			'Me.UpdateProgress(2, "... Processinging data finished.")
 
 			'NOTE: Write log files before data files, in case something goes wrong with writing data files.
 			If TheApp.Settings.DecompileDebugInfoFilesIsChecked Then
 				Me.UpdateProgress(2, "Writing decompile-info files ...")
 				Me.WriteDebugFiles(model)
 				If Me.CancellationPending Then
-					Me.UpdateProgress(1, "... Decompile of """ + mdlRelativePathFileName + """ cancelled.")
+					Me.UpdateProgress(1, "... Decompile of """ + mdlRelativePathFileName + """ canceled.")
 					status = StatusMessage.Canceled
 					Return status
 				ElseIf Me.theSkipCurrentModelIsActive Then
@@ -381,7 +410,7 @@ Public Class Decompiler
 			Me.UpdateProgress(2, "Writing data ...")
 			Me.WriteDecompiledFiles(model)
 			If Me.CancellationPending Then
-				Me.UpdateProgress(1, "... Decompiling """ + mdlRelativePathFileName + """ cancelled.")
+				Me.UpdateProgress(1, "... Decompiling """ + mdlRelativePathFileName + """ canceled.")
 				status = StatusMessage.Canceled
 				Return status
 			ElseIf Me.theSkipCurrentModelIsActive Then
@@ -395,39 +424,57 @@ Public Class Decompiler
 			Me.UpdateProgress(1, "... Decompiling """ + mdlRelativePathFileName + """ finished.")
 		Catch ex As Exception
 			Dim debug As Integer = 4242
-		Finally
-			If Me.theLogFileStream IsNot Nothing Then
-				Me.theLogFileStream.Flush()
-				Me.theLogFileStream.Close()
-			End If
+			'Finally
+			'	If Me.theLogFileStream IsNot Nothing Then
+			'		Me.theLogFileStream.Flush()
+			'		Me.theLogFileStream.Close()
+			'	End If
 		End Try
+
+		Return status
 	End Function
 
-	Private Sub CreateLogTextFile(ByVal modelName As String)
+	Private Function CreateLogTextFile(ByVal mdlPathFileName As String) As AppEnums.StatusMessage
+		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+
 		If TheApp.Settings.DecompileLogFileIsChecked Then
+			Dim mdlFileName As String
 			Dim logPath As String
 			Dim logFileName As String
 			Dim logPathFileName As String
 
-			logPath = Me.theModelOutputPath
-			FileManager.CreatePath(logPath)
+			Try
+				If mdlPathFileName <> "" Then
+					logPath = Me.theModelOutputPath
+					mdlFileName = Path.GetFileNameWithoutExtension(mdlPathFileName)
+					logFileName = mdlFileName + " " + My.Resources.Decompile_LogFileNameSuffix
+				Else
+					logPath = Me.theOutputPath
+					logFileName = My.Resources.Decompile_LogFileNameSuffix
+				End If
+				FileManager.CreatePath(logPath)
+				logPathFileName = Path.Combine(logPath, logFileName)
 
-			logFileName = modelName + " " + My.Resources.Decompile_LogFileNameSuffix
-			logPathFileName = Path.Combine(logPath, logFileName)
+				Me.theLogFileStream = File.CreateText(logPathFileName)
+				Me.theLogFileStream.AutoFlush = True
 
-			Me.theLogFileStream = File.CreateText(logPathFileName)
-			Me.theLogFileStream.AutoFlush = True
+				If File.Exists(logPathFileName) Then
+					Me.theDecompiledLogFiles.Add(FileManager.GetRelativePathFileName(Me.theOutputPath, logPathFileName))
+				End If
 
-			If File.Exists(logPathFileName) Then
-				Me.theDecompiledLogFiles.Add(FileManager.GetRelativePathFileName(Me.theOutputPath, logPathFileName))
-			End If
-
-			Me.theLogFileStream.WriteLine("// " + TheApp.GetHeaderComment())
-			Me.theLogFileStream.Flush()
+				Me.theLogFileStream.WriteLine("// " + TheApp.GetHeaderComment())
+				Me.theLogFileStream.Flush()
+			Catch ex As Exception
+				Me.UpdateProgress()
+				Me.UpdateProgress(2, "ERROR: Crowbar tried to write the decompile log file but the system gave this message: " + ex.Message)
+				status = StatusMessage.Error
+			End Try
 		Else
 			Me.theLogFileStream = Nothing
 		End If
-	End Sub
+
+		Return status
+	End Function
 
 	Private Function ReadCompiledFiles(ByVal mdlPathFileName As String, ByVal model As SourceModel) As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
@@ -506,20 +553,20 @@ Public Class Decompiler
 		Return status
 	End Function
 
-	Private Function ProcessData(ByVal model As SourceModel) As AppEnums.StatusMessage
-		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+	'Private Function ProcessData(ByVal model As SourceModel) As AppEnums.StatusMessage
+	'	Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
-		'TODO: Create all possible SMD file names before using them, so can handle any name collisions.
-		'      Store mesh SMD file names in list in SourceMdlModel where the index is lodIndex.
-		'      Store anim SMD file name in SourceMdlAnimationDesc48.
+	'	'TODO: Create all possible SMD file names before using them, so can handle any name collisions.
+	'	'      Store mesh SMD file names in list in SourceMdlModel where the index is lodIndex.
+	'	'      Store anim SMD file name in SourceMdlAnimationDesc48.
 
-		Return status
-	End Function
+	'	Return status
+	'End Function
 
 	Private Function WriteDecompiledFiles(ByVal model As SourceModel) As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
-		TheApp.SmdFilesWritten.Clear()
+		TheApp.SmdFileNames.Clear()
 
 		'TEST:
 		'Me.TestWriteDmx()
@@ -929,22 +976,22 @@ Public Class Decompiler
 		If e.Progress = ProgressOptions.WarningPhyFileChecksumDoesNotMatchMdlFileChecksum Then
 			'TODO: Test that this shows when needed.
 			Me.UpdateProgress(4, "WARNING: The PHY file's checksum value does not match the MDL file's checksum value.")
-		ElseIf e.Progress = ProgressOptions.WritingFileStarted Then
-			Dim pathFileName As String
-			Dim fileName As String
-			pathFileName = e.Message
-			fileName = Path.GetFileName(pathFileName)
-			'TODO: Figure out how to rename SMD file if already written in a previous step, which might happen if, for example, an anim is named "<modelname>_reference" or "<modelname>_physics".
-			'      Could also happen if the loop through SequenceDescs has already created the SMD file before the loop through AnimationDescs.
-			'      The same name can be used by multiple sequences, as is the case for 3 "frontkick" sequences in Half-Life Opposing Force "massn.mdl".
-			If TheApp.SmdFilesWritten.Contains(pathFileName) Then
-				Dim model As SourceModel
-				model = CType(sender, SourceModel)
-				model.WritingSingleFileIsCanceled = True
-				'Me.UpdateProgress(4, "WARNING: The file, """ + smdFileName + """, was written already in a previous step.")
-				'Else
-				'	Me.UpdateProgress(4, "Writing """ + fileName + """ file ...")
-			End If
+		'ElseIf e.Progress = ProgressOptions.WritingFileStarted Then
+		'	Dim pathFileName As String
+		'	Dim fileName As String
+		'	pathFileName = e.Message
+		'	fileName = Path.GetFileName(pathFileName)
+		'	'TODO: Figure out how to rename SMD file if already written in a previous step, which might happen if, for example, an anim is named "<modelname>_reference" or "<modelname>_physics".
+		'	'      Could also happen if the loop through SequenceDescs has already created the SMD file before the loop through AnimationDescs.
+		'	'      The same name can be used by multiple sequences, as is the case for 3 "frontkick" sequences in Half-Life Opposing Force "massn.mdl".
+		'	If TheApp.SmdFileNames.Contains(pathFileName) Then
+		'		Dim model As SourceModel
+		'		model = CType(sender, SourceModel)
+		'		model.WritingSingleFileIsCanceled = True
+		'		'Me.UpdateProgress(4, "WARNING: The file, """ + smdFileName + """, was written already in a previous step.")
+		'		'Else
+		'		'	Me.UpdateProgress(4, "Writing """ + fileName + """ file ...")
+		'	End If
 		ElseIf e.Progress = ProgressOptions.WritingFileFinished Then
 			Dim pathFileName As String
 			Dim fileName As String
@@ -973,16 +1020,16 @@ Public Class Decompiler
 
 				Me.theFirstDecompiledFileHasBeenAdded = True
 			End If
-			TheApp.SmdFilesWritten.Add(pathFileName)
+			'TheApp.SmdFileNames.Add(pathFileName)
 
 			Dim model As SourceModel
 			model = CType(sender, SourceModel)
 			If Me.CancellationPending Then
-				'status = StatusMessage.Cancelled
+				'status = StatusMessage.Canceled
 				model.WritingIsCanceled = True
-			ElseIf Me.theSkipCurrentModelIsActive Then
-				'status = StatusMessage.Skipped
-				model.WritingSingleFileIsCanceled = True
+				'ElseIf Me.theSkipCurrentModelIsActive Then
+				'	'status = StatusMessage.Skipped
+				'	model.WritingSingleFileIsCanceled = True
 			End If
 		Else
 			Dim progressUnhandled As Integer = 4242

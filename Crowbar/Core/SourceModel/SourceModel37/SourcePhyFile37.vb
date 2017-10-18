@@ -5,7 +5,7 @@ Public Class SourcePhyFile37
 
 #Region "Creation and Destruction"
 
-	Public Sub New(ByVal phyFileReader As BinaryReader, ByVal phyFileData As SourcePhyFileData37)
+	Public Sub New(ByVal phyFileReader As BinaryReader, ByVal phyFileData As SourcePhyFileData)
 		Me.theInputFileReader = phyFileReader
 		Me.thePhyFileData = phyFileData
 	End Sub
@@ -809,7 +809,7 @@ Public Class SourcePhyFile37
 #Region "Data"
 
 	Private theInputFileReader As BinaryReader
-	Private thePhyFileData As SourcePhyFileData37
+	Private thePhyFileData As SourcePhyFileData
 
 	Private theDampingToCountMap As SortedList(Of Single, Integer)
 	Private theInertiaToCountMap As SortedList(Of Single, Integer)

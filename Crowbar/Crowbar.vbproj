@@ -258,6 +258,13 @@
     <Compile Include="Core\SourceModel\SourceModel32\SourceModel32.vb" />
     <Compile Include="Core\SourceModel\SourceModel32\SourceQcFile32.vb" />
     <Compile Include="Core\SourceModel\SourceModel32\SourceSmdFile32.vb" />
+    <Compile Include="Core\SourceModel\SourceModel35\SourceMdlFile35.vb" />
+    <Compile Include="Core\SourceModel\SourceModel35\SourceMdlFileData\SourceMdlAnimationDesc35.vb" />
+    <Compile Include="Core\SourceModel\SourceModel35\SourceMdlFileData\SourceMdlFileData35.vb" />
+    <Compile Include="Core\SourceModel\SourceModel35\SourceMdlFileData\SourceMdlSequenceDesc35.vb" />
+    <Compile Include="Core\SourceModel\SourceModel35\SourceModel35.vb" />
+    <Compile Include="Core\SourceModel\SourceModel35\SourceQcFile35.vb" />
+    <Compile Include="Core\SourceModel\SourceModel35\SourceSmdFile35.vb" />
     <Compile Include="Core\SourceModel\SourceModel36\SourceMdlFile36.vb" />
     <Compile Include="Core\SourceModel\SourceModel36\SourceMdlFileData\SourceMdlAnimationDesc36.vb" />
     <Compile Include="Core\SourceModel\SourceModel36\SourceMdlFileData\SourceMdlFileData36.vb" />
@@ -297,6 +304,8 @@
     <Compile Include="Core\SourceModel\SourceModel46\SourceVtxFileData\SourceVtxFileData46.vb" />
     <Compile Include="Core\SourceModel\SourceModel46\SourceVvdFile46.vb" />
     <Compile Include="Core\SourceModel\SourceModel46\SourceVvdFileData\SourceVvdFileData46.vb" />
+    <Compile Include="Core\SourceModel\SourceModel48\SourceMdlFile48.vb" />
+    <Compile Include="Core\SourceModel\SourceModel48\SourceModel48.vb" />
     <Compile Include="Core\SourceModel\SourceModel53\SourceMdlFile53.vb" />
     <Compile Include="Core\SourceModel\SourceModel53\SourceMdlFileData\SourceMdlFileData53.vb" />
     <Compile Include="Core\SourceModel\SourceModel53\SourceModel53.vb" />
@@ -395,9 +404,7 @@
     <Compile Include="Core\SourceModel\SourceModel48\SourcePhyFileData\SourcePhyFileData48.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceVtxFileData\SourceVtxFileData48.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceVvdFileData\SourceVvdFileData48.vb" />
-    <Compile Include="Core\SourceModel\SourceModel48\SourceModel48.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceAniFile48.vb" />
-    <Compile Include="Core\SourceModel\SourceModel48\SourceMdlFile48.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourcePhyFile48.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceQcFile48.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceSmdFile48.vb" />
@@ -488,7 +495,20 @@
     <Compile Include="Core\VpkFormat\VpkDirectoryEntry.vb" />
     <Compile Include="Core\VpkFormat\VpkFile.vb" />
     <Compile Include="Core\VpkFormat\VpkFileData.vb" />
+    <Compile Include="Widgets\- Application\BaseForm.Designer.vb">
+      <DependentUpon>BaseForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\- Application\BaseForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Widgets\- Application\BaseUserControl.Designer.vb">
+      <DependentUpon>BaseUserControl.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\- Application\BaseUserControl.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Widgets\- Application\FolderAndFileListViewItemComparer.vb" />
+    <Compile Include="Widgets\- Application\NodeSorter.vb" />
     <Compile Include="Widgets\- General\FileDragDropHelper.vb" />
     <Compile Include="Widgets\- General\RichTextBoxEx.vb">
       <SubType>Component</SubType>
@@ -499,58 +519,61 @@
     <Compile Include="Widgets\- General\TextBoxEx.vb">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Widgets\Main\AboutUserControl.Designer.vb">
+    <Compile Include="Widgets\- General\ToolStripSpringTextBox.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Widgets\Main Tabs\AboutUserControl.Designer.vb">
       <DependentUpon>AboutUserControl.vb</DependentUpon>
     </Compile>
-    <Compile Include="Widgets\Main\AboutUserControl.vb">
+    <Compile Include="Widgets\Main Tabs\AboutUserControl.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Widgets\Main\CompileUserControl.Designer.vb">
+    <Compile Include="Widgets\Main Tabs\CompileUserControl.Designer.vb">
       <DependentUpon>CompileUserControl.vb</DependentUpon>
     </Compile>
-    <Compile Include="Widgets\Main\CompileUserControl.vb">
+    <Compile Include="Widgets\Main Tabs\CompileUserControl.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Widgets\Main\UnpackUserControl.Designer.vb">
+    <Compile Include="Widgets\Main Tabs\UnpackUserControl.Designer.vb">
       <DependentUpon>UnpackUserControl.vb</DependentUpon>
     </Compile>
-    <Compile Include="Widgets\Main\UnpackUserControl.vb">
+    <Compile Include="Widgets\Main Tabs\UnpackUserControl.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Widgets\Main\PackUserControl.Designer.vb">
+    <Compile Include="Widgets\Main Tabs\PackUserControl.Designer.vb">
       <DependentUpon>PackUserControl.vb</DependentUpon>
     </Compile>
-    <Compile Include="Widgets\Main\PackUserControl.vb">
+    <Compile Include="Widgets\Main Tabs\PackUserControl.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Widgets\Main\ReleaseUserControl.Designer.vb">
+    <Compile Include="Widgets\Main Tabs\ReleaseUserControl.Designer.vb">
       <DependentUpon>ReleaseUserControl.vb</DependentUpon>
     </Compile>
-    <Compile Include="Widgets\Main\ReleaseUserControl.vb">
+    <Compile Include="Widgets\Main Tabs\ReleaseUserControl.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Widgets\Main\EditUserControl.Designer.vb">
+    <Compile Include="Widgets\Main Tabs\EditUserControl.Designer.vb">
       <DependentUpon>EditUserControl.vb</DependentUpon>
     </Compile>
-    <Compile Include="Widgets\Main\EditUserControl.vb">
+    <Compile Include="Widgets\Main Tabs\EditUserControl.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Widgets\Main\OptionsUserControl.Designer.vb">
+    <Compile Include="Widgets\Main Tabs\OptionsUserControl.Designer.vb">
       <DependentUpon>OptionsUserControl.vb</DependentUpon>
     </Compile>
-    <Compile Include="Widgets\Main\OptionsUserControl.vb">
+    <Compile Include="Widgets\Main Tabs\OptionsUserControl.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Widgets\Main\ViewUserControl.Designer.vb">
+    <Compile Include="Widgets\Main Tabs\ViewUserControl.Designer.vb">
       <DependentUpon>ViewUserControl.vb</DependentUpon>
     </Compile>
-    <Compile Include="Widgets\Main\ViewUserControl.vb">
+    <Compile Include="Widgets\Main Tabs\ViewUserControl.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Widgets\Main\DecompileUserControl.Designer.vb">
+    <Compile Include="Widgets\Main Tabs\DecompileUserControl.Designer.vb">
       <DependentUpon>DecompileUserControl.vb</DependentUpon>
     </Compile>
-    <Compile Include="Widgets\Main\DecompileUserControl.vb">
+    <Compile Include="Widgets\Main Tabs\DecompileUserControl.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Widgets\Popups\GameSetupForm.Designer.vb">
@@ -559,10 +582,10 @@
     <Compile Include="Widgets\Popups\GameSetupForm.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Widgets\Main\HelpUserControl.Designer.vb">
+    <Compile Include="Widgets\Main Tabs\HelpUserControl.Designer.vb">
       <DependentUpon>HelpUserControl.vb</DependentUpon>
     </Compile>
-    <Compile Include="Widgets\Main\HelpUserControl.vb">
+    <Compile Include="Widgets\Main Tabs\HelpUserControl.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Widgets\- Application\MainForm.vb">
@@ -633,39 +656,39 @@
     <EmbeddedResource Include="Widgets\- Application\MacroDataGridView.resx">
       <DependentUpon>MacroDataGridView.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Widgets\Main\AboutUserControl.resx">
+    <EmbeddedResource Include="Widgets\Main Tabs\AboutUserControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AboutUserControl.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Widgets\Main\CompileUserControl.resx">
+    <EmbeddedResource Include="Widgets\Main Tabs\CompileUserControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>CompileUserControl.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Widgets\Main\UnpackUserControl.resx">
+    <EmbeddedResource Include="Widgets\Main Tabs\UnpackUserControl.resx">
       <DependentUpon>UnpackUserControl.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Widgets\Main\PackUserControl.resx">
+    <EmbeddedResource Include="Widgets\Main Tabs\PackUserControl.resx">
       <DependentUpon>PackUserControl.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Widgets\Main\ReleaseUserControl.resx">
+    <EmbeddedResource Include="Widgets\Main Tabs\ReleaseUserControl.resx">
       <DependentUpon>ReleaseUserControl.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Widgets\Main\EditUserControl.resx">
+    <EmbeddedResource Include="Widgets\Main Tabs\EditUserControl.resx">
       <DependentUpon>EditUserControl.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Widgets\Main\OptionsUserControl.resx">
+    <EmbeddedResource Include="Widgets\Main Tabs\OptionsUserControl.resx">
       <DependentUpon>OptionsUserControl.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Widgets\Main\ViewUserControl.resx">
+    <EmbeddedResource Include="Widgets\Main Tabs\ViewUserControl.resx">
       <DependentUpon>ViewUserControl.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Widgets\Main\DecompileUserControl.resx">
+    <EmbeddedResource Include="Widgets\Main Tabs\DecompileUserControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>DecompileUserControl.vb</DependentUpon>
     </EmbeddedResource>
@@ -673,7 +696,7 @@
       <SubType>Designer</SubType>
       <DependentUpon>GameSetupForm.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Widgets\Main\HelpUserControl.resx">
+    <EmbeddedResource Include="Widgets\Main Tabs\HelpUserControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>HelpUserControl.vb</DependentUpon>
     </EmbeddedResource>
@@ -716,7 +739,10 @@
     <Content Include="Data\Crowbar Settings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="resources\CrowbarGuideBanner.png" />
     <Content Include="resources\Datamodel.NET.dll" />
+    <Content Include="resources\Find.png" />
+    <Content Include="resources\Refresh.png" />
     <None Include="resources\EnterArrow.png" />
     <None Include="resources\FindPrevious.png" />
     <None Include="resources\FindNext.png" />
@@ -725,7 +751,6 @@
     <None Include="resources\crowbar_icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Core\SourceModel\SourceModel35\" />
     <Folder Include="Core\SourceModel\SourceModel52\" />
     <Folder Include="Core\SourceModel\SourceModel57\" />
     <Folder Include="Documents\" />

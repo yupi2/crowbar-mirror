@@ -61,15 +61,51 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized string similar to http://steamcommunity.com/id/zeqmacaw.
+        '''</summary>
+        Friend ReadOnly Property About_AuthorLink() As String
+            Get
+                Return ResourceManager.GetString("About_AuthorLink", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to Goto Steam Group.
+        '''</summary>
+        Friend ReadOnly Property About_GotoSteamGroupText() As String
+            Get
+                Return ResourceManager.GetString("About_GotoSteamGroupText", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to Goto Steam Profile.
+        '''</summary>
+        Friend ReadOnly Property About_GotoSteamProfileText() As String
+            Get
+                Return ResourceManager.GetString("About_GotoSteamProfileText", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized string similar to GoldSource and Source Engine Model Toolset:
-        '''	Decompiler of Valve&apos;s MDL and related files.
-        '''	Compiler interface to Valve&apos;s StudioMDL.exe tool.
-        '''	Model viewer interface to Valve&apos;s Half-Life Model Viewer tool.
-        '''.
+        '''	* Decompiler of Valve&apos;s MDL and related files.
+        '''	* Compiler interface to Valve&apos;s StudioMDL.exe tool.
+        '''	* Model viewer interface to Valve&apos;s Half-Life Model Viewer tool.
+        '''	* Unpacker of Valve&apos;s VPK files..
         '''</summary>
         Friend ReadOnly Property About_ProductDescription() As String
             Get
                 Return ResourceManager.GetString("About_ProductDescription", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to http://steamcommunity.com/groups/CrowbarTool.
+        '''</summary>
+        Friend ReadOnly Property About_ProductLink() As String
+            Get
+                Return ResourceManager.GetString("About_ProductLink", resourceCulture)
             End Get
         End Property
         
@@ -99,30 +135,12 @@ Namespace My.Resources
         '''	Splinks
         '''	Stiffy360
         '''	Stay Puft
-        '''	Vincentor
-        '''.
+        '''	The303
+        '''	Vincentor.
         '''</summary>
         Friend ReadOnly Property About_SpecialThanksText() As String
             Get
                 Return ResourceManager.GetString("About_SpecialThanksText", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Looks up a localized string similar to http://steamcommunity.com/id/zeqmacaw.
-        '''</summary>
-        Friend ReadOnly Property AboutAuthorLink() As String
-            Get
-                Return ResourceManager.GetString("AboutAuthorLink", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Looks up a localized string similar to http://steamcommunity.com/groups/CrowbarTool.
-        '''</summary>
-        Friend ReadOnly Property AboutProductLink() As String
-            Get
-                Return ResourceManager.GetString("AboutProductLink", resourceCulture)
             End Get
         End Property
         
@@ -142,6 +160,16 @@ Namespace My.Resources
         Friend ReadOnly Property crowbar_icon_large() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("crowbar_icon_large", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property CrowbarGuideBanner() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("CrowbarGuideBanner", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property
@@ -240,6 +268,16 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized resource of type System.Drawing.Bitmap.
         '''</summary>
+        Friend ReadOnly Property Find() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("Find", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
         Friend ReadOnly Property FindNext() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("FindNext", resourceCulture)
@@ -258,11 +296,30 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized string similar to http://steamcommunity.com/sharedfiles/filedetails/?id=791755353.
+        '''</summary>
+        Friend ReadOnly Property Help_CrowbarGuideLink() As String
+            Get
+                Return ResourceManager.GetString("Help_CrowbarGuideLink", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized resource of type System.Drawing.Bitmap.
         '''</summary>
         Friend ReadOnly Property macaw() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("macaw", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property Refresh() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("Refresh", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property

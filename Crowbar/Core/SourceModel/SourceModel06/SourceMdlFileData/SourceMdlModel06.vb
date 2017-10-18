@@ -45,6 +45,7 @@
 	Public modelDataOffset As Integer
 
 
+	Public theSmdFileName As String
 	Public theName As String
 	Public theMeshes As New List(Of SourceMdlMesh06)()
 	Public theNormalBoneInfos As New List(Of Integer)()

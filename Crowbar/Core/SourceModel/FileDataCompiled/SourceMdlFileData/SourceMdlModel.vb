@@ -1,5 +1,14 @@
 Public Class SourceMdlModel
 
+	Public Sub New()
+		'MyBase.New()
+
+		Me.theSmdFileNames = New List(Of String)(MAX_NUM_LODS)
+		For i As Integer = 0 To MAX_NUM_LODS - 1
+			Me.theSmdFileNames.Add("")
+		Next
+	End Sub
+
 	'struct mstudiomodel_t
 	'{
 	'	DECLARE_BYTESWAP_DATADESC();
@@ -72,6 +81,7 @@ Public Class SourceMdlModel
 	Public unused(7) As Integer
 
 
+	Public theSmdFileNames As List(Of String)
 	Public theMeshes As List(Of SourceMdlMesh)
 	Public theEyeballs As List(Of SourceMdlEyeball)
 

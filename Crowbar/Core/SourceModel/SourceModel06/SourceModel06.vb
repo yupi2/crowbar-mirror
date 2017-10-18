@@ -63,7 +63,7 @@ Public Class SourceModel06
 
 		Dim aBodyPart As SourceMdlBodyPart06
 		Dim aBodyModel As SourceMdlModel06
-		Dim smdFileName As String
+		'Dim smdFileName As String
 		Dim smdPathFileName As String
 		If Me.theMdlFileData.theBodyParts IsNot Nothing Then
 			For bodyPartIndex As Integer = 0 To Me.theMdlFileData.theBodyParts.Count - 1
@@ -76,8 +76,8 @@ Public Class SourceModel06
 							Continue For
 						End If
 
-						smdFileName = SourceFileNamesModule.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, 0, False, Me.theName, aBodyModel.theName, Me.theMdlFileData.theBodyParts.Count, aBodyPart.theModels.Count)
-						smdPathFileName = Path.Combine(modelOutputPath, smdFileName)
+						aBodyModel.theSmdFileName = SourceFileNamesModule.CreateBodyGroupSmdFileName(aBodyModel.theSmdFileName, bodyPartIndex, modelIndex, 0, Me.theName, aBodyModel.theName)
+						smdPathFileName = Path.Combine(modelOutputPath, aBodyModel.theSmdFileName)
 
 						Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
 						'NOTE: Check here in case writing is canceled in the above event.
@@ -103,23 +103,23 @@ Public Class SourceModel06
 	Public Overrides Function WriteBoneAnimationSmdFiles(ByVal modelOutputPath As String) As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
-		Dim aSequence As SourceMdlSequenceDesc06
+		Dim aSequenceDesc As SourceMdlSequenceDesc06
 		Dim smdPath As String
-		Dim smdFileName As String
+		'Dim smdFileName As String
 		Dim smdPathFileName As String
 
 		Try
 			For aSequenceIndex As Integer = 0 To Me.theMdlFileData.theSequences.Count - 1
-				aSequence = Me.theMdlFileData.theSequences(aSequenceIndex)
+				aSequenceDesc = Me.theMdlFileData.theSequences(aSequenceIndex)
 
-				For blendIndex As Integer = 0 To aSequence.blendCount - 1
-					If aSequence.blendCount = 1 Then
-						smdFileName = SourceModule10.GetAnimationSmdRelativePathFileName(Me.theName, aSequence.theName, -1)
+				For blendIndex As Integer = 0 To aSequenceDesc.blendCount - 1
+					If aSequenceDesc.blendCount = 1 Then
+						aSequenceDesc.theSmdRelativePathFileName = SourceFileNamesModule.CreateAnimationSmdRelativePathFileName(aSequenceDesc.theSmdRelativePathFileName, Me.theName, aSequenceDesc.theName, -1)
 					Else
-						smdFileName = SourceModule10.GetAnimationSmdRelativePathFileName(Me.theName, aSequence.theName, blendIndex)
+						aSequenceDesc.theSmdRelativePathFileName = SourceFileNamesModule.CreateAnimationSmdRelativePathFileName(aSequenceDesc.theSmdRelativePathFileName, Me.theName, aSequenceDesc.theName, blendIndex)
 					End If
 
-					smdPathFileName = Path.Combine(modelOutputPath, smdFileName)
+					smdPathFileName = Path.Combine(modelOutputPath, aSequenceDesc.theSmdRelativePathFileName)
 					smdPath = FileManager.GetPath(smdPathFileName)
 					If FileManager.OutputPathIsUsable(smdPath) Then
 						Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
@@ -132,7 +132,7 @@ Public Class SourceModel06
 							Continue For
 						End If
 
-						Me.WriteBoneAnimationSmdFile(smdPathFileName, aSequence, blendIndex)
+						Me.WriteBoneAnimationSmdFile(smdPathFileName, aSequenceDesc, blendIndex)
 
 						Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, smdPathFileName)
 					End If

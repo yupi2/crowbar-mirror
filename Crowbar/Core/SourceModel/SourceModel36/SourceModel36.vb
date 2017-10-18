@@ -75,8 +75,8 @@ Public Class SourceModel36
 
 	Public Overrides ReadOnly Property HasPhysicsMeshData As Boolean
 		Get
-			If Me.thePhyFileData IsNot Nothing _
-			 AndAlso Me.thePhyFileData.theSourcePhyCollisionDatas IsNot Nothing _
+			If Me.thePhyFileDataGeneric IsNot Nothing _
+			 AndAlso Me.thePhyFileDataGeneric.theSourcePhyCollisionDatas IsNot Nothing _
 			 AndAlso Not Me.theMdlFileData.theMdlFileOnlyHasAnimations _
 			 AndAlso Me.theMdlFileData.theBones IsNot Nothing _
 			 AndAlso Me.theMdlFileData.theBones.Count > 0 Then
@@ -168,7 +168,7 @@ Public Class SourceModel36
 			If status = StatusMessage.Success Then
 				Try
 					Me.ReadFile(Me.thePhyPathFileName, AddressOf Me.ReadPhyFile_Internal)
-					If Me.thePhyFileData.checksum <> Me.theMdlFileData.checksum Then
+					If Me.thePhyFileDataGeneric.checksum <> Me.theMdlFileData.checksum Then
 						'status = StatusMessage.WarningPhyChecksumDoesNotMatchMdl
 						Me.NotifySourceModelProgress(ProgressOptions.WarningPhyFileChecksumDoesNotMatchMdlFileChecksum, "")
 					End If
@@ -227,15 +227,15 @@ Public Class SourceModel36
 
 		Dim anAnimationDesc As SourceMdlAnimationDesc36
 		Dim smdPath As String
-		Dim smdFileName As String
+		'Dim smdFileName As String
 		Dim smdPathFileName As String
 
 		Try
 			For anAnimDescIndex As Integer = 0 To Me.theMdlFileData.theAnimationDescs.Count - 1
 				anAnimationDesc = Me.theMdlFileData.theAnimationDescs(anAnimDescIndex)
 
-				smdFileName = SourceFileNamesModule.GetAnimationSmdRelativePathFileName(Me.Name, anAnimationDesc.theName)
-				smdPathFileName = Path.Combine(modelOutputPath, smdFileName)
+				anAnimationDesc.theSmdRelativePathFileName = SourceFileNamesModule.CreateAnimationSmdRelativePathFileName(anAnimationDesc.theSmdRelativePathFileName, Me.Name, anAnimationDesc.theName)
+				smdPathFileName = Path.Combine(modelOutputPath, anAnimationDesc.theSmdRelativePathFileName)
 				smdPath = FileManager.GetPath(smdPathFileName)
 				If FileManager.OutputPathIsUsable(smdPath) Then
 					Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
@@ -372,14 +372,14 @@ Public Class SourceModel36
 	End Sub
 
 	Protected Overrides Sub ReadPhyFile_Internal()
-		If Me.thePhyFileData Is Nothing Then
-			Me.thePhyFileData = New SourcePhyFileData37()
+		If Me.thePhyFileDataGeneric Is Nothing Then
+			Me.thePhyFileDataGeneric = New SourcePhyFileData37()
 		End If
 
-		Dim phyFile As New SourcePhyFile37(Me.theInputFileReader, Me.thePhyFileData)
+		Dim phyFile As New SourcePhyFile37(Me.theInputFileReader, Me.thePhyFileDataGeneric)
 
 		phyFile.ReadSourcePhyHeader()
-		If Me.thePhyFileData.solidCount > 0 Then
+		If Me.thePhyFileDataGeneric.solidCount > 0 Then
 			phyFile.ReadSourceCollisionData()
 			phyFile.CalculateVertexNormals()
 			phyFile.ReadSourcePhysCollisionModels()
@@ -405,7 +405,7 @@ Public Class SourceModel36
 	End Sub
 
 	Protected Overrides Sub WriteQcFile()
-		Dim qcFile As New SourceQcFile36(Me.theOutputFileTextWriter, Me.theQcPathFileName, Me.theMdlFileData, Me.thePhyFileData, Me.theVtxFileData, Me.theName)
+		Dim qcFile As New SourceQcFile36(Me.theOutputFileTextWriter, Me.theQcPathFileName, Me.theMdlFileData, Me.thePhyFileDataGeneric, Me.theVtxFileData, Me.theName)
 
 		Try
 			qcFile.WriteHeaderComment()
@@ -466,11 +466,11 @@ Public Class SourceModel36
 	Protected Overrides Function WriteMeshSmdFiles(ByVal modelOutputPath As String, ByVal lodStartIndex As Integer, ByVal lodStopIndex As Integer) As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
-		Dim smdFileName As String
+		'Dim smdFileName As String
 		Dim smdPathFileName As String
 		Dim aBodyPart As SourceVtxBodyPart06
 		Dim aVtxModel As SourceVtxModel06
-		Dim aModel As SourceMdlModel37
+		Dim aBodyModel As SourceMdlModel37
 		Dim bodyPartVertexIndexStart As Integer
 
 		bodyPartVertexIndexStart = 0
@@ -483,8 +483,8 @@ Public Class SourceModel36
 						aVtxModel = aBodyPart.theVtxModels(modelIndex)
 
 						If aVtxModel.theVtxModelLods IsNot Nothing Then
-							aModel = Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex)
-							If aModel.name(0) = ChrW(0) AndAlso aVtxModel.theVtxModelLods(0).theVtxMeshes Is Nothing Then
+							aBodyModel = Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex)
+							If aBodyModel.name(0) = ChrW(0) AndAlso aVtxModel.theVtxModelLods(0).theVtxMeshes Is Nothing Then
 								Continue For
 							End If
 
@@ -495,8 +495,13 @@ Public Class SourceModel36
 								End If
 
 								Try
-									smdFileName = SourceModule2531.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, lodIndex, Me.theMdlFileData.theModelCommandIsUsed, Me.theName, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).name, Me.theMdlFileData.theBodyParts.Count, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels.Count, Me.theMdlFileData.theSequenceGroups(0).theFileName)
-									smdPathFileName = Path.Combine(modelOutputPath, smdFileName)
+									Dim bodyModelName As String
+									bodyModelName = Me.theMdlFileData.theSequenceGroups(0).theFileName
+									If String.IsNullOrEmpty(bodyModelName) OrElse FileManager.FilePathHasInvalidChars(bodyModelName) Then
+										bodyModelName = Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).name
+									End If
+									aBodyModel.theSmdFileNames(lodIndex) = SourceFileNamesModule.CreateBodyGroupSmdFileName(aBodyModel.theSmdFileNames(lodIndex), bodyPartIndex, modelIndex, lodIndex, Me.theName, bodyModelName)
+									smdPathFileName = Path.Combine(modelOutputPath, aBodyModel.theSmdFileNames(lodIndex))
 
 									Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
 									'NOTE: Check here in case writing is canceled in the above event.
@@ -508,7 +513,7 @@ Public Class SourceModel36
 										Continue For
 									End If
 
-									Me.WriteMeshSmdFile(smdPathFileName, lodIndex, aVtxModel, aModel, bodyPartVertexIndexStart)
+									Me.WriteMeshSmdFile(smdPathFileName, lodIndex, aVtxModel, aBodyModel, bodyPartVertexIndexStart)
 
 									Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, smdPathFileName)
 								Catch ex As Exception
@@ -516,7 +521,7 @@ Public Class SourceModel36
 								End Try
 							Next
 
-							bodyPartVertexIndexStart += aModel.vertexCount
+							bodyPartVertexIndexStart += aBodyModel.vertexCount
 						End If
 					Next
 				End If
@@ -527,7 +532,7 @@ Public Class SourceModel36
 	End Function
 
 	Protected Overrides Sub WritePhysicsMeshSmdFile()
-		Dim physicsMeshSmdFile As New SourceSmdFile36(Me.theOutputFileTextWriter, Me.theMdlFileData, Me.thePhyFileData)
+		Dim physicsMeshSmdFile As New SourceSmdFile36(Me.theOutputFileTextWriter, Me.theMdlFileData, Me.thePhyFileDataGeneric)
 
 		Try
 			physicsMeshSmdFile.WriteHeaderComment()
@@ -561,7 +566,7 @@ Public Class SourceModel36
 #Region "Data"
 
 	Private theMdlFileData As SourceMdlFileData36
-	Private thePhyFileData As SourcePhyFileData37
+	'Private thePhyFileData As SourcePhyFileData37
 	Private theVtxFileData As SourceVtxFileData06
 
 #End Region

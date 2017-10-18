@@ -245,7 +245,7 @@
 	Public thePoseParamDescs As List(Of SourceMdlPoseParamDesc)
 	Public theSequenceDescs As List(Of SourceMdlSequenceDesc32)
 	Public theSequenceGroups As List(Of SourceMdlSequenceGroup37)
-	Public theSkinFamilies As List(Of List(Of Integer))
+	Public theSkinFamilies As List(Of List(Of Short))
 	Public theSurfacePropName As String
 	Public theTexturePaths As List(Of String)
 	Public theTextures As List(Of SourceMdlTexture37)

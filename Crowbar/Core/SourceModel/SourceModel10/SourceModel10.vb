@@ -8,6 +8,8 @@ Public Class SourceModel10
 
 	Public Sub New(ByVal mdlPathFileName As String, ByVal mdlVersion As Integer)
 		MyBase.New(mdlPathFileName, mdlVersion)
+
+		Me.theExternalTexturesAreUsed = False
 	End Sub
 
 #End Region
@@ -80,7 +82,10 @@ Public Class SourceModel10
 			'TODO: Fill theSequenceGroupMdlPathFileNames with actual names stored as is done in ReadSequenceGroupMdlFiles().
 			'      Requires reading in the SequenceGroup data.
 			Me.theSequenceGroupMdlPathFileNames = New List(Of String)(Me.theMdlFileData.sequenceGroupCount)
-			For sequenceGroupIndex As Integer = 0 To Me.theMdlFileData.sequenceGroupCount - 1
+
+			Me.theSequenceGroupMdlPathFileNames.Add(Me.theMdlPathFileName)
+			'NOTE: Start index at 1 because 0 is the main MDL file, handled above.
+			For sequenceGroupIndex As Integer = 1 To Me.theMdlFileData.sequenceGroupCount - 1
 				Dim aSequenceGroupMdlFileName As String
 				Dim aSequenceGroupMdlPathFileName As String
 				'sequenceGroupMdlFileName = Path.GetFileName(aSequenceGroup.theFileName)
@@ -91,13 +96,21 @@ Public Class SourceModel10
 				'	status = StatusMessage.Error
 				'End If
 				Me.theSequenceGroupMdlPathFileNames.Add(aSequenceGroupMdlPathFileName)
+
+				If Not File.Exists(aSequenceGroupMdlPathFileName) Then
+					status = StatusMessage.ErrorRequiredSequenceGroupMdlFileNotFound
+					Return status
+				End If
 			Next
 
-			textureMdlFileName = mdlFileNameWithoutExtension + "T" + mdlExtension
-			Me.theTextureMdlPathFileName = Path.Combine(mdlPath, textureMdlFileName)
-			'If Not File.Exists(Me.theTextureMdlPathFileName) Then
-			'	status = StatusMessage.Error
-			'End If
+			If Me.theMdlFileData.textureCount = 0 Then
+				textureMdlFileName = mdlFileNameWithoutExtension + "T" + mdlExtension
+				Me.theTextureMdlPathFileName = Path.Combine(mdlPath, textureMdlFileName)
+				If Not File.Exists(Me.theTextureMdlPathFileName) Then
+					status = StatusMessage.ErrorRequiredTextureMdlFileNotFound
+					Return status
+				End If
+			End If
 		Catch ex As Exception
 			status = StatusMessage.Error
 		End Try
@@ -195,7 +208,7 @@ Public Class SourceModel10
 		'End If
 		Dim aBodyPart As SourceMdlBodyPart10
 		Dim aBodyModel As SourceMdlModel10
-		Dim smdFileName As String
+		'Dim smdFileName As String
 		Dim smdPathFileName As String
 		'Dim aVertex As SourceVector
 		If Me.theMdlFileData.theBodyParts IsNot Nothing Then
@@ -209,8 +222,8 @@ Public Class SourceModel10
 							Continue For
 						End If
 
-						smdFileName = SourceFileNamesModule.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, 0, False, Me.theName, aBodyModel.theName, Me.theMdlFileData.theBodyParts.Count, aBodyPart.theModels.Count)
-						smdPathFileName = Path.Combine(modelOutputPath, smdFileName)
+						aBodyModel.theSmdFileName = SourceFileNamesModule.CreateBodyGroupSmdFileName(aBodyModel.theSmdFileName, bodyPartIndex, modelIndex, 0, Me.theName, aBodyModel.theName)
+						smdPathFileName = Path.Combine(modelOutputPath, aBodyModel.theSmdFileName)
 
 						Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
 						'NOTE: Check here in case writing is canceled in the above event.
@@ -242,23 +255,23 @@ Public Class SourceModel10
 	Public Overrides Function WriteBoneAnimationSmdFiles(ByVal modelOutputPath As String) As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
-		Dim aSequence As SourceMdlSequenceDesc10
+		Dim aSequenceDesc As SourceMdlSequenceDesc10
 		Dim smdPath As String
-		Dim smdFileName As String
+		'Dim smdFileName As String
 		Dim smdPathFileName As String
 
 		Try
 			For aSequenceIndex As Integer = 0 To Me.theMdlFileData.theSequences.Count - 1
-				aSequence = Me.theMdlFileData.theSequences(aSequenceIndex)
+				aSequenceDesc = Me.theMdlFileData.theSequences(aSequenceIndex)
 
-				For blendIndex As Integer = 0 To aSequence.blendCount - 1
-					If aSequence.blendCount = 1 Then
-						smdFileName = SourceModule10.GetAnimationSmdRelativePathFileName(Me.theName, aSequence.theName, -1)
+				For blendIndex As Integer = 0 To aSequenceDesc.blendCount - 1
+					If aSequenceDesc.blendCount = 1 Then
+						aSequenceDesc.theSmdRelativePathFileNames(blendIndex) = SourceFileNamesModule.CreateAnimationSmdRelativePathFileName(aSequenceDesc.theSmdRelativePathFileNames(blendIndex), Me.theName, aSequenceDesc.theName, -1)
 					Else
-						smdFileName = SourceModule10.GetAnimationSmdRelativePathFileName(Me.theName, aSequence.theName, blendIndex)
+						aSequenceDesc.theSmdRelativePathFileNames(blendIndex) = SourceFileNamesModule.CreateAnimationSmdRelativePathFileName(aSequenceDesc.theSmdRelativePathFileNames(blendIndex), Me.theName, aSequenceDesc.theName, blendIndex)
 					End If
 
-					smdPathFileName = Path.Combine(modelOutputPath, smdFileName)
+					smdPathFileName = Path.Combine(modelOutputPath, aSequenceDesc.theSmdRelativePathFileNames(blendIndex))
 					smdPath = FileManager.GetPath(smdPathFileName)
 					If FileManager.OutputPathIsUsable(smdPath) Then
 						Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
@@ -271,7 +284,7 @@ Public Class SourceModel10
 							Continue For
 						End If
 
-						Me.WriteBoneAnimationSmdFile(smdPathFileName, aSequence, blendIndex)
+						Me.WriteBoneAnimationSmdFile(smdPathFileName, aSequenceDesc, blendIndex)
 
 						Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, smdPathFileName)
 					End If
@@ -336,7 +349,7 @@ Public Class SourceModel10
 
 			Dim smdFile As New SourceSmdFile10(Me.theOutputFileTextWriter, Me.theMdlFileData)
 
-			smdFile.WriteHeaderComment()
+			'smdFile.WriteHeaderComment()
 
 			smdFile.WriteHeaderSection()
 			smdFile.WriteNodesSection()
@@ -521,6 +534,7 @@ Public Class SourceModel10
 		Dim sequenceGroupMdlFile As New SourceMdlFile10(Me.theInputFileReader, aSequenceGroupMdlFileData10)
 
 		sequenceGroupMdlFile.ReadSequenceGroupMdlHeader()
+		Me.theMdlFileData.theSequenceGroupFileHeaders(sequenceGroupIndex).theActualFileSize = aSequenceGroupMdlFileData10.theActualFileSize
 		sequenceGroupMdlFile.ReadAnimations(sequenceGroupIndex)
 
 		Me.theSequenceGroupMdlFileDatas10.Add(aSequenceGroupMdlFileData10)
@@ -536,15 +550,30 @@ Public Class SourceModel10
 		textureMdlFile.ReadMdlHeader()
 		textureMdlFile.ReadTextures()
 		textureMdlFile.ReadSkins()
+
+		If Me.theMdlFileData.theTextures Is Nothing Then
+			Me.theExternalTexturesAreUsed = True
+		End If
 	End Sub
 
 	Protected Overrides Sub WriteQcFile()
+		If Me.theExternalTexturesAreUsed Then
+			Me.theMdlFileData.skinReferenceCount = Me.theTextureMdlFileData10.skinReferenceCount
+			Me.theMdlFileData.skinFamilyCount = Me.theTextureMdlFileData10.skinFamilyCount
+			Me.theMdlFileData.theSkinFamilies = Me.theTextureMdlFileData10.theSkinFamilies
+			Me.theMdlFileData.theTextures = Me.theTextureMdlFileData10.theTextures
+		End If
+
 		Dim qcFile As New SourceQcFile10(Me.theOutputFileTextWriter, Me.theQcPathFileName, Me.theMdlFileData, Me.theName)
 
 		Try
 			qcFile.WriteHeaderComment()
 
 			qcFile.WriteModelNameCommand()
+			qcFile.WriteCDCommand()
+			qcFile.WriteCDTextureCommand()
+			qcFile.WriteClipToTexturesCommand()
+			qcFile.WriteScaleCommand()
 
 			qcFile.WriteBodyGroupCommand()
 
@@ -556,6 +585,7 @@ Public Class SourceModel10
 			'If TheApp.Settings.DecompileDebugInfoFilesIsChecked Then
 			'	qcFile.WriteTextureFileNameComments()
 			'End If
+			qcFile.WriteTexRenderMode()
 
 			qcFile.WriteAttachmentCommand()
 
@@ -565,12 +595,20 @@ Public Class SourceModel10
 
 			qcFile.WriteControllerCommand()
 
-			qcFile.WriteSequenceGroupCommands()
+			qcFile.WriteSequenceGroupSizeCommand()
+			'qcFile.WriteSequenceGroupCommands()
 			qcFile.WriteSequenceCommands()
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		Finally
 		End Try
+
+		If Me.theExternalTexturesAreUsed Then
+			Me.theMdlFileData.skinReferenceCount = 0
+			Me.theMdlFileData.skinFamilyCount = 0
+			Me.theMdlFileData.theSkinFamilies = Nothing
+			Me.theMdlFileData.theTextures = Nothing
+		End If
 	End Sub
 
 	Protected Overloads Function WriteMeshSmdFile(ByVal smdPathFileName As String, ByVal aModel As SourceMdlModel10) As AppEnums.StatusMessage
@@ -593,16 +631,14 @@ Public Class SourceModel10
 	End Function
 
 	Protected Overloads Sub WriteMeshSmdFile(ByVal aModel As SourceMdlModel10)
-		Dim externalTexturesAreUsed As Boolean = False
-		If Me.theMdlFileData.theTextures Is Nothing Then
+		If Me.theExternalTexturesAreUsed Then
 			Me.theMdlFileData.theTextures = Me.theTextureMdlFileData10.theTextures
-			externalTexturesAreUsed = True
 		End If
 
 		Dim smdFile As New SourceSmdFile10(Me.theOutputFileTextWriter, Me.theMdlFileData)
 
 		Try
-			smdFile.WriteHeaderComment()
+			'smdFile.WriteHeaderComment()
 
 			smdFile.WriteHeaderSection()
 			smdFile.WriteNodesSection()
@@ -612,7 +648,7 @@ Public Class SourceModel10
 			Dim debug As Integer = 4242
 		End Try
 
-		If externalTexturesAreUsed Then
+		If Me.theExternalTexturesAreUsed Then
 			Me.theMdlFileData.theTextures = Nothing
 		End If
 	End Sub
@@ -630,6 +666,7 @@ Public Class SourceModel10
 	Private theMdlFileData As SourceMdlFileData10
 	Private theSequenceGroupMdlFileDatas10 As List(Of SourceMdlFileData10)
 	Private theTextureMdlFileData10 As SourceMdlFileData10
+	Private theExternalTexturesAreUsed As Boolean
 
 #End Region
 

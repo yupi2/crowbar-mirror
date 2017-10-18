@@ -2,7 +2,7 @@
 
 Module SourceFileNamesModule
 
-	Public Function GetBodyGroupSmdFileName(ByVal bodyPartIndex As Integer, ByVal modelIndex As Integer, ByVal lodIndex As Integer, ByVal theModelCommandIsUsed As Boolean, ByVal modelName As String, ByVal bodyModelName As String, ByVal bodyPartCount As Integer, ByVal bodyModelCount As Integer) As String
+	Public Function CreateBodyGroupSmdFileName(ByVal givenBodyGroupSmdFileName As String, ByVal bodyPartIndex As Integer, ByVal modelIndex As Integer, ByVal lodIndex As Integer, ByVal modelName As String, ByVal bodyModelName As String) As String
 		'Dim bodyModelNameTrimmed As String
 		'Dim bodyModelFileName As String = ""
 		'Dim bodyModelFileNameWithoutExtension As String
@@ -35,7 +35,7 @@ Module SourceFileNamesModule
 		'	End If
 		'	bodyGroupSmdFileName += ".smd"
 		'End If
-		'------
+		'======
 		'bodyModelNameTrimmed = bodyModelName.Trim(Chr(0))
 		'Try
 		'	bodyModelFileName = Path.GetFileName(bodyModelNameTrimmed).ToLower(TheApp.InternalCultureInfo)
@@ -62,25 +62,74 @@ Module SourceFileNamesModule
 		'	bodyGroupSmdFileName += lodIndex.ToString()
 		'End If
 		'bodyGroupSmdFileName += ".smd"
-		'------
-		'NOTE: Ignore bodyModelName altogether because already making up the first part of file names 
-		'      so might as well make the rest of the file names unique with an easy pattern.
-		Dim bodyGroupSmdFileName As String
-		bodyGroupSmdFileName = modelName
-		bodyGroupSmdFileName += "_"
-		If bodyPartCount = 1 AndAlso bodyModelCount = 1 AndAlso lodIndex = 0 Then
-			bodyGroupSmdFileName += "reference"
+		'======
+		''NOTE: Ignore bodyModelName altogether because already making up the first part of file names 
+		''      so might as well make the rest of the file names unique with an easy pattern.
+
+		'Dim bodyGroupSmdFileName As String
+
+		'If bodyPartIndex = 0 AndAlso modelIndex = 0 AndAlso lodIndex = 0 AndAlso Not String.IsNullOrEmpty(sequenceGroupFileName) AndAlso Not FileManager.FilePathHasInvalidChars(sequenceGroupFileName) Then
+		'	bodyGroupSmdFileName = Path.GetFileName(sequenceGroupFileName.Trim(Chr(0))).ToLower(TheApp.InternalCultureInfo)
+		'	If Not bodyGroupSmdFileName.StartsWith(modelName) Then
+		'		bodyGroupSmdFileName = modelName + "_" + bodyGroupSmdFileName
+		'	End If
+		'Else
+		'	bodyGroupSmdFileName = modelName
+		'	bodyGroupSmdFileName += "_"
+		'	If bodyPartCount = 1 AndAlso bodyModelCount = 1 AndAlso lodIndex = 0 Then
+		'		bodyGroupSmdFileName += "reference"
+		'	Else
+		'		bodyGroupSmdFileName += "body"
+		'		bodyGroupSmdFileName += CStr(bodyPartIndex)
+		'		bodyGroupSmdFileName += "_model"
+		'		bodyGroupSmdFileName += CStr(modelIndex)
+		'	End If
+		'	If lodIndex > 0 Then
+		'		bodyGroupSmdFileName += "_lod"
+		'		bodyGroupSmdFileName += lodIndex.ToString()
+		'	End If
+		'	If includeExtension Then
+		'		bodyGroupSmdFileName += ".smd"
+		'	End If
+		'End If
+		'======
+		' Use bodyModel name, but make sure the file name is unique for this model.
+		Dim bodyGroupSmdFileName As String = ""
+		Dim bodyModelFileName As String = ""
+		Dim bodyModelFileNameWithoutExtension As String = ""
+
+		If Not String.IsNullOrEmpty(givenBodyGroupSmdFileName) Then
+			bodyGroupSmdFileName = givenBodyGroupSmdFileName
 		Else
-			bodyGroupSmdFileName += "body"
-			bodyGroupSmdFileName += CStr(bodyPartIndex)
-			bodyGroupSmdFileName += "_model"
-			bodyGroupSmdFileName += CStr(modelIndex)
+			Try
+				bodyModelFileName = Path.GetFileName(bodyModelName.Trim(Chr(0)))
+				If FileManager.FilePathHasInvalidChars(bodyModelFileName) Then
+					bodyModelFileName = "body"
+					bodyModelFileName += CStr(bodyPartIndex)
+					bodyModelFileName += "_model"
+					bodyModelFileName += CStr(modelIndex)
+				End If
+			Catch ex As Exception
+				bodyModelFileName = "body"
+				bodyModelFileName += CStr(bodyPartIndex)
+				bodyModelFileName += "_model"
+				bodyModelFileName += CStr(modelIndex)
+			End Try
+			bodyModelFileNameWithoutExtension = Path.GetFileNameWithoutExtension(bodyModelFileName)
+
+			If Not bodyModelFileName.ToLower(TheApp.InternalCultureInfo).StartsWith(modelName.ToLower(TheApp.InternalCultureInfo)) Then
+				bodyGroupSmdFileName += modelName + "_"
+			End If
+			bodyGroupSmdFileName += bodyModelFileNameWithoutExtension
+			If lodIndex > 0 Then
+				bodyGroupSmdFileName += "_lod"
+				bodyGroupSmdFileName += lodIndex.ToString()
+			End If
+
+			bodyGroupSmdFileName = SourceFileNamesModule.GetUniqueSmdFileName(bodyGroupSmdFileName)
+
+			bodyGroupSmdFileName += ".smd"
 		End If
-		If lodIndex > 0 Then
-			bodyGroupSmdFileName += "_lod"
-			bodyGroupSmdFileName += lodIndex.ToString()
-		End If
-		bodyGroupSmdFileName += ".smd"
 
 		Return bodyGroupSmdFileName
 	End Function
@@ -96,29 +145,65 @@ Module SourceFileNamesModule
 		Return path
 	End Function
 
-	Public Function GetAnimationSmdRelativePathFileName(ByVal modelName As String, ByVal iAnimationName As String) As String
+	Public Function CreateAnimationSmdRelativePathFileName(ByVal givenAnimationSmdRelativePathFileName As String, ByVal modelName As String, ByVal iAnimationName As String, Optional ByVal blendIndex As Integer = -2) As String
 		Dim animationName As String
 		Dim animationSmdRelativePathFileName As String
 
-		If String.IsNullOrEmpty(iAnimationName) Then
-			animationName = ""
-		ElseIf iAnimationName(0) = "@"c Then
-			'NOTE: The file name for the animation data file is not stored in mdl file (which makes sense), 
-			'      so make the file name the same as the animation name.
-			animationName = iAnimationName.Substring(1)
+		If Not String.IsNullOrEmpty(givenAnimationSmdRelativePathFileName) Then
+			animationSmdRelativePathFileName = givenAnimationSmdRelativePathFileName
 		Else
-			animationName = iAnimationName
-		End If
-		If Not TheApp.Settings.DecompileBoneAnimationPlaceInSubfolderIsChecked Then
-			animationName = modelName + "_anim_" + iAnimationName
-		End If
-		animationSmdRelativePathFileName = Path.Combine(GetAnimationSmdRelativePath(modelName), animationName)
+			' Clean the iAnimationName.
+			Try
+				iAnimationName = iAnimationName.Trim(Chr(0))
+				'iAnimationName = iAnimationName.Replace(":", "")
+				'iAnimationName = iAnimationName.Replace("\", "")
+				'iAnimationName = iAnimationName.Replace("/", "")
+				For Each invalidChar As Char In Path.GetInvalidFileNameChars()
+					iAnimationName = iAnimationName.Replace(invalidChar, "")
+				Next
+				If FileManager.FilePathHasInvalidChars(iAnimationName) Then
+					iAnimationName = "anim"
+				End If
+			Catch ex As Exception
+				iAnimationName = "anim"
+			End Try
 
-		If Path.GetExtension(animationSmdRelativePathFileName) <> ".smd" Then
-			'animationSmdRelativePathFileName = Path.ChangeExtension(animationSmdRelativePathFileName, ".smd")
-			'NOTE: Add the ".smd" extension, keeping the existing extension in file name, which is often ".dmx" for newer models. 
-			'      Thus, user can see that model might have newer features that Crowbar does not yet handle.
-			animationSmdRelativePathFileName += ".smd"
+			' Set the name
+			If blendIndex >= 0 Then
+				' For MDL v6 and v10.
+				animationName = iAnimationName + "_blend" + (blendIndex + 1).ToString("00")
+			ElseIf blendIndex = -1 Then
+				' For MDL v6 and v10.
+				animationName = iAnimationName
+			Else
+				If String.IsNullOrEmpty(iAnimationName) Then
+					animationName = ""
+				ElseIf iAnimationName(0) = "@"c Then
+					'NOTE: The file name for the animation data file is not stored in mdl file (which makes sense), 
+					'      so make the file name the same as the animation name.
+					animationName = iAnimationName.Substring(1)
+				Else
+					animationName = iAnimationName
+				End If
+			End If
+
+			' If anims are not stored in anims folder, add some more to the name.
+			If Not TheApp.Settings.DecompileBoneAnimationPlaceInSubfolderIsChecked Then
+				animationName = modelName + "_anim_" + iAnimationName
+			End If
+
+			' Set the path.
+			animationSmdRelativePathFileName = Path.Combine(GetAnimationSmdRelativePath(modelName), animationName)
+
+			animationSmdRelativePathFileName = SourceFileNamesModule.GetUniqueSmdFileName(animationSmdRelativePathFileName)
+
+			' Set the extension.
+			If Path.GetExtension(animationSmdRelativePathFileName) <> ".smd" Then
+				'animationSmdRelativePathFileName = Path.ChangeExtension(animationSmdRelativePathFileName, ".smd")
+				'NOTE: Add the ".smd" extension, keeping the existing extension in file name, which is often ".dmx" for newer models. 
+				'      Thus, user can see that model might have newer features that Crowbar does not yet handle.
+				animationSmdRelativePathFileName += ".smd"
+			End If
 		End If
 
 		Return animationSmdRelativePathFileName
@@ -142,13 +227,21 @@ Module SourceFileNamesModule
 		Return vtaFileName
 	End Function
 
-	Public Function GetPhysicsSmdFileName(ByVal modelName As String) As String
-		Dim collisionSmdFileName As String
+	Public Function CreatePhysicsSmdFileName(ByVal givenPhysicsSmdFileName As String, ByVal modelName As String) As String
+		Dim physicsSmdFileName As String
 
-		collisionSmdFileName = modelName
-		collisionSmdFileName += "_physics.smd"
+		If Not String.IsNullOrEmpty(givenPhysicsSmdFileName) Then
+			physicsSmdFileName = givenPhysicsSmdFileName
+		Else
+			physicsSmdFileName = modelName
+			physicsSmdFileName += "_physics"
 
-		Return collisionSmdFileName
+			physicsSmdFileName = SourceFileNamesModule.GetUniqueSmdFileName(physicsSmdFileName)
+
+			physicsSmdFileName += ".smd"
+		End If
+
+		Return physicsSmdFileName
 	End Function
 
 	Public Function GetDeclareSequenceQciFileName(ByVal modelName As String) As String
@@ -204,5 +297,19 @@ Module SourceFileNamesModule
 			End If
 		Next
 	End Sub
+
+	Private Function GetUniqueSmdFileName(ByVal givenSmdFileName As String) As String
+		Dim smdFileName As String = givenSmdFileName
+
+		'NOTE: Starting this at 1 means the first file name will not have a number and the second name will have a 2.
+		Dim nameNumber As Integer = 1
+		While TheApp.SmdFileNames.Contains(smdFileName.ToLower(TheApp.InternalCultureInfo))
+			nameNumber += 1
+			smdFileName = givenSmdFileName + "_" + nameNumber.ToString()
+		End While
+
+		TheApp.SmdFileNames.Add(smdFileName.ToLower(TheApp.InternalCultureInfo))
+		Return smdFileName
+	End Function
 
 End Module

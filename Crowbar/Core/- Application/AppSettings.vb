@@ -12,8 +12,9 @@ Public Class AppSettings
 
 		Me.theWindowLocation = New Point(0, 0)
 		Me.theWindowSize = New Size(800, 600)
-		Me.theWindowState = FormWindowState.Maximized
-		Me.theMainWindowSelectedTabIndex = 0
+		Me.theWindowState = FormWindowState.Normal
+		'NOTE: 2 means the Decompile tab.
+		Me.theMainWindowSelectedTabIndex = 2
 
 		Me.thePreviewDataViewerIsRunning = False
 		'Me.thePreviewerIsRunning = False
@@ -24,31 +25,34 @@ Public Class AppSettings
 
 		Me.theUnpackContainerType = ContainerType.VPK
 		Me.theUnpackVpkPathFolderOrFileName = ""
-		Me.theUnpackOutputFolderOption = OutputFolderOptions.SubfolderName
+		'Me.theUnpackOutputFolderOption = OutputFolderOptions.SubfolderName
+		Me.theUnpackOutputFolderOption = UnpackOutputPathOptions.WorkFolder
 		Me.SetDefaultUnpackOutputSubfolderName()
-		Me.theUnpackOutputFullPath = ""
+		Me.theUnpackOutputFullPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
 		Me.theUnpackGameSetupSelectedIndex = 0
 		Me.SetDefaultUnpackOptions()
-		Me.theUnpackMode = ActionMode.File
+		Me.theUnpackMode = InputOptions.File
 
 		Me.thePreviewMdlPathFileName = ""
 		Me.thePreviewGameSetupSelectedIndex = 0
 
 		Me.theDecompileMdlPathFileName = ""
-		Me.theDecompileOutputFolderOption = OutputFolderOptions.SubfolderName
+		'Me.theDecompileOutputFolderOption = OutputFolderOptions.SubfolderName
+		Me.theDecompileOutputFolderOption = DecompileOutputPathOptions.WorkFolder
 		Me.SetDefaultDecompileOutputSubfolderName()
-		Me.theDecompileOutputFullPath = ""
+		Me.theDecompileOutputFullPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
 		Me.SetDefaultDecompileOptions()
-		Me.theDecompileMode = ActionMode.File
+		Me.theDecompileMode = InputOptions.File
 
 		Me.theCompileQcPathFileName = ""
 		Me.theCompileOutputFolderIsChecked = True
-		Me.theCompileOutputFolderOption = OutputFolderOptions.SubfolderName
+		'Me.theCompileOutputFolderOption = OutputFolderOptions.SubfolderName
+		Me.theCompileOutputFolderOption = CompileOutputPathOptions.GameModelsFolder
 		Me.SetDefaultCompileOutputSubfolderName()
-		Me.theCompileOutputFullPath = ""
+		Me.theCompileOutputFullPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
 		Me.theCompileGameSetupSelectedIndex = 0
 		Me.SetDefaultCompileOptions()
-		Me.theCompileMode = ActionMode.File
+		Me.theCompileMode = InputOptions.File
 
 		Me.theViewMdlPathFileName = ""
 		Me.theViewGameSetupSelectedIndex = 0
@@ -134,11 +138,11 @@ Public Class AppSettings
 		End Set
 	End Property
 
-	Public Property UnpackOutputFolderOption() As OutputFolderOptions
+	Public Property UnpackOutputFolderOption() As UnpackOutputPathOptions
 		Get
 			Return Me.theUnpackOutputFolderOption
 		End Get
-		Set(ByVal value As OutputFolderOptions)
+		Set(ByVal value As UnpackOutputPathOptions)
 			Me.theUnpackOutputFolderOption = value
 			NotifyPropertyChanged("UnpackOutputFolderOption")
 		End Set
@@ -161,18 +165,6 @@ Public Class AppSettings
 		Set(ByVal value As String)
 			Me.theUnpackOutputFullPath = value
 			NotifyPropertyChanged("UnpackOutputFullPath")
-		End Set
-	End Property
-
-	Public Property UnpackVpkPathFileName() As String
-		Get
-			Return Me.theUnpackVpkPathFileName
-		End Get
-		Set(ByVal value As String)
-			If Me.theUnpackVpkPathFileName <> value Then
-				Me.theUnpackVpkPathFileName = value
-				NotifyPropertyChanged("UnpackVpkPathFileName")
-			End If
 		End Set
 	End Property
 
@@ -206,11 +198,11 @@ Public Class AppSettings
 		End Set
 	End Property
 
-	Public Property UnpackMode() As ActionMode
+	Public Property UnpackMode() As InputOptions
 		Get
 			Return Me.theUnpackMode
 		End Get
-		Set(ByVal value As ActionMode)
+		Set(ByVal value As InputOptions)
 			If Me.theUnpackMode <> value Then
 				Me.theUnpackMode = value
 				NotifyPropertyChanged("UnpackMode")
@@ -281,11 +273,21 @@ Public Class AppSettings
 		End Set
 	End Property
 
-	Public Property DecompileOutputFolderOption() As OutputFolderOptions
+	'Public Property DecompileOutputFolderOption() As OutputFolderOptions
+	'	Get
+	'		Return Me.theDecompileOutputFolderOption
+	'	End Get
+	'	Set(ByVal value As OutputFolderOptions)
+	'		Me.theDecompileOutputFolderOption = value
+	'		NotifyPropertyChanged("DecompileOutputFolderOption")
+	'	End Set
+	'End Property
+
+	Public Property DecompileOutputFolderOption() As DecompileOutputPathOptions
 		Get
 			Return Me.theDecompileOutputFolderOption
 		End Get
-		Set(ByVal value As OutputFolderOptions)
+		Set(ByVal value As DecompileOutputPathOptions)
 			Me.theDecompileOutputFolderOption = value
 			NotifyPropertyChanged("DecompileOutputFolderOption")
 		End Set
@@ -331,16 +333,6 @@ Public Class AppSettings
 		End Set
 	End Property
 
-	Public Property DecompileQcIncludeDefineBoneLinesIsChecked() As Boolean
-		Get
-			Return Me.theDecompileQcIncludeDefineBoneLinesIsChecked
-		End Get
-		Set(ByVal value As Boolean)
-			Me.theDecompileQcIncludeDefineBoneLinesIsChecked = value
-			NotifyPropertyChanged("DecompileQcIncludeDefineBoneLinesIsChecked")
-		End Set
-	End Property
-
 	Public Property DecompileQcSkinFamilyOnSingleLineIsChecked() As Boolean
 		Get
 			Return Me.theDecompileQcSkinFamilyOnSingleLineIsChecked
@@ -348,6 +340,26 @@ Public Class AppSettings
 		Set(ByVal value As Boolean)
 			Me.theDecompileQcSkinFamilyOnSingleLineIsChecked = value
 			NotifyPropertyChanged("DecompileQcSkinFamilyOnSingleLineIsChecked")
+		End Set
+	End Property
+
+	Public Property DecompileQcOnlyChangedMaterialsInTextureGroupLinesIsChecked() As Boolean
+		Get
+			Return Me.theDecompileQcOnlyChangedMaterialsInTextureGroupLinesIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theDecompileQcOnlyChangedMaterialsInTextureGroupLinesIsChecked = value
+			NotifyPropertyChanged("DecompileQcOnlyChangedMaterialsInTextureGroupLinesIsChecked")
+		End Set
+	End Property
+
+	Public Property DecompileQcIncludeDefineBoneLinesIsChecked() As Boolean
+		Get
+			Return Me.theDecompileQcIncludeDefineBoneLinesIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theDecompileQcIncludeDefineBoneLinesIsChecked = value
+			NotifyPropertyChanged("DecompileQcIncludeDefineBoneLinesIsChecked")
 		End Set
 	End Property
 
@@ -511,11 +523,11 @@ Public Class AppSettings
 		End Set
 	End Property
 
-	Public Property DecompileMode() As ActionMode
+	Public Property DecompileMode() As InputOptions
 		Get
 			Return Me.theDecompileMode
 		End Get
-		Set(ByVal value As ActionMode)
+		Set(ByVal value As InputOptions)
 			Me.theDecompileMode = value
 			NotifyPropertyChanged("DecompileMode")
 		End Set
@@ -552,21 +564,31 @@ Public Class AppSettings
 		End Set
 	End Property
 
-	Public Property CompileOutputFolderIsChecked() As Boolean
-		Get
-			Return Me.theCompileOutputFolderIsChecked
-		End Get
-		Set(ByVal value As Boolean)
-			Me.theCompileOutputFolderIsChecked = value
-			NotifyPropertyChanged("CompileOutputFolderIsChecked")
-		End Set
-	End Property
+	'Public Property CompileOutputFolderIsChecked() As Boolean
+	'	Get
+	'		Return Me.theCompileOutputFolderIsChecked
+	'	End Get
+	'	Set(ByVal value As Boolean)
+	'		Me.theCompileOutputFolderIsChecked = value
+	'		NotifyPropertyChanged("CompileOutputFolderIsChecked")
+	'	End Set
+	'End Property
 
-	Public Property CompileOutputFolderOption() As OutputFolderOptions
+	'Public Property CompileOutputFolderOption() As OutputFolderOptions
+	'	Get
+	'		Return Me.theCompileOutputFolderOption
+	'	End Get
+	'	Set(ByVal value As OutputFolderOptions)
+	'		Me.theCompileOutputFolderOption = value
+	'		NotifyPropertyChanged("CompileOutputFolderOption")
+	'	End Set
+	'End Property
+
+	Public Property CompileOutputFolderOption() As CompileOutputPathOptions
 		Get
 			Return Me.theCompileOutputFolderOption
 		End Get
-		Set(ByVal value As OutputFolderOptions)
+		Set(ByVal value As CompileOutputPathOptions)
 			Me.theCompileOutputFolderOption = value
 			NotifyPropertyChanged("CompileOutputFolderOption")
 		End Set
@@ -602,23 +624,23 @@ Public Class AppSettings
 	'	End Set
 	'End Property
 
-	Public Property CompileFolderForEachModelIsChecked() As Boolean
+	Public Property CompileGoldSourceLogFileIsChecked() As Boolean
 		Get
-			Return Me.theCompileFolderForEachModelIsChecked
+			Return Me.theCompileGoldSourceLogFileIsChecked
 		End Get
 		Set(ByVal value As Boolean)
-			Me.theCompileFolderForEachModelIsChecked = value
-			NotifyPropertyChanged("CompileFolderForEachModelIsChecked")
+			Me.theCompileGoldSourceLogFileIsChecked = value
+			NotifyPropertyChanged("CompileGoldSourceLogFileIsChecked")
 		End Set
 	End Property
 
-	Public Property CompileLogFileIsChecked() As Boolean
+	Public Property CompileSourceLogFileIsChecked() As Boolean
 		Get
-			Return Me.theCompileLogFileIsChecked
+			Return Me.theCompileSourceLogFileIsChecked
 		End Get
 		Set(ByVal value As Boolean)
-			Me.theCompileLogFileIsChecked = value
-			NotifyPropertyChanged("CompileLogFileIsChecked")
+			Me.theCompileSourceLogFileIsChecked = value
+			NotifyPropertyChanged("CompileSourceLogFileIsChecked")
 		End Set
 	End Property
 
@@ -693,11 +715,11 @@ Public Class AppSettings
 		End Set
 	End Property
 
-	Public Property CompileMode() As ActionMode
+	Public Property CompileMode() As InputOptions
 		Get
 			Return Me.theCompileMode
 		End Get
-		Set(ByVal value As ActionMode)
+		Set(ByVal value As InputOptions)
 			Me.theCompileMode = value
 			NotifyPropertyChanged("CompileMode")
 		End Set
@@ -836,23 +858,13 @@ Public Class AppSettings
 		End Set
 	End Property
 
-	Public Property OptionsDragAndDropVpkFileIsChecked() As Boolean
+	Public Property OptionsAutoOpenFolderOption() As ActionType
 		Get
-			Return Me.theOptionsDragAndDropVpkFileIsChecked
+			Return Me.theOptionsAutoOpenFolderOption
 		End Get
-		Set(ByVal value As Boolean)
-			Me.theOptionsDragAndDropVpkFileIsChecked = value
-			NotifyPropertyChanged("OptionsDragAndDropVpkFileIsChecked")
-		End Set
-	End Property
-
-	Public Property OptionsDragAndDropMdlFileIsChecked() As Boolean
-		Get
-			Return Me.theOptionsDragAndDropMdlFileIsChecked
-		End Get
-		Set(ByVal value As Boolean)
-			Me.theOptionsDragAndDropMdlFileIsChecked = value
-			NotifyPropertyChanged("OptionsDragAndDropMdlFileIsChecked")
+		Set(ByVal value As ActionType)
+			Me.theOptionsAutoOpenFolderOption = value
+			NotifyPropertyChanged("OptionsAutoOpenFolderOption")
 		End Set
 	End Property
 
@@ -899,26 +911,6 @@ Public Class AppSettings
 		Set(ByVal value As ActionType)
 			Me.theOptionsDragAndDropMdlFileOption = value
 			NotifyPropertyChanged("OptionsDragAndDropMdlFileOption")
-		End Set
-	End Property
-
-	Public Property OptionsDragAndDropQcFileIsChecked() As Boolean
-		Get
-			Return Me.theOptionsDragAndDropQcFileIsChecked
-		End Get
-		Set(ByVal value As Boolean)
-			Me.theOptionsDragAndDropQcFileIsChecked = value
-			NotifyPropertyChanged("OptionsDragAndDropQcFileIsChecked")
-		End Set
-	End Property
-
-	Public Property OptionsDragAndDropFolderIsChecked() As Boolean
-		Get
-			Return Me.theOptionsDragAndDropFolderIsChecked
-		End Get
-		Set(ByVal value As Boolean)
-			Me.theOptionsDragAndDropFolderIsChecked = value
-			NotifyPropertyChanged("OptionsDragAndDropFolderIsChecked")
 		End Set
 	End Property
 
@@ -1103,11 +1095,13 @@ Public Class AppSettings
 		'NOTE: Call the properties so the NotifyPropertyChanged events are raised.
 		Me.DecompileQcFileIsChecked = True
 		Me.DecompileGroupIntoQciFilesIsChecked = False
-		Me.DecompileQcIncludeDefineBoneLinesIsChecked = False
 		Me.DecompileQcSkinFamilyOnSingleLineIsChecked = True
+		Me.DecompileQcOnlyChangedMaterialsInTextureGroupLinesIsChecked = True
+		Me.DecompileQcIncludeDefineBoneLinesIsChecked = False
 		Me.DecompileQcUseMixedCaseForKeywordsIsChecked = False
 
 		Me.DecompileReferenceMeshSmdFileIsChecked = True
+		Me.DecompileRemovePathFromSmdMaterialFileNamesIsChecked = True
 		Me.DecompileApplyRightHandFixIsChecked = False
 
 		Me.DecompileBoneAnimationSmdFilesIsChecked = True
@@ -1119,11 +1113,11 @@ Public Class AppSettings
 		Me.DecompileVertexAnimationVtaFileIsChecked = True
 		Me.DecompileProceduralBonesVrdFileIsChecked = True
 
-		Me.DecompileFolderForEachModelIsChecked = False
-		Me.DecompileLogFileIsChecked = False
-		Me.DecompileDebugInfoFilesIsChecked = False
-		Me.DecompileStricterFormatIsChecked = False
-		Me.DecompileRemovePathFromSmdMaterialFileNamesIsChecked = False
+		'Me.DecompileFolderForEachModelIsChecked = False
+		'Me.DecompileStricterFormatIsChecked = False
+
+		'Me.DecompileLogFileIsChecked = False
+		'Me.DecompileDebugInfoFilesIsChecked = False
 	End Sub
 
 	Public Sub SetDefaultCompileOutputSubfolderName()
@@ -1133,15 +1127,17 @@ Public Class AppSettings
 
 	Public Sub SetDefaultCompileOptions()
 		'NOTE: Call the properties so the NotifyPropertyChanged events are raised.
-		Me.CompileFolderForEachModelIsChecked = False
-		Me.CompileLogFileIsChecked = False
+		Me.CompileGoldSourceLogFileIsChecked = False
+		Me.CompileSourceLogFileIsChecked = False
+
+		Me.CompileOptionNoP4IsChecked = True
+		Me.CompileOptionVerboseIsChecked = True
 
 		Me.CompileOptionDefineBonesIsChecked = False
 		Me.CompileOptionDefineBonesCreateFileIsChecked = False
 		Me.CompileOptionDefineBonesQciFileName = "DefineBones"
 		Me.CompileOptionDefineBonesModifyQcFileIsChecked = False
-		Me.CompileOptionNoP4IsChecked = True
-		Me.CompileOptionVerboseIsChecked = True
+
 		Me.CompileOptionsText = ""
 	End Sub
 
@@ -1156,21 +1152,18 @@ Public Class AppSettings
 		Me.OptionsAutoOpenMdlFileOption = ActionType.Decompile
 
 		Me.OptionsAutoOpenQcFileIsChecked = False
+
+		Me.OptionsAutoOpenFolderOption = ActionType.Decompile
 	End Sub
 
 	Public Sub SetDefaultOptionsDragAndDropOptions()
 		'NOTE: Call the properties so the NotifyPropertyChanged events are raised.
-		Me.OptionsDragAndDropVpkFileIsChecked = True
 
-		Me.OptionsDragAndDropMdlFileIsChecked = True
 		Me.OptionsDragAndDropMdlFileForPreviewIsChecked = True
 		Me.OptionsDragAndDropMdlFileForDecompileIsChecked = True
 		Me.OptionsDragAndDropMdlFileForViewIsChecked = True
 		Me.OptionsDragAndDropMdlFileOption = ActionType.Decompile
 
-		Me.OptionsDragAndDropQcFileIsChecked = True
-
-		Me.OptionsDragAndDropFolderIsChecked = True
 		Me.OptionsDragAndDropFolderOption = ActionType.Decompile
 	End Sub
 
@@ -1219,7 +1212,8 @@ Public Class AppSettings
 
 	Private theUnpackContainerType As ContainerType
 	Private theUnpackVpkPathFolderOrFileName As String
-	Private theUnpackOutputFolderOption As OutputFolderOptions
+	'Private theUnpackOutputFolderOption As OutputFolderOptions
+	Private theUnpackOutputFolderOption As UnpackOutputPathOptions
 	Private theUnpackOutputSubfolderName As String
 	Private theUnpackOutputFullPath As String
 	Private theUnpackVpkPathFileName As String
@@ -1228,7 +1222,7 @@ Public Class AppSettings
 	'Private theUnpackExtractIsChecked As Boolean
 	Private theUnpackLogFileIsChecked As Boolean
 
-	Private theUnpackMode As ActionMode
+	Private theUnpackMode As InputOptions
 	Private theUnpackerIsRunning As Boolean
 
 	' Preview tab
@@ -1242,15 +1236,17 @@ Public Class AppSettings
 	' Decompile tab
 
 	Private theDecompileMdlPathFileName As String
-	Private theDecompileOutputFolderOption As OutputFolderOptions
+	'Private theDecompileOutputFolderOption As OutputFolderOptions
+	Private theDecompileOutputFolderOption As DecompileOutputPathOptions
 	Private theDecompileOutputSubfolderName As String
 	Private theDecompileOutputFullPath As String
 	'Private theDecompileOutputPathName As String
 
 	Private theDecompileQcFileIsChecked As Boolean
 	Private theDecompileGroupIntoQciFilesIsChecked As Boolean
-	Private theDecompileQcIncludeDefineBoneLinesIsChecked As Boolean
 	Private theDecompileQcSkinFamilyOnSingleLineIsChecked As Boolean
+	Private theDecompileQcOnlyChangedMaterialsInTextureGroupLinesIsChecked As Boolean
+	Private theDecompileQcIncludeDefineBoneLinesIsChecked As Boolean
 	Private theDecompileQcUseMixedCaseForKeywordsIsChecked As Boolean
 
 	Private theDecompileReferenceMeshSmdFileIsChecked As Boolean
@@ -1273,33 +1269,36 @@ Public Class AppSettings
 	Private theDecompileStricterFormatIsChecked As Boolean
 	Private theDecompileRemovePathFromSmdMaterialFileNamesIsChecked As Boolean
 
-	Private theDecompileMode As ActionMode
+	Private theDecompileMode As InputOptions
 	Private theDecompilerIsRunning As Boolean
 
 	' Compile tab
 
 	Private theCompileQcPathFileName As String
+	Private theCompileMode As InputOptions
 
 	Private theCompileOutputFolderIsChecked As Boolean
-	Private theCompileOutputFolderOption As OutputFolderOptions
+	'Private theCompileOutputFolderOption As OutputFolderOptions
+	Private theCompileOutputFolderOption As CompileOutputPathOptions
 	Private theCompileOutputSubfolderName As String
 	Private theCompileOutputFullPath As String
-	'Private theCompileOutputPathName As String
 
 	Private theCompileGameSetupSelectedIndex As Integer
 
-	Private theCompileFolderForEachModelIsChecked As Boolean
-	Private theCompileLogFileIsChecked As Boolean
+	' Source engine
+	Private theCompileGoldSourceLogFileIsChecked As Boolean
 
+	' Source engine
+	Private theCompileSourceLogFileIsChecked As Boolean
 	Private theCompileOptionDefineBonesIsChecked As Boolean
 	Private theCompileOptionDefineBonesCreateFileIsChecked As Boolean
 	Private theCompileOptionDefineBonesQciFileName As String
 	Private theCompileOptionDefineBonesModifyQcFileIsChecked As Boolean
 	Private theCompileOptionNoP4IsChecked As Boolean
 	Private theCompileOptionVerboseIsChecked As Boolean
+
 	Private theCompileOptionsText As String
 
-	Private theCompileMode As ActionMode
 	Private theCompilerIsRunning As Boolean
 
 	' View tab
@@ -1323,18 +1322,15 @@ Public Class AppSettings
 	Private theOptionsAutoOpenQcFileIsChecked As Boolean
 	'Private theOptionsAutoOpenQcFileOption As ActionType
 
-	Private theOptionsDragAndDropVpkFileIsChecked As Boolean
+	Private theOptionsAutoOpenFolderOption As ActionType
 
-	Private theOptionsDragAndDropMdlFileIsChecked As Boolean
 	Private theOptionsDragAndDropMdlFileForPreviewIsChecked As Boolean
 	Private theOptionsDragAndDropMdlFileForDecompileIsChecked As Boolean
 	Private theOptionsDragAndDropMdlFileForViewIsChecked As Boolean
 	Private theOptionsDragAndDropMdlFileOption As ActionType
 
-	Private theOptionsDragAndDropQcFileIsChecked As Boolean
 	'Private theOptionsDragAndDropQcFileOption As ActionType
 
-	Private theOptionsDragAndDropFolderIsChecked As Boolean
 	Private theOptionsDragAndDropFolderOption As ActionType
 
 	Private theOptionsContextMenuIntegrateMenuItemsIsChecked As Boolean

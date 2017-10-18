@@ -16,7 +16,8 @@ Public Class SourceMdlFileData04
 	' modelCount? Why would this value be here if it's already in SourceMdlBodyPart04?
 	Public unknownCount As Integer
 	Public sequenceDescCount As Integer
-	Public sequenceCount As Integer
+	' Total frames from all sequences + an extra for each sequence.
+	Public sequenceFrameCount As Integer
 
 	Public unknown02 As Integer
 

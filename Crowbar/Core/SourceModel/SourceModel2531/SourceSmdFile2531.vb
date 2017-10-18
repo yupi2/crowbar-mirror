@@ -9,7 +9,7 @@ Public Class SourceSmdFile2531
 		Me.theMdlFileData = mdlFileData
 	End Sub
 
-	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal mdlFileData As SourceMdlFileData2531, ByVal phyFileData As SourcePhyFileData2531)
+	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal mdlFileData As SourceMdlFileData2531, ByVal phyFileData As SourcePhyFileData)
 		Me.theOutputFileStreamWriter = outputFileStream
 		Me.theMdlFileData = mdlFileData
 		Me.thePhyFileData = phyFileData
@@ -415,7 +415,8 @@ Public Class SourceSmdFile2531
 			line += " "
 			line += texCoordU.ToString("0.000000", TheApp.InternalNumberFormat)
 			line += " "
-			line += texCoordV.ToString("0.000000", TheApp.InternalNumberFormat)
+			'line += texCoordV.ToString("0.000000", TheApp.InternalNumberFormat)
+			line += (1 - texCoordV).ToString("0.000000", TheApp.InternalNumberFormat)
 
 			If aBodyModel.vertexListType = 0 Then
 				line += " "
@@ -1305,7 +1306,7 @@ Public Class SourceSmdFile2531
 
 	Private theOutputFileStreamWriter As StreamWriter
 	Private theMdlFileData As SourceMdlFileData2531
-	Private thePhyFileData As SourcePhyFileData2531
+	Private thePhyFileData As SourcePhyFileData
 
 	Private theAnimationFrameLines As SortedList(Of Integer, AnimationFrameLine)
 

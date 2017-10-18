@@ -180,7 +180,7 @@ Public Class SourceMdlFile46
 
 			fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 			If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-				Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "theSurfacePropName")
+				Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "theSurfacePropName = " + Me.theMdlFileData.theSurfacePropName)
 			End If
 			Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
 		Else
@@ -485,7 +485,7 @@ Public Class SourceMdlFile46
 
 						fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
 						If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-							Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aBone.theSurfacePropName")
+							Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "aBone.theSurfacePropName = " + aBone.theSurfacePropName)
 						End If
 					Else
 						aBone.theSurfacePropName = ""
@@ -3122,13 +3122,13 @@ Public Class SourceMdlFile46
 			Me.theInputFileReader.BaseStream.Seek(Me.theMdlFileData.skinFamilyOffset, SeekOrigin.Begin)
 			fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
-			Me.theMdlFileData.theSkinFamilies = New List(Of List(Of Integer))(Me.theMdlFileData.skinFamilyCount)
+			Me.theMdlFileData.theSkinFamilies = New List(Of List(Of Short))(Me.theMdlFileData.skinFamilyCount)
 			For i As Integer = 0 To Me.theMdlFileData.skinFamilyCount - 1
 				skinFamilyInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
-				Dim aSkinFamily As New List(Of Integer)()
+				Dim aSkinFamily As New List(Of Short)()
 
 				For j As Integer = 0 To Me.theMdlFileData.skinReferenceCount - 1
-					Dim aSkinRef As Integer
+					Dim aSkinRef As Short
 					aSkinRef = Me.theInputFileReader.ReadInt16()
 					aSkinFamily.Add(aSkinRef)
 				Next
@@ -3145,27 +3145,27 @@ Public Class SourceMdlFile46
 				'End If
 			Next
 
-			'TEST: Remove skinRef from each skinFamily, if it is at same skinRef index in all skinFamilies. 
-			'      Start with the last skinRef index (Me.theMdlFileData.skinReferenceCount)
-			'      and step -1 to 0 until skinRefs are different between skinFamilies.
-			Dim index As Integer = -1
-			For currentSkinRef As Integer = Me.theMdlFileData.skinReferenceCount - 1 To 0 Step -1
-				For index = 0 To Me.theMdlFileData.skinFamilyCount - 1
-					Dim aSkinRef As Integer
-					aSkinRef = Me.theMdlFileData.theSkinFamilies(index)(currentSkinRef)
+			''TEST: Remove skinRef from each skinFamily, if it is at same skinRef index in all skinFamilies. 
+			''      Start with the last skinRef index (Me.theMdlFileData.skinReferenceCount)
+			''      and step -1 to 0 until skinRefs are different between skinFamilies.
+			'Dim index As Integer = -1
+			'For currentSkinRef As Integer = Me.theMdlFileData.skinReferenceCount - 1 To 0 Step -1
+			'	For index = 0 To Me.theMdlFileData.skinFamilyCount - 1
+			'		Dim aSkinRef As Integer
+			'		aSkinRef = Me.theMdlFileData.theSkinFamilies(index)(currentSkinRef)
 
-					If aSkinRef <> currentSkinRef Then
-						Exit For
-					End If
-				Next
+			'		If aSkinRef <> currentSkinRef Then
+			'			Exit For
+			'		End If
+			'	Next
 
-				If index = Me.theMdlFileData.skinFamilyCount Then
-					For index = 0 To Me.theMdlFileData.skinFamilyCount - 1
-						Me.theMdlFileData.theSkinFamilies(index).RemoveAt(currentSkinRef)
-					Next
-					Me.theMdlFileData.skinReferenceCount -= 1
-				End If
-			Next
+			'	If index = Me.theMdlFileData.skinFamilyCount Then
+			'		For index = 0 To Me.theMdlFileData.skinFamilyCount - 1
+			'			Me.theMdlFileData.theSkinFamilies(index).RemoveAt(currentSkinRef)
+			'		Next
+			'		Me.theMdlFileData.skinReferenceCount -= 1
+			'	End If
+			'Next
 
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
 			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theSkinFamilies")

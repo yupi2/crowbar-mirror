@@ -1,4 +1,5 @@
 ﻿Imports System.IO
+Imports System.Text
 
 Public Class VpkFile
 
@@ -8,6 +9,17 @@ Public Class VpkFile
 		Me.theInputFileReader = vpkFileReader
 		Me.theVpkFileData = vpkFileData
 	End Sub
+
+#End Region
+
+#Region "Properties"
+
+	Public ReadOnly Property FileData() As VpkFileData
+		Get
+			Return Me.theVpkFileData
+		End Get
+	End Property
+
 
 #End Region
 
@@ -25,6 +37,13 @@ Public Class VpkFile
 		Me.theVpkFileData.id = Me.theInputFileReader.ReadUInt32()
 		Me.theVpkFileData.version = Me.theInputFileReader.ReadUInt32()
 		Me.theVpkFileData.directoryLength = Me.theInputFileReader.ReadUInt32()
+
+		If Me.theVpkFileData.version = 2 Then
+			Me.theVpkFileData.unused01 = Me.theInputFileReader.ReadUInt32()
+			Me.theVpkFileData.archiveHashLength = Me.theInputFileReader.ReadUInt32()
+			Me.theVpkFileData.extraLength = Me.theInputFileReader.ReadUInt32()
+			Me.theVpkFileData.unused01 = Me.theInputFileReader.ReadUInt32()
+		End If
 
 		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
 		Me.theVpkFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "VPK File Header")
@@ -46,12 +65,17 @@ Public Class VpkFile
 
 		'fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
+		If Me.theVpkFileData.id <> VpkFileData.VPK_ID Then
+			Exit Sub
+		End If
+
 		Dim vpkFileHasMoreToRead As Boolean = True
 		Dim entryExtension As String = ""
 		Dim entryPath As String = ""
 		Dim entryFileName As String = ""
 		Dim entry As VpkDirectoryEntry
-		Dim entryDataOutputText As String
+		'Dim entryDataOutputText As String
+		Dim entryDataOutputText As New StringBuilder
 		While vpkFileHasMoreToRead
 			Try
 				entryExtension = FileManager.ReadNullTerminatedString(Me.theInputFileReader)
@@ -104,13 +128,21 @@ Public Class VpkFile
 					End If
 					Me.theVpkFileData.theEntries.Add(entry)
 
-					entryDataOutputText = entry.thePathFileName
-					entryDataOutputText += " crc=0x" + entry.crc.ToString("X8")
-					entryDataOutputText += " metadatasz=" + entry.preloadBytes.ToString("G0")
-					entryDataOutputText += " fnumber=" + entry.archiveIndex.ToString("G0")
-					entryDataOutputText += " ofs=0x" + entry.dataOffset.ToString("X8")
-					entryDataOutputText += " sz=" + entry.dataLength.ToString("G0")
-					Me.theVpkFileData.theEntryDataOutputTexts.Add(entryDataOutputText)
+					'entryDataOutputText = entry.thePathFileName
+					'entryDataOutputText += " crc=0x" + entry.crc.ToString("X8")
+					'entryDataOutputText += " metadatasz=" + entry.preloadBytes.ToString("G0")
+					'entryDataOutputText += " fnumber=" + entry.archiveIndex.ToString("G0")
+					'entryDataOutputText += " ofs=0x" + entry.dataOffset.ToString("X8")
+					'entryDataOutputText += " sz=" + entry.dataLength.ToString("G0")
+					'Me.theVpkFileData.theEntryDataOutputTexts.Add(entryDataOutputText)
+					entryDataOutputText.Append(entry.thePathFileName)
+					entryDataOutputText.Append(" crc=0x" + entry.crc.ToString("X8"))
+					entryDataOutputText.Append(" metadatasz=" + entry.preloadBytes.ToString("G0"))
+					entryDataOutputText.Append(" fnumber=" + entry.archiveIndex.ToString("G0"))
+					entryDataOutputText.Append(" ofs=0x" + entry.dataOffset.ToString("X8"))
+					entryDataOutputText.Append(" sz=" + entry.dataLength.ToString("G0"))
+					Me.theVpkFileData.theEntryDataOutputTexts.Add(entryDataOutputText.ToString())
+					entryDataOutputText.Clear()
 				End While
 			End While
 		End While

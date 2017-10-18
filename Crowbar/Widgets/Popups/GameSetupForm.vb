@@ -350,6 +350,10 @@ Public Class GameSetupForm
 		Me.UpdateUseCounts()
 	End Sub
 
+	Private Sub CreateModelsFolderTreeButton_Click(sender As Object, e As EventArgs) Handles CreateModelsFolderTreeButton.Click
+		'TODO: Call a function in Unpacker to do the unpacking.
+	End Sub
+
 	Private Sub BrowseForSteamAppPathFileNameButton_Click(sender As Object, e As EventArgs) Handles BrowseForSteamAppPathFileNameButton.Click
 		Dim openFileWdw As New OpenFileDialog()
 		openFileWdw.Title = "Select Steam Executable File"
@@ -552,6 +556,10 @@ Public Class GameSetupForm
 		ElseIf Me.theSelectedGameSetup.GameEngine = GameEngine.Source2 Then
 			Me.GamePathLabel.Text = "Game info file (gameinfo.gi):"
 		End If
+
+		Me.UnpackerLabel.Visible = Me.theSelectedGameSetup.GameEngine = GameEngine.Source
+		Me.UnpackerPathFileNameTextBox.Visible = Me.theSelectedGameSetup.GameEngine = GameEngine.Source
+		Me.BrowseForUnpackerPathFileNameButton.Visible = Me.theSelectedGameSetup.GameEngine = GameEngine.Source
 	End Sub
 
 	Private Sub UpdateUseCounts()

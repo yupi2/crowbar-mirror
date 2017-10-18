@@ -92,6 +92,7 @@ Public Class SourceMdlIkRule
 
 
 	Public theAttachmentName As String
+	Public theCompressedIkError As SourceMdlCompressedIkError
 
 
 

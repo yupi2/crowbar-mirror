@@ -1,5 +1,14 @@
 ﻿Public Class SourceMdlModel2531
 
+	Public Sub New()
+		'MyBase.New()
+
+		Me.theSmdFileNames = New List(Of String)(MAX_NUM_LODS)
+		For i As Integer = 0 To MAX_NUM_LODS - 1
+			Me.theSmdFileNames.Add("")
+		Next
+	End Sub
+
 	'FROM: Bloodlines SDK source 2015-06-16\sdk-src (16.06.2015)\src\public\studio.h
 	'struct mstudiomodel_t
 	'{
@@ -82,6 +91,7 @@
 	Public unknown02Offset As Integer
 
 
+	Public theSmdFileNames As List(Of String)
 	Public theName As String
 	Public theEyeballs As List(Of SourceMdlEyeball2531)
 	Public theMeshes As List(Of SourceMdlMesh2531)

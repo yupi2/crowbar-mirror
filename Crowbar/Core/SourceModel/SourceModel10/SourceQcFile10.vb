@@ -53,7 +53,7 @@ Public Class SourceQcFile10
 	'/  $modelname
 	'  $sequence
 	'  $sequencegroup
-	'X  $sequencegroupsize  (this autogenerates the same data that $sequencegroup does, so this will decompile as $sequencegroup commands)
+	'-  $sequencegroupsize  (this might be determined by looking at the largest file size of the seq group MDL files [all but the main MDL file])
 	'/  $texturegroup
 
 #Region "Creation and Destruction"
@@ -157,7 +157,7 @@ Public Class SourceQcFile10
 	Public Sub WriteBodyGroupCommand()
 		Dim line As String = ""
 		Dim aBodyPart As SourceMdlBodyPart10
-		Dim aModel As SourceMdlModel10
+		Dim aBodyModel As SourceMdlModel10
 
 		If Me.theMdlFileData.theBodyParts IsNot Nothing AndAlso Me.theMdlFileData.theBodyParts.Count > 0 Then
 			Me.theOutputFileStreamWriter.WriteLine()
@@ -180,15 +180,16 @@ Public Class SourceQcFile10
 
 				If aBodyPart.theModels IsNot Nothing AndAlso aBodyPart.theModels.Count > 0 Then
 					For modelIndex As Integer = 0 To aBodyPart.theModels.Count - 1
-						aModel = aBodyPart.theModels(modelIndex)
+						aBodyModel = aBodyPart.theModels(modelIndex)
 
 						line = vbTab
-						If aModel.theName = "blank" Then
+						If aBodyModel.theName = "blank" Then
 							line += "blank"
 						Else
+							aBodyModel.theSmdFileName = SourceFileNamesModule.CreateBodyGroupSmdFileName(aBodyModel.theSmdFileName, bodyPartIndex, modelIndex, 0, Me.theModelName, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).theName)
 							line += "studio "
 							line += """"
-							line += SourceFileNamesModule.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, 0, False, Me.theModelName, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).theName, Me.theMdlFileData.theBodyParts.Count, Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels.Count)
+							line += Path.GetFileNameWithoutExtension(aBodyModel.theSmdFileName)
 							line += """"
 						End If
 						Me.theOutputFileStreamWriter.WriteLine(line)
@@ -243,6 +244,39 @@ Public Class SourceQcFile10
 		line += " "
 		line += maxZ.ToString("0.######", TheApp.InternalNumberFormat)
 
+		Me.theOutputFileStreamWriter.WriteLine(line)
+	End Sub
+
+	Public Sub WriteCDCommand()
+		Dim line As String = ""
+
+		If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+			line = "$CD ""."""
+		Else
+			line = "$cd ""."""
+		End If
+		Me.theOutputFileStreamWriter.WriteLine(line)
+	End Sub
+
+	Public Sub WriteCDTextureCommand()
+		Dim line As String = ""
+
+		If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+			line = "$CDTexture ""."""
+		Else
+			line = "$cdtexture ""."""
+		End If
+		Me.theOutputFileStreamWriter.WriteLine(line)
+	End Sub
+
+	Public Sub WriteClipToTexturesCommand()
+		Dim line As String = ""
+
+		If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+			line = "$ClipToTextures"
+		Else
+			line = "$cliptotextures"
+		End If
 		Me.theOutputFileStreamWriter.WriteLine(line)
 	End Sub
 
@@ -403,28 +437,76 @@ Public Class SourceQcFile10
 		Me.theOutputFileStreamWriter.WriteLine(line)
 	End Sub
 
-	Public Sub WriteSequenceGroupCommands()
+	'NOTE: Although this code is correct, the $sequencegroup command seems completely pointless; it just labels each group, but is not used for anything.
+	'Public Sub WriteSequenceGroupCommands()
+	'	Dim line As String = ""
+	'	Dim aSequenceGroup As SourceMdlSequenceGroup10
+
+	'	If Me.theMdlFileData.theSequenceGroups.Count > 1 Then
+	'		Me.theOutputFileStreamWriter.WriteLine()
+
+	'		For sequenceGroupIndex As Integer = 0 To Me.theMdlFileData.theSequenceGroups.Count - 1
+	'			aSequenceGroup = Me.theMdlFileData.theSequenceGroups(sequenceGroupIndex)
+
+	'			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+	'				line = "$SequenceGroup "
+	'			Else
+	'				line = "$sequencegroup "
+	'			End If
+	'			line += """"
+	'			line += aSequenceGroup.theName
+	'			line += """"
+
+	'			Me.theOutputFileStreamWriter.WriteLine(line)
+	'		Next
+	'	End If
+	'End Sub
+
+	Public Sub WriteSequenceGroupSizeCommand()
 		Dim line As String = ""
-		Dim aSequenceGroup As SourceMdlSequenceGroup10
+		Dim fileSize As Long = 0
+		Dim largestFileSize As Long = 0
+		Dim groupSize As Long = 0
+		Dim remainder As Double = 0
 
 		If Me.theMdlFileData.theSequenceGroups.Count > 1 Then
-			Me.theOutputFileStreamWriter.WriteLine()
-
 			For sequenceGroupIndex As Integer = 0 To Me.theMdlFileData.theSequenceGroups.Count - 1
-				aSequenceGroup = Me.theMdlFileData.theSequenceGroups(sequenceGroupIndex)
+				fileSize = Me.theMdlFileData.theSequenceGroupFileHeaders(sequenceGroupIndex).theActualFileSize
+				If largestFileSize < fileSize Then
+					largestFileSize = fileSize
+				End If
+			Next
+
+			If largestFileSize > 0 Then
+				groupSize = largestFileSize \ 1024
+				remainder = largestFileSize Mod 1024
+				If remainder > 0 Then
+					groupSize += 1
+				End If
+
+				Me.theOutputFileStreamWriter.WriteLine()
 
 				If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
-					line = "$SequenceGroup "
+					line = "$SequenceGroupSize "
 				Else
-					line = "$sequencegroup "
+					line = "$sequencegroupsize "
 				End If
-				line += """"
-				line += aSequenceGroup.theName
-				line += """"
+				line += groupSize.ToString(TheApp.InternalNumberFormat)
 
 				Me.theOutputFileStreamWriter.WriteLine(line)
-			Next
+			End If
 		End If
+	End Sub
+
+	Public Sub WriteScaleCommand()
+		Dim line As String = ""
+
+		If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+			line = "$Scale 1.0"
+		Else
+			line = "$scale 1.0"
+		End If
+		Me.theOutputFileStreamWriter.WriteLine(line)
 	End Sub
 
 	Public Sub WriteSequenceCommands()
@@ -457,72 +539,114 @@ Public Class SourceQcFile10
 		End If
 	End Sub
 
+	Public Sub WriteTexRenderMode()
+		If Me.theMdlFileData.theTextures IsNot Nothing AndAlso Me.theMdlFileData.theTextures.Count > 0 Then
+			Me.theOutputFileStreamWriter.WriteLine()
+
+			For Each texture As SourceMdlTexture10 In Me.theMdlFileData.theTextures
+				If ((texture.flags And SourceMdlTexture10.STUDIO_NF_FLATSHADE) > 0) AndAlso (Not texture.theFileName.ToLower().Contains("chrome")) Then
+					Me.WriteTexRenderModeLine(texture.theFileName, "flatshade", True)
+				End If
+				If ((texture.flags And SourceMdlTexture10.STUDIO_NF_CHROME) > 0) AndAlso (Not texture.theFileName.ToLower().Contains("chrome")) Then
+					Me.WriteTexRenderModeLine(texture.theFileName, "chrome", False)
+				End If
+				If (texture.flags And SourceMdlTexture10.STUDIO_NF_FULLBRIGHT) > 0 Then
+					Me.WriteTexRenderModeLine(texture.theFileName, "fullbright", False)
+				End If
+				If (texture.flags And SourceMdlTexture10.STUDIO_NF_NOMIPS) > 0 Then
+					Me.WriteTexRenderModeLine(texture.theFileName, "nomips", False)
+				End If
+				If (texture.flags And SourceMdlTexture10.STUDIO_NF_ALPHA) > 0 Then
+					Me.WriteTexRenderModeLine(texture.theFileName, "alpha", False)
+				End If
+				If (texture.flags And SourceMdlTexture10.STUDIO_NF_ADDITIVE) > 0 Then
+					Me.WriteTexRenderModeLine(texture.theFileName, "additive", False)
+				End If
+				If (texture.flags And SourceMdlTexture10.STUDIO_NF_MASKED) > 0 Then
+					Me.WriteTexRenderModeLine(texture.theFileName, "masked", False)
+				End If
+			Next
+		End If
+	End Sub
+
 	Public Sub WriteTextureGroupCommand()
 		Dim line As String = ""
 
 		If Me.theMdlFileData.theSkinFamilies IsNot Nothing AndAlso Me.theMdlFileData.theSkinFamilies.Count > 0 AndAlso Me.theMdlFileData.theTextures IsNot Nothing AndAlso Me.theMdlFileData.theTextures.Count > 0 AndAlso Me.theMdlFileData.skinReferenceCount > 0 Then
-			Me.theOutputFileStreamWriter.WriteLine()
+			'Me.theOutputFileStreamWriter.WriteLine()
 
-			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
-				line = "$TextureGroup ""skinfamilies"""
-			Else
-				line = "$texturegroup ""skinfamilies"""
-			End If
-			Me.theOutputFileStreamWriter.WriteLine(line)
-			line = "{"
-			Me.theOutputFileStreamWriter.WriteLine(line)
+			'If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+			'	line = "$TextureGroup ""skinfamilies"""
+			'Else
+			'	line = "$texturegroup ""skinfamilies"""
+			'End If
+			'Me.theOutputFileStreamWriter.WriteLine(line)
+			'line = "{"
+			'Me.theOutputFileStreamWriter.WriteLine(line)
 
+			'Dim skinFamilies As New List(Of List(Of String))(Me.theMdlFileData.theSkinFamilies.Count)
 			'For i As Integer = 0 To Me.theMdlFileData.theSkinFamilies.Count - 1
 			'	Dim aSkinFamily As List(Of Short)
 			'	aSkinFamily = Me.theMdlFileData.theSkinFamilies(i)
 
-			'	line = vbTab
-			'	line += "{"
-			'	Me.theOutputFileStreamWriter.WriteLine(line)
-
+			'	Dim textureFileNames As New List(Of String)(Me.theMdlFileData.skinReferenceCount)
 			'	For j As Integer = 0 To Me.theMdlFileData.skinReferenceCount - 1
 			'		Dim aTexture As SourceMdlTexture10
 			'		aTexture = Me.theMdlFileData.theTextures(aSkinFamily(j))
 
-			'		line = vbTab
-			'		line += vbTab
-			'		line += """"
-			'		line += aTexture.theFileName
-			'		'line += ".bmp"
-			'		line += """"
-
-			'		Me.theOutputFileStreamWriter.WriteLine(line)
+			'		textureFileNames.Add(aTexture.theFileName)
 			'	Next
 
-			'	line = vbTab
-			'	line += "}"
-			'	Me.theOutputFileStreamWriter.WriteLine(line)
+			'	skinFamilies.Add(textureFileNames)
 			'Next
-			'------
-			Dim skinFamilies As New List(Of List(Of String))(Me.theMdlFileData.theSkinFamilies.Count)
-			For i As Integer = 0 To Me.theMdlFileData.theSkinFamilies.Count - 1
-				Dim aSkinFamily As List(Of Short)
-				aSkinFamily = Me.theMdlFileData.theSkinFamilies(i)
+			'======
+			Dim processedSkinFamilies As List(Of List(Of Short))
+			If TheApp.Settings.DecompileQcOnlyChangedMaterialsInTextureGroupLinesIsChecked Then
+				processedSkinFamilies = Me.GetSkinFamiliesOfChangedMaterials(Me.theMdlFileData.theSkinFamilies)
+			Else
+				processedSkinFamilies = Me.theMdlFileData.theSkinFamilies
+			End If
 
-				Dim textureFileNames As New List(Of String)(Me.theMdlFileData.skinReferenceCount)
-				For j As Integer = 0 To Me.theMdlFileData.skinReferenceCount - 1
+			Dim skinFamiliesOfTextureFileNames As List(Of List(Of String))
+			skinFamiliesOfTextureFileNames = New List(Of List(Of String))(processedSkinFamilies.Count)
+			Dim skinReferenceCount As Integer
+			skinReferenceCount = processedSkinFamilies(0).Count
+			For i As Integer = 0 To processedSkinFamilies.Count - 1
+				Dim aSkinFamily As List(Of Short)
+				aSkinFamily = processedSkinFamilies(i)
+
+				Dim textureFileNames As New List(Of String)(skinReferenceCount)
+				For j As Integer = 0 To skinReferenceCount - 1
 					Dim aTexture As SourceMdlTexture10
 					aTexture = Me.theMdlFileData.theTextures(aSkinFamily(j))
 
 					textureFileNames.Add(aTexture.theFileName)
 				Next
 
-				skinFamilies.Add(textureFileNames)
+				skinFamiliesOfTextureFileNames.Add(textureFileNames)
 			Next
 
-			Dim skinFamilyLines As List(Of String)
-			skinFamilyLines = Me.GetTextureGroupSkinFamilyLines(skinFamilies)
-			For skinFamilyLineIndex As Integer = 0 To skinFamilyLines.Count - 1
-				Me.theOutputFileStreamWriter.WriteLine(skinFamilyLines(skinFamilyLineIndex))
-			Next
+			If (Not TheApp.Settings.DecompileQcOnlyChangedMaterialsInTextureGroupLinesIsChecked) OrElse (skinFamiliesOfTextureFileNames.Count > 1) Then
+				Me.theOutputFileStreamWriter.WriteLine()
 
-			line = "}"
-			Me.theOutputFileStreamWriter.WriteLine(line)
+				If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+					line = "$TextureGroup ""skinfamilies"""
+				Else
+					line = "$texturegroup ""skinfamilies"""
+				End If
+				Me.theOutputFileStreamWriter.WriteLine(line)
+				line = "{"
+				Me.theOutputFileStreamWriter.WriteLine(line)
+
+				Dim skinFamilyLines As List(Of String)
+				skinFamilyLines = Me.GetTextureGroupSkinFamilyLines(skinFamiliesOfTextureFileNames)
+				For skinFamilyLineIndex As Integer = 0 To skinFamilyLines.Count - 1
+					Me.theOutputFileStreamWriter.WriteLine(skinFamilyLines(skinFamilyLineIndex))
+				Next
+
+				line = "}"
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			End If
 		End If
 	End Sub
 
@@ -610,21 +734,19 @@ Public Class SourceQcFile10
 	Private Sub WriteSequenceOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc10)
 		Dim line As String = ""
 
-		If aSequenceDesc.blendCount = 1 Then
+		For blendIndex As Integer = 0 To aSequenceDesc.blendCount - 1
+			If aSequenceDesc.blendCount = 1 Then
+				aSequenceDesc.theSmdRelativePathFileNames(blendIndex) = SourceFileNamesModule.CreateAnimationSmdRelativePathFileName(aSequenceDesc.theSmdRelativePathFileNames(blendIndex), Me.theModelName, aSequenceDesc.theName, -1)
+			Else
+				aSequenceDesc.theSmdRelativePathFileNames(blendIndex) = SourceFileNamesModule.CreateAnimationSmdRelativePathFileName(aSequenceDesc.theSmdRelativePathFileNames(blendIndex), Me.theModelName, aSequenceDesc.theName, blendIndex)
+			End If
+
 			line = vbTab
 			line += """"
-			line += SourceModule10.GetAnimationSmdRelativePathFileName(Me.theModelName, aSequenceDesc.theName, -1)
+			line += FileManager.GetPathFileNameWithoutExtension(aSequenceDesc.theSmdRelativePathFileNames(blendIndex))
 			line += """"
 			Me.theOutputFileStreamWriter.WriteLine(line)
-		Else
-			For blendIndex As Integer = 0 To aSequenceDesc.blendCount - 1
-				line = vbTab
-				line += """"
-				line += SourceModule10.GetAnimationSmdRelativePathFileName(Me.theModelName, aSequenceDesc.theName, blendIndex)
-				line += """"
-				Me.theOutputFileStreamWriter.WriteLine(line)
-			Next
-		End If
+		Next
 
 		If aSequenceDesc.activityId > 0 Then
 			line = vbTab
@@ -638,9 +760,7 @@ Public Class SourceQcFile10
 			If aSequenceDesc.blendType(i) <> 0 Then
 				line = vbTab
 				line += "blend "
-				line += """"
 				line += SourceModule10.GetControlText(aSequenceDesc.blendType(i))
-				line += """"
 				line += " "
 				line += aSequenceDesc.blendStart(i).ToString("0.######", TheApp.InternalNumberFormat)
 				line += " "
@@ -705,45 +825,64 @@ Public Class SourceQcFile10
 		'End If
 	End Sub
 
-	Private Sub WriteSequenceNodeInfo(ByVal aSeqDesc As SourceMdlSequenceDesc)
+	'Private Sub WriteSequenceNodeInfo(ByVal aSeqDesc As SourceMdlSequenceDesc)
+	'	Dim line As String = ""
+
+	'	'If aSeqDesc.localEntryNodeIndex > 0 Then
+	'	'	If aSeqDesc.localEntryNodeIndex = aSeqDesc.localExitNodeIndex Then
+	'	'		'node (name)
+	'	'		line = vbTab
+	'	'		line += "node"
+	'	'		line += " """
+	'	'		'NOTE: Use the "-1" at end because the indexing is one-based in the mdl file.
+	'	'		line += Me.theMdlFileData.theLocalNodeNames(aSeqDesc.localEntryNodeIndex - 1)
+	'	'		line += """"
+	'	'		Me.theOutputFileStreamWriter.WriteLine(line)
+	'	'	ElseIf (aSeqDesc.nodeFlags And 1) = 0 Then
+	'	'		'transition (from) (to) 
+	'	'		line = vbTab
+	'	'		line += "transition"
+	'	'		line += " """
+	'	'		'NOTE: Use the "-1" at end because the indexing is one-based in the mdl file.
+	'	'		line += Me.theMdlFileData.theLocalNodeNames(aSeqDesc.localEntryNodeIndex - 1)
+	'	'		line += """ """
+	'	'		'NOTE: Use the "-1" at end because the indexing is one-based in the mdl file.
+	'	'		line += Me.theMdlFileData.theLocalNodeNames(aSeqDesc.localExitNodeIndex - 1)
+	'	'		line += """"
+	'	'		Me.theOutputFileStreamWriter.WriteLine(line)
+	'	'	Else
+	'	'		'rtransition (name1) (name2) 
+	'	'		line = vbTab
+	'	'		line += "rtransition"
+	'	'		line += " """
+	'	'		'NOTE: Use the "-1" at end because the indexing is one-based in the mdl file.
+	'	'		line += Me.theMdlFileData.theLocalNodeNames(aSeqDesc.localEntryNodeIndex - 1)
+	'	'		line += """ """
+	'	'		'NOTE: Use the "-1" at end because the indexing is one-based in the mdl file.
+	'	'		line += Me.theMdlFileData.theLocalNodeNames(aSeqDesc.localExitNodeIndex - 1)
+	'	'		line += """"
+	'	'		Me.theOutputFileStreamWriter.WriteLine(line)
+	'	'	End If
+	'	'End If
+	'End Sub
+
+	Private Sub WriteTexRenderModeLine(ByVal textureFileName As String, ByVal renderMode As String, ByVal lineIsCommented As Boolean)
 		Dim line As String = ""
 
-		'If aSeqDesc.localEntryNodeIndex > 0 Then
-		'	If aSeqDesc.localEntryNodeIndex = aSeqDesc.localExitNodeIndex Then
-		'		'node (name)
-		'		line = vbTab
-		'		line += "node"
-		'		line += " """
-		'		'NOTE: Use the "-1" at end because the indexing is one-based in the mdl file.
-		'		line += Me.theMdlFileData.theLocalNodeNames(aSeqDesc.localEntryNodeIndex - 1)
-		'		line += """"
-		'		Me.theOutputFileStreamWriter.WriteLine(line)
-		'	ElseIf (aSeqDesc.nodeFlags And 1) = 0 Then
-		'		'transition (from) (to) 
-		'		line = vbTab
-		'		line += "transition"
-		'		line += " """
-		'		'NOTE: Use the "-1" at end because the indexing is one-based in the mdl file.
-		'		line += Me.theMdlFileData.theLocalNodeNames(aSeqDesc.localEntryNodeIndex - 1)
-		'		line += """ """
-		'		'NOTE: Use the "-1" at end because the indexing is one-based in the mdl file.
-		'		line += Me.theMdlFileData.theLocalNodeNames(aSeqDesc.localExitNodeIndex - 1)
-		'		line += """"
-		'		Me.theOutputFileStreamWriter.WriteLine(line)
-		'	Else
-		'		'rtransition (name1) (name2) 
-		'		line = vbTab
-		'		line += "rtransition"
-		'		line += " """
-		'		'NOTE: Use the "-1" at end because the indexing is one-based in the mdl file.
-		'		line += Me.theMdlFileData.theLocalNodeNames(aSeqDesc.localEntryNodeIndex - 1)
-		'		line += """ """
-		'		'NOTE: Use the "-1" at end because the indexing is one-based in the mdl file.
-		'		line += Me.theMdlFileData.theLocalNodeNames(aSeqDesc.localExitNodeIndex - 1)
-		'		line += """"
-		'		Me.theOutputFileStreamWriter.WriteLine(line)
-		'	End If
-		'End If
+		If lineIsCommented Then
+			line = "//"
+		End If
+		If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+			line += "$TexRenderMode "
+		Else
+			line += "$texrendermode "
+		End If
+		line += """"
+		line += textureFileName
+		line += """"
+		line += " "
+		line += renderMode
+		Me.theOutputFileStreamWriter.WriteLine(line)
 	End Sub
 
 #End Region

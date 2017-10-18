@@ -24,6 +24,7 @@ Public Class SourcePhyFileData
 
 
 
+	Public thePhysicsMeshSmdFileName As String
 	Public theSourcePhyKeyValueDataOffset As Long
 	Public theSourcePhyCollisionDatas As List(Of SourcePhyCollisionData)
 	Public theSourcePhyPhysCollisionModels As List(Of SourcePhyPhysCollisionModel)

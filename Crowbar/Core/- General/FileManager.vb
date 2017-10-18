@@ -296,12 +296,22 @@ Public Class FileManager
 
 #Region "Path"
 
+	Public Shared Function GetPathFileNameWithoutExtension(ByVal pathFileName As String) As String
+		Try
+			Return Path.Combine(FileManager.GetPath(pathFileName), Path.GetFileNameWithoutExtension(pathFileName))
+		Catch ex As Exception
+			Return String.Empty
+		End Try
+	End Function
+
 	'NOTE: Replacement for Path.GetDirectoryName, because GetDirectoryName returns "Nothing" when something like "C:\" is the path.
 	Public Shared Function GetPath(ByVal pathFileName As String) As String
 		Try
 			pathFileName = FileManager.GetNormalizedPathFileName(pathFileName)
 			Dim length As Integer = pathFileName.LastIndexOf(Path.DirectorySeparatorChar)
-			If length > 0 Then
+			If length < 1 Then
+				pathFileName = ""
+			ElseIf length > 0 Then
 				pathFileName = pathFileName.Substring(0, length)
 			End If
 			If pathFileName.Length = 2 AndAlso pathFileName(1) = ":"c Then
@@ -400,7 +410,11 @@ Public Class FileManager
 		For Each invalidChar As Char In Path.GetInvalidPathChars()
 			cleanedPathGivenPathFileName = cleanedPathGivenPathFileName.Replace(invalidChar, "")
 		Next
-		cleanedPathGivenPathFileName = Path.GetFullPath(cleanedPathGivenPathFileName)
+		Try
+			cleanedPathGivenPathFileName = Path.GetFullPath(cleanedPathGivenPathFileName)
+		Catch ex As Exception
+			cleanedPathGivenPathFileName = cleanedPathGivenPathFileName.Replace(":", "")
+		End Try
 
 		Dim cleanedGivenFileName As String
 		cleanedGivenFileName = Path.GetFileName(cleanedPathGivenPathFileName)
@@ -441,12 +455,61 @@ Public Class FileManager
 	End Function
 
 	Public Shared Function GetLongestExistingPath(ByVal pathFileName As String) As String
-		If Not Directory.Exists(pathFileName) Then
+		If pathFileName <> "" AndAlso Not Directory.Exists(pathFileName) Then
 			Dim shorterPath As String
 			shorterPath = FileManager.GetPath(pathFileName)
 			Return FileManager.GetLongestExistingPath(shorterPath)
 		End If
 		Return pathFileName
+	End Function
+
+	' Example: "C:\folder\subfolder\temp" returns "C:\folder".
+	' Example: "subfolder\temp"           returns "subfolder".
+	Public Shared Function GetTopFolderPath(ByVal iPathFileName As String) As String
+		Dim topFolderPath As String = ""
+		Dim fullPath As String
+		Dim splitPathArray As String()
+
+		If FileManager.GetPath(iPathFileName) = "" Then
+			Return ""
+		End If
+
+		iPathFileName = FileManager.GetNormalizedPathFileName(iPathFileName)
+		fullPath = Path.GetFullPath(iPathFileName)
+		splitPathArray = iPathFileName.Split(Path.DirectorySeparatorChar)
+		If iPathFileName = fullPath Then
+			'NOTE: Path.Combine does not put in the DirectorySeparatorChar, so combine directly.
+			topFolderPath = splitPathArray(0) + Path.DirectorySeparatorChar + splitPathArray(1)
+		Else
+			topFolderPath = splitPathArray(0)
+		End If
+
+		Return topFolderPath
+	End Function
+
+	' Delete the path if all recursive subfolders are empty.
+	' Example: "C:\folder\subfolder\temp" where temp contains "subtemp\subsubtemp".
+	' Returns the top-most folder path that was deleted.
+	Public Shared Function DeleteEmptySubpath(ByVal fullPath As String) As String
+		Dim fullPathDeleted As String = ""
+
+		If Not String.IsNullOrEmpty(fullPath) Then
+			Try
+				For Each aFullPath As String In Directory.EnumerateDirectories(fullPath)
+					FileManager.DeleteEmptySubpath(aFullPath)
+				Next
+
+				Dim entries As String() = Directory.GetFileSystemEntries(fullPath)
+				If entries.Length = 0 Then
+					Directory.Delete(fullPath)
+					fullPathDeleted = fullPath
+				End If
+			Catch ex As Exception
+				Dim debug As Integer = 4242
+			End Try
+		End If
+
+		Return fullPathDeleted
 	End Function
 
 	'This is the code that works like GetTempFileName, but instead creates a folder:

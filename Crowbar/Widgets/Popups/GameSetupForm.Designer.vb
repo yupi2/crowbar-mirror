@@ -1,6 +1,6 @@
 <Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
 Partial Class GameSetupForm
-    Inherits System.Windows.Forms.Form
+	Inherits BaseForm
 
     'Form overrides dispose to clean up the component list.
     <System.Diagnostics.DebuggerNonUserCode()> _
@@ -25,6 +25,7 @@ Partial Class GameSetupForm
 		Me.components = New System.ComponentModel.Container()
 		Me.GameSetupComboBox = New System.Windows.Forms.ComboBox()
 		Me.GameGroupBox = New System.Windows.Forms.GroupBox()
+		Me.CreateModelsFolderTreeButton = New System.Windows.Forms.Button()
 		Me.BrowseForMappingToolPathFileNameButton = New System.Windows.Forms.Button()
 		Me.MappingToolPathFileNameTextBox = New System.Windows.Forms.TextBox()
 		Me.Label9 = New System.Windows.Forms.Label()
@@ -37,7 +38,7 @@ Partial Class GameSetupForm
 		Me.BrowseForGameAppPathFileNameButton = New System.Windows.Forms.Button()
 		Me.GameAppPathFileNameTextBox = New System.Windows.Forms.TextBox()
 		Me.Label7 = New System.Windows.Forms.Label()
-		Me.Label5 = New System.Windows.Forms.Label()
+		Me.UnpackerLabel = New System.Windows.Forms.Label()
 		Me.BrowseForUnpackerPathFileNameButton = New System.Windows.Forms.Button()
 		Me.UnpackerPathFileNameTextBox = New System.Windows.Forms.TextBox()
 		Me.Label3 = New System.Windows.Forms.Label()
@@ -61,9 +62,9 @@ Partial Class GameSetupForm
 		Me.BrowseForSteamAppPathFileNameButton = New System.Windows.Forms.Button()
 		Me.SteamAppPathFileNameTextBox = New System.Windows.Forms.TextBox()
 		Me.Label11 = New System.Windows.Forms.Label()
-		Me.SteamLibraryPathsDataGridView = New Crowbar.MacroDataGridView()
 		Me.DeleteLibraryPathButton = New System.Windows.Forms.Button()
 		Me.AddLibraryPathButton = New System.Windows.Forms.Button()
+		Me.SteamLibraryPathsDataGridView = New Crowbar.MacroDataGridView()
 		Me.GameGroupBox.SuspendLayout()
 		CType(Me.SteamLibraryPathsDataGridView, System.ComponentModel.ISupportInitialize).BeginInit()
 		Me.SuspendLayout()
@@ -83,6 +84,7 @@ Partial Class GameSetupForm
 		'
 		Me.GameGroupBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.GameGroupBox.Controls.Add(Me.CreateModelsFolderTreeButton)
 		Me.GameGroupBox.Controls.Add(Me.BrowseForMappingToolPathFileNameButton)
 		Me.GameGroupBox.Controls.Add(Me.MappingToolPathFileNameTextBox)
 		Me.GameGroupBox.Controls.Add(Me.Label9)
@@ -95,7 +97,7 @@ Partial Class GameSetupForm
 		Me.GameGroupBox.Controls.Add(Me.BrowseForGameAppPathFileNameButton)
 		Me.GameGroupBox.Controls.Add(Me.GameAppPathFileNameTextBox)
 		Me.GameGroupBox.Controls.Add(Me.Label7)
-		Me.GameGroupBox.Controls.Add(Me.Label5)
+		Me.GameGroupBox.Controls.Add(Me.UnpackerLabel)
 		Me.GameGroupBox.Controls.Add(Me.BrowseForUnpackerPathFileNameButton)
 		Me.GameGroupBox.Controls.Add(Me.UnpackerPathFileNameTextBox)
 		Me.GameGroupBox.Controls.Add(Me.Label3)
@@ -118,6 +120,17 @@ Partial Class GameSetupForm
 		Me.GameGroupBox.TabStop = False
 		Me.GameGroupBox.Text = "Game Setup"
 		'
+		'CreateModelsFolderTreeButton
+		'
+		Me.CreateModelsFolderTreeButton.Location = New System.Drawing.Point(351, 406)
+		Me.CreateModelsFolderTreeButton.Name = "CreateModelsFolderTreeButton"
+		Me.CreateModelsFolderTreeButton.Size = New System.Drawing.Size(251, 23)
+		Me.CreateModelsFolderTreeButton.TabIndex = 40
+		Me.CreateModelsFolderTreeButton.Text = "Create ""models"" folder tree from this game's VPKs"
+		Me.ToolTip1.SetToolTip(Me.CreateModelsFolderTreeButton, "Use so HLMV can view models found in VPKs.")
+		Me.CreateModelsFolderTreeButton.UseVisualStyleBackColor = True
+		Me.CreateModelsFolderTreeButton.Visible = False
+		'
 		'BrowseForMappingToolPathFileNameButton
 		'
 		Me.BrowseForMappingToolPathFileNameButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
@@ -134,7 +147,7 @@ Partial Class GameSetupForm
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.MappingToolPathFileNameTextBox.Location = New System.Drawing.Point(6, 315)
 		Me.MappingToolPathFileNameTextBox.Name = "MappingToolPathFileNameTextBox"
-		Me.MappingToolPathFileNameTextBox.Size = New System.Drawing.Size(515, 20)
+		Me.MappingToolPathFileNameTextBox.Size = New System.Drawing.Size(515, 21)
 		Me.MappingToolPathFileNameTextBox.TabIndex = 38
 		'
 		'Label9
@@ -143,7 +156,7 @@ Partial Class GameSetupForm
 		Me.Label9.Location = New System.Drawing.Point(6, 299)
 		Me.Label9.Margin = New System.Windows.Forms.Padding(3, 9, 3, 0)
 		Me.Label9.Name = "Label9"
-		Me.Label9.Size = New System.Drawing.Size(137, 13)
+		Me.Label9.Size = New System.Drawing.Size(143, 13)
 		Me.Label9.TabIndex = 37
 		Me.Label9.Text = "Mapping tool (hammer.exe):"
 		'
@@ -153,7 +166,7 @@ Partial Class GameSetupForm
 		Me.Source2RadioButton.Location = New System.Drawing.Point(528, 51)
 		Me.Source2RadioButton.Margin = New System.Windows.Forms.Padding(3, 9, 9, 3)
 		Me.Source2RadioButton.Name = "Source2RadioButton"
-		Me.Source2RadioButton.Size = New System.Drawing.Size(68, 17)
+		Me.Source2RadioButton.Size = New System.Drawing.Size(67, 17)
 		Me.Source2RadioButton.TabIndex = 36
 		Me.Source2RadioButton.TabStop = True
 		Me.Source2RadioButton.Text = "Source 2"
@@ -166,7 +179,7 @@ Partial Class GameSetupForm
 		Me.SourceRadioButton.Location = New System.Drawing.Point(321, 51)
 		Me.SourceRadioButton.Margin = New System.Windows.Forms.Padding(3, 9, 9, 3)
 		Me.SourceRadioButton.Name = "SourceRadioButton"
-		Me.SourceRadioButton.Size = New System.Drawing.Size(59, 17)
+		Me.SourceRadioButton.Size = New System.Drawing.Size(58, 17)
 		Me.SourceRadioButton.TabIndex = 35
 		Me.SourceRadioButton.TabStop = True
 		Me.SourceRadioButton.Text = "Source"
@@ -178,7 +191,7 @@ Partial Class GameSetupForm
 		Me.GoldSourceRadioButton.Location = New System.Drawing.Point(228, 51)
 		Me.GoldSourceRadioButton.Margin = New System.Windows.Forms.Padding(3, 9, 9, 3)
 		Me.GoldSourceRadioButton.Name = "GoldSourceRadioButton"
-		Me.GoldSourceRadioButton.Size = New System.Drawing.Size(81, 17)
+		Me.GoldSourceRadioButton.Size = New System.Drawing.Size(79, 17)
 		Me.GoldSourceRadioButton.TabIndex = 34
 		Me.GoldSourceRadioButton.TabStop = True
 		Me.GoldSourceRadioButton.Text = "GoldSource"
@@ -190,15 +203,15 @@ Partial Class GameSetupForm
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.GameAppOptionsTextBox.Location = New System.Drawing.Point(125, 171)
 		Me.GameAppOptionsTextBox.Name = "GameAppOptionsTextBox"
-		Me.GameAppOptionsTextBox.Size = New System.Drawing.Size(396, 20)
+		Me.GameAppOptionsTextBox.Size = New System.Drawing.Size(396, 21)
 		Me.GameAppOptionsTextBox.TabIndex = 32
 		'
 		'Label8
 		'
 		Me.Label8.AutoSize = True
-		Me.Label8.Location = New System.Drawing.Point(6, 171)
+		Me.Label8.Location = New System.Drawing.Point(6, 173)
 		Me.Label8.Name = "Label8"
-		Me.Label8.Size = New System.Drawing.Size(113, 13)
+		Me.Label8.Size = New System.Drawing.Size(116, 13)
 		Me.Label8.TabIndex = 31
 		Me.Label8.Text = "Command-line options:"
 		'
@@ -228,7 +241,7 @@ Partial Class GameSetupForm
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.GameAppPathFileNameTextBox.Location = New System.Drawing.Point(6, 142)
 		Me.GameAppPathFileNameTextBox.Name = "GameAppPathFileNameTextBox"
-		Me.GameAppPathFileNameTextBox.Size = New System.Drawing.Size(515, 20)
+		Me.GameAppPathFileNameTextBox.Size = New System.Drawing.Size(515, 21)
 		Me.GameAppPathFileNameTextBox.TabIndex = 29
 		'
 		'Label7
@@ -237,19 +250,19 @@ Partial Class GameSetupForm
 		Me.Label7.Location = New System.Drawing.Point(6, 126)
 		Me.Label7.Margin = New System.Windows.Forms.Padding(3, 9, 3, 0)
 		Me.Label7.Name = "Label7"
-		Me.Label7.Size = New System.Drawing.Size(126, 13)
+		Me.Label7.Size = New System.Drawing.Size(133, 13)
 		Me.Label7.TabIndex = 28
 		Me.Label7.Text = "Game executable (*.exe):"
 		'
-		'Label5
+		'UnpackerLabel
 		'
-		Me.Label5.AutoSize = True
-		Me.Label5.Location = New System.Drawing.Point(6, 347)
-		Me.Label5.Margin = New System.Windows.Forms.Padding(3, 9, 3, 0)
-		Me.Label5.Name = "Label5"
-		Me.Label5.Size = New System.Drawing.Size(204, 13)
-		Me.Label5.TabIndex = 16
-		Me.Label5.Text = "Packer/Unpacker (vpk.exe or gmad.exe):"
+		Me.UnpackerLabel.AutoSize = True
+		Me.UnpackerLabel.Location = New System.Drawing.Point(6, 347)
+		Me.UnpackerLabel.Margin = New System.Windows.Forms.Padding(3, 9, 3, 0)
+		Me.UnpackerLabel.Name = "UnpackerLabel"
+		Me.UnpackerLabel.Size = New System.Drawing.Size(206, 13)
+		Me.UnpackerLabel.TabIndex = 16
+		Me.UnpackerLabel.Text = "Packer/Unpacker (vpk.exe or gmad.exe):"
 		'
 		'BrowseForUnpackerPathFileNameButton
 		'
@@ -267,7 +280,7 @@ Partial Class GameSetupForm
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.UnpackerPathFileNameTextBox.Location = New System.Drawing.Point(6, 363)
 		Me.UnpackerPathFileNameTextBox.Name = "UnpackerPathFileNameTextBox"
-		Me.UnpackerPathFileNameTextBox.Size = New System.Drawing.Size(515, 20)
+		Me.UnpackerPathFileNameTextBox.Size = New System.Drawing.Size(515, 21)
 		Me.UnpackerPathFileNameTextBox.TabIndex = 17
 		'
 		'Label3
@@ -276,7 +289,7 @@ Partial Class GameSetupForm
 		Me.Label3.Location = New System.Drawing.Point(6, 251)
 		Me.Label3.Margin = New System.Windows.Forms.Padding(3, 9, 3, 0)
 		Me.Label3.Name = "Label3"
-		Me.Label3.Size = New System.Drawing.Size(124, 13)
+		Me.Label3.Size = New System.Drawing.Size(129, 13)
 		Me.Label3.TabIndex = 13
 		Me.Label3.Text = "Model viewer (hlmv.exe):"
 		'
@@ -296,12 +309,12 @@ Partial Class GameSetupForm
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.ViewerPathFileNameTextBox.Location = New System.Drawing.Point(6, 267)
 		Me.ViewerPathFileNameTextBox.Name = "ViewerPathFileNameTextBox"
-		Me.ViewerPathFileNameTextBox.Size = New System.Drawing.Size(515, 20)
+		Me.ViewerPathFileNameTextBox.Size = New System.Drawing.Size(515, 21)
 		Me.ViewerPathFileNameTextBox.TabIndex = 14
 		'
 		'CloneGameSetupButton
 		'
-		Me.CloneGameSetupButton.Location = New System.Drawing.Point(6, 404)
+		Me.CloneGameSetupButton.Location = New System.Drawing.Point(6, 406)
 		Me.CloneGameSetupButton.Name = "CloneGameSetupButton"
 		Me.CloneGameSetupButton.Size = New System.Drawing.Size(75, 23)
 		Me.CloneGameSetupButton.TabIndex = 12
@@ -314,7 +327,7 @@ Partial Class GameSetupForm
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.GameNameTextBox.Location = New System.Drawing.Point(91, 19)
 		Me.GameNameTextBox.Name = "GameNameTextBox"
-		Me.GameNameTextBox.Size = New System.Drawing.Size(511, 20)
+		Me.GameNameTextBox.Size = New System.Drawing.Size(511, 21)
 		Me.GameNameTextBox.TabIndex = 1
 		'
 		'Label2
@@ -322,13 +335,13 @@ Partial Class GameSetupForm
 		Me.Label2.AutoSize = True
 		Me.Label2.Location = New System.Drawing.Point(6, 22)
 		Me.Label2.Name = "Label2"
-		Me.Label2.Size = New System.Drawing.Size(79, 13)
+		Me.Label2.Size = New System.Drawing.Size(80, 13)
 		Me.Label2.TabIndex = 0
 		Me.Label2.Text = "Name of game:"
 		'
 		'DeleteGameSetupButton
 		'
-		Me.DeleteGameSetupButton.Location = New System.Drawing.Point(87, 404)
+		Me.DeleteGameSetupButton.Location = New System.Drawing.Point(87, 406)
 		Me.DeleteGameSetupButton.Name = "DeleteGameSetupButton"
 		Me.DeleteGameSetupButton.Size = New System.Drawing.Size(75, 23)
 		Me.DeleteGameSetupButton.TabIndex = 8
@@ -351,7 +364,7 @@ Partial Class GameSetupForm
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.GamePathFileNameTextBox.Location = New System.Drawing.Point(6, 94)
 		Me.GamePathFileNameTextBox.Name = "GamePathFileNameTextBox"
-		Me.GamePathFileNameTextBox.Size = New System.Drawing.Size(515, 20)
+		Me.GamePathFileNameTextBox.Size = New System.Drawing.Size(515, 21)
 		Me.GamePathFileNameTextBox.TabIndex = 3
 		'
 		'Label1
@@ -360,7 +373,7 @@ Partial Class GameSetupForm
 		Me.Label1.Location = New System.Drawing.Point(6, 203)
 		Me.Label1.Margin = New System.Windows.Forms.Padding(3, 9, 3, 0)
 		Me.Label1.Name = "Label1"
-		Me.Label1.Size = New System.Drawing.Size(154, 13)
+		Me.Label1.Size = New System.Drawing.Size(159, 13)
 		Me.Label1.TabIndex = 5
 		Me.Label1.Text = "Model compiler (studiomdl.exe):"
 		'
@@ -380,7 +393,7 @@ Partial Class GameSetupForm
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.CompilerPathFileNameTextBox.Location = New System.Drawing.Point(6, 219)
 		Me.CompilerPathFileNameTextBox.Name = "CompilerPathFileNameTextBox"
-		Me.CompilerPathFileNameTextBox.Size = New System.Drawing.Size(515, 20)
+		Me.CompilerPathFileNameTextBox.Size = New System.Drawing.Size(515, 21)
 		Me.CompilerPathFileNameTextBox.TabIndex = 6
 		'
 		'GamePathLabel
@@ -427,7 +440,7 @@ Partial Class GameSetupForm
 		Me.Label10.Location = New System.Drawing.Point(18, 491)
 		Me.Label10.Margin = New System.Windows.Forms.Padding(3, 9, 3, 0)
 		Me.Label10.Name = "Label10"
-		Me.Label10.Size = New System.Drawing.Size(298, 13)
+		Me.Label10.Size = New System.Drawing.Size(306, 13)
 		Me.Label10.TabIndex = 19
 		Me.Label10.Text = "Steam executable (steam.exe) [Used for ""Run Game"" button]:"
 		'
@@ -447,7 +460,7 @@ Partial Class GameSetupForm
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.SteamAppPathFileNameTextBox.Location = New System.Drawing.Point(18, 507)
 		Me.SteamAppPathFileNameTextBox.Name = "SteamAppPathFileNameTextBox"
-		Me.SteamAppPathFileNameTextBox.Size = New System.Drawing.Size(515, 20)
+		Me.SteamAppPathFileNameTextBox.Size = New System.Drawing.Size(515, 21)
 		Me.SteamAppPathFileNameTextBox.TabIndex = 20
 		'
 		'Label11
@@ -456,30 +469,10 @@ Partial Class GameSetupForm
 		Me.Label11.Location = New System.Drawing.Point(18, 539)
 		Me.Label11.Margin = New System.Windows.Forms.Padding(3, 9, 3, 0)
 		Me.Label11.Name = "Label11"
-		Me.Label11.Size = New System.Drawing.Size(520, 13)
+		Me.Label11.Size = New System.Drawing.Size(544, 13)
 		Me.Label11.TabIndex = 22
 		Me.Label11.Text = "Steam Library folders (<library#> macros for placing at start of fields above; ri" & _
 	"ght-click a macro for commands):"
-		'
-		'SteamLibraryPathsDataGridView
-		'
-		Me.SteamLibraryPathsDataGridView.AllowUserToAddRows = False
-		Me.SteamLibraryPathsDataGridView.AllowUserToDeleteRows = False
-		Me.SteamLibraryPathsDataGridView.AllowUserToResizeRows = False
-		Me.SteamLibraryPathsDataGridView.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-			Or System.Windows.Forms.AnchorStyles.Left) _
-			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.SteamLibraryPathsDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
-		Me.SteamLibraryPathsDataGridView.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText
-		Me.SteamLibraryPathsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-		Me.SteamLibraryPathsDataGridView.Location = New System.Drawing.Point(18, 555)
-		Me.SteamLibraryPathsDataGridView.MultiSelect = False
-		Me.SteamLibraryPathsDataGridView.Name = "SteamLibraryPathsDataGridView"
-		Me.SteamLibraryPathsDataGridView.RowHeadersVisible = False
-		Me.SteamLibraryPathsDataGridView.RowHeadersWidth = 25
-		Me.SteamLibraryPathsDataGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing
-		Me.SteamLibraryPathsDataGridView.Size = New System.Drawing.Size(515, 101)
-		Me.SteamLibraryPathsDataGridView.TabIndex = 25
 		'
 		'DeleteLibraryPathButton
 		'
@@ -501,6 +494,26 @@ Partial Class GameSetupForm
 		Me.AddLibraryPathButton.Text = "Add"
 		Me.AddLibraryPathButton.UseVisualStyleBackColor = True
 		'
+		'SteamLibraryPathsDataGridView
+		'
+		Me.SteamLibraryPathsDataGridView.AllowUserToAddRows = False
+		Me.SteamLibraryPathsDataGridView.AllowUserToDeleteRows = False
+		Me.SteamLibraryPathsDataGridView.AllowUserToResizeRows = False
+		Me.SteamLibraryPathsDataGridView.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+			Or System.Windows.Forms.AnchorStyles.Left) _
+			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.SteamLibraryPathsDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
+		Me.SteamLibraryPathsDataGridView.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText
+		Me.SteamLibraryPathsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+		Me.SteamLibraryPathsDataGridView.Location = New System.Drawing.Point(18, 555)
+		Me.SteamLibraryPathsDataGridView.MultiSelect = False
+		Me.SteamLibraryPathsDataGridView.Name = "SteamLibraryPathsDataGridView"
+		Me.SteamLibraryPathsDataGridView.RowHeadersVisible = False
+		Me.SteamLibraryPathsDataGridView.RowHeadersWidth = 25
+		Me.SteamLibraryPathsDataGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing
+		Me.SteamLibraryPathsDataGridView.Size = New System.Drawing.Size(515, 101)
+		Me.SteamLibraryPathsDataGridView.TabIndex = 25
+		'
 		'GameSetupForm
 		'
 		Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -521,7 +534,7 @@ Partial Class GameSetupForm
 		Me.Controls.Add(Me.GameGroupBox)
 		Me.MaximizeBox = False
 		Me.MinimizeBox = False
-		Me.MinimumSize = New System.Drawing.Size(640, 750)
+		Me.MinimumSize = New System.Drawing.Size(639, 750)
 		Me.Name = "GameSetupForm"
 		Me.ShowIcon = False
 		Me.ShowInTaskbar = False
@@ -550,7 +563,7 @@ Partial Class GameSetupForm
 	Friend WithEvents SaveButton As System.Windows.Forms.Button
 	Friend WithEvents ToolTip1 As System.Windows.Forms.ToolTip
 	Friend WithEvents CloneGameSetupButton As System.Windows.Forms.Button
-	Friend WithEvents Label5 As System.Windows.Forms.Label
+	Friend WithEvents UnpackerLabel As System.Windows.Forms.Label
 	Friend WithEvents BrowseForUnpackerPathFileNameButton As System.Windows.Forms.Button
 	Friend WithEvents UnpackerPathFileNameTextBox As System.Windows.Forms.TextBox
 	Friend WithEvents Label3 As System.Windows.Forms.Label
@@ -575,4 +588,5 @@ Partial Class GameSetupForm
 	Friend WithEvents SteamLibraryPathsDataGridView As MacroDataGridView
 	Friend WithEvents DeleteLibraryPathButton As System.Windows.Forms.Button
 	Friend WithEvents AddLibraryPathButton As System.Windows.Forms.Button
+	Friend WithEvents CreateModelsFolderTreeButton As System.Windows.Forms.Button
 End Class

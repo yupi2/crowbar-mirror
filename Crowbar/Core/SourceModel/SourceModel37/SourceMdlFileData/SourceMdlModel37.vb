@@ -1,5 +1,14 @@
 ﻿Public Class SourceMdlModel37
 
+	Public Sub New()
+		'MyBase.New()
+
+		Me.theSmdFileNames = New List(Of String)(MAX_NUM_LODS)
+		For i As Integer = 0 To MAX_NUM_LODS - 1
+			Me.theSmdFileNames.Add("")
+		Next
+	End Sub
+
 	'struct mstudiomodel_t
 	'{
 	'	char		name[64];
@@ -51,6 +60,7 @@
 
 	Public unused(7) As Integer
 
+	Public theSmdFileNames As List(Of String)
 	Public theEyeballs As List(Of SourceMdlEyeball37)
 	Public theMeshes As List(Of SourceMdlMesh37)
 	Public theName As String

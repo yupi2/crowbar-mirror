@@ -46,7 +46,7 @@ Public Class SourceModel04
 
 		Dim aBodyPart As SourceMdlBodyPart04
 		Dim aBodyModel As SourceMdlModel04
-		Dim smdFileName As String
+		'Dim smdFileName As String
 		Dim smdPathFileName As String
 		If Me.theMdlFileData.theBodyParts IsNot Nothing Then
 			For bodyPartIndex As Integer = 0 To Me.theMdlFileData.theBodyParts.Count - 1
@@ -56,9 +56,8 @@ Public Class SourceModel04
 					For modelIndex As Integer = 0 To aBodyPart.theModels.Count - 1
 						aBodyModel = aBodyPart.theModels(modelIndex)
 
-						'NOTE: Using "<>" for bodyModelName input will trigger the function to use its own algorithm for creating the file name.
-						smdFileName = SourceFileNamesModule.GetBodyGroupSmdFileName(bodyPartIndex, modelIndex, 0, False, Me.theName, "<>", Me.theMdlFileData.theBodyParts.Count, aBodyPart.theModels.Count)
-						smdPathFileName = Path.Combine(modelOutputPath, smdFileName)
+						aBodyModel.theSmdFileName = SourceFileNamesModule.CreateBodyGroupSmdFileName(aBodyModel.theSmdFileName, bodyPartIndex, modelIndex, 0, Me.theName, "")
+						smdPathFileName = Path.Combine(modelOutputPath, aBodyModel.theSmdFileName)
 
 						Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
 						'NOTE: Check here in case writing is canceled in the above event.

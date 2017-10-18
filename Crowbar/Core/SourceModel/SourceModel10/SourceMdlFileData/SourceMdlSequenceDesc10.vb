@@ -104,6 +104,8 @@
 
 
 	Public theName As String
+	' There are blendCount file names.
+	Public theSmdRelativePathFileNames As List(Of String)
 	Public theAnimations As List(Of SourceMdlAnimation10)
 	Public theEvents As List(Of SourceMdlEvent10)
 	Public thePivots As List(Of SourceMdlPivot10)

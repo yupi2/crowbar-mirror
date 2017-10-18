@@ -14,10 +14,13 @@
 		End Get
 	End Property
 
-	Public ReadOnly Property Message As String
+	Public Property Message As String
 		Get
 			Return Me.theMessage
 		End Get
+		Set(value As String)
+			Me.theMessage = value
+		End Set
 	End Property
 
 	Private theProgress As ProgressOptions

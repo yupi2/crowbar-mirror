@@ -15,7 +15,7 @@ Public Class SourceSmdFile49
 		Me.theVvdFileData = vvdFileData
 	End Sub
 
-	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal mdlFileData As SourceMdlFileData49, ByVal phyFileData As SourcePhyFileData49)
+	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal mdlFileData As SourceMdlFileData49, ByVal phyFileData As SourcePhyFileData)
 		Me.theOutputFileStreamWriter = outputFileStream
 		Me.theMdlFileData = mdlFileData
 		Me.thePhyFileData = phyFileData
@@ -407,23 +407,23 @@ Public Class SourceSmdFile49
 							Me.theAnimationFrameLines.Add(boneIndex, aFrameLine)
 
 							aFrameLine.position = New SourceVector()
-							aFrameLine.position.x = 0
-							aFrameLine.position.y = 0
-							aFrameLine.position.z = 0
-							aFrameLine.position.debug_text = ""
-							'aFrameLine.position.x = aBone.position.x
-							'aFrameLine.position.y = aBone.position.y
-							'aFrameLine.position.z = aBone.position.z
-							'aFrameLine.position.debug_text = "bone"
+							'aFrameLine.position.x = 0
+							'aFrameLine.position.y = 0
+							'aFrameLine.position.z = 0
+							'aFrameLine.position.debug_text = ""
+							aFrameLine.position.x = aBone.position.x
+							aFrameLine.position.y = aBone.position.y
+							aFrameLine.position.z = aBone.position.z
+							aFrameLine.position.debug_text = "bone"
 							aFrameLine.rotation = New SourceVector()
-							aFrameLine.rotation.x = 0
-							aFrameLine.rotation.y = 0
-							aFrameLine.rotation.z = 0
-							aFrameLine.rotation.debug_text = ""
-							'aFrameLine.rotation.x = aBone.rotation.x
-							'aFrameLine.rotation.y = aBone.rotation.y
-							'aFrameLine.rotation.z = aBone.rotation.z
-							'aFrameLine.rotation.debug_text = "bone"
+							'aFrameLine.rotation.x = 0
+							'aFrameLine.rotation.y = 0
+							'aFrameLine.rotation.z = 0
+							'aFrameLine.rotation.debug_text = ""
+							aFrameLine.rotation.x = aBone.rotation.x
+							aFrameLine.rotation.y = aBone.rotation.y
+							aFrameLine.rotation.z = aBone.rotation.z
+							aFrameLine.rotation.debug_text = "bone"
 
 							Dim boneFlag As Byte
 							boneFlag = anAniFrameAnim.theBoneFlags(boneIndex)
@@ -431,36 +431,40 @@ Public Class SourceSmdFile49
 								aBoneConstantInfo = anAniFrameAnim.theBoneConstantInfos(boneIndex)
 								If (boneFlag And SourceAniFrameAnim.STUDIO_FRAME_RAWROT) > 0 Then
 									aFrameLine.rotation = MathModule.ToEulerAngles(aBoneConstantInfo.theConstantRawRot.quaternion)
-									aFrameLine.rotation.debug_text = ""
+									aFrameLine.rotation.debug_text = "RAWROT"
 								End If
 								If (boneFlag And SourceAniFrameAnim.STUDIO_FRAME_RAWPOS) > 0 Then
 									aFrameLine.position.x = aBoneConstantInfo.theConstantRawPos.x
 									aFrameLine.position.y = aBoneConstantInfo.theConstantRawPos.y
 									aFrameLine.position.z = aBoneConstantInfo.theConstantRawPos.z
-									aFrameLine.position.debug_text = ""
+									aFrameLine.position.debug_text = "RAWPOS"
 								End If
 								If (boneFlag And SourceAniFrameAnim.STUDIO_FRAME_UNKNOWN01) > 0 Then
 									aFrameLine.rotation = MathModule.ToEulerAngles(aBoneConstantInfo.theConstantRotationUnknown.quaternion)
 									'aFrameLine.rotation.debug_text = ""
 									'aFrameLine.rotation.z = aFrameLine.rotation.z + MathModule.DegreesToRadians(90)
-									aFrameLine.rotation.debug_text = ""
+									aFrameLine.rotation.debug_text = "UNKNOWN01"
 								End If
 							End If
 							If anAniFrameAnim.theBoneFrameDataInfos IsNot Nothing Then
 								aBoneFrameDataInfo = anAniFrameAnim.theBoneFrameDataInfos(sectionFrameIndex)(boneIndex)
 								If (boneFlag And SourceAniFrameAnim.STUDIO_FRAME_ANIMROT) > 0 Then
 									aFrameLine.rotation = MathModule.ToEulerAngles(aBoneFrameDataInfo.theAnimRotation.quaternion)
-									aFrameLine.rotation.debug_text = ""
+									aFrameLine.rotation.debug_text = "ANIMROT"
 								End If
 								If (boneFlag And SourceAniFrameAnim.STUDIO_FRAME_ANIMPOS) > 0 Then
 									aFrameLine.position.x = aBoneFrameDataInfo.theAnimPosition.x
 									aFrameLine.position.y = aBoneFrameDataInfo.theAnimPosition.y
 									aFrameLine.position.z = aBoneFrameDataInfo.theAnimPosition.z
-									aFrameLine.position.debug_text = ""
+									aFrameLine.position.debug_text = "ANIMPOS"
 								End If
 								If (boneFlag And SourceAniFrameAnim.STUDIO_FRAME_FULLANIMPOS) > 0 Then
 									'aBoneFrameDataInfo.theFullAnimPosition = New SourceVector()
-									Dim unknownFlagIsUsed As Integer = 4242
+									'Dim unknownFlagIsUsed As Integer = 4242
+									aFrameLine.position.x = aBoneFrameDataInfo.theFullAnimPosition.x
+									aFrameLine.position.y = aBoneFrameDataInfo.theFullAnimPosition.y
+									aFrameLine.position.z = aBoneFrameDataInfo.theFullAnimPosition.z
+									aFrameLine.position.debug_text = "FULLANIMPOS"
 								End If
 								If (boneFlag And &H20) > 0 Then
 									Dim unknownFlagIsUsed As Integer = 4242
@@ -468,7 +472,7 @@ Public Class SourceSmdFile49
 								If (boneFlag And SourceAniFrameAnim.STUDIO_FRAME_UNKNOWN02) > 0 Then
 									aFrameLine.rotation = MathModule.ToEulerAngles(aBoneFrameDataInfo.theAnimRotationUnknown.quaternion)
 									'aFrameLine.rotation.debug_text = ""
-									aFrameLine.rotation.debug_text = ""
+									aFrameLine.rotation.debug_text = "UNKNOWN02"
 									'aFrameLine.rotation.z = aFrameLine.rotation.z + MathModule.DegreesToRadians(90)
 								End If
 							End If
@@ -706,6 +710,7 @@ Public Class SourceSmdFile49
 								'NOTE: LY means x position in the SMD.
 								If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LY) > 0 Then
 									position.x = position.x + scale * aMovement.position.y
+									aFrameLine.position.debug_text += " [x]"
 								End If
 								'NOTE: LX means -y position in the SMD.
 								If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LX) > 0 Then
@@ -733,9 +738,11 @@ Public Class SourceSmdFile49
 									'position.y = -(perFrameMovement * frameIndex) - scale * position.y
 									'position.y = -(perFrameMovement * frameIndex)
 									'position.y = -(perFrameMovement * frameIndex) + scale * position.y
+									aFrameLine.position.debug_text += " [y]"
 								End If
 								If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LZ) > 0 Then
 									position.z = position.z + scale * aMovement.position.z
+									aFrameLine.position.debug_text += " [z]"
 								End If
 
 								'NOTE: Even if the original QC had an LXR, LYR, or LZR that was not actually used,
@@ -760,14 +767,17 @@ Public Class SourceSmdFile49
 								If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LXR) > 0 AndAlso (frameIndex = 0 OrElse previousFrameRotation.x <> rotation.x) Then
 									perFrameMovement = MathModule.DegreesToRadians(aMovement.angle) / aMovement.endframeIndex
 									rotation.x = rotation.x + (perFrameMovement * frameIndex)
+									aFrameLine.rotation.debug_text += " [x]"
 								End If
 								If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LYR) > 0 AndAlso (frameIndex = 0 OrElse previousFrameRotation.y <> rotation.y) Then
 									perFrameMovement = MathModule.DegreesToRadians(aMovement.angle) / aMovement.endframeIndex
 									rotation.y = rotation.y + (perFrameMovement * frameIndex)
+									aFrameLine.rotation.debug_text += " [y]"
 								End If
 								If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LZR) > 0 AndAlso (frameIndex = 0 OrElse previousFrameRotation.z <> rotation.z) Then
 									perFrameMovement = MathModule.DegreesToRadians(aMovement.angle) / aMovement.endframeIndex
 									rotation.z = rotation.z + (perFrameMovement * frameIndex)
+									aFrameLine.rotation.debug_text += " [z]"
 								End If
 
 								previousFrameRotation.x = beforeMovementFrameRotation.x
@@ -2085,7 +2095,7 @@ Public Class SourceSmdFile49
 
 	Private theOutputFileStreamWriter As StreamWriter
 	Private theMdlFileData As SourceMdlFileData49
-	Private thePhyFileData As SourcePhyFileData49
+	Private thePhyFileData As SourcePhyFileData
 	Private theVvdFileData As SourceVvdFileData49
 
 	Private theWeaponBoneIndex As Integer

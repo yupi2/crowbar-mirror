@@ -41,7 +41,7 @@ Public Class SourceMdlFile04
 		Me.theMdlFileData.bodyPartCount = Me.theInputFileReader.ReadInt32()
 		Me.theMdlFileData.unknownCount = Me.theInputFileReader.ReadInt32()
 		Me.theMdlFileData.sequenceDescCount = Me.theInputFileReader.ReadInt32()
-		Me.theMdlFileData.sequenceCount = Me.theInputFileReader.ReadInt32()
+		Me.theMdlFileData.sequenceFrameCount = Me.theInputFileReader.ReadInt32()
 
 		Me.theMdlFileData.unknown02 = Me.theInputFileReader.ReadInt32()
 

@@ -2,30 +2,32 @@
 
 Module SourceModule10
 
-	Public Function GetAnimationSmdRelativePathFileName(ByVal modelName As String, ByVal iAnimationName As String, ByVal blendIndex As Integer) As String
-		Dim animationName As String
-		Dim animationSmdRelativePathFileName As String
+	'Public Function GetAnimationSmdRelativePathFileName(ByVal modelName As String, ByVal iAnimationName As String, ByVal blendIndex As Integer, Optional ByVal includeExtension As Boolean = True) As String
+	'	Dim animationName As String
+	'	Dim animationSmdRelativePathFileName As String
 
-		'NOTE: The animation or blend name is not stored, so use sequence name or variation of it.
-		If blendIndex = -1 Then
-			animationName = iAnimationName
-		Else
-			animationName = iAnimationName + "_blend" + (blendIndex + 1).ToString("00")
-		End If
+	'	'NOTE: The animation or blend name is not stored, so use sequence name or variation of it.
+	'	If blendIndex = -1 Then
+	'		animationName = iAnimationName
+	'	Else
+	'		animationName = iAnimationName + "_blend" + (blendIndex + 1).ToString("00")
+	'	End If
 
-		If Not TheApp.Settings.DecompileBoneAnimationPlaceInSubfolderIsChecked Then
-			animationName = modelName + "_anim_" + animationName
-		End If
-		animationSmdRelativePathFileName = Path.Combine(GetAnimationSmdRelativePath(modelName), animationName)
+	'	If Not TheApp.Settings.DecompileBoneAnimationPlaceInSubfolderIsChecked Then
+	'		animationName = modelName + "_anim_" + animationName
+	'	End If
+	'	animationSmdRelativePathFileName = Path.Combine(GetAnimationSmdRelativePath(modelName), animationName)
 
-		If Path.GetExtension(animationSmdRelativePathFileName) <> ".smd" Then
-			'NOTE: Add the ".smd" extension, keeping the existing extension in file name, which is often ".dmx" for newer models. 
-			'      Thus, user can see that model might have newer features that Crowbar does not yet handle.
-			animationSmdRelativePathFileName += ".smd"
-		End If
+	'	If includeExtension Then
+	'		If Path.GetExtension(animationSmdRelativePathFileName) <> ".smd" Then
+	'			'NOTE: Add the ".smd" extension, keeping the existing extension in file name, which is often ".dmx" for newer models. 
+	'			'      Thus, user can see that model might have newer features that Crowbar does not yet handle.
+	'			animationSmdRelativePathFileName += ".smd"
+	'		End If
+	'	End If
 
-		Return animationSmdRelativePathFileName
-	End Function
+	'	Return animationSmdRelativePathFileName
+	'End Function
 
 	' For the SourceMdlBoneController10.type and SourceMdlSequenceDesc10.activityId.blendType fields.
 	'FROM: [1999] HLStandardSDK\SourceCode\utils\studiomdl\studiomdl.c

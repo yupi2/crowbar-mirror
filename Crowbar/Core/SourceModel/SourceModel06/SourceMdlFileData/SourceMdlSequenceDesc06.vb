@@ -55,6 +55,7 @@
 
 
 	Public theName As String
+	Public theSmdRelativePathFileName As String
 	Public theAnimations As List(Of SourceMdlAnimation06)
 	Public theEvents As List(Of SourceMdlEvent06)
 	Public thePivots As List(Of SourceMdlPivot06)
