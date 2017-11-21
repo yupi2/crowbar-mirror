@@ -1143,15 +1143,15 @@ Public Class AppSettings
 
 	Public Sub SetDefaultOptionsAutoOpenOptions()
 		'NOTE: Call the properties so the NotifyPropertyChanged events are raised.
-		Me.OptionsAutoOpenVpkFileIsChecked = False
+		Me.OptionsAutoOpenVpkFileIsChecked = True
 
-		Me.OptionsAutoOpenMdlFileIsChecked = False
+		Me.OptionsAutoOpenMdlFileIsChecked = True
 		Me.OptionsAutoOpenMdlFileForPreviewIsChecked = True
 		Me.OptionsAutoOpenMdlFileForDecompileIsChecked = True
 		Me.OptionsAutoOpenMdlFileForViewIsChecked = True
 		Me.OptionsAutoOpenMdlFileOption = ActionType.Decompile
 
-		Me.OptionsAutoOpenQcFileIsChecked = False
+		Me.OptionsAutoOpenQcFileIsChecked = True
 
 		Me.OptionsAutoOpenFolderOption = ActionType.Decompile
 	End Sub

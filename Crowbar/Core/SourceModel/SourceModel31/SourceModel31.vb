@@ -367,7 +367,7 @@ Public Class SourceModel31
 		mdlFile.ReadTexturePaths()
 		''NOTE: ReadTextures must be after ReadTexturePaths(), so it can compare with the texture paths.
 		mdlFile.ReadTextures()
-		'mdlFile.ReadSkinFamilies()
+		mdlFile.ReadSkinFamilies()
 
 		' '' Read what WriteKeyValues() writes.
 		''mdlFile.ReadKeyValues()
@@ -555,7 +555,7 @@ Public Class SourceModel31
 	'	End Try
 	'End Sub
 
-	Protected Overrides Sub WriteBoneAnimationSmdFile(ByVal aSequenceDescBase As SourceMdlSequenceDescBase, ByVal anAnimationDescBase As SourceMdlAnimationDescBase)
+	Protected Overrides Sub WriteBoneAnimationSmdFile(ByVal aSequenceDesc As SourceMdlSequenceDescBase, ByVal anAnimationDesc As SourceMdlAnimationDescBase)
 		Dim smdFile As New SourceSmdFile31(Me.theOutputFileTextWriter, Me.theMdlFileData)
 
 		Try
@@ -566,7 +566,7 @@ Public Class SourceModel31
 			'If Me.theMdlFileData.theFirstAnimationDesc IsNot Nothing AndAlso Me.theMdlFileData.theFirstAnimationDescFrameLines.Count = 0 Then
 			'	smdFile.CalculateFirstAnimDescFrameLinesForSubtract()
 			'End If
-			'smdFile.WriteSkeletonSectionForAnimation(aSequenceDesc, anAnimationDesc)
+			smdFile.WriteSkeletonSectionForAnimation(aSequenceDesc, anAnimationDesc)
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		End Try

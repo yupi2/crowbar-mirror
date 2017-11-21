@@ -63,7 +63,7 @@ Public Module AppEnums
 
 	Public Enum ArchiveAction
 		Undefined
-		Extract
+		'Extract
 		ExtractAndOpen
 		ExtractToTemp
 		ExtractFolderTree

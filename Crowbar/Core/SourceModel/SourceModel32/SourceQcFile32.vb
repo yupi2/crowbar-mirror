@@ -154,7 +154,7 @@ Public Class SourceQcFile32
 		'modelPath = FileManager.GetPath(CStr(theSourceEngineModel.theMdlFileHeader.name).Trim(Chr(0)))
 		'modelPathFileName = Path.Combine(modelPath, theSourceEngineModel.ModelName + ".mdl")
 		'modelPathFileName = CStr(theSourceEngineModel.MdlFileHeader.name).Trim(Chr(0))
-		modelPathFileName = Me.theMdlFileData.theName
+		modelPathFileName = Me.theMdlFileData.theModelName
 
 		Me.theOutputFileStreamWriter.WriteLine()
 
@@ -1305,7 +1305,7 @@ Public Class SourceQcFile32
 				line += aPoseParamDesc.startingValue.ToString("0.######", TheApp.InternalNumberFormat)
 				line += " "
 				line += aPoseParamDesc.endingValue.ToString("0.######", TheApp.InternalNumberFormat)
-				line += " "
+				line += " loop "
 				line += aPoseParamDesc.loopingRange.ToString("0.######", TheApp.InternalNumberFormat)
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			Next
@@ -1867,6 +1867,7 @@ Public Class SourceQcFile32
 	Public Sub WriteGroupAnimation()
 		Me.WritePoseParameterCommand()
 		Me.WriteIkChainCommand()
+		Me.WriteIkAutoPlayLockCommand()
 		Me.FillInWeightLists()
 		'NOTE: Must write $WeightList lines before animations or sequences that use them.
 		Me.WriteWeightListCommand()
@@ -1880,7 +1881,6 @@ Public Class SourceQcFile32
 		Catch ex As Exception
 		End Try
 		Me.WriteIncludeModelCommands()
-		Me.WriteIkAutoPlayLockCommand()
 		Me.WriteBoneSaveFrameCommand()
 	End Sub
 
@@ -2145,40 +2145,57 @@ Public Class SourceQcFile32
 		Dim valueString As String
 		Dim impliedAnimDesc As SourceMdlAnimationDesc32 = Nothing
 
-		''Dim anAnimationDesc As SourceMdlAnimationDesc32
-		''Dim name As String
-		''For j As Integer = 0 To aSequenceDesc.theAnimDescIndexes.Count - 1
-		''	anAnimationDesc = Me.theMdlFileData.theAnimationDescs(aSequenceDesc.theAnimDescIndexes(j))
-		''	name = anAnimationDesc.theName
+		Try
+			'Dim anAnimationDesc As SourceMdlAnimationDesc32
+			'Dim name As String
+			'For j As Integer = 0 To aSequenceDesc.theAnimDescIndexes.Count - 1
+			'	anAnimationDesc = Me.theMdlFileData.theAnimationDescs(aSequenceDesc.theAnimDescIndexes(j))
+			'	name = anAnimationDesc.theName
 
-		''	line = vbTab
-		''	line += """"
-		''	If name(0) = "@" Then
-		''		'NOTE: There should only be one implied anim desc.
-		''		impliedAnimDesc = anAnimationDesc
-		''		line += SourceFileNamesModule.GetAnimationSmdRelativePathFileName(Me.theModelName, anAnimationDesc.theName)
-		''	Else
-		''		If Not name.StartsWith("a_") Then
-		''			line += "a_"
-		''		End If
-		''		line += name
-		''	End If
-		''	line += """"
-		''	Me.theOutputFileStreamWriter.WriteLine(line)
-		''Next
-		'Dim animDescIndex As Integer
-		'For blendIndex As Integer = 0 To aSequenceDesc.blendCount - 1
-		'	animDescIndex = aSequenceDesc.anim(blendIndex)(0)
-		'	If animDescIndex >= Me.theMdlFileData.theAnimationDescs.Count Then
-		'		animDescIndex = Me.theMdlFileData.theAnimationDescs.Count - 1
-		'	End If
+			'	line = vbTab
+			'	line += """"
+			'	If name(0) = "@" Then
+			'		'NOTE: There should only be one implied anim desc.
+			'		impliedAnimDesc = anAnimationDesc
+			'		'line += SourceFileNamesModule.GetAnimationSmdRelativePathFileName(Me.theModelName, anAnimationDesc.theName)
+			'		anAnimationDesc.theSmdRelativePathFileName = SourceFileNamesModule.CreateAnimationSmdRelativePathFileName(anAnimationDesc.theSmdRelativePathFileName, Me.theModelName, anAnimationDesc.theName)
+			'		line += anAnimationDesc.theSmdRelativePathFileName
+			'	Else
+			'		If Not name.StartsWith("a_") Then
+			'			line += "a_"
+			'		End If
+			'		line += name
+			'	End If
+			'	line += """"
+			'	Me.theOutputFileStreamWriter.WriteLine(line)
+			'Next
+			'======
+			'Dim animDescIndex As Integer
+			'For blendIndex As Integer = 0 To aSequenceDesc.blendCount - 1
+			'	animDescIndex = aSequenceDesc.anim(blendIndex)(0)
+			'	If animDescIndex >= Me.theMdlFileData.theAnimationDescs.Count Then
+			'		animDescIndex = Me.theMdlFileData.theAnimationDescs.Count - 1
+			'	End If
 
-		'	line = vbTab
-		'	line += """"
-		'	line += SourceFileNamesModule.GetAnimationSmdRelativePathFileName(Me.theModelName, Me.theMdlFileData.theAnimationDescs(animDescIndex).theName)
-		'	line += """"
-		'	Me.theOutputFileStreamWriter.WriteLine(line)
-		'Next
+			'	line = vbTab
+			'	line += """"
+			'	line += SourceFileNamesModule.GetAnimationSmdRelativePathFileName(Me.theModelName, Me.theMdlFileData.theAnimationDescs(animDescIndex).theName)
+			'	line += """"
+			'	Me.theOutputFileStreamWriter.WriteLine(line)
+			'Next
+			'======
+			Dim anAnimationDesc As SourceMdlAnimationDesc32
+			anAnimationDesc = Me.theMdlFileData.theAnimationDescs(aSequenceDesc.animDescIndex)
+			line = vbTab
+			line += """"
+			'anAnimationDesc.theSmdRelativePathFileName = SourceFileNamesModule.CreateAnimationSmdRelativePathFileName(anAnimationDesc.theSmdRelativePathFileName, Me.theModelName, anAnimationDesc.theName)
+			'line += anAnimationDesc.theSmdRelativePathFileName
+			line += anAnimationDesc.theName
+			line += """"
+			Me.theOutputFileStreamWriter.WriteLine(line)
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		End Try
 
 		If aSequenceDesc.theActivityName <> "" Then
 			line = vbTab
@@ -2207,31 +2224,31 @@ Public Class SourceQcFile32
 
 		Me.WriteSequenceDeltaInfo(aSequenceDesc)
 
-		If aSequenceDesc.theEvents IsNot Nothing Then
-			Dim frameIndex As Integer
-			Dim frameCount As Integer
-			frameCount = Me.theMdlFileData.theAnimationDescs(aSequenceDesc.theAnimDescIndexes(0)).frameCount
-			For j As Integer = 0 To aSequenceDesc.theEvents.Count - 1
-				If frameCount <= 1 Then
-					frameIndex = 0
-				Else
-					frameIndex = CInt(aSequenceDesc.theEvents(j).cycle * (frameCount - 1))
-				End If
-				line = vbTab
-				line += "{ "
-				line += "event "
-				line += aSequenceDesc.theEvents(j).eventIndex.ToString(TheApp.InternalNumberFormat)
-				line += " "
-				line += frameIndex.ToString(TheApp.InternalNumberFormat)
-				If aSequenceDesc.theEvents(j).options <> "" Then
-					line += " """
-					line += CStr(aSequenceDesc.theEvents(j).options).Trim(Chr(0))
-					line += """"
-				End If
-				line += " }"
-				Me.theOutputFileStreamWriter.WriteLine(line)
-			Next
-		End If
+		'If aSequenceDesc.theEvents IsNot Nothing Then
+		'	Dim frameIndex As Integer
+		'	Dim frameCount As Integer
+		'	frameCount = Me.theMdlFileData.theAnimationDescs(aSequenceDesc.theAnimDescIndexes(0)).frameCount
+		'	For j As Integer = 0 To aSequenceDesc.theEvents.Count - 1
+		'		If frameCount <= 1 Then
+		'			frameIndex = 0
+		'		Else
+		'			frameIndex = CInt(aSequenceDesc.theEvents(j).cycle * (frameCount - 1))
+		'		End If
+		'		line = vbTab
+		'		line += "{ "
+		'		line += "event "
+		'		line += aSequenceDesc.theEvents(j).eventIndex.ToString(TheApp.InternalNumberFormat)
+		'		line += " "
+		'		line += frameIndex.ToString(TheApp.InternalNumberFormat)
+		'		If aSequenceDesc.theEvents(j).options <> "" Then
+		'			line += " """
+		'			line += CStr(aSequenceDesc.theEvents(j).options).Trim(Chr(0))
+		'			line += """"
+		'		End If
+		'		line += " }"
+		'		Me.theOutputFileStreamWriter.WriteLine(line)
+		'	Next
+		'End If
 
 		valueString = aSequenceDesc.fadeInTime.ToString("0.######", TheApp.InternalNumberFormat)
 		line = vbTab
@@ -3594,7 +3611,7 @@ Public Class SourceQcFile32
 					line += " """
 					line += Me.theMdlFileData.theBones(boneController.boneIndex).theName
 					line += """ "
-					line += boneController.type.ToString(TheApp.InternalNumberFormat)
+					line += boneController.TypeName
 					line += " "
 					line += boneController.startBlah.ToString("0.######", TheApp.InternalNumberFormat)
 					line += " "
@@ -3603,7 +3620,7 @@ Public Class SourceQcFile32
 				Next
 			End If
 		Catch ex As Exception
-
+			Dim debug As Integer = 4242
 		End Try
 	End Sub
 

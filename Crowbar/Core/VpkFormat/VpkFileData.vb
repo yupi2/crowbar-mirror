@@ -73,6 +73,7 @@
 	Public md5Hash(15) As Byte
 
 
+	Public theDirectoryOffset As Long
 	Public theEntries As List(Of VpkDirectoryEntry)
 	Public theEntryDataOutputTexts As List(Of String)
 

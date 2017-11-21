@@ -186,7 +186,7 @@ Public Class GameSetupForm
 		End If
 		openFileWdw.AddExtension = True
 		openFileWdw.ValidateNames = True
-		openFileWdw.InitialDirectory = FileManager.GetLongestExistingPath(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).GamePathFileName)
+		openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).GamePathFileName)
 		openFileWdw.FileName = Path.GetFileName(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).GamePathFileName)
 		If openFileWdw.ShowDialog() = Windows.Forms.DialogResult.OK Then
 			' Allow dialog window to completely disappear.
@@ -208,7 +208,7 @@ Public Class GameSetupForm
 		openFileWdw.Filter = "Executable Files (*.exe)|*.exe|All Files (*.*)|*.*"
 		openFileWdw.AddExtension = True
 		openFileWdw.ValidateNames = True
-		openFileWdw.InitialDirectory = FileManager.GetLongestExistingPath(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).GameAppPathFileName)
+		openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).GameAppPathFileName)
 		openFileWdw.FileName = Path.GetFileName(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).GameAppPathFileName)
 		If openFileWdw.ShowDialog() = Windows.Forms.DialogResult.OK Then
 			' Allow dialog window to completely disappear.
@@ -236,7 +236,7 @@ Public Class GameSetupForm
 		End If
 		openFileWdw.AddExtension = True
 		openFileWdw.ValidateNames = True
-		openFileWdw.InitialDirectory = FileManager.GetLongestExistingPath(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).CompilerPathFileName)
+		openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).CompilerPathFileName)
 		openFileWdw.FileName = Path.GetFileName(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).CompilerPathFileName)
 		If openFileWdw.ShowDialog() = Windows.Forms.DialogResult.OK Then
 			' Allow dialog window to completely disappear.
@@ -260,7 +260,7 @@ Public Class GameSetupForm
 		End If
 		openFileWdw.AddExtension = True
 		openFileWdw.ValidateNames = True
-		openFileWdw.InitialDirectory = FileManager.GetLongestExistingPath(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).ViewerPathFileName)
+		openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).ViewerPathFileName)
 		openFileWdw.FileName = Path.GetFileName(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).ViewerPathFileName)
 		If openFileWdw.ShowDialog() = Windows.Forms.DialogResult.OK Then
 			' Allow dialog window to completely disappear.
@@ -284,7 +284,7 @@ Public Class GameSetupForm
 		End If
 		openFileWdw.AddExtension = True
 		openFileWdw.ValidateNames = True
-		openFileWdw.InitialDirectory = FileManager.GetLongestExistingPath(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).MappingToolPathFileName)
+		openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).MappingToolPathFileName)
 		openFileWdw.FileName = Path.GetFileName(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).MappingToolPathFileName)
 		If openFileWdw.ShowDialog() = Windows.Forms.DialogResult.OK Then
 			' Allow dialog window to completely disappear.
@@ -308,7 +308,7 @@ Public Class GameSetupForm
 		End If
 		openFileWdw.AddExtension = True
 		openFileWdw.ValidateNames = True
-		openFileWdw.InitialDirectory = FileManager.GetLongestExistingPath(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).UnpackerPathFileName)
+		openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).UnpackerPathFileName)
 		openFileWdw.FileName = Path.GetFileName(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).UnpackerPathFileName)
 		If openFileWdw.ShowDialog() = Windows.Forms.DialogResult.OK Then
 			' Allow dialog window to completely disappear.
@@ -360,7 +360,7 @@ Public Class GameSetupForm
 		openFileWdw.AddExtension = True
 		openFileWdw.ValidateNames = True
 		openFileWdw.Filter = "Steam Executable File|steam.exe|All Files (*.*)|*.*"
-		openFileWdw.InitialDirectory = FileManager.GetLongestExistingPath(TheApp.Settings.SteamAppPathFileName)
+		openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(TheApp.Settings.SteamAppPathFileName)
 		openFileWdw.FileName = Path.GetFileName(TheApp.Settings.SteamAppPathFileName)
 		If openFileWdw.ShowDialog() = Windows.Forms.DialogResult.OK Then
 			' Allow dialog window to completely disappear.
@@ -380,7 +380,7 @@ Public Class GameSetupForm
 			openFileWdw.Multiselect = False
 			openFileWdw.ValidateNames = True
 			'openFileWdw.Filter = "Source Engine Packer/Unpacker Files|vpk.exe;gmad.exe|Executable Files (*.exe)|*.exe|All Files (*.*)|*.*"
-			openFileWdw.InitialDirectory = FileManager.GetLongestExistingPath(TheApp.Settings.SteamLibraryPaths(e.RowIndex).LibraryPath)
+			openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(TheApp.Settings.SteamLibraryPaths(e.RowIndex).LibraryPath)
 			'If Directory.Exists(TheApp.Settings.DecompileMdlPathFileName) Then
 			'	openFileWdw.InitialDirectory = TheApp.Settings.DecompileMdlPathFileName
 			'Else
@@ -392,7 +392,7 @@ Public Class GameSetupForm
 				Application.DoEvents()
 
 				Try
-					TheApp.Settings.SteamLibraryPaths(e.RowIndex).LibraryPath = FileManager.GetLongestExistingPath(openFileWdw.FileName)
+					TheApp.Settings.SteamLibraryPaths(e.RowIndex).LibraryPath = FileManager.GetLongestExtantPath(openFileWdw.FileName)
 				Catch ex As IO.PathTooLongException
 					MessageBox.Show("The file or folder you tried to select has too many characters in it. Try shortening it by moving the model files somewhere else or by renaming folders or files." + vbCrLf + vbCrLf + "Error message generated by Windows: " + vbCrLf + ex.Message, "The File or Folder You Tried to Select Is Too Long", MessageBoxButtons.OK)
 				Catch ex As Exception

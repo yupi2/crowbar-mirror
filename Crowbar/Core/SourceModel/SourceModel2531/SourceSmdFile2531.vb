@@ -255,15 +255,23 @@ Public Class SourceSmdFile2531
 
 		Dim collisionData As SourcePhyCollisionData
 		Dim aBone As SourceMdlBone2531
+		Dim boneIndex As Integer
 		Dim aTriangle As SourcePhyFace
 		Dim faceSection As SourcePhyFaceSection
 		Dim phyVertex As SourcePhyVertex
 		Dim aVectorTransformed As SourceVector
+		Dim aSourcePhysCollisionModel As SourcePhyPhysCollisionModel
 
 		Try
 			If Me.thePhyFileData.theSourcePhyCollisionDatas IsNot Nothing Then
 				For collisionDataIndex As Integer = 0 To Me.thePhyFileData.theSourcePhyCollisionDatas.Count - 1
 					collisionData = Me.thePhyFileData.theSourcePhyCollisionDatas(collisionDataIndex)
+
+					If collisionDataIndex < Me.thePhyFileData.theSourcePhyPhysCollisionModels.Count Then
+						aSourcePhysCollisionModel = Me.thePhyFileData.theSourcePhyPhysCollisionModels(collisionDataIndex)
+					Else
+						aSourcePhysCollisionModel = Nothing
+					End If
 
 					For faceSectionIndex As Integer = 0 To collisionData.theFaceSections.Count - 1
 						faceSection = collisionData.theFaceSections(faceSectionIndex)
@@ -271,7 +279,12 @@ Public Class SourceSmdFile2531
 						If faceSection.theBoneIndex >= Me.theMdlFileData.theBones.Count Then
 							Continue For
 						End If
-						aBone = Me.theMdlFileData.theBones(faceSection.theBoneIndex)
+						If aSourcePhysCollisionModel IsNot Nothing AndAlso Me.theMdlFileData.theBoneNameToBoneIndexMap.ContainsKey(aSourcePhysCollisionModel.theName) Then
+							boneIndex = Me.theMdlFileData.theBoneNameToBoneIndexMap(aSourcePhysCollisionModel.theName)
+						Else
+							boneIndex = faceSection.theBoneIndex
+						End If
+						aBone = Me.theMdlFileData.theBones(boneIndex)
 
 						For triangleIndex As Integer = 0 To faceSection.theFaces.Count - 1
 							aTriangle = faceSection.theFaces(triangleIndex)
@@ -279,15 +292,10 @@ Public Class SourceSmdFile2531
 							line = "  phy"
 							Me.theOutputFileStreamWriter.WriteLine(line)
 
-							'  19 -0.000009 0.000001 0.999953 0.0 0.0 0.0 1 0
-							'  19 -0.000005 1.000002 -0.000043 0.0 0.0 0.0 1 0
-							'  19 -0.008333 0.997005 1.003710 0.0 0.0 0.0 1 0
-							'NOTE: MDL Decompiler 0.4.1 lists the vertices in reverse order than they are stored, and this seems to match closely with the teenangst source file.
-							'For vertexIndex As Integer = aTriangle.vertexIndex.Length - 1 To 0 Step -1
 							For vertexIndex As Integer = 0 To aTriangle.vertexIndex.Length - 1
 								phyVertex = collisionData.theVertices(aTriangle.vertexIndex(vertexIndex))
 
-								aVectorTransformed = Me.TransformPhyVertex(aBone, phyVertex.vertex)
+								aVectorTransformed = Me.TransformPhyVertex(aBone, phyVertex.vertex, aSourcePhysCollisionModel)
 
 								line = "    "
 								line += faceSection.theBoneIndex.ToString(TheApp.InternalNumberFormat)
@@ -298,8 +306,6 @@ Public Class SourceSmdFile2531
 								line += " "
 								line += aVectorTransformed.z.ToString("0.000000", TheApp.InternalNumberFormat)
 
-								'line += " 0 0 0"
-								'------
 								line += " "
 								line += phyVertex.normal.x.ToString("0.000000", TheApp.InternalNumberFormat)
 								line += " "
@@ -308,8 +314,6 @@ Public Class SourceSmdFile2531
 								line += phyVertex.normal.z.ToString("0.000000", TheApp.InternalNumberFormat)
 
 								line += " 0 0"
-								'NOTE: The studiomdl.exe doesn't need the integer values at end.
-								'line += " 1 0"
 								Me.theOutputFileStreamWriter.WriteLine(line)
 							Next
 						Next
@@ -373,26 +377,173 @@ Public Class SourceSmdFile2531
 				texCoordV = aBodyModel.theVertexesType0(vertexIndex).texCoordV
 			ElseIf aBodyModel.vertexListType = 1 Then
 				boneIndexes.Add(0)
-				position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX / 65535) * Me.theMdlFileData.hullMinPosition.y
-				position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY / 65535) * Me.theMdlFileData.hullMinPosition.z
-				position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ / 65535) * Me.theMdlFileData.hullMinPosition.x
-				normal.x = (aBodyModel.theVertexesType1(vertexIndex).normalX / 65535) * Me.theMdlFileData.hullMaxPosition.x
-				normal.y = (aBodyModel.theVertexesType1(vertexIndex).normalY / 65535) * Me.theMdlFileData.hullMaxPosition.y
-				normal.z = (aBodyModel.theVertexesType1(vertexIndex).normalZ / 65535) * Me.theMdlFileData.hullMaxPosition.z
-				texCoordU = (aBodyModel.theVertexesType1(vertexIndex).normalY / 65535)
-				texCoordV = (aBodyModel.theVertexesType1(vertexIndex).normalZ / 65535)
+				'position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX / 65535) * Me.theMdlFileData.hullMinPosition.x
+				'position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY / 65535) * Me.theMdlFileData.hullMinPosition.y
+				'position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ / 65535) * Me.theMdlFileData.hullMinPosition.z
+				''position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX / 65535) * Me.theMdlFileData.hullMinPosition.y
+				''position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY / 65535) * Me.theMdlFileData.hullMinPosition.z
+				''position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ / 65535) * Me.theMdlFileData.hullMinPosition.x
+				'normal.x = (aBodyModel.theVertexesType1(vertexIndex).normalX / 65535) * Me.theMdlFileData.hullMaxPosition.x
+				'normal.y = (aBodyModel.theVertexesType1(vertexIndex).normalY / 65535) * Me.theMdlFileData.hullMaxPosition.y
+				'normal.z = (aBodyModel.theVertexesType1(vertexIndex).normalZ / 65535) * Me.theMdlFileData.hullMaxPosition.z
+				'texCoordU = (aBodyModel.theVertexesType1(vertexIndex).normalY / 65535)
+				'texCoordV = (aBodyModel.theVertexesType1(vertexIndex).normalZ / 65535)
+
+				' Too big compared to Therese.
+				'position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX)
+				'position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY)
+				'position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ)
+				' Too big compared to Therese.
+				'position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX / 255)
+				'position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY / 255)
+				'position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ / 255)
+				' Not correct scale for some models and car_idle seems shortened on one axis. Thus, it seems 3 scale values should be used.
+				'position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX / 4095)
+				'position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY / 4095)
+				'position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ / 4095)
+				' Too small compared to Therese.
+				'position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX / 32767)
+				'position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY / 32767)
+				'position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ / 32767)
+				' Too small compared to Therese.
+				'position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX / 65535)
+				'position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY / 65535)
+				'position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ / 65535)
+				' Flattens car_idle
+				'position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX / 65535) * Me.theMdlFileData.unknown01
+				'position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY / 65535) * Me.theMdlFileData.unknown02
+				'position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ / 65535) * Me.theMdlFileData.unknown03
+
+				'position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX / 65535) * Me.theMdlFileData.hullMinPosition.x
+				'position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY / 65535) * Me.theMdlFileData.hullMinPosition.y
+				'position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ / 65535) * Me.theMdlFileData.hullMinPosition.z
+				'position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX / 255) * Me.theMdlFileData.hullMinPosition.x
+				'position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY / 255) * Me.theMdlFileData.hullMinPosition.y
+				'position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ / 255) * Me.theMdlFileData.hullMinPosition.z
+				'normal.x = (aBodyModel.theVertexesType1(vertexIndex).normalX / 65535)
+				'normal.y = (aBodyModel.theVertexesType1(vertexIndex).normalY / 65535)
+				'normal.z = (aBodyModel.theVertexesType1(vertexIndex).normalZ / 65535)
+				'texCoordU = (aBodyModel.theVertexesType1(vertexIndex).normalY / 65535)
+				'texCoordV = (aBodyModel.theVertexesType1(vertexIndex).normalZ / 65535)
+				'position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX / 65535) * Me.theMdlFileData.unknown02
+				'position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY / 65535) * Me.theMdlFileData.unknown02
+				'position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ / 65535) * Me.theMdlFileData.unknown02
+				'position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX / 65535) * Me.theMdlFileData.hullMaxPosition.x
+				'position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY / 65535) * Me.theMdlFileData.hullMaxPosition.y
+				'position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ / 65535) * Me.theMdlFileData.hullMaxPosition.z
+				'Dim aBone As SourceMdlBone2531
+				'aBone = Me.theMdlFileData.theBones(0)
+				'Dim vecin As New SourceVector
+				'vecin.x = (aBodyModel.theVertexesType1(vertexIndex).positionX / 65535)
+				'vecin.y = (aBodyModel.theVertexesType1(vertexIndex).positionY / 65535)
+				'vecin.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ / 65535)
+				'position = MathModule.VectorTransform(vecin, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
+				'position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX / 65535) * (aBodyModel.theVertexesType1(vertexIndex).scaleX)
+				'position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY / 65535) * (aBodyModel.theVertexesType1(vertexIndex).scaleY)
+				'position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ / 65535) * (aBodyModel.theVertexesType1(vertexIndex).scaleZ)
+				'NOTE: This seems to work for many models, but seems to be wrong for:  
+				'      models\character\npc\common\freshcorpses\femalefreshcorpse\femalefreshcorpse.mdl
+				'      models\character\monster\werewolf\werewolf_head\werewolf_head.mdl
+				'position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX / 65535) * (Me.theMdlFileData.hullMaxPosition.x - Me.theMdlFileData.hullMinPosition.x)
+				'position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY / 65535) * (Me.theMdlFileData.hullMaxPosition.y - Me.theMdlFileData.hullMinPosition.y)
+				'position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ / 65535) * (Me.theMdlFileData.hullMaxPosition.z - Me.theMdlFileData.hullMinPosition.z)
+				'NOTE: This seems to work for many models, but seems to be wrong for:  
+				'      models\character\npc\common\freshcorpses\femalefreshcorpse\femalefreshcorpse.mdl
+				position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX / 65535) * (Me.theMdlFileData.hullMaxPosition.x - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(0))
+				position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY / 65535) * (Me.theMdlFileData.hullMaxPosition.y - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(1))
+				position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ / 65535) * (Me.theMdlFileData.hullMaxPosition.z - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(2))
+				'position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX / 65535) * (Me.theMdlFileData.hullMaxPosition.x - Me.theMdlFileData.hullMinPosition.x - Me.theMdlFileData.unknown01)
+				'position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY / 65535) * (Me.theMdlFileData.hullMaxPosition.y - Me.theMdlFileData.hullMinPosition.y - Me.theMdlFileData.unknown02)
+				'position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ / 65535) * (Me.theMdlFileData.hullMaxPosition.z - Me.theMdlFileData.hullMinPosition.z - Me.theMdlFileData.unknown03)
+				'position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX / 65535) * (Me.theMdlFileData.hullMaxPosition.x - Me.theMdlFileData.hullMinPosition.x + Me.theMdlFileData.unknown01)
+				'position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY / 65535) * (Me.theMdlFileData.hullMaxPosition.y - Me.theMdlFileData.hullMinPosition.y + Me.theMdlFileData.unknown02)
+				'position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ / 65535) * (Me.theMdlFileData.hullMaxPosition.z - Me.theMdlFileData.hullMinPosition.z + Me.theMdlFileData.unknown03)
+				'position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX / 65535) * (Me.theMdlFileData.hullMaxPosition.x - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(0) + Me.theMdlFileData.unknown01)
+				'position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY / 65535) * (Me.theMdlFileData.hullMaxPosition.y - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(1) + Me.theMdlFileData.unknown02)
+				'position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ / 65535) * (Me.theMdlFileData.hullMaxPosition.z - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(2) + Me.theMdlFileData.unknown03)
+				'position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX / 65535) * (Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(0) + Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(0))
+				'position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY / 65535) * (Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(1) + Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(1))
+				'position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ / 65535) * (Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(2) + Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(2))
+				'position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX / 65535) * (Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(0) - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(0))
+				'position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY / 65535) * (Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(1) - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(1))
+				'position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ / 65535) * (Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(2) - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(2))
+				' This puts the corpse facing up, but still stretched along z-axis.
+				'position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX / 65535) * (Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(0) * Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(0))
+				'position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY / 65535) * (Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(1) * Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(1))
+				'position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ / 65535) * (Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(2) * Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(2))
+				' This is close, but scale is probably wrong and slightly stretched along z-axis.
+				'position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX / 65535) * (Me.theMdlFileData.hullMaxPosition.x - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(0)) * Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(0)
+				'position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY / 65535) * (Me.theMdlFileData.hullMaxPosition.y - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(1)) * Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(1)
+				'position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ / 65535) * (Me.theMdlFileData.hullMaxPosition.z - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(2)) * Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(2)
+				'position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX) * (Me.theMdlFileData.hullMaxPosition.x - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(0)) * Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(0)
+				'position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY) * (Me.theMdlFileData.hullMaxPosition.y - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(1)) * Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(1)
+				'position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ) * (Me.theMdlFileData.hullMaxPosition.z - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(2)) * Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(2)
+				' Completely flat.
+				'position.x = (aBodyModel.theVertexesType1(vertexIndex).positionX) * (Me.theMdlFileData.hullMaxPosition.x) * Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(0)
+				'position.y = (aBodyModel.theVertexesType1(vertexIndex).positionY) * (Me.theMdlFileData.hullMaxPosition.y) * Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(1)
+				'position.z = (aBodyModel.theVertexesType1(vertexIndex).positionZ) * (Me.theMdlFileData.hullMaxPosition.z) * Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(2)
+
+				'TODO: Verify these.
+				normal.x = (aBodyModel.theVertexesType1(vertexIndex).normalX / 255)
+				normal.y = (aBodyModel.theVertexesType1(vertexIndex).normalY / 255)
+				normal.z = (aBodyModel.theVertexesType1(vertexIndex).normalZ / 255)
+
+				' These are correct.
+				texCoordU = (aBodyModel.theVertexesType1(vertexIndex).texCoordU / 255)
+				texCoordV = (aBodyModel.theVertexesType1(vertexIndex).texCoordV / 255)
 			ElseIf aBodyModel.vertexListType = 2 Then
 				boneIndexes.Add(0)
-				position.x = (aBodyModel.theVertexesType2(vertexIndex).positionX / 255) * Me.theMdlFileData.hullMinPosition.y
-				position.y = (aBodyModel.theVertexesType2(vertexIndex).positionY / 255) * Me.theMdlFileData.hullMinPosition.z
-				position.z = (aBodyModel.theVertexesType2(vertexIndex).positionZ / 255) * Me.theMdlFileData.hullMinPosition.x
-				normal.x = (aBodyModel.theVertexesType2(vertexIndex).normalX / 255) * Me.theMdlFileData.hullMaxPosition.x
-				normal.y = (aBodyModel.theVertexesType2(vertexIndex).normalY / 255) * Me.theMdlFileData.hullMaxPosition.y
-				normal.z = (aBodyModel.theVertexesType2(vertexIndex).normalZ / 255) * Me.theMdlFileData.hullMaxPosition.z
-				texCoordU = (aBodyModel.theVertexesType2(vertexIndex).normalY / 255)
-				texCoordV = (aBodyModel.theVertexesType2(vertexIndex).normalZ / 255)
+				'position.x = (aBodyModel.theVertexesType2(vertexIndex).positionX / 255) * (Me.theMdlFileData.hullMaxPosition.x - Me.theMdlFileData.hullMinPosition.x)
+				'position.y = (aBodyModel.theVertexesType2(vertexIndex).positionY / 255) * (Me.theMdlFileData.hullMaxPosition.y - Me.theMdlFileData.hullMinPosition.y)
+				'position.z = (aBodyModel.theVertexesType2(vertexIndex).positionZ / 255) * (Me.theMdlFileData.hullMaxPosition.z - Me.theMdlFileData.hullMinPosition.z)
+				'position.x = (aBodyModel.theVertexesType2(vertexIndex).positionX / 127.5) * (Me.theMdlFileData.hullMaxPosition.x - Me.theMdlFileData.hullMinPosition.x)
+				'position.y = (aBodyModel.theVertexesType2(vertexIndex).positionY / 127.5) * (Me.theMdlFileData.hullMaxPosition.y - Me.theMdlFileData.hullMinPosition.y)
+				'position.z = (aBodyModel.theVertexesType2(vertexIndex).positionZ / 127.5) * (Me.theMdlFileData.hullMaxPosition.z - Me.theMdlFileData.hullMinPosition.z)
+				'position.x = (aBodyModel.theVertexesType2(vertexIndex).positionX / 255) * (Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(0))
+				'position.y = (aBodyModel.theVertexesType2(vertexIndex).positionY / 255) * (Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(1))
+				'position.z = (aBodyModel.theVertexesType2(vertexIndex).positionZ / 255) * (Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(2))
+				'position.x = (aBodyModel.theVertexesType2(vertexIndex).positionX / 255) * (Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(0) * Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(0))
+				'position.y = (aBodyModel.theVertexesType2(vertexIndex).positionY / 255) * (Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(1) * Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(1))
+				'position.z = (aBodyModel.theVertexesType2(vertexIndex).positionZ / 255) * (Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(2) * Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(2))
+				'position.x = ((aBodyModel.theVertexesType2(vertexIndex).positionX - 128) / 255) * (Me.theMdlFileData.hullMaxPosition.x - Me.theMdlFileData.hullMinPosition.x)
+				'position.y = ((aBodyModel.theVertexesType2(vertexIndex).positionY - 128) / 255) * (Me.theMdlFileData.hullMaxPosition.y - Me.theMdlFileData.hullMinPosition.y)
+				'position.z = (aBodyModel.theVertexesType2(vertexIndex).positionZ / 255) * (Me.theMdlFileData.hullMaxPosition.z - Me.theMdlFileData.hullMinPosition.z)
+				' This makes candelabra really close to candelabra_candles.
+				position.x = ((aBodyModel.theVertexesType2(vertexIndex).positionX - 128) / 255) * (Me.theMdlFileData.hullMaxPosition.x - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(0))
+				position.y = ((aBodyModel.theVertexesType2(vertexIndex).positionY - 128) / 255) * (Me.theMdlFileData.hullMaxPosition.y - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(1))
+				position.z = (aBodyModel.theVertexesType2(vertexIndex).positionZ / 255) * (Me.theMdlFileData.hullMaxPosition.z - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(2))
+				' Too big for candelabra.
+				'position.x = ((aBodyModel.theVertexesType2(vertexIndex).positionX - 128) / 255) * (Me.theMdlFileData.hullMaxPosition.x - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(0)) * Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(0)
+				'position.y = ((aBodyModel.theVertexesType2(vertexIndex).positionY - 128) / 255) * (Me.theMdlFileData.hullMaxPosition.y - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(1)) * Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(1)
+				'position.z = (aBodyModel.theVertexesType2(vertexIndex).positionZ / 255) * (Me.theMdlFileData.hullMaxPosition.z - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(2)) * Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(2)
+				' Too big for candelabra.
+				'position.x = ((aBodyModel.theVertexesType2(vertexIndex).positionX - 128) / 255) * (Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(0) - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(0))
+				'position.y = ((aBodyModel.theVertexesType2(vertexIndex).positionY - 128) / 255) * (Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(1) - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(1))
+				'position.z = (aBodyModel.theVertexesType2(vertexIndex).positionZ / 255) * (Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(2) - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(2))
+				' Candelabra: Too big and upside-down and under candelabra_candles.
+				'position.x = ((aBodyModel.theVertexesType2(vertexIndex).positionX - 128) / 255) * (Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(0) - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(0))
+				'position.y = ((aBodyModel.theVertexesType2(vertexIndex).positionY - 128) / 255) * (Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(1) - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(1))
+				'position.z = (aBodyModel.theVertexesType2(vertexIndex).positionZ / 255) * (Me.theMdlFileData.theBodyParts(0).theModels(0).unknown01(2) - Me.theMdlFileData.theBodyParts(0).theModels(0).unknown02(2))
+
+				'TODO: Verify these.
+				normal.x = (aBodyModel.theVertexesType2(vertexIndex).normalX / 255)
+				normal.y = (aBodyModel.theVertexesType2(vertexIndex).normalY / 255)
+				normal.z = (aBodyModel.theVertexesType2(vertexIndex).normalZ / 255)
+
+				' These are correct.
+				texCoordU = (aBodyModel.theVertexesType2(vertexIndex).texCoordU / 255)
+				texCoordV = (aBodyModel.theVertexesType2(vertexIndex).texCoordV / 255)
 			Else
 				Dim debug As Integer = 4242
+			End If
+
+			'NOTE: Clamp the UV coords so they are always between 0 and 1.
+			'      Example that has U > 1: "models\items\jadedragon\info\info_jadedragon.mdl"
+			If texCoordU < 0 OrElse texCoordU > 1 Then
+				texCoordU -= Math.Truncate(texCoordU)
+			End If
+			If texCoordV < 0 OrElse texCoordV > 1 Then
+				texCoordV -= Math.Truncate(texCoordV)
 			End If
 
 			line = "  "
@@ -415,7 +566,6 @@ Public Class SourceSmdFile2531
 			line += " "
 			line += texCoordU.ToString("0.000000", TheApp.InternalNumberFormat)
 			line += " "
-			'line += texCoordV.ToString("0.000000", TheApp.InternalNumberFormat)
 			line += (1 - texCoordV).ToString("0.000000", TheApp.InternalNumberFormat)
 
 			If aBodyModel.vertexListType = 0 Then
@@ -1076,226 +1226,35 @@ Public Class SourceSmdFile2531
 		Return v1
 	End Function
 
-	Private Function TransformPhyVertex(ByVal aBone As SourceMdlBone2531, ByVal vertex As SourceVector) As SourceVector
+	Private Function TransformPhyVertex(ByVal aBone As SourceMdlBone2531, ByVal vertex As SourceVector, ByVal aSourcePhysCollisionModel As SourcePhyPhysCollisionModel) As SourceVector
 		Dim aVectorTransformed As New SourceVector
 		Dim aVector As New SourceVector()
 
-		'NOTE: Too small.
-		'aVectorTransformed.x = vertex.x
-		'aVectorTransformed.y = vertex.y
-		'aVectorTransformed.z = vertex.z
-		'------
-		'NOTE: Rotated for:
-		'      simple_shape
-		'      L4D2 w_models\weapons\w_minigun
-		'aVectorTransformed.x = 1 / 0.0254 * vertex.x
-		'aVectorTransformed.y = 1 / 0.0254 * vertex.y
-		'aVectorTransformed.z = 1 / 0.0254 * vertex.z
-		'------
-		'NOTE: Works for:
-		'      simple_shape
-		'      L4D2 w_models\weapons\w_minigun
-		'      L4D2 w_models\weapons\w_smg_uzi
-		'      L4D2 props_vehicles\van
-		'aVectorTransformed.x = 1 / 0.0254 * vertex.z
-		'aVectorTransformed.y = 1 / 0.0254 * -vertex.x
-		'aVectorTransformed.z = 1 / 0.0254 * -vertex.y
-		'------
-		'NOTE: Rotated for:
-		'      L4D2 w_models\weapons\w_minigun
-		'aVectorTransformed.x = 1 / 0.0254 * vertex.x
-		'aVectorTransformed.y = 1 / 0.0254 * -vertex.y
-		'aVectorTransformed.z = 1 / 0.0254 * vertex.z
-		'------
-		'NOTE: Rotated for:
-		'      L4D2 props_vehicles\van
-		'aVectorTransformed.x = 1 / 0.0254 * vertex.z
-		'aVectorTransformed.y = 1 / 0.0254 * -vertex.y
-		'aVectorTransformed.z = 1 / 0.0254 * vertex.x
-		'------
-		'NOTE: Rotated for:
-		'      L4D2 w_models\weapons\w_minigun
-		'aVector.x = 1 / 0.0254 * vertex.x
-		'aVector.y = 1 / 0.0254 * vertex.y
-		'aVector.z = 1 / 0.0254 * vertex.z
-		'aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'------
-		'NOTE: Rotated for:
-		'      L4D2 w_models\weapons\w_minigun
-		'aVector.x = 1 / 0.0254 * vertex.x
-		'aVector.y = 1 / 0.0254 * -vertex.y
-		'aVector.z = 1 / 0.0254 * vertex.z
-		'aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'------
-		'NOTE: Works for:
-		'      L4D2 w_models\weapons\w_minigun
-		'      L4D2 w_models\weapons\w_smg_uzi
-		'NOTE: Rotated for:
-		'      simple_shape
-		'      L4D2 props_vehicles\van
-		'NOTE: Each mesh piece rotated for:
-		'      L4D2 survivors\survivor_producer
-		'aVector.x = 1 / 0.0254 * vertex.z
-		'aVector.y = 1 / 0.0254 * -vertex.y
-		'aVector.z = 1 / 0.0254 * vertex.x
-		'aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'------
-		'NOTE: Works for:
-		'      simple_shape
-		'      L4D2 props_vehicles\van
-		'      L4D2 survivors\survivor_producer
-		'      L4D2 w_models\weapons\w_autoshot_m4super
-		'      L4D2 w_models\weapons\w_desert_eagle
-		'      L4D2 w_models\weapons\w_minigun
-		'      L4D2 w_models\weapons\w_rifle_m16a2
-		'      L4D2 w_models\weapons\w_smg_uzi
-		'NOTE: Rotated for:
-		'      L4D2 w_models\weapons\w_desert_rifle
-		'      L4D2 w_models\weapons\w_shotgun_spas
-		If Me.thePhyFileData.theSourcePhyIsCollisionModel Then
-			aVectorTransformed.x = 1 / 0.0254 * vertex.z
-			aVectorTransformed.y = 1 / 0.0254 * -vertex.x
-			aVectorTransformed.z = 1 / 0.0254 * -vertex.y
-		Else
-			aVector.x = 1 / 0.0254 * vertex.x
-			aVector.y = 1 / 0.0254 * vertex.z
-			aVector.z = 1 / 0.0254 * -vertex.y
-			aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		End If
-
-
-
-		'------
-		'NOTE: Works for:
-		'      survivor_producer
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * aVector.x
-		'phyVertex.y = 1 / 0.0254 * aVector.z
-		'phyVertex.z = 1 / 0.0254 * -aVector.y
-		'------
-		'NOTE: These two lines match orientation for cstrike it_lampholder1 model, 
-		'      but still doesn't compile properly.
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * aVector.z
-		'phyVertex.y = 1 / 0.0254 * -aVector.x
-		'phyVertex.z = 1 / 0.0254 * -aVector.y
-		'------
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * aVector.y
-		'phyVertex.y = 1 / 0.0254 * aVector.x
-		'phyVertex.z = 1 / 0.0254 * -aVector.z
-		'------
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * aVector.x
-		'phyVertex.y = 1 / 0.0254 * aVector.y
-		'phyVertex.z = 1 / 0.0254 * -aVector.z
-		'------
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * -aVector.y
-		'phyVertex.y = 1 / 0.0254 * aVector.x
-		'phyVertex.z = 1 / 0.0254 * aVector.z
-		'------
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * -aVector.y
-		'phyVertex.y = 1 / 0.0254 * aVector.x
-		'phyVertex.z = 1 / 0.0254 * aVector.z
-		'------
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * aVector.z
-		'phyVertex.y = 1 / 0.0254 * aVector.y
-		'phyVertex.z = 1 / 0.0254 * aVector.x
-		'------
-		'NOTE: Works for:
-		'      w_smg_uzi()
-		'NOTE: Does not work for:
-		'      survivor_producer
-		'phyVertex.x = 1 / 0.0254 * aVector.z
-		'phyVertex.y = 1 / 0.0254 * -aVector.y
-		'phyVertex.z = 1 / 0.0254 * aVector.x
-		'------
-		'phyVertex.x = 1 / 0.0254 * aVector.z
-		'phyVertex.y = 1 / 0.0254 * -aVector.y
-		'phyVertex.z = 1 / 0.0254 * -aVector.x
-		'------
-		''TODO: Find some rationale for why phys model is rotated differently for different models.
-		''      Possibly due to rotation needed to transfrom from pose to bone position.
-		''If Me.theSourceEngineModel.theMdlFileHeader.theAnimationDescs.Count < 2 Then
-		''If (theSourceEngineModel.theMdlFileHeader.flags And SourceMdlFileHeader.STUDIOHDR_FLAGS_STATIC_PROP) > 0 Then
-		'If Me.theSourceEngineModel.thePhyFileHeader.theSourcePhyIsCollisionModel Then
-		'	'TEST: Does not rotate L4D2's van phys mesh correctly.
-		'	'aVector.x = 1 / 0.0254 * phyVertex.vertex.x
-		'	'aVector.y = 1 / 0.0254 * phyVertex.vertex.y
-		'	'aVector.z = 1 / 0.0254 * phyVertex.vertex.z
-		'	'TEST:  Does not rotate L4D2's van phys mesh correctly.
-		'	'aVector.x = 1 / 0.0254 * phyVertex.vertex.y
-		'	'aVector.y = 1 / 0.0254 * -phyVertex.vertex.x
-		'	'aVector.z = 1 / 0.0254 * phyVertex.vertex.z
-		'	'TEST: Does not rotate L4D2's van phys mesh correctly.
-		'	'aVector.x = 1 / 0.0254 * phyVertex.vertex.z
-		'	'aVector.y = 1 / 0.0254 * -phyVertex.vertex.y
-		'	'aVector.z = 1 / 0.0254 * phyVertex.vertex.x
-		'	'TEST: Does not rotate L4D2's van phys mesh correctly.
-		'	'aVector.x = 1 / 0.0254 * phyVertex.vertex.x
-		'	'aVector.y = 1 / 0.0254 * phyVertex.vertex.z
-		'	'aVector.z = 1 / 0.0254 * -phyVertex.vertex.y
-		'	'TEST: Works for L4D2's van phys mesh.
-		'	'      Does not work for L4D2 w_model\weapons\w_minigun.mdl.
-		'	aVector.x = 1 / 0.0254 * vertex.z
-		'	aVector.y = 1 / 0.0254 * -vertex.x
-		'	aVector.z = 1 / 0.0254 * -vertex.y
-
-		'	aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-
-		'	'======
-
-		'	'Dim aVectorTransformed2 As SourceVector
-		'	''aVectorTransformed2 = New SourceVector()
-		'	''aVectorTransformed2 = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'	''aVectorTransformed2.x = aVector.x
-		'	''aVectorTransformed2.y = aVector.y
-		'	''aVectorTransformed2.z = aVector.z
-
-		'	'aVectorTransformed = MathModule.VectorTransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'	''aVectorTransformed = MathModule.VectorTransform(aVectorTransformed2, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'	''aVectorTransformed = New SourceVector()
-		'	''aVectorTransformed.x = aVectorTransformed2.x
-		'	''aVectorTransformed.y = aVectorTransformed2.y
-		'	''aVectorTransformed.z = aVectorTransformed2.z
+		'If Me.thePhyFileData.theSourcePhyIsCollisionModel Then
+		'	aVectorTransformed.x = 1 / 0.0254 * vertex.z
+		'	aVectorTransformed.y = 1 / 0.0254 * -vertex.x
+		'	aVectorTransformed.z = 1 / 0.0254 * -vertex.y
 		'Else
-		'	'TEST: Does not work for L4D2 w_model\weapons\w_minigun.mdl.
 		'	aVector.x = 1 / 0.0254 * vertex.x
 		'	aVector.y = 1 / 0.0254 * vertex.z
 		'	aVector.z = 1 / 0.0254 * -vertex.y
-
 		'	aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
 		'End If
 		'------
-		'TEST: Does not rotate L4D2's van phys mesh correctly.
-		'aVector.x = 1 / 0.0254 * phyVertex.vertex.x
-		'aVector.y = 1 / 0.0254 * phyVertex.vertex.y
-		'aVector.z = 1 / 0.0254 * phyVertex.vertex.z
-		'TEST: Does not rotate L4D2's van phys mesh correctly.
-		'aVector.x = 1 / 0.0254 * phyVertex.vertex.y
-		'aVector.y = 1 / 0.0254 * -phyVertex.vertex.x
-		'aVector.z = 1 / 0.0254 * phyVertex.vertex.z
-		'TEST: works for survivor_producer; matches ref and phy meshes of van, but both are rotated 90 degrees on z-axis
-		'aVector.x = 1 / 0.0254 * phyVertex.vertex.x
-		'aVector.y = 1 / 0.0254 * phyVertex.vertex.z
-		'aVector.z = 1 / 0.0254 * -phyVertex.vertex.y
-
-		'aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		''------
-		'''TEST: Only rotate by -90 deg if bone is a root bone.  Do not know why.
-		''If aBone.parentBoneIndex = -1 Then
-		''	aVectorTransformed = MathModule.RotateAboutZAxis(aVectorTransformed, MathModule.DegreesToRadians(-90), aBone)
-		''End If
+		aVector.x = 1 / 0.0254 * vertex.x
+		aVector.y = 1 / 0.0254 * vertex.z
+		aVector.z = 1 / 0.0254 * -vertex.y
+		If aSourcePhysCollisionModel IsNot Nothing Then
+			If Me.theMdlFileData.theBoneNameToBoneIndexMap.ContainsKey(aSourcePhysCollisionModel.theName) Then
+				aBone = Me.theMdlFileData.theBones(Me.theMdlFileData.theBoneNameToBoneIndexMap(aSourcePhysCollisionModel.theName))
+			Else
+				aVectorTransformed.x = 1 / 0.0254 * vertex.z
+				aVectorTransformed.y = 1 / 0.0254 * -vertex.x
+				aVectorTransformed.z = 1 / 0.0254 * -vertex.y
+				Return aVectorTransformed
+			End If
+		End If
+		aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
 
 		Return aVectorTransformed
 	End Function

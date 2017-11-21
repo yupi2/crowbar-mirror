@@ -161,7 +161,7 @@ Public Class SourceQcFile06
 		Dim line As String = ""
 		Dim modelPathFileName As String
 
-		modelPathFileName = Me.theMdlFileData.theName
+		modelPathFileName = Me.theMdlFileData.theModelName
 
 		Me.theOutputFileStreamWriter.WriteLine()
 

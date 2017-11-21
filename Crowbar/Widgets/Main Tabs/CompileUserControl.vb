@@ -27,17 +27,10 @@ Public Class CompileUserControl
 	Private Sub Init()
 		Me.QcPathFileNameTextBox.DataBindings.Add("Text", TheApp.Settings, "CompileQcPathFileName", False, DataSourceUpdateMode.OnValidation)
 
-		'Me.OutputFolderCheckBox.DataBindings.Add("Checked", TheApp.Settings, "CompileOutputFolderIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
-		'Me.OutputSubfolderNameRadioButton.Checked = (TheApp.Settings.CompileOutputFolderOption = OutputFolderOptions.SubfolderName)
-		'Me.OutputSubfolderNameTextBox.DataBindings.Add("Text", TheApp.Settings, "CompileOutputSubfolderName", False, DataSourceUpdateMode.OnValidation)
-		'Me.OutputFullPathRadioButton.Checked = (TheApp.Settings.CompileOutputFolderOption = OutputFolderOptions.PathName)
-		'Me.OutputFullPathTextBox.DataBindings.Add("Text", TheApp.Settings, "CompileOutputFullPath", False, DataSourceUpdateMode.OnValidation)
-		'Me.UpdateOutputFullPathTextBox()
-		'Me.UpdateOutputFolderWidgets()
-		'------
+		Me.OutputPathTextBox.DataBindings.Add("Text", TheApp.Settings, "CompileOutputFullPath", False, DataSourceUpdateMode.OnValidation)
+		Me.OutputSubfolderTextBox.DataBindings.Add("Text", TheApp.Settings, "CompileOutputSubfolderName", False, DataSourceUpdateMode.OnValidation)
 		Me.UpdateOutputPathComboBox()
 		Me.UpdateOutputPathWidgets()
-		'Me.UpdateOutputPathTextBox()
 
 		'NOTE: The DataSource, DisplayMember, and ValueMember need to be set before DataBindings, or else an exception is raised.
 		Me.GameSetupComboBox.DisplayMember = "GameName"
@@ -60,12 +53,7 @@ Public Class CompileUserControl
 		AddHandler TheApp.Compiler.RunWorkerCompleted, AddressOf Me.CompilerBackgroundWorker_RunWorkerCompleted
 
 		AddHandler Me.QcPathFileNameTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
-		'AddHandler Me.OutputFullPathTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
-		If Me.OutputPathTextBox.DataBindings.Count > 0 AndAlso Me.OutputPathTextBox.DataBindings(0).PropertyName = "Text" Then
-			AddHandler Me.OutputPathTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
-		End If
-		''NOTE: Use AddHandler instead of Handles so the handler is not called several times during Init.
-		'AddHandler Me.GameSetupComboBox.SelectedValueChanged, AddressOf Me.GameSetupComboBox_SelectedValueChanged
+		AddHandler Me.OutputPathTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
 	End Sub
 
 	Private Sub InitCrowbarOptions()
@@ -86,30 +74,19 @@ Public Class CompileUserControl
 		Me.CompilerOptionDefineBonesModifyQcFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "CompileOptionDefineBonesModifyQcFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.CompilerOptionNoP4CheckBox.DataBindings.Add("Checked", TheApp.Settings, "CompileOptionNoP4IsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.CompilerOptionVerboseCheckBox.DataBindings.Add("Checked", TheApp.Settings, "CompileOptionVerboseIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
-
-		'AddHandler Me.CompilerOptionDefineBonesCheckBox.CheckedChanged, AddressOf Me.CompilerOptionDefineBonesCheckBox_CheckedChanged
-		'AddHandler Me.CompilerOptionNoP4CheckBox.CheckedChanged, AddressOf Me.CompilerOptionNoP4CheckBox_CheckedChanged
-		'AddHandler Me.CompilerOptionVerboseCheckBox.CheckedChanged, AddressOf Me.CompilerOptionVerboseCheckBox_CheckedChanged
 	End Sub
 
 	Private Sub Free()
 		RemoveHandler Me.QcPathFileNameTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
-		'RemoveHandler Me.OutputFullPathTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
-		If Me.OutputPathTextBox.DataBindings.Count > 0 AndAlso Me.OutputPathTextBox.DataBindings(0).PropertyName = "Text" Then
-			RemoveHandler Me.OutputPathTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
-		End If
+		RemoveHandler Me.OutputPathTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
 		RemoveHandler TheApp.Settings.PropertyChanged, AddressOf AppSettings_PropertyChanged
 		RemoveHandler TheApp.Compiler.ProgressChanged, AddressOf Me.CompilerBackgroundWorker_ProgressChanged
 		RemoveHandler TheApp.Compiler.RunWorkerCompleted, AddressOf Me.CompilerBackgroundWorker_RunWorkerCompleted
 
-		'RemoveHandler GameSetupComboBox.SelectedValueChanged, AddressOf Me.GameSetupComboBox_SelectedValueChanged
-
 		Me.QcPathFileNameTextBox.DataBindings.Clear()
 
-		'Me.OutputFolderCheckBox.DataBindings.Clear()
-		'Me.OutputSubfolderNameTextBox.DataBindings.Clear()
-		'Me.OutputFullPathTextBox.DataBindings.Clear()
 		Me.OutputPathTextBox.DataBindings.Clear()
+		Me.OutputSubfolderTextBox.DataBindings.Clear()
 
 		Me.GameSetupComboBox.DataSource = Nothing
 		Me.GameSetupComboBox.DataBindings.Clear()
@@ -167,7 +144,7 @@ Public Class CompileUserControl
 			'ElseIf Directory.Exists(TheApp.Settings.CompileQcPathFileName) Then
 			'	openFileWdw.InitialDirectory = TheApp.Settings.CompileQcPathFileName
 		Else
-			openFileWdw.InitialDirectory = FileManager.GetLongestExistingPath(TheApp.Settings.CompileQcPathFileName)
+			openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(TheApp.Settings.CompileQcPathFileName)
 			If openFileWdw.InitialDirectory = "" Then
 				openFileWdw.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
 			End If
@@ -475,7 +452,8 @@ Public Class CompileUserControl
 
 	Private Sub UpdateOutputPathWidgets()
 		Me.GameModelsOutputPathTextBox.Visible = (TheApp.Settings.CompileOutputFolderOption = CompileOutputPathOptions.GameModelsFolder)
-		Me.OutputPathTextBox.Visible = (TheApp.Settings.CompileOutputFolderOption = CompileOutputPathOptions.WorkFolder) OrElse (TheApp.Settings.CompileOutputFolderOption = CompileOutputPathOptions.Subfolder)
+		Me.OutputPathTextBox.Visible = (TheApp.Settings.CompileOutputFolderOption = CompileOutputPathOptions.WorkFolder)
+		Me.OutputSubfolderTextBox.Visible = (TheApp.Settings.CompileOutputFolderOption = CompileOutputPathOptions.Subfolder)
 		Me.BrowseForOutputPathButton.Enabled = (TheApp.Settings.CompileOutputFolderOption = CompileOutputPathOptions.WorkFolder)
 		Me.BrowseForOutputPathButton.Visible = (TheApp.Settings.CompileOutputFolderOption = CompileOutputPathOptions.GameModelsFolder) OrElse (TheApp.Settings.CompileOutputFolderOption = CompileOutputPathOptions.WorkFolder)
 		Me.GotoOutputPathButton.Enabled = (TheApp.Settings.CompileOutputFolderOption = CompileOutputPathOptions.GameModelsFolder) OrElse (TheApp.Settings.CompileOutputFolderOption = CompileOutputPathOptions.WorkFolder)
@@ -483,13 +461,8 @@ Public Class CompileUserControl
 		Me.UseDefaultOutputSubfolderButton.Enabled = (TheApp.Settings.CompileOutputFolderOption = CompileOutputPathOptions.Subfolder)
 		Me.UseDefaultOutputSubfolderButton.Visible = (TheApp.Settings.CompileOutputFolderOption = CompileOutputPathOptions.Subfolder)
 
-		Me.OutputPathTextBox.DataBindings.Clear()
 		If TheApp.Settings.CompileOutputFolderOption = CompileOutputPathOptions.GameModelsFolder Then
 			Me.UpdateGameModelsOutputPathTextBox()
-		ElseIf TheApp.Settings.CompileOutputFolderOption = CompileOutputPathOptions.WorkFolder Then
-			Me.OutputPathTextBox.DataBindings.Add("Text", TheApp.Settings, "CompileOutputFullPath", False, DataSourceUpdateMode.OnValidation)
-		ElseIf TheApp.Settings.CompileOutputFolderOption = CompileOutputPathOptions.Subfolder Then
-			Me.OutputPathTextBox.DataBindings.Add("Text", TheApp.Settings, "CompileOutputSubfolderName", False, DataSourceUpdateMode.OnValidation)
 		End If
 	End Sub
 
@@ -529,7 +502,7 @@ Public Class CompileUserControl
 			'If Directory.Exists(TheApp.Settings.CompileOutputFullPath) Then
 			'	outputPathWdw.InitialDirectory = TheApp.Settings.CompileOutputFullPath
 			'Else
-			outputPathWdw.InitialDirectory = FileManager.GetLongestExistingPath(TheApp.Settings.CompileOutputFullPath)
+			outputPathWdw.InitialDirectory = FileManager.GetLongestExtantPath(TheApp.Settings.CompileOutputFullPath)
 			If outputPathWdw.InitialDirectory = "" Then
 				If File.Exists(TheApp.Settings.CompileQcPathFileName) Then
 					outputPathWdw.InitialDirectory = FileManager.GetPath(TheApp.Settings.CompileQcPathFileName)
@@ -596,6 +569,7 @@ Public Class CompileUserControl
 		'Me.BrowseForOutputPathNameButton.Enabled = Not compilerIsRunning
 		Me.OutputPathComboBox.Enabled = Not compilerIsRunning
 		Me.OutputPathTextBox.Enabled = Not compilerIsRunning
+		Me.OutputSubfolderTextBox.Enabled = Not compilerIsRunning
 		Me.BrowseForOutputPathButton.Enabled = Not compilerIsRunning
 		Me.GotoOutputPathButton.Enabled = Not compilerIsRunning
 		Me.UseDefaultOutputSubfolderButton.Enabled = Not compilerIsRunning
@@ -621,6 +595,8 @@ Public Class CompileUserControl
 			'	Me.theCompiledRelativePathFileNames.Add(pathFileName)
 			'Next
 			Me.theCompiledRelativePathFileNames = iCompiledRelativePathFileNames
+			'NOTE: Do not sort because the list is already sorted by file and then by folder.
+			'Me.theCompiledRelativePathFileNames.Sort()
 			'NOTE: Need to set to nothing first to force it to update.
 			Me.CompiledFilesComboBox.DataSource = Nothing
 			Me.CompiledFilesComboBox.DataSource = Me.theCompiledRelativePathFileNames

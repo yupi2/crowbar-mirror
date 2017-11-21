@@ -389,7 +389,7 @@ Public Class SourceModel2531
 
 	Protected Overrides Sub ReadPhyFile_Internal()
 		If Me.thePhyFileDataGeneric Is Nothing Then
-			Me.thePhyFileDataGeneric = New SourcePhyFileData2531()
+			Me.thePhyFileDataGeneric = New SourcePhyFileData()
 		End If
 
 		Dim phyFile As New SourcePhyFile2531(Me.theInputFileReader, Me.thePhyFileDataGeneric)
@@ -447,7 +447,7 @@ Public Class SourceModel2531
 
 			qcFile.WriteControllerCommand()
 
-			qcFile.WriteSequenceGroupCommands()
+			'qcFile.WriteSequenceGroupCommands()
 			qcFile.WriteSequenceCommands()
 			qcFile.WriteIncludeModelCommands()
 		Catch ex As Exception
@@ -505,10 +505,10 @@ Public Class SourceModel2531
 
 								Try
 									Dim bodyModelName As String
-									bodyModelName = Me.theMdlFileData.theSequenceGroups(0).theFileName
-									If String.IsNullOrEmpty(bodyModelName) OrElse FileManager.FilePathHasInvalidChars(bodyModelName) Then
-										bodyModelName = Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).name
-									End If
+									'bodyModelName = Me.theMdlFileData.theSequenceGroups(0).theFileName
+									'If String.IsNullOrEmpty(bodyModelName) OrElse FileManager.FilePathHasInvalidChars(bodyModelName) Then
+									bodyModelName = Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex).name
+									'End If
 									aBodyModel.theSmdFileNames(lodIndex) = SourceFileNamesModule.CreateBodyGroupSmdFileName(aBodyModel.theSmdFileNames(lodIndex), bodyPartIndex, modelIndex, lodIndex, Me.theName, bodyModelName)
 									smdPathFileName = Path.Combine(modelOutputPath, aBodyModel.theSmdFileNames(lodIndex))
 

@@ -208,15 +208,14 @@ Public Class SourceMdlFileData2531
 	Public eyePosition As New SourceVector()
 	Public illuminationPosition As New SourceVector()
 
-	Public unknown01 As Integer
-	Public unknown02 As Integer
+	Public unknown01 As Double
+	Public unknown02 As Double
+	Public unknown03 As Double
 
 	Public hullMinPosition As New SourceVector()
 	Public hullMaxPosition As New SourceVector()
 	Public viewBoundingBoxMinPosition As New SourceVector()
 	Public viewBoundingBoxMaxPosition As New SourceVector()
-
-	Public unknown03 As Integer
 
 	Public flags As Integer
 
@@ -339,6 +338,7 @@ Public Class SourceMdlFileData2531
 	Public theModelCommandIsUsed As Boolean
 	Public theProceduralBonesCommandIsUsed As Boolean
 
+	Public theBoneNameToBoneIndexMap As New SortedList(Of String, Integer)()
 
 	'#define STUDIOHDR_FLAGS_STATIC_PROP				( 1 << 4 )
 	Public Const STUDIOHDR_FLAGS_STATIC_PROP As Integer = 1 << 4

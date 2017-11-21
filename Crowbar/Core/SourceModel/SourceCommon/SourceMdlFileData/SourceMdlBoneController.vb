@@ -104,33 +104,33 @@ Public Class SourceMdlBoneController
 	'}
 	Public ReadOnly Property TypeName() As String
 		Get
-			If Me.type = STUDIO_X Then
+			If (Me.type And STUDIO_X) > 0 Then
 				Return "X"
-			ElseIf Me.type = STUDIO_Y Then
+			ElseIf (Me.type And STUDIO_Y) > 0 Then
 				Return "Y"
-			ElseIf Me.type = STUDIO_Z Then
+			ElseIf (Me.type And STUDIO_Z) > 0 Then
 				Return "Z"
-			ElseIf Me.type = STUDIO_XR Then
+			ElseIf (Me.type And STUDIO_XR) > 0 Then
 				Return "XR"
-			ElseIf Me.type = STUDIO_YR Then
+			ElseIf (Me.type And STUDIO_YR) > 0 Then
 				Return "YR"
-			ElseIf Me.type = STUDIO_ZR Then
+			ElseIf (Me.type And STUDIO_ZR) > 0 Then
 				Return "ZR"
-			ElseIf Me.type = STUDIO_LX Then
+			ElseIf (Me.type And STUDIO_LX) > 0 Then
 				Return "LX"
-			ElseIf Me.type = STUDIO_LY Then
+			ElseIf (Me.type And STUDIO_LY) > 0 Then
 				Return "LY"
-			ElseIf Me.type = STUDIO_LZ Then
+			ElseIf (Me.type And STUDIO_LZ) > 0 Then
 				Return "LZ"
-			ElseIf Me.type = STUDIO_LXR Then
+			ElseIf (Me.type And STUDIO_LXR) > 0 Then
 				Return "LXR"
-			ElseIf Me.type = STUDIO_LYR Then
+			ElseIf (Me.type And STUDIO_LYR) > 0 Then
 				Return "LYR"
-			ElseIf Me.type = STUDIO_LZR Then
+			ElseIf (Me.type And STUDIO_LZR) > 0 Then
 				Return "LZR"
-			ElseIf Me.type = STUDIO_LINEAR Then
+			ElseIf (Me.type And STUDIO_LINEAR) > 0 Then
 				Return "LM"
-			ElseIf Me.type = STUDIO_QUADRATIC_MOTION Then
+			ElseIf (Me.type And STUDIO_QUADRATIC_MOTION) > 0 Then
 				Return "LQ"
 			End If
 

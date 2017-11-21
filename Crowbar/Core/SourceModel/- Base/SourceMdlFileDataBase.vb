@@ -18,7 +18,8 @@
 
 	Public theActualFileSize As Long
 	Public theID As String
-	Public theName As String
+	Public theModelName As String
+	Public theFileName As String
 	Public theModifiedTexturePaths As New List(Of String)()
 	Public theModifiedTextureFileNames As New List(Of String)()
 

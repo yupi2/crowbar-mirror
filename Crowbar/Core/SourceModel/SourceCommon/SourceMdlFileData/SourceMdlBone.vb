@@ -152,6 +152,7 @@ Public Class SourceMdlBone
 	Public Const BONE_USED_BY_VERTEX_LOD6 As Integer = &H10000
 	Public Const BONE_USED_BY_VERTEX_LOD7 As Integer = &H20000
 	Public Const BONE_USED_BY_BONE_MERGE As Integer = &H40000
+	Public Const BONE_FIXED_ALIGNMENT As Integer = &H100000
 	Public Const BONE_HAS_SAVEFRAME_POS As Integer = &H200000
 	Public Const BONE_HAS_SAVEFRAME_ROT As Integer = &H400000
 

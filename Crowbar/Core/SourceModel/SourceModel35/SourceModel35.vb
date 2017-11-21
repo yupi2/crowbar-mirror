@@ -197,7 +197,7 @@ Public Class SourceModel35
 		Return status
 	End Function
 
-	Public Overloads Function WriteMeshSmdFile(ByVal smdPathFileName As String, ByVal lodIndex As Integer, ByVal aVtxModel As SourceVtxModel06, ByVal aModel As SourceMdlModel37, ByVal bodyPartVertexIndexStart As Integer) As AppEnums.StatusMessage
+	Public Overloads Function WriteMeshSmdFile(ByVal smdPathFileName As String, ByVal lodIndex As Integer, ByVal aVtxModel As SourceVtxModel06, ByVal aModel As SourceMdlModel37, ByVal bodyPartVertexIndexStart As Integer, ByVal bodyPartIndex As Integer) As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
 		Try
@@ -209,7 +209,7 @@ Public Class SourceModel35
 			smdFile.WriteHeaderSection()
 			smdFile.WriteNodesSection(lodIndex)
 			smdFile.WriteSkeletonSection(lodIndex)
-			smdFile.WriteTrianglesSection(lodIndex, aVtxModel, aModel, bodyPartVertexIndexStart)
+			smdFile.WriteTrianglesSection(lodIndex, aVtxModel, aModel, bodyPartVertexIndexStart, bodyPartIndex)
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		Finally
@@ -225,7 +225,7 @@ Public Class SourceModel35
 	Public Overrides Function WriteBoneAnimationSmdFiles(ByVal modelOutputPath As String) As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
-		Dim anAnimationDesc As SourceMdlAnimationDesc36
+		Dim anAnimationDesc As SourceMdlAnimationDesc35
 		Dim smdPath As String
 		'Dim smdFileName As String
 		Dim smdPathFileName As String
@@ -373,7 +373,7 @@ Public Class SourceModel35
 
 	Protected Overrides Sub ReadPhyFile_Internal()
 		If Me.thePhyFileDataGeneric Is Nothing Then
-			Me.thePhyFileDataGeneric = New SourcePhyFileData37()
+			Me.thePhyFileDataGeneric = New SourcePhyFileData()
 		End If
 
 		Dim phyFile As New SourcePhyFile37(Me.theInputFileReader, Me.thePhyFileDataGeneric)
@@ -513,7 +513,7 @@ Public Class SourceModel35
 										Continue For
 									End If
 
-									Me.WriteMeshSmdFile(smdPathFileName, lodIndex, aVtxModel, aBodyModel, bodyPartVertexIndexStart)
+									Me.WriteMeshSmdFile(smdPathFileName, lodIndex, aVtxModel, aBodyModel, bodyPartVertexIndexStart, bodyPartIndex)
 
 									Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, smdPathFileName)
 								Catch ex As Exception

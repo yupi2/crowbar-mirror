@@ -34,7 +34,7 @@ Public Class SourceMdlFile35
 		Me.theMdlFileData.checksum = Me.theInputFileReader.ReadInt32()
 
 		Me.theMdlFileData.name = Me.theInputFileReader.ReadChars(Me.theMdlFileData.name.Length)
-		Me.theMdlFileData.theName = CStr(Me.theMdlFileData.name).Trim(Chr(0))
+		Me.theMdlFileData.theModelName = CStr(Me.theMdlFileData.name).Trim(Chr(0))
 
 		Me.theMdlFileData.fileSize = Me.theInputFileReader.ReadInt32()
 		Me.theMdlFileData.theActualFileSize = Me.theInputFileReader.BaseStream.Length
@@ -509,12 +509,13 @@ Public Class SourceMdlFile35
 
 			Try
 				Me.theInputFileReader.BaseStream.Seek(Me.theMdlFileData.localSequenceOffset, SeekOrigin.Begin)
-				fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+				'fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
-				Me.theMdlFileData.theSequenceDescs = New List(Of SourceMdlSequenceDesc36)(Me.theMdlFileData.localSequenceCount)
+				Me.theMdlFileData.theSequenceDescs = New List(Of SourceMdlSequenceDesc35)(Me.theMdlFileData.localSequenceCount)
 				For i As Integer = 0 To Me.theMdlFileData.localSequenceCount - 1
 					seqInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
-					Dim aSeqDesc As New SourceMdlSequenceDesc36()
+					fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+					Dim aSeqDesc As New SourceMdlSequenceDesc35()
 
 					aSeqDesc.nameOffset = Me.theInputFileReader.ReadInt32()
 					aSeqDesc.activityNameOffset = Me.theInputFileReader.ReadInt32()
@@ -584,6 +585,10 @@ Public Class SourceMdlFile35
 						aSeqDesc.unused(x) = Me.theInputFileReader.ReadInt32()
 					Next
 
+					'NOTE: Not sure why these 3584 bytes were ever included; they are always zeroes.
+					inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+					Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition + 3584, SeekOrigin.Begin)
+
 					Me.theMdlFileData.theSequenceDescs.Add(aSeqDesc)
 
 					inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
@@ -621,19 +626,25 @@ Public Class SourceMdlFile35
 						aSeqDesc.theActivityName = ""
 					End If
 
-					Me.ReadPoseKeys(seqInputFileStreamPosition, aSeqDesc)
+					Me.theInputFileReader.BaseStream.Seek(seqInputFileStreamPosition + aSeqDesc.eventOffset, SeekOrigin.Begin)
+					'Me.ReadPoseKeys(seqInputFileStreamPosition, aSeqDesc)
 					Me.ReadEvents(seqInputFileStreamPosition, aSeqDesc)
-					Me.ReadAutoLayers(seqInputFileStreamPosition, aSeqDesc)
-					Me.ReadMdlAnimBoneWeights(seqInputFileStreamPosition, aSeqDesc)
-					Me.ReadSequenceIkLocks(seqInputFileStreamPosition, aSeqDesc)
-					'Me.ReadMdlAnimIndexes(seqInputFileStreamPosition, aSeqDesc)
-					Me.ReadSequenceKeyValues(seqInputFileStreamPosition, aSeqDesc)
+					'Me.ReadAutoLayers(seqInputFileStreamPosition, aSeqDesc)
+					''NOTE: Maybe v35 always uses a weightlist for each sequence and does not use aSeqDesc.weightOffset.
+					'Me.ReadMdlAnimBoneWeights(seqInputFileStreamPosition, aSeqDesc)
+					'Me.ReadSequenceIkLocks(seqInputFileStreamPosition, aSeqDesc)
+					''Me.ReadMdlAnimIndexes(seqInputFileStreamPosition, aSeqDesc)
+					'Me.ReadSequenceKeyValues(seqInputFileStreamPosition, aSeqDesc)
+					Me.ReadMdlAnimBoneWeights(Me.theInputFileReader.BaseStream.Position, aSeqDesc)
 
 					Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
+
+					fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+					Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aSeqDesc")
 				Next
 
-				fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-				Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theSequenceDescs " + Me.theMdlFileData.theSequenceDescs.Count.ToString())
+				'fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+				'Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theSequenceDescs " + Me.theMdlFileData.theSequenceDescs.Count.ToString())
 			Catch ex As Exception
 				Dim debug As Integer = 4242
 			End Try
@@ -662,6 +673,10 @@ Public Class SourceMdlFile35
 					aSequenceGroup.fileNameOffset = Me.theInputFileReader.ReadInt32()
 					aSequenceGroup.cacheOffset = Me.theInputFileReader.ReadInt32()
 					aSequenceGroup.data = Me.theInputFileReader.ReadInt32()
+
+					For x As Integer = 0 To aSequenceGroup.unknown.Length - 1
+						aSequenceGroup.unknown(x) = Me.theInputFileReader.ReadInt32()
+					Next
 
 					Me.theMdlFileData.theSequenceGroups.Add(aSequenceGroup)
 
@@ -755,11 +770,11 @@ Public Class SourceMdlFile35
 				Me.theInputFileReader.BaseStream.Seek(Me.theMdlFileData.animationOffset, SeekOrigin.Begin)
 				fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
-				Me.theMdlFileData.theAnimationDescs = New List(Of SourceMdlAnimationDesc36)(Me.theMdlFileData.animationCount)
+				Me.theMdlFileData.theAnimationDescs = New List(Of SourceMdlAnimationDesc35)(Me.theMdlFileData.animationCount)
 				For i As Integer = 0 To Me.theMdlFileData.animationCount - 1
 					animationDescInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 					'fileOffsetStart = Me.theInputFileReader.BaseStream.Position
-					Dim anAnimationDesc As New SourceMdlAnimationDesc36()
+					Dim anAnimationDesc As New SourceMdlAnimationDesc35()
 
 					anAnimationDesc.nameOffset = Me.theInputFileReader.ReadInt32()
 					anAnimationDesc.fps = Me.theInputFileReader.ReadSingle()
@@ -1613,7 +1628,7 @@ Public Class SourceMdlFile35
 		End If
 	End Sub
 
-	Private Sub ReadPoseKeys(ByVal seqInputFileStreamPosition As Long, ByVal aSeqDesc As SourceMdlSequenceDesc36)
+	Private Sub ReadPoseKeys(ByVal seqInputFileStreamPosition As Long, ByVal aSeqDesc As SourceMdlSequenceDesc35)
 		If (aSeqDesc.groupSize(0) > 1 OrElse aSeqDesc.groupSize(1) > 1) AndAlso aSeqDesc.poseKeyOffset <> 0 Then
 			Try
 				Dim poseKeyCount As Integer
@@ -1646,7 +1661,7 @@ Public Class SourceMdlFile35
 		End If
 	End Sub
 
-	Private Sub ReadEvents(ByVal seqInputFileStreamPosition As Long, ByVal aSeqDesc As SourceMdlSequenceDesc36)
+	Private Sub ReadEvents(ByVal seqInputFileStreamPosition As Long, ByVal aSeqDesc As SourceMdlSequenceDesc35)
 		If aSeqDesc.eventCount > 0 AndAlso aSeqDesc.eventOffset <> 0 Then
 			Try
 				'Dim eventInputFileStreamPosition As Long
@@ -1688,7 +1703,7 @@ Public Class SourceMdlFile35
 		End If
 	End Sub
 
-	Private Sub ReadAutoLayers(ByVal seqInputFileStreamPosition As Long, ByVal aSeqDesc As SourceMdlSequenceDesc36)
+	Private Sub ReadAutoLayers(ByVal seqInputFileStreamPosition As Long, ByVal aSeqDesc As SourceMdlSequenceDesc35)
 		If aSeqDesc.autoLayerCount > 0 AndAlso aSeqDesc.autoLayerOffset <> 0 Then
 			Try
 				Dim autoLayerInputFileStreamPosition As Long
@@ -1726,8 +1741,9 @@ Public Class SourceMdlFile35
 		End If
 	End Sub
 
-	Private Sub ReadMdlAnimBoneWeights(ByVal seqInputFileStreamPosition As Long, ByVal aSeqDesc As SourceMdlSequenceDesc36)
-		If Me.theMdlFileData.boneCount > 0 AndAlso aSeqDesc.weightOffset > 0 Then
+	Private Sub ReadMdlAnimBoneWeights(ByVal seqInputFileStreamPosition As Long, ByVal aSeqDesc As SourceMdlSequenceDesc35)
+		'If Me.theMdlFileData.boneCount > 0 AndAlso aSeqDesc.weightOffset > 0 Then
+		If Me.theMdlFileData.boneCount > 0 Then
 			Try
 				Dim weightListInputFileStreamPosition As Long
 				'Dim inputFileStreamPosition As Long
@@ -1736,7 +1752,8 @@ Public Class SourceMdlFile35
 				'Dim fileOffsetStart2 As Long
 				'Dim fileOffsetEnd2 As Long
 
-				Me.theInputFileReader.BaseStream.Seek(seqInputFileStreamPosition + aSeqDesc.weightOffset, SeekOrigin.Begin)
+				'Me.theInputFileReader.BaseStream.Seek(seqInputFileStreamPosition + aSeqDesc.weightOffset, SeekOrigin.Begin)
+				Me.theInputFileReader.BaseStream.Seek(seqInputFileStreamPosition, SeekOrigin.Begin)
 				fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
 				aSeqDesc.theBoneWeightsAreDefault = True
@@ -1766,7 +1783,7 @@ Public Class SourceMdlFile35
 		End If
 	End Sub
 
-	Private Sub ReadSequenceIkLocks(ByVal seqInputFileStreamPosition As Long, ByVal aSeqDesc As SourceMdlSequenceDesc36)
+	Private Sub ReadSequenceIkLocks(ByVal seqInputFileStreamPosition As Long, ByVal aSeqDesc As SourceMdlSequenceDesc35)
 		If aSeqDesc.ikLockCount > 0 AndAlso aSeqDesc.ikLockOffset <> 0 Then
 			Try
 				Dim lockInputFileStreamPosition As Long
@@ -1803,7 +1820,7 @@ Public Class SourceMdlFile35
 		End If
 	End Sub
 
-	'Private Sub ReadMdlAnimIndexes(ByVal seqInputFileStreamPosition As Long, ByVal aSeqDesc As SourceMdlSequenceDesc36)
+	'Private Sub ReadMdlAnimIndexes(ByVal seqInputFileStreamPosition As Long, ByVal aSeqDesc As SourceMdlSequenceDesc35)
 	'	If (aSeqDesc.groupSize(0) * aSeqDesc.groupSize(1)) > 0 AndAlso aSeqDesc.blendOffset <> 0 Then
 	'		Try
 	'			Dim animIndexCount As Integer
@@ -1849,7 +1866,7 @@ Public Class SourceMdlFile35
 	'	End If
 	'End Sub
 
-	Private Sub ReadSequenceKeyValues(ByVal seqInputFileStreamPosition As Long, ByVal aSeqDesc As SourceMdlSequenceDesc36)
+	Private Sub ReadSequenceKeyValues(ByVal seqInputFileStreamPosition As Long, ByVal aSeqDesc As SourceMdlSequenceDesc35)
 		If aSeqDesc.keyValueSize > 0 AndAlso aSeqDesc.keyValueOffset <> 0 Then
 			Try
 				Dim fileOffsetStart As Long
@@ -1870,7 +1887,7 @@ Public Class SourceMdlFile35
 		End If
 	End Sub
 
-	Private Sub ReadAnimations(ByVal animationDescInputFileStreamPosition As Long, ByVal anAnimationDesc As SourceMdlAnimationDesc36)
+	Private Sub ReadAnimations(ByVal animationDescInputFileStreamPosition As Long, ByVal anAnimationDesc As SourceMdlAnimationDesc35)
 		If anAnimationDesc.animOffset > 0 Then
 			Dim animationInputFileStreamPosition As Long
 			Dim inputFileStreamPosition As Long
@@ -1996,7 +2013,7 @@ Public Class SourceMdlFile35
 		End If
 	End Sub
 
-	Private Sub ReadMdlMovements(ByVal animInputFileStreamPosition As Long, ByVal anAnimationDesc As SourceMdlAnimationDesc36)
+	Private Sub ReadMdlMovements(ByVal animInputFileStreamPosition As Long, ByVal anAnimationDesc As SourceMdlAnimationDesc35)
 		If anAnimationDesc.movementCount > 0 Then
 			Dim movementInputFileStreamPosition As Long
 			Dim fileOffsetStart As Long
@@ -2039,7 +2056,7 @@ Public Class SourceMdlFile35
 		End If
 	End Sub
 
-	Private Sub ReadMdlIkRules(ByVal animInputFileStreamPosition As Long, ByVal anAnimationDesc As SourceMdlAnimationDesc36)
+	Private Sub ReadMdlIkRules(ByVal animInputFileStreamPosition As Long, ByVal anAnimationDesc As SourceMdlAnimationDesc35)
 		If anAnimationDesc.ikRuleCount > 0 Then
 			Dim ikRuleInputFileStreamPosition As Long
 			Dim inputFileStreamPosition As Long
@@ -2303,12 +2320,14 @@ Public Class SourceMdlFile35
 
 					fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
 					'NOTE: Although studiomdl source code indicates ALIGN64, it seems to align on 32.
-					Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 32, "aModel.theVertexes pre-alignment (NOTE: Should end at: " + CStr(modelInputFileStreamPosition + aModel.vertexOffset - 1) + ")")
-					Me.ReadVertexes(modelInputFileStreamPosition, aModel)
+					If aModel.vertexCount > 0 Then
+						Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 32, "aModel.theVertexes pre-alignment (NOTE: Should end at: " + CStr(modelInputFileStreamPosition + aModel.vertexOffset - 1) + ")")
+						Me.ReadVertexes(modelInputFileStreamPosition, aModel)
 
-					fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-					Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "aModel.theTangents pre-alignment (NOTE: Should end at: " + CStr(modelInputFileStreamPosition + aModel.tangentOffset - 1) + ")")
-					Me.ReadTangents(modelInputFileStreamPosition, aModel)
+						fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+						Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "aModel.theTangents pre-alignment (NOTE: Should end at: " + CStr(modelInputFileStreamPosition + aModel.tangentOffset - 1) + ")")
+						Me.ReadTangents(modelInputFileStreamPosition, aModel)
+					End If
 
 					Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
 				Next

@@ -362,8 +362,8 @@ Public Class SourceModel36
 		mdlFile.ReadTextures()
 		mdlFile.ReadSkinFamilies()
 
-		'' Read what WriteKeyValues() writes.
-		'mdlFile.ReadKeyValues()
+		' Read what WriteKeyValues() writes.
+		mdlFile.ReadKeyValues()
 
 		'' Post-processing.
 		'mdlFile.BuildBoneTransforms()
@@ -373,7 +373,7 @@ Public Class SourceModel36
 
 	Protected Overrides Sub ReadPhyFile_Internal()
 		If Me.thePhyFileDataGeneric Is Nothing Then
-			Me.thePhyFileDataGeneric = New SourcePhyFileData37()
+			Me.thePhyFileDataGeneric = New SourcePhyFileData()
 		End If
 
 		Dim phyFile As New SourcePhyFile37(Me.theInputFileReader, Me.thePhyFileDataGeneric)
@@ -434,7 +434,6 @@ Public Class SourceModel36
 			qcFile.WriteNoForcedFadeCommand()
 			qcFile.WriteForcePhonemeCrossfadeCommand()
 
-			qcFile.WriteAmbientBoostCommand()
 			qcFile.WriteOpaqueCommand()
 			qcFile.WriteObsoleteCommand()
 			qcFile.WriteCdMaterialsCommand()
@@ -456,7 +455,13 @@ Public Class SourceModel36
 
 			qcFile.WriteGroup("collision", AddressOf qcFile.WriteGroupCollision, False, False)
 
-			'qcFile.WriteKeyValues(Me.theMdlFileData.theKeyValuesText, "$KeyValues")
+			Dim command As String
+			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+				command = "$KeyValues"
+			Else
+				command = "$keyvalues"
+			End If
+			qcFile.WriteKeyValues(Me.theMdlFileData.theKeyValuesText, Command)
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		Finally

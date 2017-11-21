@@ -155,7 +155,7 @@ Public Class SourceQcFile35
 		'modelPath = FileManager.GetPath(CStr(theSourceEngineModel.theMdlFileHeader.name).Trim(Chr(0)))
 		'modelPathFileName = Path.Combine(modelPath, theSourceEngineModel.ModelName + ".mdl")
 		'modelPathFileName = CStr(theSourceEngineModel.MdlFileHeader.name).Trim(Chr(0))
-		modelPathFileName = Me.theMdlFileData.theName
+		modelPathFileName = Me.theMdlFileData.theModelName
 
 		Me.theOutputFileStreamWriter.WriteLine()
 
@@ -1302,7 +1302,7 @@ Public Class SourceQcFile35
 				line += aPoseParamDesc.startingValue.ToString("0.######", TheApp.InternalNumberFormat)
 				line += " "
 				line += aPoseParamDesc.endingValue.ToString("0.######", TheApp.InternalNumberFormat)
-				line += " "
+				line += " loop "
 				line += aPoseParamDesc.loopingRange.ToString("0.######", TheApp.InternalNumberFormat)
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			Next
@@ -1864,6 +1864,7 @@ Public Class SourceQcFile35
 	Public Sub WriteGroupAnimation()
 		Me.WritePoseParameterCommand()
 		Me.WriteIkChainCommand()
+		Me.WriteIkAutoPlayLockCommand()
 		Me.FillInWeightLists()
 		'NOTE: Must write $WeightList lines before animations or sequences that use them.
 		Me.WriteWeightListCommand()
@@ -1877,13 +1878,12 @@ Public Class SourceQcFile35
 		Catch ex As Exception
 		End Try
 		Me.WriteIncludeModelCommands()
-		Me.WriteIkAutoPlayLockCommand()
 		Me.WriteBoneSaveFrameCommand()
 	End Sub
 
 	Private Sub FillInWeightLists()
 		If Me.theMdlFileData.theSequenceDescs IsNot Nothing Then
-			Dim aSeqDesc As SourceMdlSequenceDesc36
+			Dim aSeqDesc As SourceMdlSequenceDesc35
 			Dim aWeightList As SourceMdlWeightList
 			Dim aWeightListIndex As Integer
 
@@ -2001,7 +2001,7 @@ Public Class SourceQcFile35
 	Private Sub WriteAnimationOrDeclareAnimationCommand()
 		If Me.theMdlFileData.theAnimationDescs IsNot Nothing Then
 			For i As Integer = 0 To Me.theMdlFileData.theAnimationDescs.Count - 1
-				Dim anAnimationDesc As SourceMdlAnimationDesc36
+				Dim anAnimationDesc As SourceMdlAnimationDesc35
 				anAnimationDesc = Me.theMdlFileData.theAnimationDescs(i)
 
 				If anAnimationDesc.theName(0) <> "@" Then
@@ -2011,7 +2011,7 @@ Public Class SourceQcFile35
 		End If
 	End Sub
 
-	Private Sub WriteAnimationLine(ByVal anAnimationDesc As SourceMdlAnimationDesc36)
+	Private Sub WriteAnimationLine(ByVal anAnimationDesc As SourceMdlAnimationDesc35)
 		Dim line As String = ""
 
 		Me.theOutputFileStreamWriter.WriteLine()
@@ -2060,7 +2060,7 @@ Public Class SourceQcFile35
 		'$sequence ragdoll "ragdoll" ACT_DIERAGDOLL 1 fps 30.00
 		If Me.theMdlFileData.theSequenceDescs IsNot Nothing Then
 			For sequenceIndex As Integer = 0 To Me.theMdlFileData.theSequenceDescs.Count - 1
-				Dim aSequenceDesc As SourceMdlSequenceDesc36
+				Dim aSequenceDesc As SourceMdlSequenceDesc35
 				aSequenceDesc = Me.theMdlFileData.theSequenceDescs(sequenceIndex)
 
 				Me.WriteSequenceLine(aSequenceDesc)
@@ -2068,7 +2068,7 @@ Public Class SourceQcFile35
 		End If
 	End Sub
 
-	Private Sub WriteSequenceLine(ByVal aSequenceDesc As SourceMdlSequenceDesc36)
+	Private Sub WriteSequenceLine(ByVal aSequenceDesc As SourceMdlSequenceDesc35)
 		Dim line As String = ""
 
 		Me.theOutputFileStreamWriter.WriteLine()
@@ -2137,12 +2137,12 @@ Public Class SourceQcFile35
 	'worldspace         // done       
 	'ParseAnimationToken( animations[0] )
 	'Cmd_ImpliedAnimation( pseq, token )
-	Private Sub WriteSequenceOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc36)
+	Private Sub WriteSequenceOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc35)
 		Dim line As String = ""
 		Dim valueString As String
-		Dim impliedAnimDesc As SourceMdlAnimationDesc36 = Nothing
+		Dim impliedAnimDesc As SourceMdlAnimationDesc35 = Nothing
 
-		'Dim anAnimationDesc As SourceMdlAnimationDesc36
+		'Dim anAnimationDesc As SourceMdlAnimationDesc35
 		'Dim name As String
 		'For j As Integer = 0 To aSequenceDesc.theAnimDescIndexes.Count - 1
 		'	anAnimationDesc = Me.theMdlFileData.theAnimationDescs(aSequenceDesc.theAnimDescIndexes(j))
@@ -2164,7 +2164,7 @@ Public Class SourceQcFile35
 		'	Me.theOutputFileStreamWriter.WriteLine(line)
 		'Next
 		Dim anAnimDescIndex As Integer
-		Dim anAnimationDesc As SourceMdlAnimationDesc36
+		Dim anAnimationDesc As SourceMdlAnimationDesc35
 		For blendIndex As Integer = 0 To aSequenceDesc.blendCount - 1
 			anAnimDescIndex = aSequenceDesc.anim(blendIndex)(0)
 			If anAnimDescIndex >= Me.theMdlFileData.theAnimationDescs.Count Then
@@ -2306,7 +2306,7 @@ Public Class SourceQcFile35
 		'	Me.theOutputFileStreamWriter.WriteLine(line)
 		'End If
 
-		Dim firstAnimDesc As SourceMdlAnimationDesc36
+		Dim firstAnimDesc As SourceMdlAnimationDesc35
 		firstAnimDesc = Me.theMdlFileData.theAnimationDescs(0)
 		Me.WriteAnimationOptions(aSequenceDesc, firstAnimDesc, impliedAnimDesc)
 	End Sub
@@ -2333,7 +2333,7 @@ Public Class SourceQcFile35
 	'ParseCmdlistToken( panim->numcmds, panim->cmds )
 	'TODO: All these options (LX, LY, etc.) seem to be baked-in, but might need to be calculated for anims that have movement.
 	'lookupControl( token )       
-	Private Sub WriteAnimationOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc36, ByVal anAnimationDesc As SourceMdlAnimationDesc36, ByVal impliedAnimDesc As SourceMdlAnimationDesc36)
+	Private Sub WriteAnimationOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc35, ByVal anAnimationDesc As SourceMdlAnimationDesc35, ByVal impliedAnimDesc As SourceMdlAnimationDesc35)
 		Dim line As String = ""
 
 		line = vbTab
@@ -2385,7 +2385,7 @@ Public Class SourceQcFile35
 	'weightlist         // done
 	'worldspaceblend       //
 	'worldspaceblendloop   // 
-	Private Sub WriteCmdListOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc36, ByVal anAnimationDesc As SourceMdlAnimationDesc36, ByVal impliedAnimDesc As SourceMdlAnimationDesc36)
+	Private Sub WriteCmdListOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc35, ByVal anAnimationDesc As SourceMdlAnimationDesc35, ByVal impliedAnimDesc As SourceMdlAnimationDesc35)
 		Dim line As String = ""
 
 		If (anAnimationDesc.flags And SourceMdlAnimationDesc.STUDIO_ALLZEROS) > 0 Then
@@ -2422,7 +2422,7 @@ Public Class SourceQcFile35
 
 		'TODO: Can probably reduce the info written in v0.24.
 		' weightlist "top_bottom"
-		Dim aSeqDesc As SourceMdlSequenceDesc36 = Nothing
+		Dim aSeqDesc As SourceMdlSequenceDesc35 = Nothing
 		If aSequenceDesc Is Nothing Then
 			If anAnimationDesc.theAnimIsLinkedToSequence Then
 				'NOTE: Just get first one, because all should have same bone weights.
@@ -2439,7 +2439,7 @@ Public Class SourceQcFile35
 		End If
 	End Sub
 
-	Private Sub WriteSequenceWeightListLine(ByVal aSeqDesc As SourceMdlSequenceDesc36)
+	Private Sub WriteSequenceWeightListLine(ByVal aSeqDesc As SourceMdlSequenceDesc35)
 		Dim line As String = ""
 
 		If Me.theMdlFileData.theWeightLists IsNot Nothing AndAlso Me.theMdlFileData.theWeightLists.Count > 0 Then
@@ -2455,7 +2455,7 @@ Public Class SourceQcFile35
 		End If
 	End Sub
 
-	Private Sub WriteSequenceBlendInfo(ByVal aSeqDesc As SourceMdlSequenceDesc36)
+	Private Sub WriteSequenceBlendInfo(ByVal aSeqDesc As SourceMdlSequenceDesc35)
 		Dim line As String = ""
 
 		If Me.theMdlFileData.thePoseParamDescs IsNot Nothing Then
@@ -2476,7 +2476,7 @@ Public Class SourceQcFile35
 		End If
 	End Sub
 
-	Private Sub WriteSequenceDeltaInfo(ByVal aSeqDesc As SourceMdlSequenceDesc36)
+	Private Sub WriteSequenceDeltaInfo(ByVal aSeqDesc As SourceMdlSequenceDesc35)
 		Dim line As String = ""
 
 		If (aSeqDesc.flags And SourceMdlAnimationDesc.STUDIO_DELTA) > 0 Then
@@ -2493,7 +2493,7 @@ Public Class SourceQcFile35
 		End If
 	End Sub
 
-	Private Sub WriteSequenceLayerInfo(ByVal aSeqDesc As SourceMdlSequenceDesc36)
+	Private Sub WriteSequenceLayerInfo(ByVal aSeqDesc As SourceMdlSequenceDesc35)
 		If aSeqDesc.autoLayerCount > 0 Then
 			Dim line As String = ""
 			Dim layer As SourceMdlAutoLayer37
@@ -2548,7 +2548,7 @@ Public Class SourceQcFile35
 		End If
 	End Sub
 
-	'Private Sub WriteSequenceNodeInfo(ByVal aSeqDesc As SourceMdlSequenceDesc36)
+	'Private Sub WriteSequenceNodeInfo(ByVal aSeqDesc As SourceMdlSequenceDesc35)
 	'	Dim line As String = ""
 
 	'	If aSeqDesc.entryNodeIndex > 0 Then

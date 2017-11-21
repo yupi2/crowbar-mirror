@@ -20,15 +20,24 @@ Public MustInherit Class SourceModel
 				model = New SourceModel10(mdlPathFileName, version)
 			ElseIf version = 2531 Then
 				model = New SourceModel2531(mdlPathFileName, version)
+			ElseIf version = 27 Then
+				'NOT IMPLEMENTED YET.
+				'model = New SourceModel27(mdlPathFileName, version)
+			ElseIf version = 28 Then
+				'NOT IMPLEMENTED YET.
+				'model = New SourceModel28(mdlPathFileName, version)
 			ElseIf version = 29 Then
 				'NOT IMPLEMENTED YET.
 				'model = New SourceModel29(mdlPathFileName, version)
+			ElseIf version = 30 Then
+				'NOT IMPLEMENTED YET.
+				'model = New SourceModel30(mdlPathFileName, version)
 			ElseIf version = 31 Then
 				'NOT IMPLEMENTED YET.
-				'model = New SourceModel31(mdlPathFileName, version)
+				model = New SourceModel31(mdlPathFileName, version)
 			ElseIf version = 32 Then
 				'NOT IMPLEMENTED YET.
-				'model = New SourceModel32(mdlPathFileName, version)
+				model = New SourceModel32(mdlPathFileName, version)
 			ElseIf version = 35 Then
 				'NOT IMPLEMENTED YET.
 				model = New SourceModel35(mdlPathFileName, version)
@@ -62,6 +71,9 @@ Public MustInherit Class SourceModel
 			ElseIf version = 53 Then
 				'TODO: Properly decompile v53.
 				'model = New SourceModel53(mdlPathFileName, version)
+			ElseIf version = 57 Then
+				'TODO: Properly decompile v57.
+				'model = New SourceModel57(mdlPathFileName, version)
 			Else
 				' Version not implemented.
 				model = Nothing
@@ -800,7 +812,7 @@ Public MustInherit Class SourceModel
 		End If
 
 		ioTextLines.Add("MDL file version: " + Me.theMdlFileDataGeneric.version.ToString("N0"))
-		ioTextLines.Add("MDL stored file name: """ + Me.theMdlFileDataGeneric.theName + """")
+		ioTextLines.Add("MDL stored file name: """ + Me.theMdlFileDataGeneric.theModelName + """")
 
 		Dim storedFileSize As Long
 		Dim actualFileSize As Long

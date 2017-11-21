@@ -91,5 +91,7 @@ Public Class SourcePhyPhysCollisionModel
 	Public theVolume As Single
 	Public theMassBiasIsValid As Boolean = False
 	Public theMassBias As Single
+	Public theRollingDragCoefficientIsValid As Boolean = False
+	Public theRollingDragCoefficient As Single
 
 End Class

@@ -18,6 +18,9 @@
 	Public cacheOffset As Integer
 	Public data As Integer
 
+	'For MDL v35.
+	Public unknown(7) As Integer
+
 	Public theName As String
 	Public theFileName As String
 

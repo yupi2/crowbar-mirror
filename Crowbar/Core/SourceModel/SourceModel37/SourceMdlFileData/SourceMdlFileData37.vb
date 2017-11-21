@@ -264,7 +264,8 @@
 	Public theEyelidFlexFrameIndexes As List(Of Integer)
 	Public theFirstAnimationDesc As SourceMdlAnimationDesc37
 	Public theFirstAnimationDescFrameLines As New SortedList(Of Integer, AnimationFrameLine)()
-	'Public theFlexFrames As List(Of FlexFrame)
+	Public theFlexFrames As List(Of FlexFrame37)
+	Public theVertexes As List(Of SourceMdlVertex37)
 	Public theWeightLists As New List(Of SourceMdlWeightList)()
 
 End Class

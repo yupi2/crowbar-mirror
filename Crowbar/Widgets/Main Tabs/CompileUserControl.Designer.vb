@@ -52,9 +52,9 @@ Partial Class CompileUserControl
 		Me.CompileButton = New System.Windows.Forms.Button()
 		Me.Panel1 = New System.Windows.Forms.Panel()
 		Me.GameModelsOutputPathTextBox = New Crowbar.TextBoxEx()
+		Me.OutputPathTextBox = New Crowbar.TextBoxEx()
 		Me.GotoOutputPathButton = New System.Windows.Forms.Button()
 		Me.BrowseForOutputPathButton = New System.Windows.Forms.Button()
-		Me.OutputPathTextBox = New Crowbar.TextBoxEx()
 		Me.OutputPathComboBox = New System.Windows.Forms.ComboBox()
 		Me.CompileComboBox = New System.Windows.Forms.ComboBox()
 		Me.Label1 = New System.Windows.Forms.Label()
@@ -80,6 +80,7 @@ Partial Class CompileUserControl
 		Me.RecompileButton = New System.Windows.Forms.Button()
 		Me.UseDefaultOutputSubfolderButton = New System.Windows.Forms.Button()
 		Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+		Me.OutputSubfolderTextBox = New Crowbar.TextBoxEx()
 		Me.CompilerOptionsTabControl.SuspendLayout()
 		Me.OrangeBoxOptionsTabPage.SuspendLayout()
 		Me.Panel1.SuspendLayout()
@@ -102,7 +103,7 @@ Partial Class CompileUserControl
 		Me.CompilerOptionsTextBox.Multiline = True
 		Me.CompilerOptionsTextBox.Name = "CompilerOptionsTextBox"
 		Me.CompilerOptionsTextBox.ReadOnly = True
-		Me.CompilerOptionsTextBox.Size = New System.Drawing.Size(758, 45)
+		Me.CompilerOptionsTextBox.Size = New System.Drawing.Size(758, 46)
 		Me.CompilerOptionsTextBox.TabIndex = 15
 		'
 		'GameSetupComboBox
@@ -172,7 +173,7 @@ Partial Class CompileUserControl
 		Me.CheckBox21.AutoSize = True
 		Me.CheckBox21.Location = New System.Drawing.Point(6, 98)
 		Me.CheckBox21.Name = "CheckBox21"
-		Me.CheckBox21.Size = New System.Drawing.Size(88, 17)
+		Me.CheckBox21.Size = New System.Drawing.Size(85, 17)
 		Me.CheckBox21.TabIndex = 21
 		Me.CheckBox21.Text = "CheckBox21"
 		Me.CheckBox21.UseVisualStyleBackColor = True
@@ -183,7 +184,7 @@ Partial Class CompileUserControl
 		Me.CheckBox22.AutoSize = True
 		Me.CheckBox22.Location = New System.Drawing.Point(6, 75)
 		Me.CheckBox22.Name = "CheckBox22"
-		Me.CheckBox22.Size = New System.Drawing.Size(88, 17)
+		Me.CheckBox22.Size = New System.Drawing.Size(85, 17)
 		Me.CheckBox22.TabIndex = 20
 		Me.CheckBox22.Text = "CheckBox22"
 		Me.CheckBox22.UseVisualStyleBackColor = True
@@ -194,7 +195,7 @@ Partial Class CompileUserControl
 		Me.CheckBox23.AutoSize = True
 		Me.CheckBox23.Location = New System.Drawing.Point(6, 52)
 		Me.CheckBox23.Name = "CheckBox23"
-		Me.CheckBox23.Size = New System.Drawing.Size(88, 17)
+		Me.CheckBox23.Size = New System.Drawing.Size(85, 17)
 		Me.CheckBox23.TabIndex = 19
 		Me.CheckBox23.Text = "CheckBox23"
 		Me.CheckBox23.UseVisualStyleBackColor = True
@@ -205,7 +206,7 @@ Partial Class CompileUserControl
 		Me.CheckBox24.AutoSize = True
 		Me.CheckBox24.Location = New System.Drawing.Point(6, 29)
 		Me.CheckBox24.Name = "CheckBox24"
-		Me.CheckBox24.Size = New System.Drawing.Size(88, 17)
+		Me.CheckBox24.Size = New System.Drawing.Size(85, 17)
 		Me.CheckBox24.TabIndex = 18
 		Me.CheckBox24.Text = "CheckBox24"
 		Me.CheckBox24.UseVisualStyleBackColor = True
@@ -216,7 +217,7 @@ Partial Class CompileUserControl
 		Me.CheckBox25.AutoSize = True
 		Me.CheckBox25.Location = New System.Drawing.Point(6, 6)
 		Me.CheckBox25.Name = "CheckBox25"
-		Me.CheckBox25.Size = New System.Drawing.Size(88, 17)
+		Me.CheckBox25.Size = New System.Drawing.Size(85, 17)
 		Me.CheckBox25.TabIndex = 17
 		Me.CheckBox25.Text = "CheckBox25"
 		Me.CheckBox25.UseVisualStyleBackColor = True
@@ -227,7 +228,7 @@ Partial Class CompileUserControl
 		Me.FolderForEachModelCheckBox.AutoSize = True
 		Me.FolderForEachModelCheckBox.Location = New System.Drawing.Point(502, 74)
 		Me.FolderForEachModelCheckBox.Name = "FolderForEachModelCheckBox"
-		Me.FolderForEachModelCheckBox.Size = New System.Drawing.Size(139, 17)
+		Me.FolderForEachModelCheckBox.Size = New System.Drawing.Size(130, 17)
 		Me.FolderForEachModelCheckBox.TabIndex = 3
 		Me.FolderForEachModelCheckBox.Text = "Folder for each model"
 		Me.FolderForEachModelCheckBox.UseVisualStyleBackColor = True
@@ -238,7 +239,7 @@ Partial Class CompileUserControl
 		Me.SourceEngineLogFileCheckBox.AutoSize = True
 		Me.SourceEngineLogFileCheckBox.Location = New System.Drawing.Point(6, 3)
 		Me.SourceEngineLogFileCheckBox.Name = "SourceEngineLogFileCheckBox"
-		Me.SourceEngineLogFileCheckBox.Size = New System.Drawing.Size(116, 17)
+		Me.SourceEngineLogFileCheckBox.Size = New System.Drawing.Size(108, 17)
 		Me.SourceEngineLogFileCheckBox.TabIndex = 4
 		Me.SourceEngineLogFileCheckBox.Text = "Write log to a file"
 		Me.ToolTip1.SetToolTip(Me.SourceEngineLogFileCheckBox, "Write compile log to a file (in same folder as QC file).")
@@ -249,7 +250,7 @@ Partial Class CompileUserControl
 		Me.CompilerOptionDefineBonesCheckBox.AutoSize = True
 		Me.CompilerOptionDefineBonesCheckBox.Location = New System.Drawing.Point(179, 3)
 		Me.CompilerOptionDefineBonesCheckBox.Name = "CompilerOptionDefineBonesCheckBox"
-		Me.CompilerOptionDefineBonesCheckBox.Size = New System.Drawing.Size(95, 17)
+		Me.CompilerOptionDefineBonesCheckBox.Size = New System.Drawing.Size(89, 17)
 		Me.CompilerOptionDefineBonesCheckBox.TabIndex = 7
 		Me.CompilerOptionDefineBonesCheckBox.Text = "Define Bones"
 		Me.CompilerOptionDefineBonesCheckBox.UseVisualStyleBackColor = True
@@ -259,7 +260,7 @@ Partial Class CompileUserControl
 		Me.CompilerOptionNoP4CheckBox.AutoSize = True
 		Me.CompilerOptionNoP4CheckBox.Location = New System.Drawing.Point(6, 26)
 		Me.CompilerOptionNoP4CheckBox.Name = "CompilerOptionNoP4CheckBox"
-		Me.CompilerOptionNoP4CheckBox.Size = New System.Drawing.Size(56, 17)
+		Me.CompilerOptionNoP4CheckBox.Size = New System.Drawing.Size(54, 17)
 		Me.CompilerOptionNoP4CheckBox.TabIndex = 5
 		Me.CompilerOptionNoP4CheckBox.Text = "No P4"
 		Me.ToolTip1.SetToolTip(Me.CompilerOptionNoP4CheckBox, "No Perforce integration (modders do not usually have Perforce software).")
@@ -270,7 +271,7 @@ Partial Class CompileUserControl
 		Me.CompilerOptionVerboseCheckBox.AutoSize = True
 		Me.CompilerOptionVerboseCheckBox.Location = New System.Drawing.Point(6, 49)
 		Me.CompilerOptionVerboseCheckBox.Name = "CompilerOptionVerboseCheckBox"
-		Me.CompilerOptionVerboseCheckBox.Size = New System.Drawing.Size(68, 17)
+		Me.CompilerOptionVerboseCheckBox.Size = New System.Drawing.Size(65, 17)
 		Me.CompilerOptionVerboseCheckBox.TabIndex = 6
 		Me.CompilerOptionVerboseCheckBox.Text = "Verbose"
 		Me.ToolTip1.SetToolTip(Me.CompilerOptionVerboseCheckBox, "Write more info in compile log.")
@@ -282,7 +283,7 @@ Partial Class CompileUserControl
 		Me.CompilerOptionDefineBonesModifyQcFileCheckBox.Enabled = False
 		Me.CompilerOptionDefineBonesModifyQcFileCheckBox.Location = New System.Drawing.Point(213, 72)
 		Me.CompilerOptionDefineBonesModifyQcFileCheckBox.Name = "CompilerOptionDefineBonesModifyQcFileCheckBox"
-		Me.CompilerOptionDefineBonesModifyQcFileCheckBox.Size = New System.Drawing.Size(240, 17)
+		Me.CompilerOptionDefineBonesModifyQcFileCheckBox.Size = New System.Drawing.Size(226, 17)
 		Me.CompilerOptionDefineBonesModifyQcFileCheckBox.TabIndex = 11
 		Me.CompilerOptionDefineBonesModifyQcFileCheckBox.Text = "Put in QC file: $include ""<QCI file name>"""
 		Me.CompilerOptionDefineBonesModifyQcFileCheckBox.UseVisualStyleBackColor = True
@@ -293,7 +294,7 @@ Partial Class CompileUserControl
 		Me.CompilerOptionDefineBonesCreateFileCheckBox.Enabled = False
 		Me.CompilerOptionDefineBonesCreateFileCheckBox.Location = New System.Drawing.Point(196, 26)
 		Me.CompilerOptionDefineBonesCreateFileCheckBox.Name = "CompilerOptionDefineBonesCreateFileCheckBox"
-		Me.CompilerOptionDefineBonesCreateFileCheckBox.Size = New System.Drawing.Size(234, 17)
+		Me.CompilerOptionDefineBonesCreateFileCheckBox.Size = New System.Drawing.Size(225, 17)
 		Me.CompilerOptionDefineBonesCreateFileCheckBox.TabIndex = 8
 		Me.CompilerOptionDefineBonesCreateFileCheckBox.Text = "Create QCI file (in same folder as QC file)"
 		Me.CompilerOptionDefineBonesCreateFileCheckBox.UseVisualStyleBackColor = True
@@ -303,7 +304,7 @@ Partial Class CompileUserControl
 		Me.CompilerOptionDefineBonesFileNameTextBox.Enabled = False
 		Me.CompilerOptionDefineBonesFileNameTextBox.Location = New System.Drawing.Point(292, 47)
 		Me.CompilerOptionDefineBonesFileNameTextBox.Name = "CompilerOptionDefineBonesFileNameTextBox"
-		Me.CompilerOptionDefineBonesFileNameTextBox.Size = New System.Drawing.Size(139, 22)
+		Me.CompilerOptionDefineBonesFileNameTextBox.Size = New System.Drawing.Size(139, 21)
 		Me.CompilerOptionDefineBonesFileNameTextBox.TabIndex = 10
 		'
 		'CompilerOptionDefineBonesFileNameLabel
@@ -312,7 +313,7 @@ Partial Class CompileUserControl
 		Me.CompilerOptionDefineBonesFileNameLabel.Enabled = False
 		Me.CompilerOptionDefineBonesFileNameLabel.Location = New System.Drawing.Point(213, 50)
 		Me.CompilerOptionDefineBonesFileNameLabel.Name = "CompilerOptionDefineBonesFileNameLabel"
-		Me.CompilerOptionDefineBonesFileNameLabel.Size = New System.Drawing.Size(79, 13)
+		Me.CompilerOptionDefineBonesFileNameLabel.Size = New System.Drawing.Size(76, 13)
 		Me.CompilerOptionDefineBonesFileNameLabel.TabIndex = 9
 		Me.CompilerOptionDefineBonesFileNameLabel.Text = "QCI file name:"
 		'
@@ -330,7 +331,7 @@ Partial Class CompileUserControl
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.DirectCompilerOptionsTextBox.Location = New System.Drawing.Point(3, 149)
 		Me.DirectCompilerOptionsTextBox.Name = "DirectCompilerOptionsTextBox"
-		Me.DirectCompilerOptionsTextBox.Size = New System.Drawing.Size(758, 22)
+		Me.DirectCompilerOptionsTextBox.Size = New System.Drawing.Size(758, 21)
 		Me.DirectCompilerOptionsTextBox.TabIndex = 14
 		'
 		'BrowseForQcPathFolderOrFileNameButton
@@ -383,6 +384,7 @@ Partial Class CompileUserControl
 		'
 		Me.Panel1.Controls.Add(Me.GameModelsOutputPathTextBox)
 		Me.Panel1.Controls.Add(Me.OutputPathTextBox)
+		Me.Panel1.Controls.Add(Me.OutputSubfolderTextBox)
 		Me.Panel1.Controls.Add(Me.GotoOutputPathButton)
 		Me.Panel1.Controls.Add(Me.BrowseForOutputPathButton)
 		Me.Panel1.Controls.Add(Me.OutputPathComboBox)
@@ -408,8 +410,17 @@ Partial Class CompileUserControl
 		Me.GameModelsOutputPathTextBox.Location = New System.Drawing.Point(209, 34)
 		Me.GameModelsOutputPathTextBox.Name = "GameModelsOutputPathTextBox"
 		Me.GameModelsOutputPathTextBox.ReadOnly = True
-		Me.GameModelsOutputPathTextBox.Size = New System.Drawing.Size(445, 22)
+		Me.GameModelsOutputPathTextBox.Size = New System.Drawing.Size(445, 21)
 		Me.GameModelsOutputPathTextBox.TabIndex = 8
+		'
+		'OutputPathTextBox
+		'
+		Me.OutputPathTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.OutputPathTextBox.Location = New System.Drawing.Point(209, 34)
+		Me.OutputPathTextBox.Name = "OutputPathTextBox"
+		Me.OutputPathTextBox.Size = New System.Drawing.Size(445, 21)
+		Me.OutputPathTextBox.TabIndex = 9
 		'
 		'GotoOutputPathButton
 		'
@@ -431,15 +442,6 @@ Partial Class CompileUserControl
 		Me.BrowseForOutputPathButton.TabIndex = 10
 		Me.BrowseForOutputPathButton.Text = "Browse..."
 		Me.BrowseForOutputPathButton.UseVisualStyleBackColor = True
-		'
-		'OutputPathTextBox
-		'
-		Me.OutputPathTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.OutputPathTextBox.Location = New System.Drawing.Point(209, 34)
-		Me.OutputPathTextBox.Name = "OutputPathTextBox"
-		Me.OutputPathTextBox.Size = New System.Drawing.Size(445, 22)
-		Me.OutputPathTextBox.TabIndex = 9
 		'
 		'OutputPathComboBox
 		'
@@ -483,7 +485,7 @@ Partial Class CompileUserControl
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.QcPathFileNameTextBox.Location = New System.Drawing.Point(209, 5)
 		Me.QcPathFileNameTextBox.Name = "QcPathFileNameTextBox"
-		Me.QcPathFileNameTextBox.Size = New System.Drawing.Size(445, 22)
+		Me.QcPathFileNameTextBox.Size = New System.Drawing.Size(445, 21)
 		Me.QcPathFileNameTextBox.TabIndex = 2
 		'
 		'SplitContainer1
@@ -556,9 +558,9 @@ Partial Class CompileUserControl
 		Me.Panel2.Controls.Add(Me.CompilerOptionsTextBox)
 		Me.Panel2.Controls.Add(Me.CompileOptionsSizerLabel)
 		Me.Panel2.Dock = System.Windows.Forms.DockStyle.Fill
-		Me.Panel2.Location = New System.Drawing.Point(3, 18)
+		Me.Panel2.Location = New System.Drawing.Point(3, 17)
 		Me.Panel2.Name = "Panel2"
-		Me.Panel2.Size = New System.Drawing.Size(764, 223)
+		Me.Panel2.Size = New System.Drawing.Size(764, 224)
 		Me.Panel2.TabIndex = 0
 		'
 		'CompilerOptionsGoldSourceEnginePanel
@@ -570,7 +572,7 @@ Partial Class CompileUserControl
 		Me.CompilerOptionsGoldSourceEnginePanel.Controls.Add(Me.CompileOptionsGoldSourceEngineUseDefaultsButton)
 		Me.CompilerOptionsGoldSourceEnginePanel.Location = New System.Drawing.Point(0, 22)
 		Me.CompilerOptionsGoldSourceEnginePanel.Name = "CompilerOptionsGoldSourceEnginePanel"
-		Me.CompilerOptionsGoldSourceEnginePanel.Size = New System.Drawing.Size(764, 108)
+		Me.CompilerOptionsGoldSourceEnginePanel.Size = New System.Drawing.Size(764, 109)
 		Me.CompilerOptionsGoldSourceEnginePanel.TabIndex = 13
 		'
 		'GoldSourceEngineLogFileCheckBox
@@ -612,7 +614,7 @@ Partial Class CompileUserControl
 		Me.CompilerOptionsSourceEnginePanel.Controls.Add(Me.CompileOptionsSourceEngineUseDefaultsButton)
 		Me.CompilerOptionsSourceEnginePanel.Location = New System.Drawing.Point(0, 22)
 		Me.CompilerOptionsSourceEnginePanel.Name = "CompilerOptionsSourceEnginePanel"
-		Me.CompilerOptionsSourceEnginePanel.Size = New System.Drawing.Size(764, 108)
+		Me.CompilerOptionsSourceEnginePanel.Size = New System.Drawing.Size(764, 109)
 		Me.CompilerOptionsSourceEnginePanel.TabIndex = 38
 		'
 		'CompileOptionsSourceEngineUseDefaultsButton
@@ -738,6 +740,16 @@ Partial Class CompileUserControl
 		Me.UseDefaultOutputSubfolderButton.Text = "Use Default"
 		Me.UseDefaultOutputSubfolderButton.UseVisualStyleBackColor = True
 		'
+		'OutputSubfolderTextBox
+		'
+		Me.OutputSubfolderTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.OutputSubfolderTextBox.Location = New System.Drawing.Point(209, 34)
+		Me.OutputSubfolderTextBox.Name = "OutputSubfolderTextBox"
+		Me.OutputSubfolderTextBox.Size = New System.Drawing.Size(445, 21)
+		Me.OutputSubfolderTextBox.TabIndex = 21
+		Me.OutputSubfolderTextBox.Visible = False
+		'
 		'CompileUserControl
 		'
 		Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -820,5 +832,6 @@ Partial Class CompileUserControl
 	Friend WithEvents CompilerOptionsGoldSourceEnginePanel As System.Windows.Forms.Panel
 	Friend WithEvents GoldSourceEngineLogFileCheckBox As System.Windows.Forms.CheckBox
 	Friend WithEvents CompileOptionsGoldSourceEngineUseDefaultsButton As System.Windows.Forms.Button
+	Friend WithEvents OutputSubfolderTextBox As Crowbar.TextBoxEx
 
 End Class

@@ -470,7 +470,6 @@ Public Class SourcePhyFile2531
 					thereIsAValue = FileManager.ReadKeyValueLine(Me.theInputFileReader, key, value)
 					If thereIsAValue Then
 						If key = "index" Then
-							'aSourcePhysCollisionModel.theIndex = CInt(value)
 							aSourcePhysCollisionModel.theIndex = Integer.Parse(value, TheApp.InternalNumberFormat)
 						ElseIf key = "name" Then
 							aSourcePhysCollisionModel.theName = value
@@ -478,12 +477,10 @@ Public Class SourcePhyFile2531
 							aSourcePhysCollisionModel.theParentIsValid = True
 							aSourcePhysCollisionModel.theParentName = value
 						ElseIf key = "mass" Then
-							'aSourcePhysCollisionModel.theMass = CSng(value)
 							aSourcePhysCollisionModel.theMass = Single.Parse(value, TheApp.InternalNumberFormat)
 						ElseIf key = "surfaceprop" Then
 							aSourcePhysCollisionModel.theSurfaceProp = value
 						ElseIf key = "damping" Then
-							'aSourcePhysCollisionModel.theDamping = CSng(value)
 							aSourcePhysCollisionModel.theDamping = Single.Parse(value, TheApp.InternalNumberFormat)
 							If Me.theDampingToCountMap.ContainsKey(aSourcePhysCollisionModel.theDamping) Then
 								Me.theDampingToCountMap(aSourcePhysCollisionModel.theDamping) += 1
@@ -491,7 +488,6 @@ Public Class SourcePhyFile2531
 								Me.theDampingToCountMap.Add(aSourcePhysCollisionModel.theDamping, 1)
 							End If
 						ElseIf key = "rotdamping" Then
-							'aSourcePhysCollisionModel.theRotDamping = CSng(value)
 							aSourcePhysCollisionModel.theRotDamping = Single.Parse(value, TheApp.InternalNumberFormat)
 							If Me.theRotDampingToCountMap.ContainsKey(aSourcePhysCollisionModel.theRotDamping) Then
 								Me.theRotDampingToCountMap(aSourcePhysCollisionModel.theRotDamping) += 1
@@ -500,10 +496,8 @@ Public Class SourcePhyFile2531
 							End If
 						ElseIf key = "drag" Then
 							aSourcePhysCollisionModel.theDragCoefficientIsValid = True
-							'aSourcePhysCollisionModel.theDragCoefficient = CSng(value)
 							aSourcePhysCollisionModel.theDragCoefficient = Single.Parse(value, TheApp.InternalNumberFormat)
 						ElseIf key = "inertia" Then
-							'aSourcePhysCollisionModel.theInertia = CSng(value)
 							aSourcePhysCollisionModel.theInertia = Single.Parse(value, TheApp.InternalNumberFormat)
 							If Me.theInertiaToCountMap.ContainsKey(aSourcePhysCollisionModel.theInertia) Then
 								Me.theInertiaToCountMap(aSourcePhysCollisionModel.theInertia) += 1
@@ -511,11 +505,9 @@ Public Class SourcePhyFile2531
 								Me.theInertiaToCountMap.Add(aSourcePhysCollisionModel.theInertia, 1)
 							End If
 						ElseIf key = "volume" Then
-							'aSourcePhysCollisionModel.theVolume = CSng(value)
 							aSourcePhysCollisionModel.theVolume = Single.Parse(value, TheApp.InternalNumberFormat)
 						ElseIf key = "massbias" Then
 							aSourcePhysCollisionModel.theMassBiasIsValid = True
-							'aSourcePhysCollisionModel.theMassBias = CSng(value)
 							aSourcePhysCollisionModel.theMassBias = Single.Parse(value, TheApp.InternalNumberFormat)
 						End If
 					End If
@@ -729,16 +721,18 @@ Public Class SourcePhyFile2531
 	End Sub
 
 	Public Sub ReadCollisionTextSection()
-		Dim streamLastPosition As Long
+		'Dim streamLastPosition As Long
 
-		Try
-			streamLastPosition = Me.theInputFileReader.BaseStream.Length() - 1
+		'Try
+		'	streamLastPosition = Me.theInputFileReader.BaseStream.Length() - 1
 
-			'NOTE: Use -1 to drop the null terminator character.
-			Me.thePhyFileData.theSourcePhyCollisionText = Me.theInputFileReader.ReadChars(CInt(streamLastPosition - Me.theInputFileReader.BaseStream.Position - 1))
-		Catch
-		Finally
-		End Try
+		'	'NOTE: Use -1 to drop the null terminator character.
+		'	Me.thePhyFileData.theSourcePhyCollisionText = Me.theInputFileReader.ReadChars(CInt(streamLastPosition - Me.theInputFileReader.BaseStream.Position - 1))
+		'Catch
+		'Finally
+		'End Try
+
+		Me.thePhyFileData.theSourcePhyCollisionText = Common.ReadPhyCollisionTextSection(Me.theInputFileReader)
 	End Sub
 
 #End Region

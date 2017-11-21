@@ -34,7 +34,7 @@ Public Class SourceMdlFile32
 		Me.theMdlFileData.checksum = Me.theInputFileReader.ReadInt32()
 
 		Me.theMdlFileData.name = Me.theInputFileReader.ReadChars(Me.theMdlFileData.name.Length)
-		Me.theMdlFileData.theName = CStr(Me.theMdlFileData.name).Trim(Chr(0))
+		Me.theMdlFileData.theModelName = CStr(Me.theMdlFileData.name).Trim(Chr(0))
 
 		Me.theMdlFileData.fileSize = Me.theInputFileReader.ReadInt32()
 		Me.theMdlFileData.theActualFileSize = Me.theInputFileReader.BaseStream.Length
@@ -676,8 +676,8 @@ Public Class SourceMdlFile32
 
 					aSeqDesc.frameCount = Me.theInputFileReader.ReadInt32()
 
-					aSeqDesc.blendCount = Me.theInputFileReader.ReadInt32()
-					aSeqDesc.blendOffset = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.animDescIndex = Me.theInputFileReader.ReadInt32()
+					aSeqDesc.unknown = Me.theInputFileReader.ReadInt32()
 
 					aSeqDesc.sequenceGroup = Me.theInputFileReader.ReadInt32()
 
@@ -754,13 +754,15 @@ Public Class SourceMdlFile32
 						aSeqDesc.theActivityName = ""
 					End If
 
+					Me.theInputFileReader.BaseStream.Seek(seqInputFileStreamPosition + aSeqDesc.eventOffset, SeekOrigin.Begin)
 					'Me.ReadPoseKeys(seqInputFileStreamPosition, aSeqDesc)
-					'Me.ReadEvents(seqInputFileStreamPosition, aSeqDesc)
+					Me.ReadEvents(seqInputFileStreamPosition, aSeqDesc)
 					'Me.ReadAutoLayers(seqInputFileStreamPosition, aSeqDesc)
-					'Me.ReadMdlAnimBoneWeights(seqInputFileStreamPosition, aSeqDesc)
 					'Me.ReadSequenceIkLocks(seqInputFileStreamPosition, aSeqDesc)
 					'Me.ReadMdlAnimIndexes(seqInputFileStreamPosition, aSeqDesc)
 					'Me.ReadSequenceKeyValues(seqInputFileStreamPosition, aSeqDesc)
+
+					Me.ReadMdlAnimBoneWeights(Me.theInputFileReader.BaseStream.Position, aSeqDesc)
 
 					Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
 
@@ -1529,34 +1531,7 @@ Public Class SourceMdlFile32
 				'inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 
 				'Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
-
-				'If Me.theMdlFileData.theTextures IsNot Nothing AndAlso Me.theMdlFileData.theTextures.Count > 0 Then
-				'	'$pos1 += ($matname_num * 2);
-				'	Me.theInputFileReader.BaseStream.Seek(skinFamilyInputFileStreamPosition + Me.theMdlFileData.theTextures.Count * 2, SeekOrigin.Begin)
-				'End If
 			Next
-
-			''TEST: Remove skinRef from each skinFamily, if it is at same skinRef index in all skinFamilies. 
-			''      Start with the last skinRef index (Me.theMdlFileData.skinReferenceCount)
-			''      and step -1 to 0 until skinRefs are different between skinFamilies.
-			'Dim index As Integer = -1
-			'For currentSkinRef As Integer = Me.theMdlFileData.skinReferenceCount - 1 To 0 Step -1
-			'	For index = 0 To Me.theMdlFileData.skinFamilyCount - 1
-			'		Dim aSkinRef As Integer
-			'		aSkinRef = Me.theMdlFileData.theSkinFamilies(index)(currentSkinRef)
-
-			'		If aSkinRef <> currentSkinRef Then
-			'			Exit For
-			'		End If
-			'	Next
-
-			'	If index = Me.theMdlFileData.skinFamilyCount Then
-			'		For index = 0 To Me.theMdlFileData.skinFamilyCount - 1
-			'			Me.theMdlFileData.theSkinFamilies(index).RemoveAt(currentSkinRef)
-			'		Next
-			'		Me.theMdlFileData.skinReferenceCount -= 1
-			'	End If
-			'Next
 
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
 			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theSkinFamilies")
@@ -1863,7 +1838,8 @@ Public Class SourceMdlFile32
 	End Sub
 
 	Private Sub ReadMdlAnimBoneWeights(ByVal seqInputFileStreamPosition As Long, ByVal aSeqDesc As SourceMdlSequenceDesc32)
-		If Me.theMdlFileData.boneCount > 0 AndAlso aSeqDesc.weightOffset > 0 Then
+		'If Me.theMdlFileData.boneCount > 0 AndAlso aSeqDesc.weightOffset > 0 Then
+		If Me.theMdlFileData.boneCount > 0 Then
 			Try
 				Dim weightListInputFileStreamPosition As Long
 				'Dim inputFileStreamPosition As Long
@@ -1872,7 +1848,8 @@ Public Class SourceMdlFile32
 				'Dim fileOffsetStart2 As Long
 				'Dim fileOffsetEnd2 As Long
 
-				Me.theInputFileReader.BaseStream.Seek(seqInputFileStreamPosition + aSeqDesc.weightOffset, SeekOrigin.Begin)
+				'Me.theInputFileReader.BaseStream.Seek(seqInputFileStreamPosition + aSeqDesc.weightOffset, SeekOrigin.Begin)
+				Me.theInputFileReader.BaseStream.Seek(seqInputFileStreamPosition, SeekOrigin.Begin)
 				fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
 				aSeqDesc.theBoneWeightsAreDefault = True
@@ -1893,9 +1870,7 @@ Public Class SourceMdlFile32
 				Next
 
 				fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-				If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart) Then
-					Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aSeqDesc.theBoneWeights " + aSeqDesc.theBoneWeights.Count.ToString())
-				End If
+				Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aSeqDesc.theBoneWeights " + aSeqDesc.theBoneWeights.Count.ToString())
 			Catch ex As Exception
 				Dim debug As Integer = 4242
 			End Try
@@ -1939,8 +1914,8 @@ Public Class SourceMdlFile32
 		End If
 	End Sub
 
-	'Private Sub ReadMdlAnimIndexes(ByVal seqInputFileStreamPosition As Long, ByVal aSeqDesc As SourceMdlSequenceDesc36)
-	'	If (aSeqDesc.groupSize(0) * aSeqDesc.groupSize(1)) > 0 AndAlso aSeqDesc.blendOffset <> 0 Then
+	'Private Sub ReadMdlAnimIndexes(ByVal seqInputFileStreamPosition As Long, ByVal aSeqDesc As SourceMdlSequenceDesc32)
+	'	If (aSeqDesc.groupSize(0) * aSeqDesc.groupSize(1)) > 0 AndAlso aSeqDesc.unknown <> 0 Then
 	'		Try
 	'			Dim animIndexCount As Integer
 	'			animIndexCount = aSeqDesc.groupSize(0) * aSeqDesc.groupSize(1)
@@ -1949,7 +1924,7 @@ Public Class SourceMdlFile32
 	'			Dim fileOffsetStart As Long
 	'			Dim fileOffsetEnd As Long
 
-	'			Me.theInputFileReader.BaseStream.Seek(seqInputFileStreamPosition + aSeqDesc.blendOffset, SeekOrigin.Begin)
+	'			Me.theInputFileReader.BaseStream.Seek(seqInputFileStreamPosition + aSeqDesc.unknown, SeekOrigin.Begin)
 	'			fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
 	'			aSeqDesc.theAnimDescIndexes = New List(Of Short)(animIndexCount)
@@ -2589,6 +2564,7 @@ Public Class SourceMdlFile32
 					aMesh.center.x = Me.theInputFileReader.ReadSingle()
 					aMesh.center.y = Me.theInputFileReader.ReadSingle()
 					aMesh.center.z = Me.theInputFileReader.ReadSingle()
+
 					For x As Integer = 0 To aMesh.unused.Length - 1
 						aMesh.unused(x) = Me.theInputFileReader.ReadInt32()
 					Next

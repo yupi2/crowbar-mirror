@@ -170,7 +170,7 @@ Public Class SourceQcFile44
 		'modelPath = FileManager.GetPath(CStr(theSourceEngineModel.theMdlFileHeader.name).Trim(Chr(0)))
 		'modelPathFileName = Path.Combine(modelPath, theSourceEngineModel.ModelName + ".mdl")
 		'modelPathFileName = CStr(theSourceEngineModel.MdlFileHeader.name).Trim(Chr(0))
-		modelPathFileName = Me.theMdlFileData.theName
+		modelPathFileName = Me.theMdlFileData.theModelName
 
 		Me.theOutputFileStreamWriter.WriteLine()
 
@@ -224,7 +224,7 @@ Public Class SourceQcFile44
 		End If
 	End Sub
 
-	Public Sub WriteConstDirectionalLightCommand()
+	Public Sub WriteConstantDirectionalLightCommand()
 		Dim line As String = ""
 
 		'$constantdirectionallight
@@ -1364,7 +1364,7 @@ Public Class SourceQcFile44
 				line += aPoseParamDesc.startingValue.ToString("0.######", TheApp.InternalNumberFormat)
 				line += " "
 				line += aPoseParamDesc.endingValue.ToString("0.######", TheApp.InternalNumberFormat)
-				line += " "
+				line += " loop "
 				line += aPoseParamDesc.loopingRange.ToString("0.######", TheApp.InternalNumberFormat)
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			Next
@@ -1932,6 +1932,7 @@ Public Class SourceQcFile44
 		Me.WriteSectionFramesCommand()
 		Me.WritePoseParameterCommand()
 		Me.WriteIkChainCommand()
+		Me.WriteIkAutoPlayLockCommand()
 		Me.FillInWeightLists()
 		'NOTE: Must write $WeightList lines before animations or sequences that use them.
 		Me.WriteWeightListCommand()
@@ -1945,7 +1946,6 @@ Public Class SourceQcFile44
 		Catch ex As Exception
 		End Try
 		Me.WriteIncludeModelCommands()
-		Me.WriteIkAutoPlayLockCommand()
 		Me.WriteBoneSaveFrameCommand()
 	End Sub
 
@@ -3378,6 +3378,46 @@ Public Class SourceQcFile44
 			line += SourceFileNamesModule.GetVrdFileName(Me.theModelName)
 			line += """"
 			Me.theOutputFileStreamWriter.WriteLine(line)
+		End If
+	End Sub
+
+	Private Sub WriteLimitRotationCommand()
+		Dim line As String = ""
+
+		'$limitrotation "boneName" "sequenceName1" [["sequenceName2"] ... "sequenceNameX"]
+		If Me.theMdlFileData.theBones IsNot Nothing Then
+			Dim aBone As SourceMdlBone
+			Dim emptyLineIsAlreadyWritten As Boolean
+
+			emptyLineIsAlreadyWritten = False
+			For i As Integer = 0 To Me.theMdlFileData.theBones.Count - 1
+				aBone = Me.theMdlFileData.theBones(i)
+
+				If (aBone.flags And SourceMdlBone.BONE_FIXED_ALIGNMENT) > 0 Then
+					If Not emptyLineIsAlreadyWritten Then
+						Me.theOutputFileStreamWriter.WriteLine()
+						emptyLineIsAlreadyWritten = True
+					End If
+
+					If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+						line += "$LimitRotation "
+					Else
+						line += "$limitrotation "
+					End If
+					line += """"
+					line += aBone.theName
+					line += """"
+
+					'TODO: Finish WriteLimitRotationCommand().
+					'If aBone.qAlignment = aBone.rotation Then
+					'	line += """"
+					'	line += aBone.theName
+					'	line += """"
+					'End If
+
+					Me.theOutputFileStreamWriter.WriteLine(line)
+				End If
+			Next
 		End If
 	End Sub
 

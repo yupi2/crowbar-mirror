@@ -170,7 +170,7 @@ Public Class SourceQcFile46
 		'modelPath = FileManager.GetPath(CStr(theSourceEngineModel.theMdlFileHeader.name).Trim(Chr(0)))
 		'modelPathFileName = Path.Combine(modelPath, theSourceEngineModel.ModelName + ".mdl")
 		'modelPathFileName = CStr(theSourceEngineModel.MdlFileHeader.name).Trim(Chr(0))
-		modelPathFileName = Me.theMdlFileData.theName
+		modelPathFileName = Me.theMdlFileData.theModelName
 
 		Me.theOutputFileStreamWriter.WriteLine()
 
@@ -1359,7 +1359,7 @@ Public Class SourceQcFile46
 				line += aPoseParamDesc.startingValue.ToString("0.######", TheApp.InternalNumberFormat)
 				line += " "
 				line += aPoseParamDesc.endingValue.ToString("0.######", TheApp.InternalNumberFormat)
-				line += " "
+				line += " loop "
 				line += aPoseParamDesc.loopingRange.ToString("0.######", TheApp.InternalNumberFormat)
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			Next
@@ -1952,6 +1952,7 @@ Public Class SourceQcFile46
 		Me.WriteSectionFramesCommand()
 		Me.WritePoseParameterCommand()
 		Me.WriteIkChainCommand()
+		Me.WriteIkAutoPlayLockCommand()
 		Me.FillInWeightLists()
 		'NOTE: Must write $WeightList lines before animations or sequences that use them.
 		Me.WriteWeightListCommand()
@@ -1965,7 +1966,6 @@ Public Class SourceQcFile46
 		Catch ex As Exception
 		End Try
 		Me.WriteIncludeModelCommands()
-		Me.WriteIkAutoPlayLockCommand()
 		Me.WriteBoneSaveFrameCommand()
 	End Sub
 

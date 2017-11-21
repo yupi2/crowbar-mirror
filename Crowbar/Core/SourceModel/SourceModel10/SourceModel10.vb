@@ -491,6 +491,7 @@ Public Class SourceModel10
 			Me.theMdlFileDataGeneric = Me.theMdlFileData
 		End If
 
+		Me.theMdlFileData.theFileName = Me.theName
 		Dim mdlFile As New SourceMdlFile10(Me.theInputFileReader, Me.theMdlFileData)
 
 		mdlFile.ReadMdlHeader()

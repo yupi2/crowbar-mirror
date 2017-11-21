@@ -279,12 +279,13 @@ Public Class FileManager
 		Try
 			While True
 				aChar = inputFileReader.ReadChar()
-				If aChar = Chr(&HA) Then
+				If aChar = Chr(0) OrElse aChar = Chr(&HA) Then
 					Exit While
 				End If
 				line.Append(aChar)
 			End While
 		Catch ex As Exception
+			Dim debug As Integer = 4242
 		End Try
 		If line.Length > 0 Then
 			Return line.ToString()
@@ -379,23 +380,24 @@ Public Class FileManager
 	'End Function
 
 	Public Shared Function GetRelativePathFileName(ByVal fromPath As String, ByVal toPathFileName As String) As String
-		'Dim fromPathAbsolute As String
-		'Dim toPathAbsolute As String
+		Dim fromPathAbsolute As String
+		Dim toPathAbsolute As String
 
-		'fromPathAbsolute = path.GetFullPath(path.Combine(basepath, relative))
+		fromPathAbsolute = Path.GetFullPath(fromPath)
+		toPathAbsolute = Path.GetFullPath(toPathFileName)
 
-		Dim fromAttr As Integer = GetPathAttribute(fromPath)
-		Dim toAttr As Integer = GetPathAttribute(toPathFileName)
+		Dim fromAttr As Integer = GetPathAttribute(fromPathAbsolute)
+		Dim toAttr As Integer = GetPathAttribute(toPathAbsolute)
 
-		Dim path As New StringBuilder(260)
-		' MAX_PATH
-		If PathRelativePathTo(path, fromPath, fromAttr, toPathFileName, toAttr) = 0 Then
+		' MAX_PATH = 260
+		Dim newPathFileName As New StringBuilder(260)
+		If PathRelativePathTo(newPathFileName, fromPathAbsolute, fromAttr, toPathAbsolute, toAttr) = 0 Then
 			'Throw New ArgumentException("Paths must have a common prefix")
-			Return toPathFileName
+			Return toPathAbsolute
 		End If
 
 		Dim cleanedPath As String
-		cleanedPath = path.ToString()
+		cleanedPath = newPathFileName.ToString()
 		If cleanedPath.StartsWith(".\") Then
 			cleanedPath = cleanedPath.Remove(0, 2)
 		End If
@@ -454,13 +456,14 @@ Public Class FileManager
 		Return cleanPathFileName
 	End Function
 
-	Public Shared Function GetLongestExistingPath(ByVal pathFileName As String) As String
-		If pathFileName <> "" AndAlso Not Directory.Exists(pathFileName) Then
+	Public Shared Function GetLongestExtantPath(ByVal iPath As String, Optional ByRef topNonextantPath As String = "") As String
+		If iPath <> "" AndAlso Not Directory.Exists(iPath) Then
+			topNonextantPath = iPath
 			Dim shorterPath As String
-			shorterPath = FileManager.GetPath(pathFileName)
-			Return FileManager.GetLongestExistingPath(shorterPath)
+			shorterPath = FileManager.GetPath(iPath)
+			Return FileManager.GetLongestExtantPath(shorterPath, topNonextantPath)
 		End If
-		Return pathFileName
+		Return iPath
 	End Function
 
 	' Example: "C:\folder\subfolder\temp" returns "C:\folder".
@@ -496,7 +499,7 @@ Public Class FileManager
 		If Not String.IsNullOrEmpty(fullPath) Then
 			Try
 				For Each aFullPath As String In Directory.EnumerateDirectories(fullPath)
-					FileManager.DeleteEmptySubpath(aFullPath)
+					fullPathDeleted = FileManager.DeleteEmptySubpath(aFullPath)
 				Next
 
 				Dim entries As String() = Directory.GetFileSystemEntries(fullPath)

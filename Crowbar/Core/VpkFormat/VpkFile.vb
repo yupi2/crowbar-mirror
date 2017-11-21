@@ -45,6 +45,8 @@ Public Class VpkFile
 			Me.theVpkFileData.unused01 = Me.theInputFileReader.ReadUInt32()
 		End If
 
+		Me.theVpkFileData.theDirectoryOffset = Me.theInputFileReader.BaseStream.Position
+
 		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
 		Me.theVpkFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "VPK File Header")
 	End Sub
@@ -160,7 +162,7 @@ Public Class VpkFile
 					Me.theOutputFileWriter = New BinaryWriter(outputFileStream, System.Text.Encoding.ASCII)
 
 					If entry.archiveIndex = &H7FFF Then
-						Me.theInputFileReader.BaseStream.Seek(&HC + Me.theVpkFileData.directoryLength + entry.dataOffset, SeekOrigin.Begin)
+						Me.theInputFileReader.BaseStream.Seek(Me.theVpkFileData.theDirectoryOffset + Me.theVpkFileData.directoryLength + entry.dataOffset, SeekOrigin.Begin)
 					Else
 						Me.theInputFileReader.BaseStream.Seek(entry.dataOffset, SeekOrigin.Begin)
 					End If

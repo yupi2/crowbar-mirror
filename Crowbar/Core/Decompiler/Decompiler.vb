@@ -89,7 +89,7 @@ Public Class Decompiler
 			If File.Exists(TheApp.Settings.DecompileMdlPathFileName) Then
 				outputPath = Path.Combine(FileManager.GetPath(TheApp.Settings.DecompileMdlPathFileName), TheApp.Settings.DecompileOutputSubfolderName)
 			ElseIf Directory.Exists(TheApp.Settings.DecompileMdlPathFileName) Then
-				outputPath = Path.Combine(TheApp.Settings.DecompileMdlPathFileName, TheApp.Settings.DecompileOutputSubfolderName)
+				outputPath = Path.GetFullPath(Path.Combine(TheApp.Settings.DecompileMdlPathFileName, TheApp.Settings.DecompileOutputSubfolderName))
 			Else
 				outputPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
 			End If
@@ -958,8 +958,6 @@ Public Class Decompiler
 	End Sub
 
 	Private Sub UpdateProgressInternal(ByVal progressValue As Integer, ByVal line As String)
-		'If progressValue = 0 Then
-		'	Do not write to file stream.
 		If progressValue = 1 AndAlso Me.theLogFileStream IsNot Nothing Then
 			Me.theLogFileStream.WriteLine(line)
 			Me.theLogFileStream.Flush()

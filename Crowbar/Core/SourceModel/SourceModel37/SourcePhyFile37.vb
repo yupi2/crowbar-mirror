@@ -506,6 +506,9 @@ Public Class SourcePhyFile37
 							aSourcePhysCollisionModel.theDragCoefficientIsValid = True
 							'aSourcePhysCollisionModel.theDragCoefficient = CSng(value)
 							aSourcePhysCollisionModel.theDragCoefficient = Single.Parse(value, TheApp.InternalNumberFormat)
+						ElseIf key = "rollingDrag" Then
+							aSourcePhysCollisionModel.theRollingDragCoefficientIsValid = True
+							aSourcePhysCollisionModel.theRollingDragCoefficient = Single.Parse(value, TheApp.InternalNumberFormat)
 						ElseIf key = "inertia" Then
 							'aSourcePhysCollisionModel.theInertia = CSng(value)
 							aSourcePhysCollisionModel.theInertia = Single.Parse(value, TheApp.InternalNumberFormat)
@@ -703,6 +706,7 @@ Public Class SourcePhyFile37
 
 				Dim delimiters As Char() = {","c}
 				Dim tokens As String() = {""}
+				Dim thelist As List(Of String)
 				While thereIsAValue
 					thereIsAValue = FileManager.ReadKeyValueLine(Me.theInputFileReader, key, value)
 					If key = "rootname" Then
@@ -715,6 +719,19 @@ Public Class SourcePhyFile37
 					ElseIf thereIsAValue Then
 						If key = "concave" Then
 							Me.thePhyFileData.theSourcePhyEditParamsSection.concave = value
+						ElseIf key = "jointmerge" Then
+							tokens = value.Split(delimiters)
+
+							If Me.thePhyFileData.theSourcePhyEditParamsSection.jointMergeMap Is Nothing Then
+								Me.thePhyFileData.theSourcePhyEditParamsSection.jointMergeMap = New Dictionary(Of String, List(Of String))()
+							End If
+							If Not Me.thePhyFileData.theSourcePhyEditParamsSection.jointMergeMap.ContainsKey(tokens(0)) Then
+								thelist = New List(Of String)()
+								Me.thePhyFileData.theSourcePhyEditParamsSection.jointMergeMap.Add(tokens(0), thelist)
+							Else
+								thelist = Me.thePhyFileData.theSourcePhyEditParamsSection.jointMergeMap(tokens(0))
+							End If
+							thelist.Add(tokens(1))
 						ElseIf key = "totalmass" Then
 							Me.thePhyFileData.theSourcePhyEditParamsSection.totalMass = Single.Parse(value, TheApp.InternalNumberFormat)
 						End If
@@ -727,22 +744,25 @@ Public Class SourcePhyFile37
 				End If
 				thereIsAValue = True
 			Loop Until line Is Nothing
-		Catch
+		Catch ex As Exception
+			Dim debug As Integer = 4242
 		Finally
 		End Try
 	End Sub
 
 	Public Sub ReadCollisionTextSection()
-		Dim streamLastPosition As Long
+		'Dim streamLastPosition As Long
 
-		Try
-			streamLastPosition = Me.theInputFileReader.BaseStream.Length() - 1
+		'Try
+		'	streamLastPosition = Me.theInputFileReader.BaseStream.Length() - 1
 
-			'NOTE: Use -1 to drop the null terminator character.
-			Me.thePhyFileData.theSourcePhyCollisionText = Me.theInputFileReader.ReadChars(CInt(streamLastPosition - Me.theInputFileReader.BaseStream.Position - 1))
-		Catch
-		Finally
-		End Try
+		'	'NOTE: Use -1 to drop the null terminator character.
+		'	Me.thePhyFileData.theSourcePhyCollisionText = Me.theInputFileReader.ReadChars(CInt(streamLastPosition - Me.theInputFileReader.BaseStream.Position - 1))
+		'Catch
+		'Finally
+		'End Try
+
+		Me.thePhyFileData.theSourcePhyCollisionText = Common.ReadPhyCollisionTextSection(Me.theInputFileReader)
 	End Sub
 
 #End Region

@@ -80,8 +80,8 @@ Public Class SourceModel37
 
 	Public Overrides ReadOnly Property HasPhysicsMeshData As Boolean
 		Get
-			If Me.thePhyFileData IsNot Nothing _
-			 AndAlso Me.thePhyFileData.theSourcePhyCollisionDatas IsNot Nothing _
+			If Me.thePhyFileDataGeneric IsNot Nothing _
+			 AndAlso Me.thePhyFileDataGeneric.theSourcePhyCollisionDatas IsNot Nothing _
 			 AndAlso Not Me.theMdlFileData.theMdlFileOnlyHasAnimations _
 			 AndAlso Me.theMdlFileData.theBones IsNot Nothing _
 			 AndAlso Me.theMdlFileData.theBones.Count > 0 Then
@@ -94,15 +94,15 @@ Public Class SourceModel37
 
 	Public Overrides ReadOnly Property HasProceduralBonesData As Boolean
 		Get
-			'If Me.theMdlFileData IsNot Nothing _
-			' AndAlso Me.theMdlFileData.theProceduralBonesCommandIsUsed _
-			' AndAlso Not Me.theMdlFileData.theMdlFileOnlyHasAnimations _
-			' AndAlso Me.theMdlFileData.theBones IsNot Nothing _
-			' AndAlso Me.theMdlFileData.theBones.Count > 0 Then
-			'	Return True
-			'Else
-			Return False
-			'End If
+			If Me.theMdlFileData IsNot Nothing _
+			 AndAlso Me.theMdlFileData.theProceduralBonesCommandIsUsed _
+			 AndAlso Not Me.theMdlFileData.theMdlFileOnlyHasAnimations _
+			 AndAlso Me.theMdlFileData.theBones IsNot Nothing _
+			 AndAlso Me.theMdlFileData.theBones.Count > 0 Then
+				Return True
+			Else
+				Return False
+			End If
 		End Get
 	End Property
 
@@ -120,13 +120,13 @@ Public Class SourceModel37
 	Public Overrides ReadOnly Property HasVertexAnimationData As Boolean
 		Get
 			'TODO: Change back to commented-out lines once implemented.
-			'If Not Me.theMdlFileData.theMdlFileOnlyHasAnimations _
-			' AndAlso Me.theMdlFileData.theFlexDescs IsNot Nothing _
-			' AndAlso Me.theMdlFileData.theFlexDescs.Count > 0 Then
-			'	Return True
-			'Else
-			'	Return False
-			'End If
+			If Not Me.theMdlFileData.theMdlFileOnlyHasAnimations _
+			 AndAlso Me.theMdlFileData.theFlexDescs IsNot Nothing _
+			 AndAlso Me.theMdlFileData.theFlexDescs.Count > 0 Then
+				Return True
+			Else
+				Return False
+			End If
 			Return False
 		End Get
 	End Property
@@ -173,7 +173,7 @@ Public Class SourceModel37
 			If status = StatusMessage.Success Then
 				Try
 					Me.ReadFile(Me.thePhyPathFileName, AddressOf Me.ReadPhyFile_Internal)
-					If Me.thePhyFileData.checksum <> Me.theMdlFileData.checksum Then
+					If Me.thePhyFileDataGeneric.checksum <> Me.theMdlFileData.checksum Then
 						'status = StatusMessage.WarningPhyChecksumDoesNotMatchMdl
 						Me.NotifySourceModelProgress(ProgressOptions.WarningPhyFileChecksumDoesNotMatchMdlFileChecksum, "")
 					End If
@@ -261,6 +261,16 @@ Public Class SourceModel37
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		End Try
+
+		Return status
+	End Function
+
+	Public Overrides Function WriteVrdFile(ByVal vrdPathFileName As String) As AppEnums.StatusMessage
+		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+
+		Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, vrdPathFileName)
+		Me.WriteTextFile(vrdPathFileName, AddressOf Me.WriteVrdFile)
+		Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, vrdPathFileName)
 
 		Return status
 	End Function
@@ -372,21 +382,22 @@ Public Class SourceModel37
 		'' Read what WriteKeyValues() writes.
 		'mdlFile.ReadKeyValues()
 
-		'' Post-processing.
+		' Post-processing.
+		mdlFile.CreateFlexFrameList()
 		'mdlFile.BuildBoneTransforms()
 
 		mdlFile.ReadFinalBytesAlignment()
 	End Sub
 
 	Protected Overrides Sub ReadPhyFile_Internal()
-		If Me.thePhyFileData Is Nothing Then
-			Me.thePhyFileData = New SourcePhyFileData37()
+		If Me.thePhyFileDataGeneric Is Nothing Then
+			Me.thePhyFileDataGeneric = New SourcePhyFileData()
 		End If
 
-		Dim phyFile As New SourcePhyFile37(Me.theInputFileReader, Me.thePhyFileData)
+		Dim phyFile As New SourcePhyFile37(Me.theInputFileReader, Me.thePhyFileDataGeneric)
 
 		phyFile.ReadSourcePhyHeader()
-		If Me.thePhyFileData.solidCount > 0 Then
+		If Me.thePhyFileDataGeneric.solidCount > 0 Then
 			phyFile.ReadSourceCollisionData()
 			phyFile.CalculateVertexNormals()
 			phyFile.ReadSourcePhysCollisionModels()
@@ -412,7 +423,7 @@ Public Class SourceModel37
 	End Sub
 
 	Protected Overrides Sub WriteQcFile()
-		Dim qcFile As New SourceQcFile37(Me.theOutputFileTextWriter, Me.theQcPathFileName, Me.theMdlFileData, Me.thePhyFileData, Me.theVtxFileData, Me.theName)
+		Dim qcFile As New SourceQcFile37(Me.theOutputFileTextWriter, Me.theQcPathFileName, Me.theMdlFileData, Me.thePhyFileDataGeneric, Me.theVtxFileData, Me.theName)
 
 		Try
 			qcFile.WriteHeaderComment()
@@ -539,7 +550,7 @@ Public Class SourceModel37
 	End Function
 
 	Protected Overrides Sub WritePhysicsMeshSmdFile()
-		Dim physicsMeshSmdFile As New SourceSmdFile37(Me.theOutputFileTextWriter, Me.theMdlFileData, Me.thePhyFileData)
+		Dim physicsMeshSmdFile As New SourceSmdFile37(Me.theOutputFileTextWriter, Me.theMdlFileData, Me.thePhyFileDataGeneric)
 
 		Try
 			physicsMeshSmdFile.WriteHeaderComment()
@@ -548,6 +559,18 @@ Public Class SourceModel37
 			physicsMeshSmdFile.WriteNodesSection(-1)
 			physicsMeshSmdFile.WriteSkeletonSection(-1)
 			physicsMeshSmdFile.WriteTrianglesSectionForPhysics()
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		Finally
+		End Try
+	End Sub
+
+	Protected Overrides Sub WriteVrdFile()
+		Dim vrdFile As New SourceVrdFile37(Me.theOutputFileTextWriter, Me.theMdlFileData)
+
+		Try
+			vrdFile.WriteHeaderComment()
+			vrdFile.WriteCommands()
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		Finally
@@ -568,12 +591,28 @@ Public Class SourceModel37
 		End Try
 	End Sub
 
+	Protected Overrides Sub WriteVertexAnimationVtaFile()
+		Dim vertexAnimationVtaFile As New SourceVtaFile37(Me.theOutputFileTextWriter, Me.theMdlFileData)
+
+		Try
+			vertexAnimationVtaFile.WriteHeaderComment()
+
+			vertexAnimationVtaFile.WriteHeaderSection()
+			vertexAnimationVtaFile.WriteNodesSection()
+			vertexAnimationVtaFile.WriteSkeletonSectionForVertexAnimation()
+			vertexAnimationVtaFile.WriteVertexAnimationSection()
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		Finally
+		End Try
+	End Sub
+
 #End Region
 
 #Region "Data"
 
 	Private theMdlFileData As SourceMdlFileData37
-	Private thePhyFileData As SourcePhyFileData37
+	'Private thePhyFileData As SourcePhyFileData37
 	Private theVtxFileData As SourceVtxFileData06
 
 #End Region

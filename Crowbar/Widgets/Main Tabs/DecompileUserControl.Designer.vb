@@ -74,6 +74,7 @@ Partial Class DecompileUserControl
 		Me.DecompilerLogTextBox = New Crowbar.RichTextBoxEx()
 		Me.DecompiledFilesComboBox = New System.Windows.Forms.ComboBox()
 		Me.GotoDecompiledFileButton = New System.Windows.Forms.Button()
+		Me.OutputSubfolderTextBox = New Crowbar.TextBoxEx()
 		Me.Panel2.SuspendLayout()
 		CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
 		Me.SplitContainer1.Panel1.SuspendLayout()
@@ -161,6 +162,7 @@ Partial Class DecompileUserControl
 		Me.Panel2.Controls.Add(Me.DecompileComboBox)
 		Me.Panel2.Controls.Add(Me.BrowseForOutputPathButton)
 		Me.Panel2.Controls.Add(Me.OutputPathTextBox)
+		Me.Panel2.Controls.Add(Me.OutputSubfolderTextBox)
 		Me.Panel2.Controls.Add(Me.OutputPathComboBox)
 		Me.Panel2.Controls.Add(Me.Label3)
 		Me.Panel2.Controls.Add(Me.UseDefaultOutputSubfolderButton)
@@ -657,6 +659,16 @@ Partial Class DecompileUserControl
 		Me.GotoDecompiledFileButton.Text = "Goto"
 		Me.GotoDecompiledFileButton.UseVisualStyleBackColor = True
 		'
+		'OutputSubfolderTextBox
+		'
+		Me.OutputSubfolderTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.OutputSubfolderTextBox.Location = New System.Drawing.Point(209, 34)
+		Me.OutputSubfolderTextBox.Name = "OutputSubfolderTextBox"
+		Me.OutputSubfolderTextBox.Size = New System.Drawing.Size(445, 21)
+		Me.OutputSubfolderTextBox.TabIndex = 20
+		Me.OutputSubfolderTextBox.Visible = False
+		'
 		'DecompileUserControl
 		'
 		Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -730,5 +742,6 @@ Partial Class DecompileUserControl
 	Friend WithEvents OptionsGroupBox As System.Windows.Forms.GroupBox
 	Friend WithEvents Panel3 As System.Windows.Forms.Panel
 	Friend WithEvents OnlyChangedMaterialsInTextureGroupLinesCheckBox As System.Windows.Forms.CheckBox
+	Friend WithEvents OutputSubfolderTextBox As Crowbar.TextBoxEx
 
 End Class

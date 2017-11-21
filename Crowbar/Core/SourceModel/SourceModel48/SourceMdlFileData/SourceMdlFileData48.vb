@@ -560,16 +560,16 @@ Public Class SourceMdlFileData48
 	Public theSectionFrameCount As Integer
 	Public theSectionFrameMinFrameCount As Integer
 
-	'Public theActualFileSize As Long
 	Public theModelCommandIsUsed As Boolean
-	Public theFlexFrames As List(Of FlexFrame)
-	Public theEyelidFlexFrameIndexes As List(Of Integer)
-	'Public theUpperEyelidFlexFrameIndexes As List(Of Integer)
-
-	Public theFirstAnimationDesc As SourceMdlAnimationDesc48
-	Public theFirstAnimationDescFrameLines As SortedList(Of Integer, AnimationFrameLine)
 	'Public theMdlFileOnlyHasAnimations As Boolean
 	Public theProceduralBonesCommandIsUsed As Boolean
+
+	Public theBoneNameToBoneIndexMap As New SortedList(Of String, Integer)()
+	'Public theEyelidFlexFrameIndexes As List(Of Integer)
+	'Public theUpperEyelidFlexFrameIndexes As List(Of Integer)
+	Public theFirstAnimationDesc As SourceMdlAnimationDesc48
+	Public theFirstAnimationDescFrameLines As SortedList(Of Integer, AnimationFrameLine)
+	Public theFlexFrames As List(Of FlexFrame)
 	Public theWeightLists As List(Of SourceMdlWeightList)
 
 	Public theBoneTransforms As List(Of SourceMdlBoneTransform)

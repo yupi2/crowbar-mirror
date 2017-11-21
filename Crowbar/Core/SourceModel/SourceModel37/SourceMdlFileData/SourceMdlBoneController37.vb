@@ -54,4 +54,43 @@
 	Public STUDIO_TYPES As Integer = &H3FFFF
 	Public STUDIO_RLOOP As Integer = &H40000
 
+	Public ReadOnly Property TypeName() As String
+		Get
+			If (Me.type And STUDIO_X) > 0 Then
+				Return "X"
+			ElseIf (Me.type And STUDIO_Y) > 0 Then
+				Return "Y"
+			ElseIf (Me.type And STUDIO_Z) > 0 Then
+				Return "Z"
+			ElseIf (Me.type And STUDIO_XR) > 0 Then
+				Return "XR"
+			ElseIf (Me.type And STUDIO_YR) > 0 Then
+				Return "YR"
+			ElseIf (Me.type And STUDIO_ZR) > 0 Then
+				Return "ZR"
+			ElseIf (Me.type And STUDIO_LX) > 0 Then
+				Return "LX"
+			ElseIf (Me.type And STUDIO_LY) > 0 Then
+				Return "LY"
+			ElseIf (Me.type And STUDIO_LZ) > 0 Then
+				Return "LZ"
+			ElseIf (Me.type And STUDIO_LXR) > 0 Then
+				Return "LXR"
+			ElseIf (Me.type And STUDIO_LYR) > 0 Then
+				Return "LYR"
+			ElseIf (Me.type And STUDIO_LZR) > 0 Then
+				Return "LZR"
+				'ElseIf (Me.type And STUDIO_LINEAR) > 0 Then
+				'	Return "LM"
+				'ElseIf (Me.type And STUDIO_QUADRATIC_MOTION) > 0 Then
+				'	Return "LQ"
+			End If
+
+			Return ""
+		End Get
+		'Set(ByVal value As String)
+
+		'End Set
+	End Property
+
 End Class

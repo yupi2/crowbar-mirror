@@ -592,7 +592,7 @@
 	Public theModelCommandIsUsed As Boolean
 	Public theBodyPartIndexThatShouldUseModelCommand As Integer
 	Public theFlexFrames As List(Of FlexFrame)
-	Public theEyelidFlexFrameIndexes As List(Of Integer)
+	'Public theEyelidFlexFrameIndexes As List(Of Integer)
 	'Public theUpperEyelidFlexFrameIndexes As List(Of Integer)
 
 	Public theFirstAnimationDesc As SourceMdlAnimationDesc49

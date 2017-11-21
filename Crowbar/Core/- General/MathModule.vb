@@ -210,6 +210,110 @@ Module MathModule
 		matrixColumn3.z = 0
 	End Sub
 
+	'FROM: [36] SourceEngine2003_source HL2 Beta 2003\src_main\Public\Mathlib.cpp
+	'void MatrixAngles( const matrix3x4_t& matrix, float *angles )
+	'{ 
+	'	Assert( s_bMathlibInitialized );
+	'	float forward[3];
+	'	float left[3];
+	'	float up[3];
+	'
+	'	//
+	'	// Extract the basis vectors from the matrix. Since we only need the Z
+	'	// component of the up vector, we don't get X and Y.
+	'	//
+	'	forward[0] = matrix[0][0];
+	'	forward[1] = matrix[1][0];
+	'	forward[2] = matrix[2][0];
+	'	left[0] = matrix[0][1];
+	'	left[1] = matrix[1][1];
+	'	left[2] = matrix[2][1];
+	'	up[2] = matrix[2][2];
+	'
+	'	float xyDist = sqrtf( forward[0] * forward[0] + forward[1] * forward[1] );
+	'	
+	'	// enough here to get angles?
+	'	if ( xyDist > 0.001f )
+	'	{
+	'		// (yaw)	y = ATAN( forward.y, forward.x );		-- in our space, forward is the X axis
+	'		angles[1] = RAD2DEG( atan2f( forward[1], forward[0] ) );
+	'
+	'		// The engine does pitch inverted from this, but we always end up negating it in the DLL
+	'		// UNDONE: Fix the engine to make it consistent
+	'		// (pitch)	x = ATAN( -forward.z, sqrt(forward.x*forward.x+forward.y*forward.y) );
+	'		angles[0] = RAD2DEG( atan2f( -forward[2], xyDist ) );
+	'
+	'		// (roll)	z = ATAN( left.z, up.z );
+	'		angles[2] = RAD2DEG( atan2f( left[2], up[2] ) );
+	'	}
+	'	else	// forward is mostly Z, gimbal lock-
+	'	{
+	'		// (yaw)	y = ATAN( -left.x, left.y );			-- forward is mostly z, so use right for yaw
+	'		angles[1] = RAD2DEG( atan2f( -left[0], left[1] ) );
+	'
+	'		// The engine does pitch inverted from this, but we always end up negating it in the DLL
+	'		// UNDONE: Fix the engine to make it consistent
+	'		// (pitch)	x = ATAN( -forward.z, sqrt(forward.x*forward.x+forward.y*forward.y) );
+	'		angles[0] = RAD2DEG( atan2f( -forward[2], xyDist ) );
+	'
+	'		// Assume no roll in this case as one degree of freedom has been lost (i.e. yaw == roll)
+	'		angles[2] = 0;
+	'	}
+	'}
+	Public Sub MatrixAnglesInDegrees(ByVal matrixColumn0 As SourceVector, ByVal matrixColumn1 As SourceVector, ByVal matrixColumn2 As SourceVector, ByVal matrixColumn3 As SourceVector, ByRef pitchDegrees As Double, ByRef yawDegrees As Double, ByRef rollDegrees As Double)
+		Dim forward As New SourceVector()
+		Dim left As New SourceVector()
+		Dim up As New SourceVector()
+
+		forward.x = matrixColumn0.x
+		forward.y = matrixColumn0.y
+		forward.z = matrixColumn0.z
+		left.x = matrixColumn1.x
+		left.y = matrixColumn1.y
+		left.z = matrixColumn1.z
+		up.z = matrixColumn2.z
+
+		Dim xyDist As Double
+		xyDist = Math.Sqrt(forward.x * forward.x + forward.y * forward.y)
+
+		If xyDist > 0.001 Then
+			yawDegrees = MathModule.RadiansToDegrees(Math.Atan2(forward.y, forward.x))
+			pitchDegrees = MathModule.RadiansToDegrees(Math.Atan2(-forward.z, xyDist))
+			rollDegrees = MathModule.RadiansToDegrees(Math.Atan2(left.z, up.z))
+		Else
+			yawDegrees = MathModule.RadiansToDegrees(Math.Atan2(-left.x, left.y))
+			pitchDegrees = MathModule.RadiansToDegrees(Math.Atan2(-forward.z, xyDist))
+			rollDegrees = 0
+		End If
+	End Sub
+
+	Public Sub MatrixAnglesInRadians(ByVal matrixColumn0 As SourceVector, ByVal matrixColumn1 As SourceVector, ByVal matrixColumn2 As SourceVector, ByVal matrixColumn3 As SourceVector, ByRef pitchRadians As Double, ByRef yawRadians As Double, ByRef rollRadians As Double)
+		Dim forward As New SourceVector()
+		Dim left As New SourceVector()
+		Dim up As New SourceVector()
+
+		forward.x = matrixColumn0.x
+		forward.y = matrixColumn0.y
+		forward.z = matrixColumn0.z
+		left.x = matrixColumn1.x
+		left.y = matrixColumn1.y
+		left.z = matrixColumn1.z
+		up.z = matrixColumn2.z
+
+		Dim xyDist As Double
+		xyDist = Math.Sqrt(forward.x * forward.x + forward.y * forward.y)
+
+		If xyDist > 0.001 Then
+			yawRadians = Math.Atan2(forward.y, forward.x)
+			pitchRadians = Math.Atan2(-forward.z, xyDist)
+			rollRadians = Math.Atan2(left.z, up.z)
+		Else
+			yawRadians = Math.Atan2(-left.x, left.y)
+			pitchRadians = Math.Atan2(-forward.z, xyDist)
+			rollRadians = 0
+		End If
+	End Sub
+
 	'FROM: [1999] HLStandardSDK\SourceCode\utils\common\mathlib.c
 	'void R_ConcatTransforms (const float in1[3][4], const float in2[3][4], float out[3][4])
 	'{
@@ -253,6 +357,64 @@ Module MathModule
 		out_matrixColumn1.z = in1_matrixColumn0.z * in2_matrixColumn1.x + in1_matrixColumn1.z * in2_matrixColumn1.y + in1_matrixColumn2.z * in2_matrixColumn1.z
 		out_matrixColumn2.z = in1_matrixColumn0.z * in2_matrixColumn2.x + in1_matrixColumn1.z * in2_matrixColumn2.y + in1_matrixColumn2.z * in2_matrixColumn2.z
 		out_matrixColumn3.z = in1_matrixColumn0.z * in2_matrixColumn3.x + in1_matrixColumn1.z * in2_matrixColumn3.y + in1_matrixColumn2.z * in2_matrixColumn3.z + in1_matrixColumn3.z
+	End Sub
+
+	'FROM: [36] SourceEngine2003_source HL2 Beta 2003\src_main\Public\Mathlib.cpp
+	'void MatrixInvert( const matrix3x4_t& in, matrix3x4_t& out )
+	'{
+	'	Assert( s_bMathlibInitialized );
+	'	if ( &in == &out )
+	'	{
+	'		matrix3x4_t in2;
+	'		MatrixCopy( in, in2 );
+	'		MatrixInvert( in2, out );
+	'		return;
+	'	}
+	'	float tmp[3];
+	'
+	'	// I'm guessing this only works on a 3x4 orthonormal matrix
+	'	out[0][0] = in[0][0];
+	'	out[0][1] = in[1][0];
+	'	out[0][2] = in[2][0];
+	'
+	'	out[1][0] = in[0][1];
+	'	out[1][1] = in[1][1];
+	'	out[1][2] = in[2][1];
+	'
+	'	out[2][0] = in[0][2];
+	'	out[2][1] = in[1][2];
+	'	out[2][2] = in[2][2];
+	'
+	'	tmp[0] = in[0][3];
+	'	tmp[1] = in[1][3];
+	'	tmp[2] = in[2][3];
+	'
+	'	out[0][3] = -DotProduct( tmp, out[0] );
+	'	out[1][3] = -DotProduct( tmp, out[1] );
+	'	out[2][3] = -DotProduct( tmp, out[2] );
+	'}
+	Public Sub MatrixInvert(ByVal in_matrixColumn0 As SourceVector, ByVal in_matrixColumn1 As SourceVector, ByVal in_matrixColumn2 As SourceVector, ByVal in_matrixColumn3 As SourceVector, ByRef out_matrixColumn0 As SourceVector, ByRef out_matrixColumn1 As SourceVector, ByRef out_matrixColumn2 As SourceVector, ByRef out_matrixColumn3 As SourceVector)
+		out_matrixColumn0.x = in_matrixColumn0.x
+		out_matrixColumn1.x = in_matrixColumn0.y
+		out_matrixColumn2.x = in_matrixColumn0.z
+
+		out_matrixColumn0.y = in_matrixColumn1.x
+		out_matrixColumn1.y = in_matrixColumn1.y
+		out_matrixColumn2.y = in_matrixColumn1.z
+
+		out_matrixColumn0.z = in_matrixColumn2.x
+		out_matrixColumn1.z = in_matrixColumn2.y
+		out_matrixColumn2.z = in_matrixColumn2.z
+
+		Dim temp As New SourceVector()
+
+		temp.x = in_matrixColumn3.x
+		temp.y = in_matrixColumn3.y
+		temp.z = in_matrixColumn3.z
+
+		out_matrixColumn3.x = -DotProduct(temp, out_matrixColumn0)
+		out_matrixColumn3.y = -DotProduct(temp, out_matrixColumn1)
+		out_matrixColumn3.z = -DotProduct(temp, out_matrixColumn2)
 	End Sub
 
 

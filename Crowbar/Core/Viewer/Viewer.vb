@@ -105,17 +105,21 @@ Public Class Viewer
 			'RemoveHandler Me.theHlmvAppProcess.Exited, AddressOf HlmvApp_Exited
 
 			Try
-				If Not Me.theHlmvAppProcess.CloseMainWindow() Then
+				If Not Me.theHlmvAppProcess.HasExited AndAlso Not Me.theHlmvAppProcess.CloseMainWindow() Then
 					Me.theHlmvAppProcess.Kill()
 				End If
 			Catch ex As Exception
 				Dim debug As Integer = 4242
 			Finally
-				Me.theHlmvAppProcess.Close()
-				'NOTE: This raises an exception when the background thread has already completed its work.
-				'If calledFromBackgroundThread Then
-				'	Me.UpdateProgressStop("Model viewer closed.")
-				'End If
+				'NOTE: Due to threading, Me.theHlmvAppProcess might be Nothing at this point.
+				If Me.theHlmvAppProcess IsNot Nothing Then
+					Me.theHlmvAppProcess.Close()
+					'NOTE: This raises an exception when the background thread has already completed its work.
+					'If calledFromBackgroundThread Then
+					'	Me.UpdateProgressStop("Model viewer closed.")
+					'End If
+					Me.theHlmvAppProcess = Nothing
+				End If
 			End Try
 		End If
 	End Sub

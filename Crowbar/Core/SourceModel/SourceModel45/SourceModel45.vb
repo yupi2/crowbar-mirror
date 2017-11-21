@@ -435,7 +435,7 @@ Public Class SourceModel45
 
 	Protected Overrides Sub ReadPhyFile_Internal()
 		If Me.thePhyFileDataGeneric Is Nothing Then
-			Me.thePhyFileDataGeneric = New SourcePhyFileData45()
+			Me.thePhyFileDataGeneric = New SourcePhyFileData()
 		End If
 
 		Dim phyFile As New SourcePhyFile45(Me.theInputFileReader, Me.thePhyFileDataGeneric)

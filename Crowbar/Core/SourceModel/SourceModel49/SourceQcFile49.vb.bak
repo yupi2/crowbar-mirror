@@ -1,12 +1,12 @@
 Imports System.IO
 Imports System.Text
 
-Public Class SourceQcFile48
+Public Class SourceQcFile49
 	Inherits SourceQcFile
 
 #Region "Creation and Destruction"
 
-	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal outputPathFileName As String, ByVal mdlFileData As SourceMdlFileData48, ByVal vtxFileData As SourceVtxFileData48, ByVal phyFileData As SourcePhyFileData, ByVal aniFileData As SourceAniFileData48, ByVal modelName As String)
+	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal outputPathFileName As String, ByVal mdlFileData As SourceMdlFileData49, ByVal vtxFileData As SourceVtxFileData49, ByVal phyFileData As SourcePhyFileData, ByVal aniFileData As SourceAniFileData49, ByVal modelName As String)
 		Me.theOutputFileStreamWriter = outputFileStream
 		Me.theMdlFileData = mdlFileData
 		Me.thePhyFileData = phyFileData
@@ -18,7 +18,7 @@ Public Class SourceQcFile48
 		Me.theOutputFileNameWithoutExtension = Path.GetFileNameWithoutExtension(outputPathFileName)
 	End Sub
 
-	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal outputPathFileName As String, ByVal mdlFileData As SourceMdlFileData48, ByVal modelName As String)
+	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal outputPathFileName As String, ByVal mdlFileData As SourceMdlFileData49, ByVal modelName As String)
 		Me.theOutputFileStreamWriter = outputFileStream
 		Me.theMdlFileData = mdlFileData
 		Me.theModelName = modelName
@@ -27,7 +27,7 @@ Public Class SourceQcFile48
 		Me.theOutputFileNameWithoutExtension = Path.GetFileNameWithoutExtension(outputPathFileName)
 	End Sub
 
-	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal mdlFileData As SourceMdlFileData48, ByVal modelName As String)
+	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal mdlFileData As SourceMdlFileData49, ByVal modelName As String)
 		Me.theOutputFileStreamWriter = outputFileStream
 		Me.theMdlFileData = mdlFileData
 		Me.theModelName = modelName
@@ -35,66 +35,13 @@ Public Class SourceQcFile48
 
 #End Region
 
-#Region "Methods"
-
-	'Public Function GetMdlRelativePathFileName(ByVal qcPathFileName As String) As String
-	'	Dim modelRelativePathFileName As String
-
-	'	modelRelativePathFileName = ""
-
-	'	Using inputFileStream As StreamReader = New StreamReader(qcPathFileName)
-	'		Dim inputLine As String
-	'		Dim temp As String
-
-	'		While (Not (inputFileStream.EndOfStream))
-	'			inputLine = inputFileStream.ReadLine()
-
-	'			temp = inputLine.ToLower().TrimStart()
-	'			If temp.StartsWith("$modelname") Then
-	'				temp = temp.Replace("$modelname", "")
-	'				temp = temp.Trim()
-	'				temp = temp.Trim(Chr(34))
-	'				modelRelativePathFileName = temp.Replace("/", "\")
-	'				Exit While
-	'			End If
-	'		End While
-	'	End Using
-
-	'	Return modelRelativePathFileName
-	'End Function
-
-	'Public Sub InsertAnIncludeFileCommand(ByVal qcPathFileName As String, ByVal includedPathFileName As String)
-	'	Using outputFileStream As StreamWriter = File.AppendText(qcPathFileName)
-	'		If File.Exists(includedPathFileName) Then
-	'			Dim qciFileInfo As New FileInfo(includedPathFileName)
-	'			If qciFileInfo.Length > 0 Then
-	'				Dim line As String = ""
-
-	'				outputFileStream.WriteLine()
-
-	'If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
-	'	line += "$Include "
-	'Else
-	'	line += "$include "
-	'End If
-	'				line += """"
-	'				line += FileManager.GetRelativePathFileName(qcPathFileName, includedPathFileName)
-	'				line += """"
-	'				outputFileStream.WriteLine(line)
-	'			End If
-	'		End If
-	'	End Using
-	'End Sub
-
-#End Region
-
-#Region "Private Delegates"
+#Region "Delegates"
 
 	Public Delegate Sub WriteGroupDelegate()
 
 #End Region
 
-#Region "Private Methods"
+#Region "Methods"
 
 	Public Sub WriteGroup(ByVal qciGroupName As String, ByVal writeGroupAction As WriteGroupDelegate, ByVal includeLineIsCommented As Boolean, ByVal includeLineIsIndented As Boolean)
 		If TheApp.Settings.DecompileGroupIntoQciFilesIsChecked Then
@@ -273,8 +220,7 @@ Public Class SourceQcFile48
 		'Dim referenceSmdFileName As String
 		'Dim aBone As SourceMdlBone
 		Dim eyeballNames As List(Of String)
-
-		eyeballNames = New List(Of String)()
+		Dim bodyPart As SourceMdlBodyPart = Nothing
 
 		'$model "producer" "producer_model_merged.dmx.smd" {
 		'//-doesn't work     eyeball righteye ValveBiped.Bip01_Head1 -1.260 -0.086 64.594 eyeball_r 1.050  3.000 producer_head 0.530
@@ -282,14 +228,22 @@ Public Class SourceQcFile48
 		'     mouth 0 "mouth"  ValveBiped.Bip01_Head1 0.000 1.000 0.000
 		'}
 		If Me.theMdlFileData.theBodyParts IsNot Nothing AndAlso Me.theMdlFileData.theBodyParts.Count > 0 Then
+			If Me.theMdlFileData.theModelCommandIsUsed Then
+				bodyPart = Me.theMdlFileData.theBodyParts(Me.theMdlFileData.theBodyPartIndexThatShouldUseModelCommand)
+			Else
+				Exit Sub
+			End If
+
+			eyeballNames = New List(Of String)()
+
 			line = ""
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
-			aBodyPart = Me.theMdlFileData.theBodyParts(0)
+			aBodyPart = Me.theMdlFileData.theBodyParts(Me.theMdlFileData.theBodyPartIndexThatShouldUseModelCommand)
 			aBodyModel = aBodyPart.theModels(0)
 			'referenceSmdFileName = Me.GetModelPathFileName(Me.theSourceEngineModel.theMdlFileHeader.theBodyParts(0).theModels(0))
 			'referenceSmdFileName = theSourceEngineModel.GetLodSmdFileName(0)
-			aBodyModel.theSmdFileNames(0) = SourceFileNamesModule.CreateBodyGroupSmdFileName(aBodyModel.theSmdFileNames(0), 0, 0, 0, Me.theModelName, Me.theMdlFileData.theBodyParts(0).theModels(0).name)
+			aBodyModel.theSmdFileNames(0) = SourceFileNamesModule.CreateBodyGroupSmdFileName(aBodyModel.theSmdFileNames(0), Me.theMdlFileData.theBodyPartIndexThatShouldUseModelCommand, 0, 0, Me.theModelName, bodyPart.theModels(0).name)
 
 			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
 				line = "$Model "
@@ -297,7 +251,7 @@ Public Class SourceQcFile48
 				line = "$model "
 			End If
 			line += """"
-			line += Me.theMdlFileData.theBodyParts(0).theName
+			line += bodyPart.theName
 			line += """ """
 			line += aBodyModel.theSmdFileNames(0)
 			line += """"
@@ -306,8 +260,8 @@ Public Class SourceQcFile48
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
 			'NOTE: Must call WriteEyeballLines() before WriteEyelidLines(), because eyeballNames are created in first and sent to other.
-			Me.WriteEyeballLines(eyeballNames)
-			Me.WriteEyelidLines(eyeballNames)
+			Me.WriteEyeballLines(bodyPart, eyeballNames)
+			Me.WriteEyelidLines(bodyPart, eyeballNames)
 
 			Me.WriteMouthLines()
 
@@ -318,9 +272,9 @@ Public Class SourceQcFile48
 		End If
 	End Sub
 
-	Private Sub WriteEyeballLines(ByRef eyeballNames As List(Of String))
+	Private Sub WriteEyeballLines(ByVal aBodyPart As SourceMdlBodyPart, ByRef eyeballNames As List(Of String))
 		Dim line As String = ""
-		Dim aBodyPart As SourceMdlBodyPart
+		'Dim aBodyPart As SourceMdlBodyPart
 		Dim aModel As SourceMdlModel
 		Dim anEyeball As SourceMdlEyeball
 		Dim eyeballTextureName As String
@@ -342,7 +296,7 @@ Public Class SourceQcFile48
 		Try
 			'eyeball righteye ValveBiped.Bip01_Head1 -1.160 -3.350 62.600 teenangst_eyeball_r 1.000  3.000 zoey_color 0.630
 			'eyeball lefteye ValveBiped.Bip01_Head1 1.160 -3.350 62.600 teenangst_eyeball_l 1.000  -3.000 zoey_color 0.630
-			aBodyPart = Me.theMdlFileData.theBodyParts(0)
+			'aBodyPart = Me.theMdlFileData.theBodyParts(0)
 			If aBodyPart.theModels IsNot Nothing AndAlso aBodyPart.theModels.Count > 0 Then
 				aModel = aBodyPart.theModels(0)
 				If aModel.theEyeballs IsNot Nothing AndAlso aModel.theEyeballs.Count > 0 Then
@@ -401,7 +355,6 @@ Public Class SourceQcFile48
 							eyeballTextureName = "[unknown_texture]"
 						Else
 							'eyeballTextureName = Me.theMdlFileData.theTextures(anEyeball.theTextureIndex).thePathFileName
-							''eyeballTextureName = Path.GetFileName(theSourceEngineModel.theMdlFileHeader.theTextures(anEyeball.theTextureIndex).theName)
 							eyeballTextureName = Me.theMdlFileData.theModifiedTextureFileNames(anEyeball.theTextureIndex)
 						End If
 
@@ -435,8 +388,7 @@ Public Class SourceQcFile48
 					Next
 				End If
 			End If
-		Catch ex As Exception
-			Dim debug As Integer = 4242
+		Catch
 		End Try
 
 		'Me.CreateListOfEyelidFlexFrameIndexes()
@@ -456,9 +408,9 @@ Public Class SourceQcFile48
 	'	Next
 	'End Sub
 
-	Private Sub WriteEyelidLines(ByVal eyeballNames As List(Of String))
+	Private Sub WriteEyelidLines(ByVal aBodyPart As SourceMdlBodyPart, ByVal eyeballNames As List(Of String))
 		Dim line As String = ""
-		Dim aBodyPart As SourceMdlBodyPart
+		'Dim aBodyPart As SourceMdlBodyPart
 		Dim aModel As SourceMdlModel
 		Dim anEyeball As SourceMdlEyeball
 		Dim frameIndex As Integer
@@ -472,7 +424,7 @@ Public Class SourceQcFile48
 			'eyelid  lower_right $expressions$ lowerer 3 -0.32 neutral 0 -0.19 raiser 4 -0.02 split 0.1 eyeball righteye
 			'eyelid  upper_left $expressions$ lowerer 1 -0.19 neutral 0 0.13 raiser 2 0.27 split -0.1 eyeball lefteye
 			'eyelid  lower_left $expressions$ lowerer 3 -0.32 neutral 0 -0.19 raiser 4 -0.02 split -0.1 eyeball lefteye
-			aBodyPart = Me.theMdlFileData.theBodyParts(0)
+			'aBodyPart = Me.theMdlFileData.theBodyParts(0)
 			'If aBodyPart.theModels IsNot Nothing AndAlso aBodyPart.theModels.Count > 0 AndAlso Me.theMdlFileData.theEyelidFlexFrameIndexes.Count > 0 Then
 			If aBodyPart.theModels IsNot Nothing AndAlso aBodyPart.theModels.Count > 0 Then
 				aModel = aBodyPart.theModels(0)
@@ -483,12 +435,6 @@ Public Class SourceQcFile48
 					'frameIndex = 0
 					For eyeballIndex As Integer = 0 To aModel.theEyeballs.Count - 1
 						anEyeball = aModel.theEyeballs(eyeballIndex)
-
-						If anEyeball.upperLidFlexDesc = anEyeball.upperFlexDesc(0) Then
-							'NOTE: This means the eyeball uses "dummy_eyelid", made via DMX file.
-							'      Comparing the two flexDescs seemed better than comparing flexDesc.theName with "dummy_eyelid", because the flexDescs can't be faked without hex-editing the MDL.
-							Continue For
-						End If
 
 						'If frameIndex + 3 >= Me.theMdlFileData.theEyelidFlexFrameIndexes.Count Then
 						'	frameIndex = 0
@@ -897,37 +843,37 @@ Public Class SourceQcFile48
 		End If
 	End Sub
 
-	''#define clamp(val, min, max) (((val) > (max)) ? (max) : (((val) < (min)) ? (min) : (val)))
-	'Private Function Clamp(ByVal val As Double, ByVal min As Double, ByVal max As Double) As Double
-	'	If val > max Then
-	'		Return max
-	'	ElseIf val < min Then
-	'		Return min
-	'	Else
-	'		Return val
-	'	End If
-	'End Function
+	'#define clamp(val, min, max) (((val) > (max)) ? (max) : (((val) < (min)) ? (min) : (val)))
+	Private Function Clamp(ByVal val As Double, ByVal min As Double, ByVal max As Double) As Double
+		If val > max Then
+			Return max
+		ElseIf val < min Then
+			Return min
+		Else
+			Return val
+		End If
+	End Function
 
-	''inline float RemapValClamped( float val, float A, float B, float C, float D)
-	''{
-	''	if ( A == B )
-	''		return val >= B ? D : C;
-	''	float cVal = (val - A) / (B - A);
-	''	cVal = clamp( cVal, 0.0f, 1.0f );
+	'inline float RemapValClamped( float val, float A, float B, float C, float D)
+	'{
+	'	if ( A == B )
+	'		return val >= B ? D : C;
+	'	float cVal = (val - A) / (B - A);
+	'	cVal = clamp( cVal, 0.0f, 1.0f );
 
-	''	return C + (D - C) * cVal;
-	''}
-	'Private Function RemapValClamped(ByVal val As Double, ByVal A As Double, ByVal B As Double, ByVal C As Double, ByVal D As Double) As Double
-	'	If A = B Then
-	'		Return 0
-	'	End If
+	'	return C + (D - C) * cVal;
+	'}
+	Private Function RemapValClamped(ByVal val As Double, ByVal A As Double, ByVal B As Double, ByVal C As Double, ByVal D As Double) As Double
+		If A = B Then
+			Return 0
+		End If
 
-	'	Dim cVal As Double
-	'	cVal = (val - A) / (B - A)
-	'	cVal = clamp(cVal, 0.0F, 1.0F)
+		Dim cVal As Double
+		cVal = (val - A) / (B - A)
+		cVal = Clamp(cVal, 0.0F, 1.0F)
 
-	'	Return C + (D - C) * cVal
-	'End Function
+		Return C + (D - C) * cVal
+	End Function
 
 	'Private Function GetFlexRule(ByVal aFlexRule As SourceMdlFlexRule) As String
 	'	Dim flexRuleEquation As String
@@ -1118,20 +1064,12 @@ Public Class SourceQcFile48
 	'				newExpression = intermediateExp.theExpression + " * (1 - " + newExpression + ")"
 	'				newExpression = "(" + newExpression + ")"
 	'				stack.Push(New IntermediateExpression(newExpression, 5))
-	'			ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_DME_LOWER_EYELID Then
-	'				Dim x As Integer = 42
-	'				Dim closeLidIndex As IntermediateExpression = stack.Pop()
-	'				Dim blinkIndex As IntermediateExpression = stack.Pop()
-	'				Dim eyeUpDownIndex As IntermediateExpression = stack.Pop()
-
-	'				stack.Push(New IntermediateExpression("(1 - " + Me.theMdlFileData.theFlexControllers(CInt(eyeUpDownIndex.theExpression)).theName + ") * (1 - " + Me.theMdlFileData.theFlexControllers(aFlexOp.index).theName + ") * " + Me.theMdlFileData.theFlexControllers(CInt(closeLidIndex.theExpression)).theName + " // WARNING: This is an approximation of the expression that can only be done via DMX file.", 10))
-	'			ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_DME_UPPER_EYELID Then
-	'				Dim x As Integer = 42
-	'				Dim closeLidIndex As IntermediateExpression = stack.Pop()
-	'				Dim blinkIndex As IntermediateExpression = stack.Pop()
-	'				Dim eyeUpDownIndex As IntermediateExpression = stack.Pop()
-
-	'				stack.Push(New IntermediateExpression("(1 - " + Me.theMdlFileData.theFlexControllers(CInt(eyeUpDownIndex.theExpression)).theName + ") * (1 - " + Me.theMdlFileData.theFlexControllers(aFlexOp.index).theName + ") * " + Me.theMdlFileData.theFlexControllers(CInt(closeLidIndex.theExpression)).theName + " // WARNING: This is an approximation of the expression that can only be done via DMX file.", 10))
+	'				'TODO: SourceMdlFlexOp.STUDIO_DME_LOWER_EYELID
+	'				'ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_DME_LOWER_EYELID Then
+	'				'	Dim x As Integer = 42
+	'				'TODO: SourceMdlFlexOp.STUDIO_DME_UPPER_EYELID
+	'				'ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_DME_UPPER_EYELID Then
+	'				'	Dim x As Integer = 42
 	'			Else
 	'				stack.Clear()
 	'				Exit For
@@ -1142,7 +1080,7 @@ Public Class SourceQcFile48
 	'		If stack.Count = 1 Then
 	'			flexRuleEquation += stack.Peek().theExpression
 	'		ElseIf stack.Count = 0 OrElse stack.Count > 1 Then
-	'			flexRuleEquation = "// " + flexRuleEquation + stack.Peek().theExpression + " // [Decompiler failed to parse expression. Please report the error with the following info: this qc file, the mdl filename that was decompiled, and where the mdl file was found (e.g. the game's name or a web link).]"
+	'			flexRuleEquation = "// [Decompiler failed to parse expression. Please report the error with the following info: this qc file, the mdl filename that was decompiled, and where the mdl file was found (e.g. the game's name or a web link).]"
 	'		Else
 	'			flexRuleEquation = "// [Empty flex rule found and ignored.]"
 	'		End If
@@ -1236,6 +1174,7 @@ Public Class SourceQcFile48
 			Dim aBodyPart As SourceVtxBodyPart
 			Dim aVtxModel As SourceVtxModel
 			Dim aBodyModel As SourceMdlModel
+			Dim lodIndex As Integer
 			Dim aLodQcInfo As LodQcInfo
 			Dim aLodQcInfoList As List(Of LodQcInfo)
 			Dim aLodList As SortedList(Of Single, List(Of LodQcInfo))
@@ -1251,12 +1190,13 @@ Public Class SourceQcFile48
 
 						If aVtxModel.theVtxModelLods IsNot Nothing Then
 							aBodyModel = Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex)
+							'NOTE: This check is for skipping "blank" bodygroup. Example: the third boygroup of L4D2's "infected/common_female_tshirt_skirt.mdl".
 							If aBodyModel.name(0) = ChrW(0) AndAlso aVtxModel.theVtxModelLods(0).theVtxMeshes Is Nothing Then
 								Continue For
 							End If
 
 							'NOTE: Start loop at 1 to skip first LOD, which isn't needed for the $lod command.
-							For lodIndex As Integer = 1 To Me.theVtxFileData.lodCount - 1
+							For lodIndex = 1 To Me.theVtxFileData.lodCount - 1
 								'TODO: Why would this count be different than the file header count?
 								If lodIndex >= aVtxModel.theVtxModelLods.Count Then
 									Exit For
@@ -1298,6 +1238,7 @@ Public Class SourceQcFile48
 			Dim lodQcInfoListOfShadowLod As List(Of LodQcInfo)
 			lodQcInfoListOfShadowLod = Nothing
 
+			lodIndex = 0
 			For lodListIndex As Integer = 0 To aLodList.Count - 1
 				switchPoint = aLodList.Keys(lodListIndex)
 				If switchPoint = -1 Then
@@ -1305,6 +1246,7 @@ Public Class SourceQcFile48
 					lodQcInfoListOfShadowLod = aLodList.Values(lodListIndex)
 					Continue For
 				End If
+				lodIndex += 1
 
 				aLodQcInfoList = aLodList.Values(lodListIndex)
 
@@ -1319,24 +1261,26 @@ Public Class SourceQcFile48
 				line = "{"
 				Me.theOutputFileStreamWriter.WriteLine(line)
 
-				For i As Integer = 0 To aLodQcInfoList.Count - 1
-					aLodQcInfo = aLodQcInfoList(i)
+				'For i As Integer = 0 To aLodQcInfoList.Count - 1
+				'	aLodQcInfo = aLodQcInfoList(i)
 
-					line = vbTab
-					line += "replacemodel "
-					line += """"
-					line += aLodQcInfo.referenceFileName
-					line += """ """
-					line += aLodQcInfo.lodFileName
-					line += """"
-					Me.theOutputFileStreamWriter.WriteLine(line)
-				Next
+				'	line = vbTab
+				'	line += "replacemodel "
+				'	line += """"
+				'	line += aLodQcInfo.referenceFileName
+				'	line += """ """
+				'	line += aLodQcInfo.lodFileName
+				'	line += """"
+				'	Me.theOutputFileStreamWriter.WriteLine(line)
+				'Next
+				Me.WriteLodOptions(lodIndex, aLodQcInfoList)
 
 				line = "}"
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			Next
 
 			'NOTE: As a requirement for the compiler, write $shadowlod last.
+			lodIndex = aLodList.Count - 1
 			If lodQcInfoListOfShadowLod IsNot Nothing Then
 				'// Shadow lod reserves -1 as switch value
 				'// which uniquely identifies a shadow lod
@@ -1351,23 +1295,75 @@ Public Class SourceQcFile48
 				line = "{"
 				Me.theOutputFileStreamWriter.WriteLine(line)
 
-				For i As Integer = 0 To lodQcInfoListOfShadowLod.Count - 1
-					aLodQcInfo = lodQcInfoListOfShadowLod(i)
+				'For i As Integer = 0 To lodQcInfoListOfShadowLod.Count - 1
+				'	aLodQcInfo = lodQcInfoListOfShadowLod(i)
 
-					line = vbTab
-					line += "replacemodel "
-					line += """"
-					line += aLodQcInfo.referenceFileName
-					line += """ """
-					line += aLodQcInfo.lodFileName
-					line += """"
-					Me.theOutputFileStreamWriter.WriteLine(line)
-				Next
+				'	line = vbTab
+				'	line += "replacemodel "
+				'	line += """"
+				'	line += aLodQcInfo.referenceFileName
+				'	line += """ """
+				'	line += aLodQcInfo.lodFileName
+				'	line += """"
+				'	Me.theOutputFileStreamWriter.WriteLine(line)
+				'Next
+				Me.WriteLodOptions(lodIndex, lodQcInfoListOfShadowLod)
 
 				line = "}"
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			End If
 		End If
+	End Sub
+
+	'if( stricmp( "replacemodel", token ) == 0 )
+	'else if( stricmp( "removemodel", token ) == 0 )
+	'else if( stricmp( "replacebone", token ) == 0 )
+	'else if( stricmp( "bonetreecollapse", token ) == 0 )
+	'else if( stricmp( "replacematerial", token ) == 0 )
+	'else if( stricmp( "removemesh", token ) == 0 )
+	'else if( stricmp( "nofacial", token ) == 0 )
+	'else if( stricmp( "facial", token ) == 0 )
+	'else if ( stricmp( "use_shadowlod_materials", token ) == 0 )
+	'NOTE: The "bonetreecollapse" is really a bunch of "replacebone" options.
+	Private Sub WriteLodOptions(ByVal lodIndex As Integer, ByVal aLodQcInfoList As List(Of LodQcInfo))
+		Dim line As String = ""
+		Dim aLodQcInfo As LodQcInfo
+
+		'NOTE: The "facial" option seems to be only used for creating the VTX files. Not sure how to decompile this.
+		'NOTE: The "nofacial" option seems to be only used for creating the VTX files. Not sure how to decompile this.
+
+		For i As Integer = 0 To aLodQcInfoList.Count - 1
+			aLodQcInfo = aLodQcInfoList(i)
+
+			line = vbTab
+			line += "replacemodel "
+			line += """"
+			line += aLodQcInfo.referenceFileName
+			line += """ """
+			line += aLodQcInfo.lodFileName
+			line += """"
+			Me.theOutputFileStreamWriter.WriteLine(line)
+		Next
+
+		For Each aBone As SourceMdlBone In Me.theMdlFileData.theBones
+			If (lodIndex = 1 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD1) = 0) _
+				OrElse (lodIndex = 2 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD2) = 0) _
+				OrElse (lodIndex = 3 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD3) = 0) _
+				OrElse (lodIndex = 4 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD4) = 0) _
+				OrElse (lodIndex = 5 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD5) = 0) _
+				OrElse (lodIndex = 6 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD6) = 0) _
+				OrElse (lodIndex = 7 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD7) = 0) Then
+				'replacebone "ValveBiped.Bip01_Neck1" "ValveBiped.Bip01_Head1"
+				line = vbTab
+				line += "replacebone "
+				line += """"
+				line += aBone.theName
+				line += """ """
+				line += Me.theMdlFileData.theBones(aBone.parentBoneIndex).theName
+				line += """"
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			End If
+		Next
 	End Sub
 
 	Public Sub WriteNoForcedFadeCommand()
@@ -1405,10 +1401,14 @@ Public Class SourceQcFile48
 	Public Sub WritePoseParameterCommand()
 		Dim line As String = ""
 
+		'NOTE: According to source code for v44 and v48, not having "loop" means the last value is ignored:
 		'$poseparameter body_pitch -90.00 90.00 360.00
 		'$poseparameter body_yaw -90.00 90.00 360.00
 		'$poseparameter head_pitch -90.00 90.00 360.00
 		'$poseparameter head_yaw -90.00 90.00 360.00
+		'NOTE: These 2 lines are equivalent:
+		'$poseparameter head_yaw -90.00 90.00 loop 180.00
+		'$poseparameter head_yaw -90.00 90.00 wrap
 		If Me.theMdlFileData.thePoseParamDescs IsNot Nothing Then
 			line = ""
 			Me.theOutputFileStreamWriter.WriteLine(line)
@@ -1507,8 +1507,7 @@ Public Class SourceQcFile48
 			For i As Integer = 0 To texturePaths.Count - 1
 				Dim aTexturePath As String
 				aTexturePath = texturePaths(i)
-				'NOTE: Write out null or empty strings, because Crowbar should show what was stored.
-				'If Not String.IsNullOrEmpty(aTexturePath) Then
+				'NOTE: Write out all stored paths, even if null or empty strings, because Crowbar should show what was stored.
 				If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
 					line = "$CDMaterials "
 				Else
@@ -1518,7 +1517,6 @@ Public Class SourceQcFile48
 				line += aTexturePath
 				line += """"
 				Me.theOutputFileStreamWriter.WriteLine(line)
-				'End If
 			Next
 		End If
 	End Sub
@@ -1631,7 +1629,7 @@ Public Class SourceQcFile48
 		'$attachment "melee" "ValveBiped.Bip01_Spine4" 2.64 -3.12 4.45 rotate 24.08 175.37 97.14
 		'$attachment "molotov" "ValveBiped.Bip01_Spine" -3.19 -2.44 7.01 rotate -63.44 -74.67 -101.41
 		'$attachment "grenade" "ValveBiped.Bip01_Spine" -0.68 1.17 6.97 rotate -90.00 -175.23 0.00
-		'$attachment "pills" "ValveBiped.Bip01_Spine" -2.63 0.63 -7.56 rotate -41.18 -88.48 -87.05
+		'$attachment "pills" "ValveBiped.Bip01_Spine" -2.63 0.63 -7.56 rotate -41.18 -88.49 -87.05
 		'$attachment "lfoot" "ValveBiped.Bip01_L_Foot" 0.00 4.44 0.00 rotate -0.00 -0.00 -0.00
 		'$attachment "rfoot" "ValveBiped.Bip01_R_Foot" 0.00 4.44 0.00 rotate -0.00 0.00 -0.00
 		'$attachment "muzzle_flash" "ValveBiped.Bip01_L_Hand" 0.00 0.00 0.00 rotate -0.00 0.00 0.00
@@ -1671,40 +1669,47 @@ Public Class SourceQcFile48
 				line += """"
 				line += " "
 
-				'TheApp.ConvertRotationMatrixToDegrees(anAttachment.localM11, anAttachment.localM12, anAttachment.localM13, anAttachment.localM21, anAttachment.localM22, anAttachment.localM23, anAttachment.localM33, angleX, angleY, angleZ)
-				'NOTE: This one works with the strange order below.
-				MathModule.ConvertRotationMatrixToDegrees(anAttachment.localM11, anAttachment.localM21, anAttachment.localM31, anAttachment.localM12, anAttachment.localM22, anAttachment.localM32, anAttachment.localM33, angleX, angleY, angleZ)
-				offsetX = Math.Round(anAttachment.localM14, 2)
-				offsetY = Math.Round(anAttachment.localM24, 2)
-				offsetZ = Math.Round(anAttachment.localM34, 2)
-				angleX = Math.Round(angleX, 2)
-				angleY = Math.Round(angleY, 2)
-				angleZ = Math.Round(angleZ, 2)
-				line += offsetX.ToString("0.######", TheApp.InternalNumberFormat)
-				line += " "
-				line += offsetY.ToString("0.######", TheApp.InternalNumberFormat)
-				line += " "
-				line += offsetZ.ToString("0.######", TheApp.InternalNumberFormat)
-				line += " rotate "
-				''NOTE: Intentionally z,y,x order.
-				'line += angleZ.ToString()
-				'line += " "
-				'line += angleY.ToString()
-				'line += " "
-				'line += angleX.ToString()
-				'NOTE: Intentionally in strange order.
-				line += angleY.ToString("0.######", TheApp.InternalNumberFormat)
-				line += " "
-				line += (-angleZ).ToString("0.######", TheApp.InternalNumberFormat)
-				line += " "
-				line += (-angleX).ToString("0.######", TheApp.InternalNumberFormat)
-
+				If Me.theMdlFileData.version = 10 Then
+					line += anAttachment.attachmentPoint.x.ToString("0.######", TheApp.InternalNumberFormat)
+					line += " "
+					line += anAttachment.attachmentPoint.y.ToString("0.######", TheApp.InternalNumberFormat)
+					line += " "
+					line += anAttachment.attachmentPoint.z.ToString("0.######", TheApp.InternalNumberFormat)
+				Else
+					'TheApp.ConvertRotationMatrixToDegrees(anAttachment.localM11, anAttachment.localM12, anAttachment.localM13, anAttachment.localM21, anAttachment.localM22, anAttachment.localM23, anAttachment.localM33, angleX, angleY, angleZ)
+					'NOTE: This one works with the strange order below.
+					MathModule.ConvertRotationMatrixToDegrees(anAttachment.localM11, anAttachment.localM21, anAttachment.localM31, anAttachment.localM12, anAttachment.localM22, anAttachment.localM32, anAttachment.localM33, angleX, angleY, angleZ)
+					offsetX = Math.Round(anAttachment.localM14, 2)
+					offsetY = Math.Round(anAttachment.localM24, 2)
+					offsetZ = Math.Round(anAttachment.localM34, 2)
+					angleX = Math.Round(angleX, 2)
+					angleY = Math.Round(angleY, 2)
+					angleZ = Math.Round(angleZ, 2)
+					line += offsetX.ToString("0.######", TheApp.InternalNumberFormat)
+					line += " "
+					line += offsetY.ToString("0.######", TheApp.InternalNumberFormat)
+					line += " "
+					line += offsetZ.ToString("0.######", TheApp.InternalNumberFormat)
+					line += " rotate "
+					''NOTE: Intentionally z,y,x order.
+					'line += angleZ.ToString()
+					'line += " "
+					'line += angleY.ToString()
+					'line += " "
+					'line += angleX.ToString()
+					'NOTE: Intentionally in strange order.
+					line += angleY.ToString("0.######", TheApp.InternalNumberFormat)
+					line += " "
+					line += (-angleZ).ToString("0.######", TheApp.InternalNumberFormat)
+					line += " "
+					line += (-angleX).ToString("0.######", TheApp.InternalNumberFormat)
+				End If
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			Next
 		End If
 	End Sub
 
-	Public Sub WriteIncludeModelCommands()
+	Public Sub WriteIncludeModelCommand()
 		Dim line As String = ""
 
 		'$includemodel "survivors/anim_producer.mdl"
@@ -1990,7 +1995,7 @@ Public Class SourceQcFile48
 		line += "Only set this if you know what it does, and need it for special circumstances, such as with gibs."
 		Me.theOutputFileStreamWriter.WriteLine(line)
 
-		'$illumposition -2.533 -0.555 32.487
+		'$illumposition -2.533 -0.555 32.497
 		'NOTE: These are stored in different order in MDL file.
 		'FROM: utils\studiomdl\studiomdl.cpp Cmd_Illumposition()
 		'illumposition[1] = verify_atof (token);
@@ -2018,6 +2023,7 @@ Public Class SourceQcFile48
 		Me.WriteAnimBlockSizeCommand()
 		Me.WriteSectionFramesCommand()
 		Me.WritePoseParameterCommand()
+		'NOTE: IkChain commands must be before Animation and Sequence commands because either could refer to IkChain via ikrule option.
 		Me.WriteIkChainCommand()
 		Me.WriteIkAutoPlayLockCommand()
 		Me.FillInWeightLists()
@@ -2027,12 +2033,14 @@ Public Class SourceQcFile48
 		Try
 			Me.WriteAnimationOrDeclareAnimationCommand()
 		Catch ex As Exception
+			Dim debug As Integer = 4242
 		End Try
 		Try
 			Me.WriteSequenceOrDeclareSequenceCommand()
 		Catch ex As Exception
+			Dim debug As Integer = 4242
 		End Try
-		Me.WriteIncludeModelCommands()
+		Me.WriteIncludeModelCommand()
 		Me.WriteBoneSaveFrameCommand()
 	End Sub
 
@@ -2201,7 +2209,7 @@ Public Class SourceQcFile48
 	Private Sub WriteAnimationOrDeclareAnimationCommand()
 		If Me.theMdlFileData.theAnimationDescs IsNot Nothing Then
 			For i As Integer = 0 To Me.theMdlFileData.theAnimationDescs.Count - 1
-				Dim anAnimationDesc As SourceMdlAnimationDesc48
+				Dim anAnimationDesc As SourceMdlAnimationDesc49
 				anAnimationDesc = Me.theMdlFileData.theAnimationDescs(i)
 
 				If anAnimationDesc.theName(0) <> "@" Then
@@ -2211,7 +2219,7 @@ Public Class SourceQcFile48
 		End If
 	End Sub
 
-	Private Sub WriteAnimationLine(ByVal anAnimationDesc As SourceMdlAnimationDesc48)
+	Private Sub WriteAnimationLine(ByVal anAnimationDesc As SourceMdlAnimationDesc49)
 		Dim line As String = ""
 
 		Me.theOutputFileStreamWriter.WriteLine()
@@ -2326,7 +2334,7 @@ Public Class SourceQcFile48
 	'iklock             // done
 	'keyvalues          // done
 	'node               // done
-	'posecycle          // v48; done
+	'posecycle          // v49; done
 	'post               // baked-in
 	'predelta           // done
 	'realtime           // done
@@ -2339,9 +2347,9 @@ Public Class SourceQcFile48
 	Private Sub WriteSequenceOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc)
 		Dim line As String = ""
 		Dim valueString As String
-		Dim impliedAnimDesc As SourceMdlAnimationDesc48 = Nothing
+		Dim impliedAnimDesc As SourceMdlAnimationDesc49 = Nothing
 
-		Dim anAnimationDesc As SourceMdlAnimationDesc48
+		Dim anAnimationDesc As SourceMdlAnimationDesc49
 		Dim name As String
 		For j As Integer = 0 To aSequenceDesc.theAnimDescIndexes.Count - 1
 			anAnimationDesc = Me.theMdlFileData.theAnimationDescs(aSequenceDesc.theAnimDescIndexes(j))
@@ -2502,9 +2510,12 @@ Public Class SourceQcFile48
 		'	Me.theOutputFileStreamWriter.WriteLine(line)
 		'End If
 
-		Dim firstAnimDesc As SourceMdlAnimationDesc48
+		Dim firstAnimDesc As SourceMdlAnimationDesc49
 		firstAnimDesc = Me.theMdlFileData.theAnimationDescs(aSequenceDesc.theAnimDescIndexes(0))
-		Me.WriteAnimationOptions(aSequenceDesc, firstAnimDesc, impliedAnimDesc)
+		'TEST: Only write animation options if sequence has an impliedAnimDesc.
+		If impliedAnimDesc IsNot Nothing Then
+			Me.WriteAnimationOptions(aSequenceDesc, firstAnimDesc, impliedAnimDesc)
+		End If
 	End Sub
 
 	'angles
@@ -2529,7 +2540,7 @@ Public Class SourceQcFile48
 	'ParseCmdlistToken( panim->numcmds, panim->cmds )
 	'TODO: All these options (LX, LY, etc.) seem to be baked-in, but might need to be calculated for anims that have movement.
 	'lookupControl( token )       
-	Private Sub WriteAnimationOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc, ByVal anAnimationDesc As SourceMdlAnimationDesc48, ByVal impliedAnimDesc As SourceMdlAnimationDesc48)
+	Private Sub WriteAnimationOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc, ByVal anAnimationDesc As SourceMdlAnimationDesc49, ByVal impliedAnimDesc As SourceMdlAnimationDesc49)
 		Dim line As String = ""
 
 		line = vbTab
@@ -2581,8 +2592,168 @@ Public Class SourceQcFile48
 	'weightlist         // done
 	'worldspaceblend       //
 	'worldspaceblendloop   // 
-	Private Sub WriteCmdListOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc, ByVal anAnimationDesc As SourceMdlAnimationDesc48, ByVal impliedAnimDesc As SourceMdlAnimationDesc48)
+	Private Sub WriteCmdListOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc, ByVal anAnimationDesc As SourceMdlAnimationDesc49, ByVal impliedAnimDesc As SourceMdlAnimationDesc49)
 		Dim line As String = ""
+
+		If anAnimationDesc.theIkRules IsNot Nothing Then
+			For Each anIkRule As SourceMdlIkRule In anAnimationDesc.theIkRules
+				line = vbTab
+				line += "ikrule"
+				line += " "
+				line += Me.theMdlFileData.theIkChains(anIkRule.chain).theName
+				If anIkRule.type = SourceMdlIkRule.IK_SELF Then
+					line += " "
+					line += "touch"
+					line += " """
+					If anIkRule.bone >= 0 Then
+						line += Me.theMdlFileData.theBones(anIkRule.bone).theName
+					End If
+					line += """"
+					'ElseIf anIkRule.type = SourceMdlIkRule.IK_WORLD Then
+					'line += " "
+					'line += "world"
+				ElseIf anIkRule.type = SourceMdlIkRule.IK_GROUND Then
+					line += " "
+					line += "footstep"
+				ElseIf anIkRule.type = SourceMdlIkRule.IK_RELEASE Then
+					line += " "
+					line += "release"
+				ElseIf anIkRule.type = SourceMdlIkRule.IK_ATTACHMENT Then
+					line += " "
+					line += "attachment"
+				ElseIf anIkRule.type = SourceMdlIkRule.IK_UNLATCH Then
+					line += " "
+					line += "unlatch"
+				End If
+
+				'	while (TokenAvailable())
+				'	{
+				'		GetToken( false );
+				'		if (stricmp( token, "height" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->height = verify_atof( token );
+				'		}
+				'		else if (stricmp( token, "target" ) == 0)
+				'		{
+				'			// slot
+				'			GetToken( false );
+				'			pRule->slot = verify_atoi( token );
+				'		}
+				'		else if (stricmp( token, "range" ) == 0)
+				'		{
+				'			// ramp
+				'			GetToken( false );
+				'			if (token[0] == '.')
+				'				pRule->start = -1;
+				'			else
+				'				pRule->start = verify_atoi( token );
+				'
+				'			GetToken( false );
+				'			if (token[0] == '.')
+				'				pRule->peak = -1;
+				'			else
+				'				pRule->peak = verify_atoi( token );
+				'	
+				'			GetToken( false );
+				'			if (token[0] == '.')
+				'				pRule->tail = -1;
+				'			else
+				'				pRule->tail = verify_atoi( token );
+				'
+				'			GetToken( false );
+				'			if (token[0] == '.')
+				'				pRule->end = -1;
+				'			else
+				'				pRule->end = verify_atoi( token );
+				'		}
+				'		else if (stricmp( token, "floor" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->floor = verify_atof( token );
+				'		}
+				'		else if (stricmp( token, "pad" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->radius = verify_atof( token ) / 2.0f;
+				'		}
+				'		else if (stricmp( token, "radius" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->radius = verify_atof( token );
+				'		}
+				'		else if (stricmp( token, "contact" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->contact = verify_atoi( token );
+				'		}
+				'		else if (stricmp( token, "usesequence" ) == 0)
+				'		{
+				'			pRule->usesequence = true;
+				'			pRule->usesource = false;
+				'		}
+				'		else if (stricmp( token, "usesource" ) == 0)
+				'		{
+				'			pRule->usesequence = false;
+				'			pRule->usesource = true;
+				'		}
+				'		else if (stricmp( token, "fakeorigin" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->pos.x = verify_atof( token );
+				'			GetToken( false );
+				'			pRule->pos.y = verify_atof( token );
+				'			GetToken( false );
+				'			pRule->pos.z = verify_atof( token );
+				'
+				'			pRule->bone = -1;
+				'		}
+				'		else if (stricmp( token, "fakerotate" ) == 0)
+				'		{
+				'			QAngle ang;
+				'
+				'			GetToken( false );
+				'			ang.x = verify_atof( token );
+				'			GetToken( false );
+				'			ang.y = verify_atof( token );
+				'			GetToken( false );
+				'			ang.z = verify_atof( token );
+				'
+				'			AngleQuaternion( ang, pRule->q );
+				'
+				'			pRule->bone = -1;
+				'		}
+				'		else if (stricmp( token, "bone" ) == 0)
+				'		{
+				'			strcpy( pRule->bonename, token );
+				'		}
+				'		else
+				'		{
+				'			UnGetToken();
+				'			return;
+				'		}
+				'	}
+				'TODO: Other sub-options for ikrule option.
+				'	height
+				'	target
+				'	range
+				'	floor
+				'	pad
+				'	radius
+				'	contact
+				'	usesequence   [converted into mstudiocompressedikerror_t?]
+				'	usesource     [converted into mstudiocompressedikerror_t?]
+				'	fakeorigin
+				'	fakerotate
+				'	bone
+				'If anIkRule.type = SourceMdlIkRule.IK_UNLATCH Then
+				'	line += " "
+				'	line += "usesource"
+				'End If
+
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			Next
+		End If
 
 		'$sequence taunt01 "taunt01.dmx" fps 30 localhierarchy "weapon_bone" "bip_hand_L" range 0 5 80 90 {
 		'if (srcanim->numframes > 1.0)
@@ -2616,7 +2787,11 @@ Public Class SourceQcFile48
 		'      Unsure how to determine which option is intended or if both are intended.
 		If (anAnimationDesc.flags And SourceMdlAnimationDesc.STUDIO_DELTA) > 0 Then
 			line = vbTab
-			line += "// This subtract line guesses the animation name and frame index. There is no way to determine which $animation and which frame was used. Change as needed."
+			If Me.theMdlFileData.theFirstAnimationDesc IsNot Nothing Then
+				line += "// This subtract line is a guess of the animation name and frame index. There is no way to determine which $animation and which frame were used, so Crowbar uses the name of the first $animation. Change as needed."
+			Else
+				line += "// This subtract line is a guess of the animation name and frame index. There is no way to determine which $animation or $sequence and which frame were used, so Crowbar uses the name of the first $sequence. Change as needed."
+			End If
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
 			line = vbTab
@@ -2628,7 +2803,11 @@ Public Class SourceQcFile48
 			' For now, do what MDL Decompiler seems to do; use the first animation name.
 			'line += "[anim_name]"
 			'line += Me.theFirstAnimationDescName
-			line += Me.theMdlFileData.theFirstAnimationDesc.theName
+			If Me.theMdlFileData.theFirstAnimationDesc IsNot Nothing Then
+				line += Me.theMdlFileData.theFirstAnimationDesc.theName
+			Else
+				line += Me.theMdlFileData.theSequenceDescs(0).theName
+			End If
 			line += """ "
 			'TODO: Change to writing frameIndex.
 			' Doesn't seem to be direct way to get this value.
@@ -2638,12 +2817,40 @@ Public Class SourceQcFile48
 			Me.theOutputFileStreamWriter.WriteLine(line)
 		End If
 
-		'TODO: walkframe
-		'If anAnimationDesc.theMovements.Count > 0 Then
-		'	line = vbTab
-		'	line += "walkframe "
-		'	Me.theOutputFileStreamWriter.WriteLine(line)
-		'End If
+		'If anAnimationDesc.theMovements IsNot Nothing AndAlso anAnimationDesc.theMovements.Count > 0 Then
+		If aSequenceDesc Is Nothing AndAlso anAnimationDesc.theMovements IsNot Nothing Then
+			For Each aMovement As SourceMdlMovement In anAnimationDesc.theMovements
+				line = vbTab
+				line += "walkframe"
+				line += " "
+				line += aMovement.endframeIndex.ToString()
+				If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LX) > 0 Then
+					line += " "
+					line += "LX"
+				End If
+				If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LY) > 0 Then
+					line += " "
+					line += "LY"
+				End If
+				If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LZ) > 0 Then
+					line += " "
+					line += "LZ"
+				End If
+				If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LXR) > 0 Then
+					line += " "
+					line += "LXR"
+				End If
+				If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LYR) > 0 Then
+					line += " "
+					line += "LYR"
+				End If
+				If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LZR) > 0 Then
+					line += " "
+					line += "LZR"
+				End If
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			Next
+		End If
 
 		'TODO: Can probably reduce the info written in v0.24.
 		' weightlist "top_bottom"
@@ -2817,44 +3024,45 @@ Public Class SourceQcFile48
 		End If
 	End Sub
 
-	Private Sub WriteCmdListLocalHierarchyOption(ByVal anAnimationDesc As SourceMdlAnimationDesc48)
+	Private Sub WriteCmdListLocalHierarchyOption(ByVal anAnimationDesc As SourceMdlAnimationDesc49)
 		Dim line As String = ""
 
-		If anAnimationDesc.theLocalHierarchies IsNot Nothing AndAlso anAnimationDesc.theLocalHierarchies.Count > 0 Then
-			Dim aLocalHierarchy As SourceMdlLocalHierarchy
-			Dim frameCount As Integer
-			Dim startInfluence As Double
-			Dim peakInfluence As Double
-			Dim tailInfluence As Double
-			Dim endInfluence As Double
+		If anAnimationDesc.theLocalHierarchies IsNot Nothing Then
+			For hierarchyIndex As Integer = 0 To anAnimationDesc.theLocalHierarchies.Count - 1
+				Dim aLocalHierarchy As SourceMdlLocalHierarchy
+				Dim frameCount As Integer
+				Dim startInfluence As Double
+				Dim peakInfluence As Double
+				Dim tailInfluence As Double
+				Dim endInfluence As Double
 
-			aLocalHierarchy = anAnimationDesc.theLocalHierarchies(0)
-			frameCount = anAnimationDesc.frameCount
-			startInfluence = aLocalHierarchy.startInfluence * (frameCount - 1)
-			peakInfluence = aLocalHierarchy.peakInfluence * (frameCount - 1)
-			tailInfluence = aLocalHierarchy.tailInfluence * (frameCount - 1)
-			endInfluence = aLocalHierarchy.endInfluence * (frameCount - 1)
+				aLocalHierarchy = anAnimationDesc.theLocalHierarchies(0)
+				frameCount = anAnimationDesc.frameCount
+				startInfluence = aLocalHierarchy.startInfluence * (frameCount - 1)
+				peakInfluence = aLocalHierarchy.peakInfluence * (frameCount - 1)
+				tailInfluence = aLocalHierarchy.tailInfluence * (frameCount - 1)
+				endInfluence = aLocalHierarchy.endInfluence * (frameCount - 1)
 
-			line = vbTab
-			line += "localhierarchy"
-			line += " """
-			line += Me.theMdlFileData.theBones(aLocalHierarchy.boneIndex).theName
-			line += """"
-			line += " """
-			If aLocalHierarchy.boneNewParentIndex >= 0 AndAlso aLocalHierarchy.boneNewParentIndex < Me.theMdlFileData.theBones.Count Then
-				line += Me.theMdlFileData.theBones(aLocalHierarchy.boneNewParentIndex).theName
-			End If
-			line += """"
-			line += " range "
-			line += startInfluence.ToString("0.######", TheApp.InternalNumberFormat)
-			line += " "
-			line += peakInfluence.ToString("0.######", TheApp.InternalNumberFormat)
-			line += " "
-			line += tailInfluence.ToString("0.######", TheApp.InternalNumberFormat)
-			line += " "
-			line += endInfluence.ToString("0.######", TheApp.InternalNumberFormat)
-			'line += aLocalHierarchy.boneIndex.ToString("0.######", TheApp.InternalNumberFormat)
-			Me.theOutputFileStreamWriter.WriteLine(line)
+				line = vbTab
+				line += "localhierarchy"
+				line += " """
+				line += Me.theMdlFileData.theBones(aLocalHierarchy.boneIndex).theName
+				line += """"
+				line += " """
+				If aLocalHierarchy.boneNewParentIndex >= 0 AndAlso aLocalHierarchy.boneNewParentIndex < Me.theMdlFileData.theBones.Count Then
+					line += Me.theMdlFileData.theBones(aLocalHierarchy.boneNewParentIndex).theName
+				End If
+				line += """"
+				line += " range "
+				line += startInfluence.ToString("0.######", TheApp.InternalNumberFormat)
+				line += " "
+				line += peakInfluence.ToString("0.######", TheApp.InternalNumberFormat)
+				line += " "
+				line += tailInfluence.ToString("0.######", TheApp.InternalNumberFormat)
+				line += " "
+				line += endInfluence.ToString("0.######", TheApp.InternalNumberFormat)
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			Next
 		End If
 	End Sub
 
@@ -4008,7 +4216,8 @@ Public Class SourceQcFile48
 		Next
 	End Sub
 
-	Public Sub WriteBodyGroupCommand(ByVal startIndex As Integer)
+	'Public Sub WriteBodyGroupCommand(ByVal startIndex As Integer)
+	Public Sub WriteBodyGroupCommand()
 		Dim line As String = ""
 		Dim aBodyPart As SourceMdlBodyPart
 		Dim aVtxBodyPart As SourceVtxBodyPart
@@ -4032,11 +4241,15 @@ Public Class SourceQcFile48
 		'	studio "laser_dot.smd"
 		'	blank
 		'}
-		If Me.theMdlFileData.theBodyParts IsNot Nothing AndAlso Me.theMdlFileData.theBodyParts.Count > startIndex Then
+		'If Me.theMdlFileData.theBodyParts IsNot Nothing AndAlso Me.theMdlFileData.theBodyParts.Count > startIndex Then
+		If Me.theMdlFileData.theBodyParts IsNot Nothing AndAlso Me.theMdlFileData.theBodyParts.Count > 0 Then
 			line = ""
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
-			For bodyPartIndex As Integer = startIndex To Me.theMdlFileData.theBodyParts.Count - 1
+			For bodyPartIndex As Integer = 0 To Me.theMdlFileData.theBodyParts.Count - 1
+				If Me.theMdlFileData.theModelCommandIsUsed AndAlso bodyPartIndex = Me.theMdlFileData.theBodyPartIndexThatShouldUseModelCommand Then
+					Continue For
+				End If
 				aBodyPart = Me.theMdlFileData.theBodyParts(bodyPartIndex)
 				aVtxBodyPart = Me.theVtxFileData.theVtxBodyParts(bodyPartIndex)
 
@@ -4384,10 +4597,10 @@ Public Class SourceQcFile48
 
 	'Private theModel As SourceModel
 	Private theOutputFileStreamWriter As StreamWriter
-	Private theAniFileData As SourceAniFileData48
-	Private theMdlFileData As SourceMdlFileData48
+	Private theAniFileData As SourceAniFileData49
+	Private theMdlFileData As SourceMdlFileData49
 	Private thePhyFileData As SourcePhyFileData
-	Private theVtxFileData As SourceVtxFileData48
+	Private theVtxFileData As SourceVtxFileData49
 	Private theModelName As String
 
 	Private theOutputPath As String

@@ -214,15 +214,23 @@ Public Class SourceSmdFile48
 
 		Dim collisionData As SourcePhyCollisionData
 		Dim aBone As SourceMdlBone
+		Dim boneIndex As Integer
 		Dim aTriangle As SourcePhyFace
 		Dim faceSection As SourcePhyFaceSection
 		Dim phyVertex As SourcePhyVertex
 		Dim aVectorTransformed As SourceVector
+		Dim aSourcePhysCollisionModel As SourcePhyPhysCollisionModel
 
 		Try
 			If Me.thePhyFileData.theSourcePhyCollisionDatas IsNot Nothing Then
 				For collisionDataIndex As Integer = 0 To Me.thePhyFileData.theSourcePhyCollisionDatas.Count - 1
 					collisionData = Me.thePhyFileData.theSourcePhyCollisionDatas(collisionDataIndex)
+
+					If collisionDataIndex < Me.thePhyFileData.theSourcePhyPhysCollisionModels.Count Then
+						aSourcePhysCollisionModel = Me.thePhyFileData.theSourcePhyPhysCollisionModels(collisionDataIndex)
+					Else
+						aSourcePhysCollisionModel = Nothing
+					End If
 
 					For faceSectionIndex As Integer = 0 To collisionData.theFaceSections.Count - 1
 						faceSection = collisionData.theFaceSections(faceSectionIndex)
@@ -230,7 +238,12 @@ Public Class SourceSmdFile48
 						If faceSection.theBoneIndex >= Me.theMdlFileData.theBones.Count Then
 							Continue For
 						End If
-						aBone = Me.theMdlFileData.theBones(faceSection.theBoneIndex)
+						If aSourcePhysCollisionModel IsNot Nothing AndAlso Me.theMdlFileData.theBoneNameToBoneIndexMap.ContainsKey(aSourcePhysCollisionModel.theName) Then
+							boneIndex = Me.theMdlFileData.theBoneNameToBoneIndexMap(aSourcePhysCollisionModel.theName)
+						Else
+							boneIndex = faceSection.theBoneIndex
+						End If
+						aBone = Me.theMdlFileData.theBones(boneIndex)
 
 						For triangleIndex As Integer = 0 To faceSection.theFaces.Count - 1
 							aTriangle = faceSection.theFaces(triangleIndex)
@@ -246,10 +259,10 @@ Public Class SourceSmdFile48
 							For vertexIndex As Integer = 0 To aTriangle.vertexIndex.Length - 1
 								phyVertex = collisionData.theVertices(aTriangle.vertexIndex(vertexIndex))
 
-								aVectorTransformed = Me.TransformPhyVertex(aBone, phyVertex.vertex)
+								aVectorTransformed = Me.TransformPhyVertex(aBone, phyVertex.vertex, aSourcePhysCollisionModel)
 
 								line = "    "
-								line += faceSection.theBoneIndex.ToString(TheApp.InternalNumberFormat)
+								line += boneIndex.ToString(TheApp.InternalNumberFormat)
 								line += " "
 								line += aVectorTransformed.x.ToString("0.000000", TheApp.InternalNumberFormat)
 								line += " "
@@ -275,8 +288,8 @@ Public Class SourceSmdFile48
 					Next
 				Next
 			End If
-		Catch
-
+		Catch ex As Exception
+			Dim debug As Integer = 4242
 		End Try
 
 		line = "end"
@@ -481,23 +494,36 @@ Public Class SourceSmdFile48
 					'		// [...]
 					'	}
 					'NOTE: The change for "anim+bone" is needed for weapon view models in "No More Room in Hell".
-					If aFrameLine.position.debug_text.StartsWith("raw") OrElse aFrameLine.position.debug_text = "anim+bone" Then
+					'If aFrameLine.position.debug_text.StartsWith("raw") OrElse aFrameLine.position.debug_text = "anim+bone" Then
+					If aFrameLine.position.debug_text = "anim+bone" Then
 						'If aFrameLine.position.debug_text.StartsWith("raw") Then
 						position.x = aFrameLine.position.y
 						position.y = -aFrameLine.position.x
+						position.z = aFrameLine.position.z
+					ElseIf aFrameLine.position.debug_text.StartsWith("raw") Then
+						position.x = aFrameLine.position.y
+						position.y = aFrameLine.position.z
+						position.z = aFrameLine.position.x
 					Else
 						position.x = aFrameLine.position.x
 						position.y = aFrameLine.position.y
+						position.z = aFrameLine.position.z
 					End If
-					position.z = aFrameLine.position.z
 
-					rotation.x = aFrameLine.rotation.x
-					rotation.y = aFrameLine.rotation.y
 					'NOTE: The change for "anim+bone" is needed for weapon view models in "No More Room in Hell".
-					If aFrameLine.rotation.debug_text.StartsWith("raw") OrElse aFrameLine.rotation.debug_text = "anim+bone" Then
+					'If aFrameLine.rotation.debug_text.StartsWith("raw") OrElse aFrameLine.rotation.debug_text = "anim+bone" Then
+					If aFrameLine.rotation.debug_text = "anim+bone" Then
 						'If aFrameLine.rotation.debug_text.StartsWith("raw") Then
+						rotation.x = aFrameLine.rotation.x
+						rotation.y = aFrameLine.rotation.y
+						rotation.z = aFrameLine.rotation.z + MathModule.DegreesToRadians(-90)
+					ElseIf aFrameLine.position.debug_text.StartsWith("raw") Then
+						rotation.x = aFrameLine.rotation.x + MathModule.DegreesToRadians(270)
+						rotation.y = aFrameLine.rotation.y
 						rotation.z = aFrameLine.rotation.z + MathModule.DegreesToRadians(-90)
 					Else
+						rotation.x = aFrameLine.rotation.x
+						rotation.y = aFrameLine.rotation.y
 						rotation.z = aFrameLine.rotation.z
 					End If
 				Else
@@ -510,33 +536,33 @@ Public Class SourceSmdFile48
 					rotation.z = aFrameLine.rotation.z
 				End If
 
-					line = "    "
-					line += boneIndex.ToString(TheApp.InternalNumberFormat)
+				line = "    "
+				line += boneIndex.ToString(TheApp.InternalNumberFormat)
 
-					line += " "
-					line += position.x.ToString("0.000000", TheApp.InternalNumberFormat)
-					line += " "
-					line += position.y.ToString("0.000000", TheApp.InternalNumberFormat)
-					line += " "
-					line += position.z.ToString("0.000000", TheApp.InternalNumberFormat)
+				line += " "
+				line += position.x.ToString("0.000000", TheApp.InternalNumberFormat)
+				line += " "
+				line += position.y.ToString("0.000000", TheApp.InternalNumberFormat)
+				line += " "
+				line += position.z.ToString("0.000000", TheApp.InternalNumberFormat)
 
-					line += " "
-					line += rotation.x.ToString("0.000000", TheApp.InternalNumberFormat)
-					line += " "
-					line += rotation.y.ToString("0.000000", TheApp.InternalNumberFormat)
-					line += " "
-					line += rotation.z.ToString("0.000000", TheApp.InternalNumberFormat)
+				line += " "
+				line += rotation.x.ToString("0.000000", TheApp.InternalNumberFormat)
+				line += " "
+				line += rotation.y.ToString("0.000000", TheApp.InternalNumberFormat)
+				line += " "
+				line += rotation.z.ToString("0.000000", TheApp.InternalNumberFormat)
 
-					If TheApp.Settings.DecompileDebugInfoFilesIsChecked Then
-						line += "   # "
-						line += "pos: "
-						line += aFrameLine.position.debug_text
-						line += "   "
-						line += "rot: "
-						line += aFrameLine.rotation.debug_text
-					End If
+				If TheApp.Settings.DecompileDebugInfoFilesIsChecked Then
+					line += "   # "
+					line += "pos: "
+					line += aFrameLine.position.debug_text
+					line += "   "
+					line += "rot: "
+					line += aFrameLine.rotation.debug_text
+				End If
 
-					Me.theOutputFileStreamWriter.WriteLine(line)
+				Me.theOutputFileStreamWriter.WriteLine(line)
 			Next
 		Next
 
@@ -636,12 +662,10 @@ Public Class SourceSmdFile48
 
 			line += " "
 			If (Me.theMdlFileData.flags And SourceMdlFileData.STUDIOHDR_FLAGS_STATIC_PROP) > 0 Then
-				'NOTE: This does not work for L4D2 w_models\weapons\w_minigun.mdl.
 				line += aVertex.positionY.ToString("0.000000", TheApp.InternalNumberFormat)
 				line += " "
 				line += (-aVertex.positionX).ToString("0.000000", TheApp.InternalNumberFormat)
 			Else
-				'NOTE: This works for L4D2 w_models\weapons\w_minigun.mdl.
 				line += aVertex.positionX.ToString("0.000000", TheApp.InternalNumberFormat)
 				line += " "
 				line += aVertex.positionY.ToString("0.000000", TheApp.InternalNumberFormat)
@@ -665,7 +689,6 @@ Public Class SourceSmdFile48
 			line += " "
 			line += aVertex.texCoordX.ToString("0.000000", TheApp.InternalNumberFormat)
 			line += " "
-			'line += aVertex.texCoordY.ToString("0.000000", TheApp.InternalNumberFormat)
 			line += (1 - aVertex.texCoordY).ToString("0.000000", TheApp.InternalNumberFormat)
 
 			line += " "
@@ -676,7 +699,6 @@ Public Class SourceSmdFile48
 				line += " "
 				line += aVertex.boneWeight.weight(boneWeightBoneIndex).ToString("0.000000", TheApp.InternalNumberFormat)
 			Next
-			'Me.theOutputFileStreamWriter.WriteLine(line)
 		Catch ex As Exception
 			line = "// " + line
 		End Try
@@ -684,238 +706,74 @@ Public Class SourceSmdFile48
 		Return line
 	End Function
 
-	'NOTE: From disassembling of MDL Decompiler with OllyDbg, the following calculations are used in VPHYSICS.DLL for each face:
-	'      convertedZ = 1.0 / 0.0254 * lastVertex.position.z
-	'      convertedY = 1.0 / 0.0254 * -lastVertex.position.y
-	'      convertedX = 1.0 / 0.0254 * lastVertex.position.x
-	'NOTE: From disassembling of MDL Decompiler with OllyDbg, the following calculations are used after above for each vertex:
-	'      newValue1 = unknownZ1 * convertedZ + unknownY1 * convertedY + unknownX1 * convertedX + unknownW1
-	'      newValue2 = unknownZ2 * convertedZ + unknownY2 * convertedY + unknownX2 * convertedX + unknownW2
-	'      newValue3 = unknownZ3 * convertedZ + unknownY3 * convertedY + unknownX3 * convertedX + unknownW3
-	'Seems to be same as this code:
-	'Dim aBone As SourceMdlBone
-	'aBone = Me.theSourceEngineModel.theMdlFileHeader.theBones(anEyeball.boneIndex)
-	'eyeballPosition = MathModule.VectorITransform(anEyeball.org, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-	Private Function TransformPhyVertex(ByVal aBone As SourceMdlBone, ByVal vertex As SourceVector) As SourceVector
+
+	Private Function TransformPhyVertex(ByVal aBone As SourceMdlBone, ByVal vertex As SourceVector, ByVal aSourcePhysCollisionModel As SourcePhyPhysCollisionModel) As SourceVector
 		Dim aVectorTransformed As New SourceVector
 		Dim aVector As New SourceVector()
 
-		'NOTE: Too small.
-		'aVectorTransformed.x = vertex.x
-		'aVectorTransformed.y = vertex.y
-		'aVectorTransformed.z = vertex.z
-		'------
-		'NOTE: Rotated for:
-		'      simple_shape
-		'      L4D2 w_models\weapons\w_minigun
-		'aVectorTransformed.x = 1 / 0.0254 * vertex.x
-		'aVectorTransformed.y = 1 / 0.0254 * vertex.y
-		'aVectorTransformed.z = 1 / 0.0254 * vertex.z
-		'------
-		'NOTE: Works for:
-		'      simple_shape
-		'      L4D2 w_models\weapons\w_minigun
-		'      L4D2 w_models\weapons\w_smg_uzi
-		'      L4D2 props_vehicles\van
-		'aVectorTransformed.x = 1 / 0.0254 * vertex.z
-		'aVectorTransformed.y = 1 / 0.0254 * -vertex.x
-		'aVectorTransformed.z = 1 / 0.0254 * -vertex.y
-		'------
-		'NOTE: Rotated for:
-		'      L4D2 w_models\weapons\w_minigun
-		'aVectorTransformed.x = 1 / 0.0254 * vertex.x
-		'aVectorTransformed.y = 1 / 0.0254 * -vertex.y
-		'aVectorTransformed.z = 1 / 0.0254 * vertex.z
-		'------
-		'NOTE: Rotated for:
-		'      L4D2 props_vehicles\van
-		'aVectorTransformed.x = 1 / 0.0254 * vertex.z
-		'aVectorTransformed.y = 1 / 0.0254 * -vertex.y
-		'aVectorTransformed.z = 1 / 0.0254 * vertex.x
-		'------
-		'NOTE: Rotated for:
-		'      L4D2 w_models\weapons\w_minigun
-		'aVector.x = 1 / 0.0254 * vertex.x
-		'aVector.y = 1 / 0.0254 * vertex.y
-		'aVector.z = 1 / 0.0254 * vertex.z
-		'aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'------
-		'NOTE: Rotated for:
-		'      L4D2 w_models\weapons\w_minigun
-		'aVector.x = 1 / 0.0254 * vertex.x
-		'aVector.y = 1 / 0.0254 * -vertex.y
-		'aVector.z = 1 / 0.0254 * vertex.z
-		'aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'------
-		'NOTE: Works for:
-		'      L4D2 w_models\weapons\w_minigun
-		'      L4D2 w_models\weapons\w_smg_uzi
-		'NOTE: Rotated for:
-		'      simple_shape
-		'      L4D2 props_vehicles\van
-		'NOTE: Each mesh piece rotated for:
-		'      L4D2 survivors\survivor_producer
-		'aVector.x = 1 / 0.0254 * vertex.z
-		'aVector.y = 1 / 0.0254 * -vertex.y
-		'aVector.z = 1 / 0.0254 * vertex.x
-		'aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'------
-		'NOTE: Works for:
-		'      simple_shape
-		'      L4D2 props_vehicles\van
-		'      L4D2 survivors\survivor_producer
-		'      L4D2 w_models\weapons\w_autoshot_m4super
-		'      L4D2 w_models\weapons\w_desert_eagle
-		'      L4D2 w_models\weapons\w_minigun
-		'      L4D2 w_models\weapons\w_rifle_m16a2
-		'      L4D2 w_models\weapons\w_smg_uzi
-		'NOTE: Rotated for:
-		'      L4D2 w_models\weapons\w_desert_rifle
-		'      L4D2 w_models\weapons\w_shotgun_spas
+		'If Me.thePhyFileData.theSourcePhyIsCollisionModel Then
+		'	'NOTE: Correct:
+		'	'      Underhell Underhell_Chapter1_1.2\models\Inaki\jeep.mdl
+		'	'      Team Fortress 2\tf2_misc_dir\models\ambulance.mdl
+		'	aVectorTransformed.x = 1 / 0.0254 * vertex.x
+		'	aVectorTransformed.y = 1 / 0.0254 * -vertex.z
+		'	aVectorTransformed.z = 1 / 0.0254 * -vertex.y
+		'Else
+		'	'NOTE: Correct:
+		'	'      Team Fortress 2\tf2_misc_dir\models\player\demo.mdl
+		'	aVector.x = 1 / 0.0254 * vertex.x
+		'	aVector.y = 1 / 0.0254 * vertex.z
+		'	aVector.z = 1 / 0.0254 * -vertex.y
+		'	aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
+		'End If
+		'======
 		If Me.thePhyFileData.theSourcePhyIsCollisionModel Then
-			aVectorTransformed.x = 1 / 0.0254 * vertex.z
-			aVectorTransformed.y = 1 / 0.0254 * -vertex.x
+			'aVectorTransformed.x = 1 / 0.0254 * vertex.x
+			'aVectorTransformed.y = 1 / 0.0254 * vertex.y
+			'aVectorTransformed.z = 1 / 0.0254 * vertex.z
+			'---
+			'aVectorTransformed.x = 1 / 0.0254 * vertex.y
+			'aVectorTransformed.y = 1 / 0.0254 * -vertex.x
+			'aVectorTransformed.z = 1 / 0.0254 * vertex.z
+			'---
+			'aVectorTransformed.x = 1 / 0.0254 * vertex.z
+			'aVectorTransformed.y = 1 / 0.0254 * -vertex.x
+			'aVectorTransformed.z = 1 / 0.0254 * -vertex.y
+			'---
+			aVectorTransformed.x = 1 / 0.0254 * vertex.x
+			aVectorTransformed.y = 1 / 0.0254 * -vertex.z
 			aVectorTransformed.z = 1 / 0.0254 * -vertex.y
+			'===
+			'aVector.x = 1 / 0.0254 * vertex.x
+			'aVector.y = 1 / 0.0254 * vertex.y
+			'aVector.z = 1 / 0.0254 * vertex.z
+			'---
+			'aVectorTransformed.x = 1 / 0.0254 * vertex.y
+			'aVectorTransformed.y = 1 / 0.0254 * -vertex.x
+			'aVectorTransformed.z = 1 / 0.0254 * vertex.z
+			'---
+			'aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
 		Else
 			aVector.x = 1 / 0.0254 * vertex.x
 			aVector.y = 1 / 0.0254 * vertex.z
 			aVector.z = 1 / 0.0254 * -vertex.y
 			aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
 		End If
-
-
-
-		'------
-		'NOTE: Works for:
-		'      survivor_producer
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * aVector.x
-		'phyVertex.y = 1 / 0.0254 * aVector.z
-		'phyVertex.z = 1 / 0.0254 * -aVector.y
-		'------
-		'NOTE: These two lines match orientation for cstrike it_lampholder1 model, 
-		'      but still doesn't compile properly.
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * aVector.z
-		'phyVertex.y = 1 / 0.0254 * -aVector.x
-		'phyVertex.z = 1 / 0.0254 * -aVector.y
-		'------
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * aVector.y
-		'phyVertex.y = 1 / 0.0254 * aVector.x
-		'phyVertex.z = 1 / 0.0254 * -aVector.z
-		'------
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * aVector.x
-		'phyVertex.y = 1 / 0.0254 * aVector.y
-		'phyVertex.z = 1 / 0.0254 * -aVector.z
-		'------
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * -aVector.y
-		'phyVertex.y = 1 / 0.0254 * aVector.x
-		'phyVertex.z = 1 / 0.0254 * aVector.z
-		'------
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * -aVector.y
-		'phyVertex.y = 1 / 0.0254 * aVector.x
-		'phyVertex.z = 1 / 0.0254 * aVector.z
-		'------
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * aVector.z
-		'phyVertex.y = 1 / 0.0254 * aVector.y
-		'phyVertex.z = 1 / 0.0254 * aVector.x
-		'------
-		'NOTE: Works for:
-		'      w_smg_uzi()
-		'NOTE: Does not work for:
-		'      survivor_producer
-		'phyVertex.x = 1 / 0.0254 * aVector.z
-		'phyVertex.y = 1 / 0.0254 * -aVector.y
-		'phyVertex.z = 1 / 0.0254 * aVector.x
-		'------
-		'phyVertex.x = 1 / 0.0254 * aVector.z
-		'phyVertex.y = 1 / 0.0254 * -aVector.y
-		'phyVertex.z = 1 / 0.0254 * -aVector.x
-		'------
-		''TODO: Find some rationale for why phys model is rotated differently for different models.
-		''      Possibly due to rotation needed to transfrom from pose to bone position.
-		''If Me.theSourceEngineModel.theMdlFileHeader.theAnimationDescs.Count < 2 Then
-		''If (theSourceEngineModel.theMdlFileHeader.flags And SourceMdlFileHeader.STUDIOHDR_FLAGS_STATIC_PROP) > 0 Then
-		'If Me.theSourceEngineModel.thePhyFileHeader.theSourcePhyIsCollisionModel Then
-		'	'TEST: Does not rotate L4D2's van phys mesh correctly.
-		'	'aVector.x = 1 / 0.0254 * phyVertex.vertex.x
-		'	'aVector.y = 1 / 0.0254 * phyVertex.vertex.y
-		'	'aVector.z = 1 / 0.0254 * phyVertex.vertex.z
-		'	'TEST:  Does not rotate L4D2's van phys mesh correctly.
-		'	'aVector.x = 1 / 0.0254 * phyVertex.vertex.y
-		'	'aVector.y = 1 / 0.0254 * -phyVertex.vertex.x
-		'	'aVector.z = 1 / 0.0254 * phyVertex.vertex.z
-		'	'TEST: Does not rotate L4D2's van phys mesh correctly.
-		'	'aVector.x = 1 / 0.0254 * phyVertex.vertex.z
-		'	'aVector.y = 1 / 0.0254 * -phyVertex.vertex.y
-		'	'aVector.z = 1 / 0.0254 * phyVertex.vertex.x
-		'	'TEST: Does not rotate L4D2's van phys mesh correctly.
-		'	'aVector.x = 1 / 0.0254 * phyVertex.vertex.x
-		'	'aVector.y = 1 / 0.0254 * phyVertex.vertex.z
-		'	'aVector.z = 1 / 0.0254 * -phyVertex.vertex.y
-		'	'TEST: Works for L4D2's van phys mesh.
-		'	'      Does not work for L4D2 w_model\weapons\w_minigun.mdl.
-		'	aVector.x = 1 / 0.0254 * vertex.z
-		'	aVector.y = 1 / 0.0254 * -vertex.x
-		'	aVector.z = 1 / 0.0254 * -vertex.y
-
-		'	aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-
-		'	'======
-
-		'	'Dim aVectorTransformed2 As SourceVector
-		'	''aVectorTransformed2 = New SourceVector()
-		'	''aVectorTransformed2 = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'	''aVectorTransformed2.x = aVector.x
-		'	''aVectorTransformed2.y = aVector.y
-		'	''aVectorTransformed2.z = aVector.z
-
-		'	'aVectorTransformed = MathModule.VectorTransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'	''aVectorTransformed = MathModule.VectorTransform(aVectorTransformed2, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'	''aVectorTransformed = New SourceVector()
-		'	''aVectorTransformed.x = aVectorTransformed2.x
-		'	''aVectorTransformed.y = aVectorTransformed2.y
-		'	''aVectorTransformed.z = aVectorTransformed2.z
-		'Else
-		'	'TEST: Does not work for L4D2 w_model\weapons\w_minigun.mdl.
-		'	aVector.x = 1 / 0.0254 * vertex.x
-		'	aVector.y = 1 / 0.0254 * vertex.z
-		'	aVector.z = 1 / 0.0254 * -vertex.y
-
-		'	aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
+		'======
+		'aVector.x = 1 / 0.0254 * vertex.x
+		'aVector.y = 1 / 0.0254 * vertex.z
+		'aVector.z = 1 / 0.0254 * -vertex.y
+		'If aSourcePhysCollisionModel IsNot Nothing Then
+		'	If Me.theMdlFileData.theBoneNameToBoneIndexMap.ContainsKey(aSourcePhysCollisionModel.theName) Then
+		'		aBone = Me.theMdlFileData.theBones(Me.theMdlFileData.theBoneNameToBoneIndexMap(aSourcePhysCollisionModel.theName))
+		'	Else
+		'		aVectorTransformed.x = 1 / 0.0254 * vertex.z
+		'		aVectorTransformed.y = 1 / 0.0254 * -vertex.x
+		'		aVectorTransformed.z = 1 / 0.0254 * -vertex.y
+		'		Return aVectorTransformed
+		'	End If
 		'End If
-		'------
-		'TEST: Does not rotate L4D2's van phys mesh correctly.
-		'aVector.x = 1 / 0.0254 * phyVertex.vertex.x
-		'aVector.y = 1 / 0.0254 * phyVertex.vertex.y
-		'aVector.z = 1 / 0.0254 * phyVertex.vertex.z
-		'TEST: Does not rotate L4D2's van phys mesh correctly.
-		'aVector.x = 1 / 0.0254 * phyVertex.vertex.y
-		'aVector.y = 1 / 0.0254 * -phyVertex.vertex.x
-		'aVector.z = 1 / 0.0254 * phyVertex.vertex.z
-		'TEST: works for survivor_producer; matches ref and phy meshes of van, but both are rotated 90 degrees on z-axis
-		'aVector.x = 1 / 0.0254 * phyVertex.vertex.x
-		'aVector.y = 1 / 0.0254 * phyVertex.vertex.z
-		'aVector.z = 1 / 0.0254 * -phyVertex.vertex.y
-
 		'aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		''------
-		'''TEST: Only rotate by -90 deg if bone is a root bone.  Do not know why.
-		''If aBone.parentBoneIndex = -1 Then
-		''	aVectorTransformed = MathModule.RotateAboutZAxis(aVectorTransformed, MathModule.DegreesToRadians(-90), aBone)
-		''End If
 
 		Return aVectorTransformed
 	End Function

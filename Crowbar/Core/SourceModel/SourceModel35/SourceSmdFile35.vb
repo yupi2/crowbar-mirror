@@ -109,7 +109,7 @@ Public Class SourceSmdFile35
 		Me.theOutputFileStreamWriter.WriteLine(line)
 	End Sub
 
-	Public Sub WriteTrianglesSection(ByVal lodIndex As Integer, ByVal aVtxModel As SourceVtxModel06, ByVal aModel As SourceMdlModel37, ByVal bodyPartVertexIndexStart As Integer)
+	Public Sub WriteTrianglesSection(ByVal lodIndex As Integer, ByVal aVtxModel As SourceVtxModel06, ByVal aModel As SourceMdlModel37, ByVal bodyPartVertexIndexStart As Integer, ByVal bodyPartIndex As Integer)
 		Dim line As String = ""
 		Dim materialLine As String = ""
 		Dim vertex1Line As String = ""
@@ -161,9 +161,10 @@ Public Class SourceSmdFile35
 									'------
 									'NOTE: studiomdl.exe will complain if texture name for eyeball is not at start of line.
 									materialLine = materialName
-									vertex1Line = Me.WriteVertexLine(aStripGroup, vtxIndexIndex, lodIndex, meshVertexIndexStart, bodyPartVertexIndexStart)
-									vertex2Line = Me.WriteVertexLine(aStripGroup, vtxIndexIndex + 2, lodIndex, meshVertexIndexStart, bodyPartVertexIndexStart)
-									vertex3Line = Me.WriteVertexLine(aStripGroup, vtxIndexIndex + 1, lodIndex, meshVertexIndexStart, bodyPartVertexIndexStart)
+									Dim modelIndex As Integer = Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels.IndexOf(aModel)
+									vertex1Line = Me.WriteVertexLine(aStripGroup, vtxIndexIndex, lodIndex, meshVertexIndexStart, bodyPartVertexIndexStart, bodyPartIndex, modelIndex)
+									vertex2Line = Me.WriteVertexLine(aStripGroup, vtxIndexIndex + 2, lodIndex, meshVertexIndexStart, bodyPartVertexIndexStart, bodyPartIndex, modelIndex)
+									vertex3Line = Me.WriteVertexLine(aStripGroup, vtxIndexIndex + 1, lodIndex, meshVertexIndexStart, bodyPartVertexIndexStart, bodyPartIndex, modelIndex)
 									If vertex1Line.StartsWith("// ") OrElse vertex2Line.StartsWith("// ") OrElse vertex3Line.StartsWith("// ") Then
 										materialLine = "// " + materialLine
 										If Not vertex1Line.StartsWith("// ") Then
@@ -287,7 +288,7 @@ Public Class SourceSmdFile35
 		Dim aFrameLine As AnimationFrameLine
 		Dim frameIndex As Integer
 		Dim aSequenceDesc As SourceMdlSequenceDesc
-		Dim anAnimationDesc As SourceMdlAnimationDesc36
+		Dim anAnimationDesc As SourceMdlAnimationDesc35
 
 		aSequenceDesc = Nothing
 		anAnimationDesc = Me.theMdlFileData.theFirstAnimationDesc
@@ -346,10 +347,11 @@ Public Class SourceSmdFile35
 		Dim rotation As New SourceVector()
 		Dim tempRotation As New SourceVector()
 		Dim aSequenceDesc As SourceMdlSequenceDesc
-		Dim anAnimationDesc As SourceMdlAnimationDesc36
+		Dim anAnimationDesc As SourceMdlAnimationDesc35
+		Dim tempValue As Double
 
 		aSequenceDesc = CType(aSequenceDescBase, SourceMdlSequenceDesc)
-		anAnimationDesc = CType(anAnimationDescBase, SourceMdlAnimationDesc36)
+		anAnimationDesc = CType(anAnimationDescBase, SourceMdlAnimationDesc35)
 
 		'skeleton
 		line = "skeleton"
@@ -375,10 +377,66 @@ Public Class SourceSmdFile35
 				position.x = aFrameLine.position.x
 				position.y = aFrameLine.position.y
 				position.z = aFrameLine.position.z
+				If Me.theMdlFileData.theBones(boneIndex).parentBoneIndex = -1 Then
+					If anAnimationDesc.theMovements IsNot Nothing Then
+						Dim perFrameMovement As Double
+						Dim startFrameIndex As Integer = 0
+						For Each aMovement As SourceMdlMovement In anAnimationDesc.theMovements
+							If frameIndex <= aMovement.endframeIndex Then
+								If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LX) > 0 Then
+									perFrameMovement = aMovement.position.x / aMovement.endframeIndex
+									position.x = position.x + (perFrameMovement * frameIndex)
+									aFrameLine.position.debug_text += " [x]"
+								End If
+								If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LY) > 0 Then
+									perFrameMovement = aMovement.position.y / aMovement.endframeIndex
+									position.y = position.y + (perFrameMovement * frameIndex)
+									aFrameLine.position.debug_text += " [y]"
+								End If
+								If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LZ) > 0 Then
+									perFrameMovement = aMovement.position.z / aMovement.endframeIndex
+									position.z = position.z - (perFrameMovement * frameIndex)
+									aFrameLine.position.debug_text += " [z]"
+								End If
+							End If
+						Next
+					End If
+
+					tempValue = position.x
+					position.x = position.y
+					position.y = -tempValue
+				End If
 
 				rotation.x = aFrameLine.rotation.x
 				rotation.y = aFrameLine.rotation.y
 				rotation.z = aFrameLine.rotation.z
+				If Me.theMdlFileData.theBones(boneIndex).parentBoneIndex = -1 Then
+					If anAnimationDesc.theMovements IsNot Nothing Then
+						Dim perFrameMovement As Double
+						Dim startFrameIndex As Integer = 0
+						For Each aMovement As SourceMdlMovement In anAnimationDesc.theMovements
+							If frameIndex <= aMovement.endframeIndex Then
+								If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LXR) > 0 Then
+									perFrameMovement = MathModule.DegreesToRadians(aMovement.angle) / aMovement.endframeIndex
+									rotation.x = rotation.x + (perFrameMovement * frameIndex)
+									aFrameLine.rotation.debug_text += " [x]"
+								End If
+								If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LYR) > 0 Then
+									perFrameMovement = MathModule.DegreesToRadians(aMovement.angle) / aMovement.endframeIndex
+									rotation.y = rotation.y + (perFrameMovement * frameIndex)
+									aFrameLine.rotation.debug_text += " [y]"
+								End If
+								If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LZR) > 0 Then
+									perFrameMovement = MathModule.DegreesToRadians(aMovement.angle) / aMovement.endframeIndex
+									rotation.z = rotation.z + (perFrameMovement * frameIndex)
+									aFrameLine.rotation.debug_text += " [z]"
+								End If
+							End If
+						Next
+					End If
+
+					rotation.z = aFrameLine.rotation.z + MathModule.DegreesToRadians(-90)
+				End If
 
 				line = "    "
 				line += boneIndex.ToString(TheApp.InternalNumberFormat)
@@ -422,7 +480,7 @@ Public Class SourceSmdFile35
 
 #Region "Private Methods"
 
-	Private Function WriteVertexLine(ByVal aStripGroup As SourceVtxStripGroup06, ByVal aVtxIndexIndex As Integer, ByVal lodIndex As Integer, ByVal meshVertexIndexStart As Integer, ByVal bodyPartVertexIndexStart As Integer) As String
+	Private Function WriteVertexLine(ByVal aStripGroup As SourceVtxStripGroup06, ByVal aVtxIndexIndex As Integer, ByVal lodIndex As Integer, ByVal meshVertexIndexStart As Integer, ByVal bodyPartVertexIndexStart As Integer, ByVal bodyPartIndex As Integer, ByVal bodyModelIndex As Integer) As String
 		Dim aVtxVertexIndex As UShort
 		Dim aVtxVertex As SourceVtxVertex06
 		Dim aVertex As SourceMdlVertex37
@@ -433,17 +491,8 @@ Public Class SourceSmdFile35
 		Try
 			aVtxVertexIndex = aStripGroup.theVtxIndexes(aVtxIndexIndex)
 			aVtxVertex = aStripGroup.theVtxVertexes(aVtxVertexIndex)
-			vertexIndex = aVtxVertex.originalMeshVertexIndex + bodyPartVertexIndexStart + meshVertexIndexStart
-			'If Me.theVvdFileData.fixupCount = 0 Then
-			'	aVertex = Me.theVvdFileData.theVertexes(vertexIndex)
-			'Else
-			'	'NOTE: I don't know why lodIndex is not needed here, but using only lodIndex=0 matches what MDL Decompiler produces.
-			'	'      Maybe the listing by lodIndex is only needed internally by graphics engine.
-			'	'aVertex = Me.theSourceEngineModel.theVvdFileData.theFixedVertexesByLod(lodIndex)(aVtxVertex.originalMeshVertexIndex + meshVertexIndexStart)
-			'	aVertex = Me.theVvdFileData.theFixedVertexesByLod(0)(vertexIndex)
-			'	'aVertex = Me.theSourceEngineModel.theVvdFileHeader.theFixedVertexesByLod(lodIndex)(aVtxVertex.originalMeshVertexIndex + meshVertexIndexStart)
-			'End If
-			aVertex = Me.theMdlFileData.theBodyParts(0).theModels(0).theVertexes(vertexIndex)
+			vertexIndex = aVtxVertex.originalMeshVertexIndex + meshVertexIndexStart
+			aVertex = Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(bodyModelIndex).theVertexes(vertexIndex)
 
 			line = "  "
 			line += aVertex.boneWeight.bone(0).ToString(TheApp.InternalNumberFormat)
@@ -1000,7 +1049,7 @@ Public Class SourceSmdFile35
 	'	}
 	'
 	'}
-	Private Sub CalcAnimation(ByVal aSequenceDesc As SourceMdlSequenceDesc, ByVal anAnimationDesc As SourceMdlAnimationDesc36, ByVal frameIndex As Integer)
+	Private Sub CalcAnimation(ByVal aSequenceDesc As SourceMdlSequenceDesc, ByVal anAnimationDesc As SourceMdlAnimationDesc35, ByVal frameIndex As Integer)
 		Dim s As Double
 		Dim aBone As SourceMdlBone37
 		Dim anAnimation As SourceMdlAnimation37
@@ -1041,6 +1090,7 @@ Public Class SourceSmdFile35
 			End If
 		Next
 	End Sub
+
 	Private Function CalcBoneRotation(ByVal frameIndex As Integer, ByVal s As Double, ByVal aBone As SourceMdlBone37, ByVal anAnimation As SourceMdlAnimation37, ByRef rotationQuat As SourceQuaternion) As SourceVector
 		Dim angleVector As New SourceVector()
 

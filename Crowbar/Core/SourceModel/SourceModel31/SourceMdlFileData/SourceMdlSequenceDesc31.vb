@@ -52,7 +52,7 @@
 
 	Public unused(2) As Integer
 
-	'Public theActivityName As String
+	Public theActivityName As String
 	'Public theAnimDescIndexes As List(Of Short)
 	'Public theAutoLayers As List(Of SourceMdlAutoLayer37)
 	'Public theBoneWeights As List(Of Double)

@@ -729,16 +729,18 @@ Public Class SourcePhyFile44
 	End Sub
 
 	Public Sub ReadCollisionTextSection()
-		Dim streamLastPosition As Long
+		'Dim streamLastPosition As Long
 
-		Try
-			streamLastPosition = Me.theInputFileReader.BaseStream.Length() - 1
+		'Try
+		'	streamLastPosition = Me.theInputFileReader.BaseStream.Length() - 1
 
-			'NOTE: Use -1 to drop the null terminator character.
-			Me.thePhyFileData.theSourcePhyCollisionText = Me.theInputFileReader.ReadChars(CInt(streamLastPosition - Me.theInputFileReader.BaseStream.Position - 1))
-		Catch
-		Finally
-		End Try
+		'	'NOTE: Use -1 to drop the null terminator character.
+		'	Me.thePhyFileData.theSourcePhyCollisionText = Me.theInputFileReader.ReadChars(CInt(streamLastPosition - Me.theInputFileReader.BaseStream.Position - 1))
+		'Catch
+		'Finally
+		'End Try
+
+		Me.thePhyFileData.theSourcePhyCollisionText = Common.ReadPhyCollisionTextSection(Me.theInputFileReader)
 	End Sub
 
 #End Region

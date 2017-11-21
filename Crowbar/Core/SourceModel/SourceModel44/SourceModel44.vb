@@ -464,7 +464,7 @@ Public Class SourceModel44
 
 	Protected Overrides Sub ReadPhyFile_Internal()
 		If Me.thePhyFileDataGeneric Is Nothing Then
-			Me.thePhyFileDataGeneric = New SourcePhyFileData44()
+			Me.thePhyFileDataGeneric = New SourcePhyFileData()
 		End If
 
 		Dim phyFile As New SourcePhyFile44(Me.theInputFileReader, Me.thePhyFileDataGeneric)
@@ -515,7 +515,7 @@ Public Class SourceModel44
 			qcFile.WriteModelNameCommand()
 
 			qcFile.WriteStaticPropCommand()
-			qcFile.WriteConstDirectionalLightCommand()
+			qcFile.WriteConstantDirectionalLightCommand()
 
 			'If Me.theMdlFileData.theModelCommandIsUsed Then
 			'	qcFile.WriteModelCommand()
@@ -561,7 +561,13 @@ Public Class SourceModel44
 
 			qcFile.WriteGroup("collision", AddressOf qcFile.WriteGroupCollision, False, False)
 
-			qcFile.WriteKeyValues(Me.theMdlFileData.theKeyValuesText, "$KeyValues")
+			Dim command As String
+			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+				command = "$KeyValues"
+			Else
+				command = "$keyvalues"
+			End If
+			qcFile.WriteKeyValues(Me.theMdlFileData.theKeyValuesText, command)
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		Finally

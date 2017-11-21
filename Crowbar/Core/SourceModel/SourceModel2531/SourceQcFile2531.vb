@@ -588,7 +588,7 @@ Public Class SourceQcFile2531
 		Dim line As String = ""
 		Dim modelPathFileName As String
 
-		modelPathFileName = Me.theMdlFileData.theName
+		modelPathFileName = Me.theMdlFileData.theModelName
 
 		Me.theOutputFileStreamWriter.WriteLine()
 
@@ -603,29 +603,29 @@ Public Class SourceQcFile2531
 		Me.theOutputFileStreamWriter.WriteLine(line)
 	End Sub
 
-	Public Sub WriteSequenceGroupCommands()
-		Dim line As String = ""
-		Dim aSequenceGroup As SourceMdlSequenceGroup2531
+	'Public Sub WriteSequenceGroupCommands()
+	'	Dim line As String = ""
+	'	Dim aSequenceGroup As SourceMdlSequenceGroup2531
 
-		If Me.theMdlFileData.theSequenceGroups IsNot Nothing AndAlso Me.theMdlFileData.theSequenceGroups.Count > 1 Then
-			Me.theOutputFileStreamWriter.WriteLine()
+	'	If Me.theMdlFileData.theSequenceGroups IsNot Nothing AndAlso Me.theMdlFileData.theSequenceGroups.Count > 1 Then
+	'		Me.theOutputFileStreamWriter.WriteLine()
 
-			For sequenceGroupIndex As Integer = 0 To Me.theMdlFileData.theSequenceGroups.Count - 1
-				aSequenceGroup = Me.theMdlFileData.theSequenceGroups(sequenceGroupIndex)
+	'		For sequenceGroupIndex As Integer = 0 To Me.theMdlFileData.theSequenceGroups.Count - 1
+	'			aSequenceGroup = Me.theMdlFileData.theSequenceGroups(sequenceGroupIndex)
 
-				If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
-					line = "$SequenceGroup "
-				Else
-					line = "$sequencegroup "
-				End If
-				line += """"
-				line += aSequenceGroup.theName
-				line += """"
+	'			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+	'				line = "$SequenceGroup "
+	'			Else
+	'				line = "$sequencegroup "
+	'			End If
+	'			line += """"
+	'			line += aSequenceGroup.theName
+	'			line += """"
 
-				Me.theOutputFileStreamWriter.WriteLine(line)
-			Next
-		End If
-	End Sub
+	'			Me.theOutputFileStreamWriter.WriteLine(line)
+	'		Next
+	'	End If
+	'End Sub
 
 	Public Sub WriteSequenceCommands()
 		Dim line As String = ""

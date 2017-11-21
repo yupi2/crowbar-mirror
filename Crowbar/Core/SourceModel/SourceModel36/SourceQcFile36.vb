@@ -155,7 +155,7 @@ Public Class SourceQcFile36
 		'modelPath = FileManager.GetPath(CStr(theSourceEngineModel.theMdlFileHeader.name).Trim(Chr(0)))
 		'modelPathFileName = Path.Combine(modelPath, theSourceEngineModel.ModelName + ".mdl")
 		'modelPathFileName = CStr(theSourceEngineModel.MdlFileHeader.name).Trim(Chr(0))
-		modelPathFileName = Me.theMdlFileData.theName
+		modelPathFileName = Me.theMdlFileData.theModelName
 
 		Me.theOutputFileStreamWriter.WriteLine()
 
@@ -1302,26 +1302,10 @@ Public Class SourceQcFile36
 				line += aPoseParamDesc.startingValue.ToString("0.######", TheApp.InternalNumberFormat)
 				line += " "
 				line += aPoseParamDesc.endingValue.ToString("0.######", TheApp.InternalNumberFormat)
-				line += " "
+				line += " loop "
 				line += aPoseParamDesc.loopingRange.ToString("0.######", TheApp.InternalNumberFormat)
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			Next
-		End If
-	End Sub
-
-	Public Sub WriteAmbientBoostCommand()
-		Dim line As String = ""
-
-		'$ambientboost
-		If (Me.theMdlFileData.flags And SourceMdlFileData.STUDIOHDR_FLAGS_AMBIENT_BOOST) > 0 Then
-			Me.theOutputFileStreamWriter.WriteLine()
-
-			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
-				line = "$AmbientBoost"
-			Else
-				line = "$ambientboost"
-			End If
-			Me.theOutputFileStreamWriter.WriteLine(line)
 		End If
 	End Sub
 
@@ -1864,6 +1848,7 @@ Public Class SourceQcFile36
 	Public Sub WriteGroupAnimation()
 		Me.WritePoseParameterCommand()
 		Me.WriteIkChainCommand()
+		Me.WriteIkAutoPlayLockCommand()
 		Me.FillInWeightLists()
 		'NOTE: Must write $WeightList lines before animations or sequences that use them.
 		Me.WriteWeightListCommand()
@@ -1872,12 +1857,12 @@ Public Class SourceQcFile36
 			Me.WriteAnimationOrDeclareAnimationCommand()
 		Catch ex As Exception
 		End Try
+		Me.WriteSequenceGroupCommands()
 		Try
 			Me.WriteSequenceOrDeclareSequenceCommand()
 		Catch ex As Exception
 		End Try
 		Me.WriteIncludeModelCommands()
-		Me.WriteIkAutoPlayLockCommand()
 		Me.WriteBoneSaveFrameCommand()
 	End Sub
 
@@ -2052,6 +2037,30 @@ Public Class SourceQcFile36
 
 			line = "}"
 			Me.theOutputFileStreamWriter.WriteLine(line)
+		End If
+	End Sub
+
+	Public Sub WriteSequenceGroupCommands()
+		Dim line As String = ""
+		Dim aSequenceGroup As SourceMdlSequenceGroup37
+
+		If Me.theMdlFileData.theSequenceGroups.Count > 1 Then
+			Me.theOutputFileStreamWriter.WriteLine()
+
+			For sequenceGroupIndex As Integer = 0 To Me.theMdlFileData.theSequenceGroups.Count - 1
+				aSequenceGroup = Me.theMdlFileData.theSequenceGroups(sequenceGroupIndex)
+
+				If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+					line = "$SequenceGroup "
+				Else
+					line = "$sequencegroup "
+				End If
+				line += """"
+				line += aSequenceGroup.theName
+				line += """"
+
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			Next
 		End If
 	End Sub
 
@@ -2897,32 +2906,6 @@ Public Class SourceQcFile36
 		End If
 	End Sub
 
-	'$animatedfriction
-	'$assumeworldspace
-	'$automass          // baked-in as mass
-	'$concave           // done
-	'$concaveperjoint
-	'$damping           // done
-	'$drag
-	'$inertia           // done
-	'$jointcollide
-	'$jointconstrain    // done
-	'$jointdamping      // done
-	'$jointinertia      // done
-	'$jointmassbias     // done
-	'$jointmerge
-	'$jointrotdamping   // done
-	'$jointskip
-	'$mass              // done
-	'$masscenter
-	'$maxconvexpieces
-	'$noselfcollisions  //done
-	'$remove2d
-	'$rollingDrag
-	'$rootbone          // done
-	'$rotdamping        // done
-	'$weldnormal
-	'$weldposition
 	Private Sub WriteCollisionModelOrCollisionJointsOptions()
 		Dim line As String = ""
 
@@ -2949,6 +2932,19 @@ Public Class SourceQcFile36
 			line += """"
 			Me.theOutputFileStreamWriter.WriteLine(line)
 		End If
+		If Me.thePhyFileData.theSourcePhyEditParamsSection.jointMergeMap IsNot Nothing AndAlso Me.thePhyFileData.theSourcePhyEditParamsSection.jointMergeMap.Count > 0 Then
+			For Each jointMergeKey As String In Me.thePhyFileData.theSourcePhyEditParamsSection.jointMergeMap.Keys
+				For Each jointMergeValue As String In Me.thePhyFileData.theSourcePhyEditParamsSection.jointMergeMap(jointMergeKey)
+					line = vbTab
+					line += "$jointmerge """
+					line += jointMergeKey
+					line += """ """
+					line += jointMergeValue
+					line += """"
+					Me.theOutputFileStreamWriter.WriteLine(line)
+				Next
+			Next
+		End If
 		If Me.thePhyFileData.theSourcePhyEditParamsSection.concave = "1" Then
 			line = vbTab
 			line += "$concave"
@@ -2962,8 +2958,23 @@ Public Class SourceQcFile36
 			line = ""
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
-			'If aSourcePhysCollisionModel.theDragCoefficientIsValid Then
-			'End If
+			If aSourcePhysCollisionModel.theDragCoefficientIsValid Then
+				line = vbTab
+				line += "$drag """
+				line += aSourcePhysCollisionModel.theName
+				line += """ "
+				line += aSourcePhysCollisionModel.theDragCoefficient.ToString("0.######", TheApp.InternalNumberFormat)
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			End If
+
+			If aSourcePhysCollisionModel.theRollingDragCoefficientIsValid Then
+				line = vbTab
+				line += "$rollingDrag """
+				line += aSourcePhysCollisionModel.theName
+				line += """ "
+				line += aSourcePhysCollisionModel.theRollingDragCoefficient.ToString("0.######", TheApp.InternalNumberFormat)
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			End If
 
 			If aSourcePhysCollisionModel.theMassBiasIsValid Then
 				line = vbTab
@@ -3036,26 +3047,6 @@ Public Class SourceQcFile36
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			End If
 		Next
-
-		If Not Me.thePhyFileData.theSourcePhySelfCollides Then
-			line = vbTab
-			line += "$noselfcollisions"
-			Me.theOutputFileStreamWriter.WriteLine(line)
-		Else
-			For Each aSourcePhyCollisionPair As SourcePhyCollisionPair In Me.thePhyFileData.theSourcePhyCollisionPairs
-				line = vbTab
-				line += "$jointcollide"
-				line += " "
-				line += """"
-				line += Me.thePhyFileData.theSourcePhyPhysCollisionModels(aSourcePhyCollisionPair.obj0).theName
-				line += """"
-				line += " "
-				line += """"
-				line += Me.thePhyFileData.theSourcePhyPhysCollisionModels(aSourcePhyCollisionPair.obj1).theName
-				line += """"
-				Me.theOutputFileStreamWriter.WriteLine(line)
-			Next
-		End If
 	End Sub
 
 	Public Sub WriteCollisionTextCommand()
@@ -3087,127 +3078,7 @@ Public Class SourceQcFile36
 	End Sub
 
 	Public Sub WriteGroupBone()
-		Me.WriteDefineBoneCommand()
-		Me.WriteBoneMergeCommand()
-
 		Me.WriteProceduralBonesCommand()
-	End Sub
-
-	Private Sub WriteDefineBoneCommand()
-		If Not TheApp.Settings.DecompileQcIncludeDefineBoneLinesIsChecked Then
-			Exit Sub
-		End If
-
-		Dim line As String = ""
-
-		'NOTE: Should not be used with L4D2 survivors, because it messes up the mesh in animations.
-		'TODO: Need to figure out when to insert the lines, such as is typical for L4D2 view models.
-
-		'$definebone "ValveBiped.root" "" 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
-		If Me.theMdlFileData.theBones IsNot Nothing Then
-			Dim aBone As SourceMdlBone37
-			Dim aParentBoneName As String
-			Dim aFixupPosition As New SourceVector()
-			Dim aFixupRotation As New SourceVector()
-
-			If Me.theMdlFileData.theBones.Count > 0 Then
-				Me.theOutputFileStreamWriter.WriteLine()
-			End If
-
-			For i As Integer = 0 To Me.theMdlFileData.theBones.Count - 1
-				aBone = Me.theMdlFileData.theBones(i)
-				If aBone.parentBoneIndex = -1 Then
-					aParentBoneName = ""
-				Else
-					aParentBoneName = Me.theMdlFileData.theBones(aBone.parentBoneIndex).theName
-				End If
-
-				If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
-					line = "$DefineBone "
-				Else
-					line = "$definebone "
-				End If
-				line += """"
-				line += aBone.theName
-				line += """"
-				line += " "
-				line += """"
-				line += aParentBoneName
-				line += """"
-
-				line += " "
-				line += aBone.position.x.ToString("0.######", TheApp.InternalNumberFormat)
-				line += " "
-				line += aBone.position.y.ToString("0.######", TheApp.InternalNumberFormat)
-				line += " "
-				line += aBone.position.z.ToString("0.######", TheApp.InternalNumberFormat)
-
-				If Me.theMdlFileData.version = 2531 Then
-					line += " 0.000000 0.000000 0.000000"
-				Else
-					line += " "
-					line += MathModule.RadiansToDegrees(aBone.rotation.y).ToString("0.######", TheApp.InternalNumberFormat)
-					line += " "
-					line += MathModule.RadiansToDegrees(aBone.rotation.z).ToString("0.######", TheApp.InternalNumberFormat)
-					line += " "
-					line += MathModule.RadiansToDegrees(aBone.rotation.x).ToString("0.######", TheApp.InternalNumberFormat)
-				End If
-
-				'TODO: These fixups are all zeroes for now.
-				'      They might be found in the srcbonetransform list.
-				'      Note the g_bonetable[nParent].srcRealign that seems linked to the input fixup values of $definebone.
-				'FROM: write.cpp
-				'mstudiosrcbonetransform_t *pSrcBoneTransform = (mstudiosrcbonetransform_t *)pData;
-				'phdr->numsrcbonetransform = nTransformCount;
-				'phdr->srcbonetransformindex = pData - pStart;
-				'pData += nTransformCount * sizeof( mstudiosrcbonetransform_t );
-				'int bt = 0;
-				'for ( int i = 0; i < g_numbones; i++ )
-				'{
-				'	if ( g_bonetable[i].flags & BONE_ALWAYS_PROCEDURAL )
-				'		continue;
-				'	int nParent = g_bonetable[i].parent;
-				'	if ( MatricesAreEqual( identity, g_bonetable[i].srcRealign ) &&
-				'		( ( nParent < 0 ) || MatricesAreEqual( identity, g_bonetable[nParent].srcRealign ) ) )
-				'		continue;
-
-				'	// What's going on here?
-				'	// So, when we realign a bone, we want to do it in a way so that the child bones
-				'	// have the same bone->world transform. If we take T as the src realignment transform
-				'	// for the parent, P is the parent to world, and C is the child to parent, we expect 
-				'	// the child->world is constant after realignment:
-				'	//		CtoW = P * C = ( P * T ) * ( T^-1 * C )
-				'	// therefore Cnew = ( T^-1 * C )
-				'						If (nParent >= 0) Then
-				'	{
-				'		MatrixInvert( g_bonetable[nParent].srcRealign, pSrcBoneTransform[bt].pretransform );
-				'	}
-				'						Else
-				'	{
-				'		SetIdentityMatrix( pSrcBoneTransform[bt].pretransform );
-				'	}
-				'	MatrixCopy( g_bonetable[i].srcRealign, pSrcBoneTransform[bt].posttransform );
-				'	AddToStringTable( &pSrcBoneTransform[bt], &pSrcBoneTransform[bt].sznameindex, g_bonetable[i].name );
-				'	++bt;
-				'}
-
-				line += " "
-				line += aFixupPosition.x.ToString("0.######", TheApp.InternalNumberFormat)
-				line += " "
-				line += aFixupPosition.y.ToString("0.######", TheApp.InternalNumberFormat)
-				line += " "
-				line += aFixupPosition.z.ToString("0.######", TheApp.InternalNumberFormat)
-
-				line += " "
-				line += aFixupRotation.x.ToString("0.######", TheApp.InternalNumberFormat)
-				line += " "
-				line += aFixupRotation.y.ToString("0.######", TheApp.InternalNumberFormat)
-				line += " "
-				line += aFixupRotation.z.ToString("0.######", TheApp.InternalNumberFormat)
-
-				Me.theOutputFileStreamWriter.WriteLine(line)
-			Next
-		End If
 	End Sub
 
 	Private Sub WriteProceduralBonesCommand()
@@ -3228,49 +3099,11 @@ Public Class SourceQcFile36
 		End If
 	End Sub
 
-	Private Sub WriteBoneMergeCommand()
-		Dim line As String = ""
-
-		'$bonemerge "ValveBiped.Bip01_R_Hand"
-		If Me.theMdlFileData.theBones IsNot Nothing Then
-			Dim aBone As SourceMdlBone37
-			Dim emptyLineIsAlreadyWritten As Boolean
-
-			emptyLineIsAlreadyWritten = False
-			For i As Integer = 0 To Me.theMdlFileData.theBones.Count - 1
-				aBone = Me.theMdlFileData.theBones(i)
-
-				If (aBone.flags And SourceMdlBone.BONE_USED_BY_BONE_MERGE) > 0 Then
-					If Not emptyLineIsAlreadyWritten Then
-						Me.theOutputFileStreamWriter.WriteLine()
-						emptyLineIsAlreadyWritten = True
-					End If
-
-					If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
-						line = "$BoneMerge "
-					Else
-						line = "$bonemerge "
-					End If
-					line += """"
-					line += aBone.theName
-					line += """"
-					Me.theOutputFileStreamWriter.WriteLine(line)
-				End If
-			Next
-		End If
-	End Sub
-
 	Public Sub WriteGroupBox()
 		Me.WriteCBoxCommand()
 		Me.WriteBBoxCommand()
 		If Me.theMdlFileData.theHitboxSets IsNot Nothing Then
-			If Me.theMdlFileData.version <= 10 Then
-				Dim skipBoneInBBoxCommandWasUsed As Boolean = False
-				Me.theOutputFileStreamWriter.WriteLine()
-				Me.WriteHBoxCommands(Me.theMdlFileData.theHitboxSets(0).theHitboxes, "", "", skipBoneInBBoxCommandWasUsed)
-			Else
-				Me.WriteHBoxRelatedCommands()
-			End If
+			Me.WriteHBoxRelatedCommands()
 		End If
 	End Sub
 
@@ -3437,15 +3270,6 @@ Public Class SourceQcFile36
 
 			Me.WriteHBoxCommands(aHitboxSet.theHitboxes, commentTag, aHitboxSet.theName, skipBoneInBBoxCommandWasUsed)
 		Next
-
-		If skipBoneInBBoxCommandWasUsed Then
-			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
-				line = "$SkipBoneInBBox"
-			Else
-				line = "$skipboneinbbox"
-			End If
-			Me.theOutputFileStreamWriter.WriteLine(commentTag + line)
-		End If
 	End Sub
 
 	Private Sub WriteHBoxCommands(ByVal theHitboxes As List(Of SourceMdlHitbox37), ByVal commentTag As String, ByVal hitboxSetName As String, ByRef theSkipBoneInBBoxCommandWasUsed As Boolean)
@@ -3481,18 +3305,6 @@ Public Class SourceQcFile36
 			line += aHitbox.theName
 			line += """"
 			Me.theOutputFileStreamWriter.WriteLine(commentTag + line)
-
-			If Not theSkipBoneInBBoxCommandWasUsed Then
-				If aHitbox.boundingBoxMin.x > 0 _
-				 OrElse aHitbox.boundingBoxMin.y > 0 _
-				 OrElse aHitbox.boundingBoxMin.z > 0 _
-				 OrElse aHitbox.boundingBoxMax.x < 0 _
-				 OrElse aHitbox.boundingBoxMax.y < 0 _
-				 OrElse aHitbox.boundingBoxMax.z < 0 _
-				 Then
-					theSkipBoneInBBoxCommandWasUsed = True
-				End If
-			End If
 		Next
 	End Sub
 
@@ -3600,7 +3412,7 @@ Public Class SourceQcFile36
 				Next
 			End If
 		Catch ex As Exception
-
+			Dim debug As Integer = 4242
 		End Try
 	End Sub
 

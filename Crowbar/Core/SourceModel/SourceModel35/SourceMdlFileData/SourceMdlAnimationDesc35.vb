@@ -53,6 +53,6 @@
 	'Public theName As String
 
 	Public theAnimIsLinkedToSequence As Boolean = False
-	Public theLinkedSequences As New List(Of SourceMdlSequenceDesc36)()
+	Public theLinkedSequences As New List(Of SourceMdlSequenceDesc35)()
 
 End Class

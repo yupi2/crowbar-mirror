@@ -434,15 +434,6 @@ Public Class SourceSmdFile36
 			aVtxVertexIndex = aStripGroup.theVtxIndexes(aVtxIndexIndex)
 			aVtxVertex = aStripGroup.theVtxVertexes(aVtxVertexIndex)
 			vertexIndex = aVtxVertex.originalMeshVertexIndex + bodyPartVertexIndexStart + meshVertexIndexStart
-			'If Me.theVvdFileData.fixupCount = 0 Then
-			'	aVertex = Me.theVvdFileData.theVertexes(vertexIndex)
-			'Else
-			'	'NOTE: I don't know why lodIndex is not needed here, but using only lodIndex=0 matches what MDL Decompiler produces.
-			'	'      Maybe the listing by lodIndex is only needed internally by graphics engine.
-			'	'aVertex = Me.theSourceEngineModel.theVvdFileData.theFixedVertexesByLod(lodIndex)(aVtxVertex.originalMeshVertexIndex + meshVertexIndexStart)
-			'	aVertex = Me.theVvdFileData.theFixedVertexesByLod(0)(vertexIndex)
-			'	'aVertex = Me.theSourceEngineModel.theVvdFileHeader.theFixedVertexesByLod(lodIndex)(aVtxVertex.originalMeshVertexIndex + meshVertexIndexStart)
-			'End If
 			aVertex = Me.theMdlFileData.theBodyParts(0).theModels(0).theVertexes(vertexIndex)
 
 			line = "  "

@@ -246,12 +246,117 @@ Public Class SourceVtaFile2531
 					Dim debug As Integer = 4242
 				End If
 
-				position.x += aVertAnim.deltaX
-				position.y += aVertAnim.deltaY
-				position.z += aVertAnim.deltaZ
-				normal.x += aVertAnim.nDeltaX
-				normal.y += aVertAnim.nDeltaY
-				normal.z += aVertAnim.nDeltaZ
+				'TEST: Values are too big.
+				'position.x += aVertAnim.deltaX
+				'position.y += aVertAnim.deltaY
+				'position.z += aVertAnim.deltaZ
+				'normal.x += aVertAnim.nDeltaX
+				'normal.y += aVertAnim.nDeltaY
+				'normal.z += aVertAnim.nDeltaZ
+				'------
+				'TEST: Values are too big, but seem to be somewhat close to what they should be.
+				'position.x += (aVertAnim.deltaX / 255)
+				'position.y += (aVertAnim.deltaY / 255)
+				'position.z += (aVertAnim.deltaZ / 255)
+				'normal.x += (aVertAnim.nDeltaX / 255)
+				'normal.y += (aVertAnim.nDeltaY / 255)
+				'normal.z += (aVertAnim.nDeltaZ / 255)
+				'position.x += (aVertAnim.deltaY / 255)
+				'position.y += (aVertAnim.deltaX / 255)
+				'position.z += (aVertAnim.deltaZ / 255)
+				'normal.x += (aVertAnim.nDeltaY / 255)
+				'normal.y += (aVertAnim.nDeltaX / 255)
+				'normal.z += (aVertAnim.nDeltaZ / 255)
+				'TEST: Seems close, but pushes all flexes slightly to the right (when viewing from front).
+				'position.x += (aVertAnim.deltaX / 2550)
+				'position.y += (aVertAnim.deltaY / 2550)
+				'position.z += (aVertAnim.deltaZ / 2550)
+				'normal.x += (aVertAnim.nDeltaX / 2550)
+				'normal.y += (aVertAnim.nDeltaY / 2550)
+				'normal.z += (aVertAnim.nDeltaZ / 2550)
+				'position.x += (aVertAnim.deltaX / 2550)
+				'position.y += (aVertAnim.deltaZ / 2550)
+				'position.z += (aVertAnim.deltaY / 2550)
+				'normal.x += (aVertAnim.nDeltaX / 2550)
+				'normal.y += (aVertAnim.nDeltaZ / 2550)
+				'normal.z += (aVertAnim.nDeltaY / 2550)
+				'position.x += (aVertAnim.deltaY / 2550)
+				'position.y += (aVertAnim.deltaX / 2550)
+				'position.z += (aVertAnim.deltaZ / 2550)
+				'normal.x += (aVertAnim.nDeltaY / 2550)
+				'normal.y += (aVertAnim.nDeltaX / 2550)
+				'normal.z += (aVertAnim.nDeltaZ / 2550)
+				'position.x += (aVertAnim.deltaY / 2550)
+				'position.y += (aVertAnim.deltaZ / 2550)
+				'position.z += (aVertAnim.deltaX / 2550)
+				'normal.x += (aVertAnim.nDeltaY / 2550)
+				'normal.y += (aVertAnim.nDeltaZ / 2550)
+				'normal.z += (aVertAnim.nDeltaX / 2550)
+				'position.x += (aVertAnim.deltaZ / 2550)
+				'position.y += (aVertAnim.deltaX / 2550)
+				'position.z += (aVertAnim.deltaY / 2550)
+				'normal.x += (aVertAnim.nDeltaZ / 2550)
+				'normal.y += (aVertAnim.nDeltaX / 2550)
+				'normal.z += (aVertAnim.nDeltaY / 2550)
+				'position.x += (aVertAnim.deltaZ / 2550)
+				'position.y += (aVertAnim.deltaY / 2550)
+				'position.z += (aVertAnim.deltaX / 2550)
+				'normal.x += (aVertAnim.nDeltaZ / 2550)
+				'normal.y += (aVertAnim.nDeltaY / 2550)
+				'normal.z += (aVertAnim.nDeltaX / 2550)
+				position.x -= (aVertAnim.deltaX / 2550)
+				position.y -= (aVertAnim.deltaY / 2550)
+				position.z -= (aVertAnim.deltaZ / 2550)
+				normal.x -= (aVertAnim.nDeltaX / 2550)
+				normal.y -= (aVertAnim.nDeltaY / 2550)
+				normal.z -= (aVertAnim.nDeltaZ / 2550)
+				'------
+				'position.x += (aVertAnim.deltaX / 128)
+				'position.y += (aVertAnim.deltaY / 128)
+				'position.z += (aVertAnim.deltaZ / 128)
+				'normal.x += (aVertAnim.nDeltaX / 128)
+				'normal.y += (aVertAnim.nDeltaY / 128)
+				'normal.z += (aVertAnim.nDeltaZ / 128)
+				'position.x += (aVertAnim.deltaX / 128)
+				'position.y += (aVertAnim.deltaY / 128)
+				'position.z += (aVertAnim.deltaZ / 128)
+				'normal.x += (aVertAnim.nDeltaX / 128)
+				'normal.y += (aVertAnim.nDeltaY / 128)
+				'normal.z += (aVertAnim.nDeltaZ / 128)
+				'position.x += (aVertAnim.deltaX / 1280)
+				'position.y += (aVertAnim.deltaY / 1280)
+				'position.z += (aVertAnim.deltaZ / 1280)
+				'normal.x += (aVertAnim.nDeltaX / 1280)
+				'normal.y += (aVertAnim.nDeltaY / 1280)
+				'normal.z += (aVertAnim.nDeltaZ / 1280)
+				'position.x += (aVertAnim.deltaY / 1280)
+				'position.y += (aVertAnim.deltaX / 1280)
+				'position.z += (aVertAnim.deltaZ / 1280)
+				'normal.x += (aVertAnim.nDeltaY / 1280)
+				'normal.y += (aVertAnim.nDeltaX / 1280)
+				'normal.z += (aVertAnim.nDeltaZ / 1280)
+				'------
+				'TEST: Values are too big, but maybe the SourceFloat8Bits calculations are wrong.
+				'position.x += aVertAnim.flDelta(0).TheFloatValue
+				'position.y += aVertAnim.flDelta(1).TheFloatValue
+				'position.z += aVertAnim.flDelta(2).TheFloatValue
+				'normal.x += aVertAnim.flNDelta(0).TheFloatValue
+				'normal.y += aVertAnim.flNDelta(1).TheFloatValue
+				'normal.z += aVertAnim.flNDelta(2).TheFloatValue
+				'------
+				'position.x += (aVertAnim.deltaX / 32767)
+				'position.y += (aVertAnim.deltaY / 32767)
+				'position.z += (aVertAnim.deltaZ / 32767)
+				'normal.x = 1
+				'normal.y = 1
+				'normal.z = 1
+				'------
+				'position.x += aVertAnim.flDelta(0).TheFloatValue
+				'position.y += aVertAnim.flDelta(1).TheFloatValue
+				'position.z += aVertAnim.flDelta(2).TheFloatValue
+				'normal.x = 1
+				'normal.y = 1
+				'normal.z = 1
 
 				line = "    "
 				line += vertexIndex.ToString(TheApp.InternalNumberFormat)

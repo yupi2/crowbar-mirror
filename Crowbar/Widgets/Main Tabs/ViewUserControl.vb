@@ -110,7 +110,7 @@ Public Class ViewUserControl
 
 		openFileWdw.Title = "Open the MDL file you want to view"
 		'openFileWdw.InitialDirectory = FileManager.GetPath(Me.AppSettingMdlPathFileName)
-		openFileWdw.InitialDirectory = FileManager.GetLongestExistingPath(Me.AppSettingMdlPathFileName)
+		openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(Me.AppSettingMdlPathFileName)
 		If openFileWdw.InitialDirectory = "" Then
 			openFileWdw.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
 		End If

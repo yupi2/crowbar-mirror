@@ -16,7 +16,7 @@
 	'Public texCoordV As UInt16
 	'NOTE: Not float values.
 	'Public position As New SourceVector()
-	'Public unknown(11) As Byte
+	Public unknown(11) As Byte
 	'Public positionX As UInt16
 	'Public positionY As UInt16
 	'Public positionZ As UInt16
@@ -26,8 +26,16 @@
 	Public positionX As UInt16
 	Public positionY As UInt16
 	Public positionZ As UInt16
-	Public normalX As UInt16
-	Public normalY As UInt16
-	Public normalZ As UInt16
+	'Public normalX As UInt16
+	'Public normalY As UInt16
+	'Public normalZ As UInt16
+	Public normalX As Byte
+	Public normalY As Byte
+	Public normalZ As Byte
+	Public texCoordU As Byte
+	Public texCoordV As Byte
+	'Public scaleX As Byte
+	'Public scaleY As Byte
+	'Public scaleZ As Byte
 
 End Class

@@ -28,15 +28,10 @@ Public Class DecompileUserControl
 	Private Sub Init()
 		Me.MdlPathFileNameTextBox.DataBindings.Add("Text", TheApp.Settings, "DecompileMdlPathFileName", False, DataSourceUpdateMode.OnValidation)
 
-		'Me.OutputSubfolderNameRadioButton.Checked = (TheApp.Settings.DecompileOutputFolderOption = OutputFolderOptions.SubfolderName)
-		'Me.OutputSubfolderNameTextBox.DataBindings.Add("Text", TheApp.Settings, "DecompileOutputSubfolderName", False, DataSourceUpdateMode.OnValidation)
-		'Me.OutputFullPathRadioButton.Checked = (TheApp.Settings.DecompileOutputFolderOption = OutputFolderOptions.PathName)
-		'Me.OutputFullPathTextBox.DataBindings.Add("Text", TheApp.Settings, "DecompileOutputFullPath", False, DataSourceUpdateMode.OnValidation)
-		'      Me.UpdateOutputFullPathTextBox()
-		'------
+		Me.OutputPathTextBox.DataBindings.Add("Text", TheApp.Settings, "DecompileOutputFullPath", False, DataSourceUpdateMode.OnValidation)
+		Me.OutputSubfolderTextBox.DataBindings.Add("Text", TheApp.Settings, "DecompileOutputSubfolderName", False, DataSourceUpdateMode.OnValidation)
 		Me.UpdateOutputPathComboBox()
 		Me.UpdateOutputPathWidgets()
-		'Me.UpdateOutputPathTextBox()
 
 		Me.InitDecompilerOptions()
 
@@ -47,10 +42,7 @@ Public Class DecompileUserControl
 		Me.UpdateWidgets(False)
 
 		AddHandler Me.MdlPathFileNameTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
-		'AddHandler Me.OutputFullPathTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
-		If Me.OutputPathTextBox.DataBindings.Count > 0 AndAlso Me.OutputPathTextBox.DataBindings(0).PropertyName = "Text" Then
-			AddHandler Me.OutputPathTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
-		End If
+		AddHandler Me.OutputPathTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
 		AddHandler TheApp.Settings.PropertyChanged, AddressOf AppSettings_PropertyChanged
 		AddHandler TheApp.Decompiler.ProgressChanged, AddressOf Me.DecompilerBackgroundWorker_ProgressChanged
 		AddHandler TheApp.Decompiler.RunWorkerCompleted, AddressOf Me.DecompilerBackgroundWorker_RunWorkerCompleted
@@ -87,19 +79,15 @@ Public Class DecompileUserControl
 
 	Private Sub Free()
 		RemoveHandler Me.MdlPathFileNameTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
-		'RemoveHandler Me.OutputFullPathTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
-		If Me.OutputPathTextBox.DataBindings.Count > 0 AndAlso Me.OutputPathTextBox.DataBindings(0).PropertyName = "Text" Then
-			RemoveHandler Me.OutputPathTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
-		End If
+		RemoveHandler Me.OutputPathTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
 		RemoveHandler TheApp.Settings.PropertyChanged, AddressOf AppSettings_PropertyChanged
 		RemoveHandler TheApp.Decompiler.ProgressChanged, AddressOf Me.DecompilerBackgroundWorker_ProgressChanged
 		RemoveHandler TheApp.Decompiler.RunWorkerCompleted, AddressOf Me.DecompilerBackgroundWorker_RunWorkerCompleted
 
 		Me.MdlPathFileNameTextBox.DataBindings.Clear()
 
-		'Me.OutputSubfolderNameTextBox.DataBindings.Clear()
-		'Me.OutputFullPathTextBox.DataBindings.Clear()
 		Me.OutputPathTextBox.DataBindings.Clear()
+		Me.OutputSubfolderTextBox.DataBindings.Clear()
 
 		Me.FreeDecompilerOptions()
 
@@ -159,7 +147,7 @@ Public Class DecompileUserControl
 			'ElseIf Directory.Exists(TheApp.Settings.DecompileMdlPathFileName) Then
 			'	openFileWdw.InitialDirectory = TheApp.Settings.DecompileMdlPathFileName
 		Else
-			openFileWdw.InitialDirectory = FileManager.GetLongestExistingPath(TheApp.Settings.DecompileMdlPathFileName)
+			openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(TheApp.Settings.DecompileMdlPathFileName)
 			If openFileWdw.InitialDirectory = "" Then
 				openFileWdw.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
 			End If
@@ -332,11 +320,11 @@ Public Class DecompileUserControl
 	End Sub
 
 	Private Sub DecompilerBackgroundWorker_RunWorkerCompleted(ByVal sender As System.Object, ByVal e As System.ComponentModel.RunWorkerCompletedEventArgs)
-        If Not e.Cancelled Then
-            Dim decompileResultInfo As DecompilerOutputInfo
-            decompileResultInfo = CType(e.Result, DecompilerOutputInfo)
-            Me.UpdateDecompiledRelativePathFileNames(decompileResultInfo.theDecompiledRelativePathFileNames)
-        End If
+		If Not e.Cancelled Then
+			Dim decompileResultInfo As DecompilerOutputInfo
+			decompileResultInfo = CType(e.Result, DecompilerOutputInfo)
+			Me.UpdateDecompiledRelativePathFileNames(decompileResultInfo.theDecompiledRelativePathFileNames)
+		End If
 
 		Me.UpdateWidgets(False)
 	End Sub
@@ -379,24 +367,18 @@ Public Class DecompileUserControl
 	End Sub
 
 	Private Sub UpdateOutputPathWidgets()
-		Me.OutputPathTextBox.Visible = (TheApp.Settings.DecompileOutputFolderOption = DecompileOutputPathOptions.WorkFolder) OrElse (TheApp.Settings.DecompileOutputFolderOption = DecompileOutputPathOptions.Subfolder)
+		Me.OutputPathTextBox.Visible = (TheApp.Settings.DecompileOutputFolderOption = DecompileOutputPathOptions.WorkFolder)
+		Me.OutputSubfolderTextBox.Visible = (TheApp.Settings.DecompileOutputFolderOption = DecompileOutputPathOptions.Subfolder)
 		Me.BrowseForOutputPathButton.Enabled = (TheApp.Settings.DecompileOutputFolderOption = DecompileOutputPathOptions.WorkFolder)
 		Me.BrowseForOutputPathButton.Visible = (TheApp.Settings.DecompileOutputFolderOption = DecompileOutputPathOptions.WorkFolder)
 		Me.GotoOutputPathButton.Enabled = (TheApp.Settings.DecompileOutputFolderOption = DecompileOutputPathOptions.WorkFolder)
 		Me.GotoOutputPathButton.Visible = (TheApp.Settings.DecompileOutputFolderOption = DecompileOutputPathOptions.WorkFolder)
 		Me.UseDefaultOutputSubfolderButton.Enabled = (TheApp.Settings.DecompileOutputFolderOption = DecompileOutputPathOptions.Subfolder)
 		Me.UseDefaultOutputSubfolderButton.Visible = (TheApp.Settings.DecompileOutputFolderOption = DecompileOutputPathOptions.Subfolder)
-
-		Me.OutputPathTextBox.DataBindings.Clear()
-		If TheApp.Settings.DecompileOutputFolderOption = DecompileOutputPathOptions.WorkFolder Then
-			Me.OutputPathTextBox.DataBindings.Add("Text", TheApp.Settings, "DecompileOutputFullPath", False, DataSourceUpdateMode.OnValidation)
-		ElseIf TheApp.Settings.DecompileOutputFolderOption = DecompileOutputPathOptions.Subfolder Then
-			Me.OutputPathTextBox.DataBindings.Add("Text", TheApp.Settings, "DecompileOutputSubfolderName", False, DataSourceUpdateMode.OnValidation)
-		End If
 	End Sub
 
 	Private Sub UpdateOutputPathTextBox()
-		If TheApp.Settings.DecompileOutputFolderOption = CompileOutputPathOptions.WorkFolder Then
+		If TheApp.Settings.DecompileOutputFolderOption = DecompileOutputPathOptions.WorkFolder Then
 			If String.IsNullOrEmpty(Me.OutputPathTextBox.Text) Then
 				Try
 					TheApp.Settings.DecompileOutputFullPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
@@ -417,7 +399,7 @@ Public Class DecompileUserControl
 			'If Directory.Exists(TheApp.Settings.DecompileOutputFullPath) Then
 			'	outputPathWdw.InitialDirectory = TheApp.Settings.DecompileOutputFullPath
 			'Else
-			outputPathWdw.InitialDirectory = FileManager.GetLongestExistingPath(TheApp.Settings.DecompileOutputFullPath)
+			outputPathWdw.InitialDirectory = FileManager.GetLongestExtantPath(TheApp.Settings.DecompileOutputFullPath)
 			If outputPathWdw.InitialDirectory = "" Then
 				If File.Exists(TheApp.Settings.DecompileMdlPathFileName) Then
 					outputPathWdw.InitialDirectory = FileManager.GetPath(TheApp.Settings.DecompileMdlPathFileName)
@@ -465,6 +447,7 @@ Public Class DecompileUserControl
 		'Me.BrowseForOutputPathNameButton.Enabled = Not decompilerIsRunning
 		Me.OutputPathComboBox.Enabled = Not decompilerIsRunning
 		Me.OutputPathTextBox.Enabled = Not decompilerIsRunning
+		Me.OutputSubfolderTextBox.Enabled = Not decompilerIsRunning
 		Me.BrowseForOutputPathButton.Enabled = Not decompilerIsRunning
 		Me.GotoOutputPathButton.Enabled = Not decompilerIsRunning
 		Me.UseDefaultOutputSubfolderButton.Enabled = Not decompilerIsRunning
@@ -475,6 +458,8 @@ Public Class DecompileUserControl
 		Me.IncludeDefineBoneLinesCheckBox.Enabled = TheApp.Settings.DecompileQcFileIsChecked
 		Me.ApplyRightHandFixCheckBox.Enabled = TheApp.Settings.DecompileReferenceMeshSmdFileIsChecked
 		Me.PlaceInAnimsSubfolderCheckBox.Enabled = TheApp.Settings.DecompileBoneAnimationSmdFilesIsChecked
+
+		Me.OptionsGroupBox.Enabled = Not decompilerIsRunning
 
 		Me.DecompileButton.Enabled = Not decompilerIsRunning _
 		 AndAlso (TheApp.Settings.DecompileQcFileIsChecked _
@@ -504,6 +489,8 @@ Public Class DecompileUserControl
 		'Next
 		If iDecompiledRelativePathFileNames IsNot Nothing Then
 			Me.theDecompiledRelativePathFileNames = iDecompiledRelativePathFileNames
+			'NOTE: Do not sort because the list is already sorted by file and then by folder.
+			'Me.theDecompiledRelativePathFileNames.Sort()
 			'NOTE: Need to set to nothing first to force it to update.
 			Me.DecompiledFilesComboBox.DataSource = Nothing
 			Me.DecompiledFilesComboBox.DataSource = Me.theDecompiledRelativePathFileNames

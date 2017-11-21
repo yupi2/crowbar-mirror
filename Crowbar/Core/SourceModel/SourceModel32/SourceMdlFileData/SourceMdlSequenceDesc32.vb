@@ -154,8 +154,8 @@
 
 	Public frameCount As Integer
 
-	Public blendCount As Integer
-	Public blendOffset As Integer
+	Public animDescIndex As Integer
+	Public unknown As Integer
 
 	Public sequenceGroup As Integer
 
@@ -193,7 +193,7 @@
 	Public unused(1) As Integer
 
 	Public theActivityName As String
-	Public theAnimDescIndexes As List(Of Short)
+	'Public theAnimDescIndexes As List(Of Short)
 	Public theAutoLayers As List(Of SourceMdlAutoLayer37)
 	Public theBoneWeights As List(Of Double)
 	Public theEvents As List(Of SourceMdlEvent37)

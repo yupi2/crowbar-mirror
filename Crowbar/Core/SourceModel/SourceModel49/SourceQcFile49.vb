@@ -117,7 +117,7 @@ Public Class SourceQcFile49
 		'modelPath = FileManager.GetPath(CStr(theSourceEngineModel.theMdlFileHeader.name).Trim(Chr(0)))
 		'modelPathFileName = Path.Combine(modelPath, theSourceEngineModel.ModelName + ".mdl")
 		'modelPathFileName = CStr(theSourceEngineModel.MdlFileHeader.name).Trim(Chr(0))
-		modelPathFileName = Me.theMdlFileData.theName
+		modelPathFileName = Me.theMdlFileData.theModelName
 
 		Me.theOutputFileStreamWriter.WriteLine()
 
@@ -391,22 +391,22 @@ Public Class SourceQcFile49
 		Catch
 		End Try
 
-		Me.CreateListOfEyelidFlexFrameIndexes()
+		'Me.CreateListOfEyelidFlexFrameIndexes()
 	End Sub
 
-	Private Sub CreateListOfEyelidFlexFrameIndexes()
-		Dim aFlexFrame As FlexFrame
+	'Private Sub CreateListOfEyelidFlexFrameIndexes()
+	'	Dim aFlexFrame As FlexFrame
 
-		Me.theMdlFileData.theEyelidFlexFrameIndexes = New List(Of Integer)()
-		For frameIndex As Integer = 1 To Me.theMdlFileData.theFlexFrames.Count - 1
-			aFlexFrame = Me.theMdlFileData.theFlexFrames(frameIndex)
-			If Not Me.theMdlFileData.theEyelidFlexFrameIndexes.Contains(frameIndex) Then
-				If Me.theMdlFileData.theFlexDescs(aFlexFrame.flexes(0).flexDescIndex).theDescIsUsedByEyelid Then
-					Me.theMdlFileData.theEyelidFlexFrameIndexes.Add(frameIndex)
-				End If
-			End If
-		Next
-	End Sub
+	'	Me.theMdlFileData.theEyelidFlexFrameIndexes = New List(Of Integer)()
+	'	For frameIndex As Integer = 1 To Me.theMdlFileData.theFlexFrames.Count - 1
+	'		aFlexFrame = Me.theMdlFileData.theFlexFrames(frameIndex)
+	'		If Not Me.theMdlFileData.theEyelidFlexFrameIndexes.Contains(frameIndex) Then
+	'			If Me.theMdlFileData.theFlexDescs(aFlexFrame.flexes(0).flexDescIndex).theDescIsUsedByEyelid Then
+	'				Me.theMdlFileData.theEyelidFlexFrameIndexes.Add(frameIndex)
+	'			End If
+	'		End If
+	'	Next
+	'End Sub
 
 	Private Sub WriteEyelidLines(ByVal aBodyPart As SourceMdlBodyPart, ByVal eyeballNames As List(Of String))
 		Dim line As String = ""
@@ -415,6 +415,7 @@ Public Class SourceQcFile49
 		Dim anEyeball As SourceMdlEyeball
 		Dim frameIndex As Integer
 		Dim eyelidName As String
+		Dim aFlexFrame As FlexFrame
 
 		Try
 			' Write eyelid options.
@@ -424,19 +425,26 @@ Public Class SourceQcFile49
 			'eyelid  upper_left $expressions$ lowerer 1 -0.19 neutral 0 0.13 raiser 2 0.27 split -0.1 eyeball lefteye
 			'eyelid  lower_left $expressions$ lowerer 3 -0.32 neutral 0 -0.19 raiser 4 -0.02 split -0.1 eyeball lefteye
 			'aBodyPart = Me.theMdlFileData.theBodyParts(0)
-			If aBodyPart.theModels IsNot Nothing AndAlso aBodyPart.theModels.Count > 0 AndAlso Me.theMdlFileData.theEyelidFlexFrameIndexes.Count > 0 Then
+			'If aBodyPart.theModels IsNot Nothing AndAlso aBodyPart.theModels.Count > 0 AndAlso Me.theMdlFileData.theEyelidFlexFrameIndexes.Count > 0 Then
+			If aBodyPart.theModels IsNot Nothing AndAlso aBodyPart.theModels.Count > 0 Then
 				aModel = aBodyPart.theModels(0)
 				If aModel.theEyeballs IsNot Nothing AndAlso aModel.theEyeballs.Count > 0 Then
 					line = ""
 					Me.theOutputFileStreamWriter.WriteLine(line)
 
-					frameIndex = 0
+					'frameIndex = 0
 					For eyeballIndex As Integer = 0 To aModel.theEyeballs.Count - 1
 						anEyeball = aModel.theEyeballs(eyeballIndex)
 
-						If frameIndex + 3 >= Me.theMdlFileData.theEyelidFlexFrameIndexes.Count Then
-							frameIndex = 0
+						If anEyeball.upperLidFlexDesc = anEyeball.upperFlexDesc(0) Then
+							'NOTE: This means the eyeball uses "dummy_eyelid", made via DMX file.
+							'      Comparing the two flexDescs seemed better than comparing flexDesc.theName with "dummy_eyelid", because the flexDescs can't be faked without hex-editing the MDL.
+							Continue For
 						End If
+
+						'If frameIndex + 3 >= Me.theMdlFileData.theEyelidFlexFrameIndexes.Count Then
+						'	frameIndex = 0
+						'End If
 						eyelidName = Me.theMdlFileData.theFlexDescs(anEyeball.upperLidFlexDesc).theName
 
 						line = vbTab
@@ -454,8 +462,20 @@ Public Class SourceQcFile49
 						'TEST:
 						'line += anEyeball.upperFlexDesc(0).ToString()
 						'TEST:
-						line += Me.theMdlFileData.theEyelidFlexFrameIndexes(frameIndex).ToString(TheApp.InternalNumberFormat)
-						frameIndex += 1
+						'line += Me.theMdlFileData.theEyelidFlexFrameIndexes(frameIndex).ToString(TheApp.InternalNumberFormat)
+						'frameIndex += 1
+						'NOTE: Start at index 1 because defaultflex frame is at index 0.
+						frameIndex = 0
+						For flexFrameIndex As Integer = 1 To Me.theMdlFileData.theFlexFrames.Count - 1
+							aFlexFrame = Me.theMdlFileData.theFlexFrames(flexFrameIndex)
+							If aFlexFrame.flexName = eyelidName Then
+								If aFlexFrame.flexes(0).target0 = -11 Then
+									frameIndex = flexFrameIndex
+									Exit For
+								End If
+							End If
+						Next
+						line += frameIndex.ToString(TheApp.InternalNumberFormat)
 						line += " "
 						line += anEyeball.upperTarget(0).ToString("0.##", TheApp.InternalNumberFormat)
 						line += " "
@@ -469,8 +489,20 @@ Public Class SourceQcFile49
 						'TEST:
 						'line += anEyeball.upperFlexDesc(2).ToString()
 						'TEST:
-						line += Me.theMdlFileData.theEyelidFlexFrameIndexes(frameIndex).ToString(TheApp.InternalNumberFormat)
-						frameIndex += 1
+						'line += Me.theMdlFileData.theEyelidFlexFrameIndexes(frameIndex).ToString(TheApp.InternalNumberFormat)
+						'frameIndex += 1
+						'NOTE: Start at index 1 because defaultflex frame is at index 0.
+						frameIndex = 0
+						For flexFrameIndex As Integer = 1 To Me.theMdlFileData.theFlexFrames.Count - 1
+							aFlexFrame = Me.theMdlFileData.theFlexFrames(flexFrameIndex)
+							If aFlexFrame.flexName = eyelidName Then
+								If aFlexFrame.flexes(0).target3 = 11 Then
+									frameIndex = flexFrameIndex
+									Exit For
+								End If
+							End If
+						Next
+						line += frameIndex.ToString(TheApp.InternalNumberFormat)
 						line += " "
 						line += anEyeball.upperTarget(2).ToString("0.##", TheApp.InternalNumberFormat)
 						line += " "
@@ -503,8 +535,20 @@ Public Class SourceQcFile49
 						'TEST:
 						'line += anEyeball.lowerFlexDesc(0).ToString()
 						'TEST:
-						line += Me.theMdlFileData.theEyelidFlexFrameIndexes(frameIndex).ToString(TheApp.InternalNumberFormat)
-						frameIndex += 1
+						'line += Me.theMdlFileData.theEyelidFlexFrameIndexes(frameIndex).ToString(TheApp.InternalNumberFormat)
+						'frameIndex += 1
+						'NOTE: Start at index 1 because defaultflex frame is at index 0.
+						frameIndex = 0
+						For flexFrameIndex As Integer = 1 To Me.theMdlFileData.theFlexFrames.Count - 1
+							aFlexFrame = Me.theMdlFileData.theFlexFrames(flexFrameIndex)
+							If aFlexFrame.flexName = eyelidName Then
+								If aFlexFrame.flexes(0).target0 = -11 Then
+									frameIndex = flexFrameIndex
+									Exit For
+								End If
+							End If
+						Next
+						line += frameIndex.ToString(TheApp.InternalNumberFormat)
 						line += " "
 						line += anEyeball.lowerTarget(0).ToString("0.##", TheApp.InternalNumberFormat)
 						line += " "
@@ -518,8 +562,20 @@ Public Class SourceQcFile49
 						'TEST:
 						'line += anEyeball.lowerFlexDesc(2).ToString()
 						'TEST:
-						line += Me.theMdlFileData.theEyelidFlexFrameIndexes(frameIndex).ToString(TheApp.InternalNumberFormat)
-						frameIndex += 1
+						'line += Me.theMdlFileData.theEyelidFlexFrameIndexes(frameIndex).ToString(TheApp.InternalNumberFormat)
+						'frameIndex += 1
+						'NOTE: Start at index 1 because defaultflex frame is at index 0.
+						frameIndex = 0
+						For flexFrameIndex As Integer = 1 To Me.theMdlFileData.theFlexFrames.Count - 1
+							aFlexFrame = Me.theMdlFileData.theFlexFrames(flexFrameIndex)
+							If aFlexFrame.flexName = eyelidName Then
+								If aFlexFrame.flexes(0).target3 = 11 Then
+									frameIndex = flexFrameIndex
+									Exit For
+								End If
+							End If
+						Next
+						line += frameIndex.ToString(TheApp.InternalNumberFormat)
 						line += " "
 						line += anEyeball.lowerTarget(2).ToString("0.##", TheApp.InternalNumberFormat)
 						line += " "
@@ -786,7 +842,8 @@ Public Class SourceQcFile49
 
 			For i As Integer = 0 To Me.theMdlFileData.theFlexRules.Count - 1
 				aFlexRule = Me.theMdlFileData.theFlexRules(i)
-				line = Me.GetFlexRule(aFlexRule)
+				'line = Me.GetFlexRule(aFlexRule)
+				line = Common.GetFlexRule(Me.theMdlFileData.theFlexDescs, Me.theMdlFileData.theFlexControllers, aFlexRule)
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			Next
 		End If
@@ -824,218 +881,218 @@ Public Class SourceQcFile49
 		Return C + (D - C) * cVal
 	End Function
 
-	Private Function GetFlexRule(ByVal aFlexRule As SourceMdlFlexRule) As String
-		Dim flexRuleEquation As String
-		flexRuleEquation = vbTab
-		flexRuleEquation += "%"
-		flexRuleEquation += Me.theMdlFileData.theFlexDescs(aFlexRule.flexIndex).theName
-		flexRuleEquation += " = "
-		If aFlexRule.theFlexOps IsNot Nothing AndAlso aFlexRule.theFlexOps.Count > 0 Then
-			Dim aFlexOp As SourceMdlFlexOp
+	'Private Function GetFlexRule(ByVal aFlexRule As SourceMdlFlexRule) As String
+	'	Dim flexRuleEquation As String
+	'	flexRuleEquation = vbTab
+	'	flexRuleEquation += "%"
+	'	flexRuleEquation += Me.theMdlFileData.theFlexDescs(aFlexRule.flexIndex).theName
+	'	flexRuleEquation += " = "
+	'	If aFlexRule.theFlexOps IsNot Nothing AndAlso aFlexRule.theFlexOps.Count > 0 Then
+	'		Dim aFlexOp As SourceMdlFlexOp
 
-			' Convert to infix notation.
+	'		' Convert to infix notation.
 
-			Dim stack As Stack(Of IntermediateExpression) = New Stack(Of IntermediateExpression)()
-			Dim rightExpr As String
-			Dim leftExpr As String
+	'		Dim stack As Stack(Of IntermediateExpression) = New Stack(Of IntermediateExpression)()
+	'		Dim rightExpr As String
+	'		Dim leftExpr As String
 
-			For i As Integer = 0 To aFlexRule.theFlexOps.Count - 1
-				aFlexOp = aFlexRule.theFlexOps(i)
-				If aFlexOp.op = SourceMdlFlexOp.STUDIO_CONST Then
-					stack.Push(New IntermediateExpression(Math.Round(aFlexOp.value, 6).ToString("0.######", TheApp.InternalNumberFormat), 10))
-				ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_FETCH1 Then
-					'int m = pFlexcontroller( (LocalFlexController_t)pops->d.index)->localToGlobal;
-					'stack[k] = src[m];
-					'k++; 
-					stack.Push(New IntermediateExpression(Me.theMdlFileData.theFlexControllers(aFlexOp.index).theName, 10))
-				ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_FETCH2 Then
-					stack.Push(New IntermediateExpression("%" + Me.theMdlFileData.theFlexDescs(aFlexOp.index).theName, 10))
-				ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_ADD Then
-					Dim rightIntermediate As IntermediateExpression = stack.Pop()
-					Dim leftIntermediate As IntermediateExpression = stack.Pop()
+	'		For i As Integer = 0 To aFlexRule.theFlexOps.Count - 1
+	'			aFlexOp = aFlexRule.theFlexOps(i)
+	'			If aFlexOp.op = SourceMdlFlexOp.STUDIO_CONST Then
+	'				stack.Push(New IntermediateExpression(Math.Round(aFlexOp.value, 6).ToString("0.######", TheApp.InternalNumberFormat), 10))
+	'			ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_FETCH1 Then
+	'				'int m = pFlexcontroller( (LocalFlexController_t)pops->d.index)->localToGlobal;
+	'				'stack[k] = src[m];
+	'				'k++; 
+	'				stack.Push(New IntermediateExpression(Me.theMdlFileData.theFlexControllers(aFlexOp.index).theName, 10))
+	'			ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_FETCH2 Then
+	'				stack.Push(New IntermediateExpression("%" + Me.theMdlFileData.theFlexDescs(aFlexOp.index).theName, 10))
+	'			ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_ADD Then
+	'				Dim rightIntermediate As IntermediateExpression = stack.Pop()
+	'				Dim leftIntermediate As IntermediateExpression = stack.Pop()
 
-					Dim newExpr As String = Convert.ToString(leftIntermediate.theExpression) + " + " + Convert.ToString(rightIntermediate.theExpression)
-					stack.Push(New IntermediateExpression(newExpr, 1))
-				ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_SUB Then
-					Dim rightIntermediate As IntermediateExpression = stack.Pop()
-					Dim leftIntermediate As IntermediateExpression = stack.Pop()
+	'				Dim newExpr As String = Convert.ToString(leftIntermediate.theExpression) + " + " + Convert.ToString(rightIntermediate.theExpression)
+	'				stack.Push(New IntermediateExpression(newExpr, 1))
+	'			ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_SUB Then
+	'				Dim rightIntermediate As IntermediateExpression = stack.Pop()
+	'				Dim leftIntermediate As IntermediateExpression = stack.Pop()
 
-					Dim newExpr As String = Convert.ToString(leftIntermediate.theExpression) + " - " + Convert.ToString(rightIntermediate.theExpression)
-					stack.Push(New IntermediateExpression(newExpr, 1))
-				ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_MUL Then
-					Dim rightIntermediate As IntermediateExpression = stack.Pop()
-					If rightIntermediate.thePrecedence < 2 Then
-						rightExpr = "(" + Convert.ToString(rightIntermediate.theExpression) + ")"
-					Else
-						rightExpr = rightIntermediate.theExpression
-					End If
+	'				Dim newExpr As String = Convert.ToString(leftIntermediate.theExpression) + " - " + Convert.ToString(rightIntermediate.theExpression)
+	'				stack.Push(New IntermediateExpression(newExpr, 1))
+	'			ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_MUL Then
+	'				Dim rightIntermediate As IntermediateExpression = stack.Pop()
+	'				If rightIntermediate.thePrecedence < 2 Then
+	'					rightExpr = "(" + Convert.ToString(rightIntermediate.theExpression) + ")"
+	'				Else
+	'					rightExpr = rightIntermediate.theExpression
+	'				End If
 
-					Dim leftIntermediate As IntermediateExpression = stack.Pop()
-					If leftIntermediate.thePrecedence < 2 Then
-						leftExpr = "(" + Convert.ToString(leftIntermediate.theExpression) + ")"
-					Else
-						leftExpr = leftIntermediate.theExpression
-					End If
+	'				Dim leftIntermediate As IntermediateExpression = stack.Pop()
+	'				If leftIntermediate.thePrecedence < 2 Then
+	'					leftExpr = "(" + Convert.ToString(leftIntermediate.theExpression) + ")"
+	'				Else
+	'					leftExpr = leftIntermediate.theExpression
+	'				End If
 
-					Dim newExpr As String = leftExpr + " * " + rightExpr
-					stack.Push(New IntermediateExpression(newExpr, 2))
-				ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_DIV Then
-					Dim rightIntermediate As IntermediateExpression = stack.Pop()
-					If rightIntermediate.thePrecedence < 2 Then
-						rightExpr = "(" + Convert.ToString(rightIntermediate.theExpression) + ")"
-					Else
-						rightExpr = rightIntermediate.theExpression
-					End If
+	'				Dim newExpr As String = leftExpr + " * " + rightExpr
+	'				stack.Push(New IntermediateExpression(newExpr, 2))
+	'			ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_DIV Then
+	'				Dim rightIntermediate As IntermediateExpression = stack.Pop()
+	'				If rightIntermediate.thePrecedence < 2 Then
+	'					rightExpr = "(" + Convert.ToString(rightIntermediate.theExpression) + ")"
+	'				Else
+	'					rightExpr = rightIntermediate.theExpression
+	'				End If
 
-					Dim leftIntermediate As IntermediateExpression = stack.Pop()
-					If leftIntermediate.thePrecedence < 2 Then
-						leftExpr = "(" + Convert.ToString(leftIntermediate.theExpression) + ")"
-					Else
-						leftExpr = leftIntermediate.theExpression
-					End If
+	'				Dim leftIntermediate As IntermediateExpression = stack.Pop()
+	'				If leftIntermediate.thePrecedence < 2 Then
+	'					leftExpr = "(" + Convert.ToString(leftIntermediate.theExpression) + ")"
+	'				Else
+	'					leftExpr = leftIntermediate.theExpression
+	'				End If
 
-					Dim newExpr As String = leftExpr + " / " + rightExpr
-					stack.Push(New IntermediateExpression(newExpr, 2))
-				ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_NEG Then
-					Dim rightIntermediate As IntermediateExpression = stack.Pop()
+	'				Dim newExpr As String = leftExpr + " / " + rightExpr
+	'				stack.Push(New IntermediateExpression(newExpr, 2))
+	'			ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_NEG Then
+	'				Dim rightIntermediate As IntermediateExpression = stack.Pop()
 
-					Dim newExpr As String = "-" + rightIntermediate.theExpression
-					stack.Push(New IntermediateExpression(newExpr, 10))
-				ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_EXP Then
-					Dim ignoreThisOpBecauseItIsMistakeToBeHere As Integer = 4242
-				ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_OPEN Then
-					Dim ignoreThisOpBecauseItIsMistakeToBeHere As Integer = 4242
-				ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_CLOSE Then
-					Dim ignoreThisOpBecauseItIsMistakeToBeHere As Integer = 4242
-				ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_COMMA Then
-					Dim ignoreThisOpBecauseItIsMistakeToBeHere As Integer = 4242
-				ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_MAX Then
-					Dim rightIntermediate As IntermediateExpression = stack.Pop()
-					If rightIntermediate.thePrecedence < 5 Then
-						rightExpr = "(" + Convert.ToString(rightIntermediate.theExpression) + ")"
-					Else
-						rightExpr = rightIntermediate.theExpression
-					End If
+	'				Dim newExpr As String = "-" + rightIntermediate.theExpression
+	'				stack.Push(New IntermediateExpression(newExpr, 10))
+	'			ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_EXP Then
+	'				Dim ignoreThisOpBecauseItIsMistakeToBeHere As Integer = 4242
+	'			ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_OPEN Then
+	'				Dim ignoreThisOpBecauseItIsMistakeToBeHere As Integer = 4242
+	'			ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_CLOSE Then
+	'				Dim ignoreThisOpBecauseItIsMistakeToBeHere As Integer = 4242
+	'			ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_COMMA Then
+	'				Dim ignoreThisOpBecauseItIsMistakeToBeHere As Integer = 4242
+	'			ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_MAX Then
+	'				Dim rightIntermediate As IntermediateExpression = stack.Pop()
+	'				If rightIntermediate.thePrecedence < 5 Then
+	'					rightExpr = "(" + Convert.ToString(rightIntermediate.theExpression) + ")"
+	'				Else
+	'					rightExpr = rightIntermediate.theExpression
+	'				End If
 
-					Dim leftIntermediate As IntermediateExpression = stack.Pop()
-					If leftIntermediate.thePrecedence < 5 Then
-						leftExpr = "(" + Convert.ToString(leftIntermediate.theExpression) + ")"
-					Else
-						leftExpr = leftIntermediate.theExpression
-					End If
+	'				Dim leftIntermediate As IntermediateExpression = stack.Pop()
+	'				If leftIntermediate.thePrecedence < 5 Then
+	'					leftExpr = "(" + Convert.ToString(leftIntermediate.theExpression) + ")"
+	'				Else
+	'					leftExpr = leftIntermediate.theExpression
+	'				End If
 
-					Dim newExpr As String = " max(" + leftExpr + ", " + rightExpr + ")"
-					stack.Push(New IntermediateExpression(newExpr, 5))
-				ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_MIN Then
-					Dim rightIntermediate As IntermediateExpression = stack.Pop()
-					If rightIntermediate.thePrecedence < 5 Then
-						rightExpr = "(" + Convert.ToString(rightIntermediate.theExpression) + ")"
-					Else
-						rightExpr = rightIntermediate.theExpression
-					End If
+	'				Dim newExpr As String = " max(" + leftExpr + ", " + rightExpr + ")"
+	'				stack.Push(New IntermediateExpression(newExpr, 5))
+	'			ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_MIN Then
+	'				Dim rightIntermediate As IntermediateExpression = stack.Pop()
+	'				If rightIntermediate.thePrecedence < 5 Then
+	'					rightExpr = "(" + Convert.ToString(rightIntermediate.theExpression) + ")"
+	'				Else
+	'					rightExpr = rightIntermediate.theExpression
+	'				End If
 
-					Dim leftIntermediate As IntermediateExpression = stack.Pop()
-					If leftIntermediate.thePrecedence < 5 Then
-						leftExpr = "(" + Convert.ToString(leftIntermediate.theExpression) + ")"
-					Else
-						leftExpr = leftIntermediate.theExpression
-					End If
+	'				Dim leftIntermediate As IntermediateExpression = stack.Pop()
+	'				If leftIntermediate.thePrecedence < 5 Then
+	'					leftExpr = "(" + Convert.ToString(leftIntermediate.theExpression) + ")"
+	'				Else
+	'					leftExpr = leftIntermediate.theExpression
+	'				End If
 
-					Dim newExpr As String = " min(" + leftExpr + ", " + rightExpr + ")"
-					stack.Push(New IntermediateExpression(newExpr, 5))
-					'TODO: SourceMdlFlexOp.STUDIO_2WAY_0
-					'ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_2WAY_0 Then
-					'	'	'#define STUDIO_2WAY_0	15	// Fetch a value from a 2 Way slider for the 1st value RemapVal( 0.0, 0.5, 0.0, 1.0 )
-					'	'	'int m = pFlexcontroller( (LocalFlexController_t)pops->d.index )->localToGlobal;
-					'	'	'stack[ k ] = RemapValClamped( src[m], -1.0f, 0.0f, 1.0f, 0.0f );
-					'	'	'k++; 
-					'	Dim newExpression As String
-					'	'newExpression = CStr(Me.RemapValClamped(aFlexOp.value, -1, 0, 1, 0))
-					'	newExpression = "RemapValClamped(" + theSourceEngineModel.theMdlFileHeader.theFlexControllers(aFlexOp.index).theName + ", -1, 0, 1, 0)"
-					'	stack.Push(New IntermediateExpression(newExpression, 5))
-					'TODO: SourceMdlFlexOp.STUDIO_2WAY_1
-					'ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_2WAY_1 Then
-					'	'#define STUDIO_2WAY_1	16	// Fetch a value from a 2 Way slider for the 2nd value RemapVal( 0.5, 1.0, 0.0, 1.0 )
-					'	'int m = pFlexcontroller( (LocalFlexController_t)pops->d.index )->localToGlobal;
-					'	'stack[ k ] = RemapValClamped( src[m], 0.0f, 1.0f, 0.0f, 1.0f );
-					'	'k++; 
-					'	Dim newExpression As String
-					'	'newExpression = CStr(Me.RemapValClamped(aFlexOp.value, 0, 1, 0, 1))
-					'	newExpression = "RemapValClamped(" + theSourceEngineModel.theMdlFileHeader.theFlexControllers(aFlexOp.index).theName + ", 0, 1, 0, 1)"
-					'	stack.Push(New IntermediateExpression(newExpression, 5))
-					'TODO: SourceMdlFlexOp.STUDIO_NWAY
-					'ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_NWAY Then
-					'	Dim x As Integer = 42
-				ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_COMBO Then
-					'#define STUDIO_COMBO	18	// Perform a combo operation (essentially multiply the last N values on the stack)
-					'int m = pops->d.index;
-					'int km = k - m;
-					'for ( int i = km + 1; i < k; ++i )
-					'{
-					'	stack[ km ] *= stack[ i ];
-					'}
-					'k = k - m + 1;
-					Dim count As Integer
-					Dim newExpression As String
-					Dim intermediateExp As IntermediateExpression
-					count = aFlexOp.index
-					newExpression = ""
-					intermediateExp = stack.Pop()
-					newExpression += intermediateExp.theExpression
-					For j As Integer = 2 To count
-						intermediateExp = stack.Pop()
-						newExpression += " * " + intermediateExp.theExpression
-					Next
-					newExpression = "(" + newExpression + ")"
-					stack.Push(New IntermediateExpression(newExpression, 5))
-				ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_DOMINATE Then
-					'int m = pops->d.index;
-					'int km = k - m;
-					'float dv = stack[ km ];
-					'for ( int i = km + 1; i < k; ++i )
-					'{
-					'	dv *= stack[ i ];
-					'}
-					'stack[ km - 1 ] *= 1.0f - dv;
-					'k -= m;
-					Dim count As Integer
-					Dim newExpression As String
-					Dim intermediateExp As IntermediateExpression
-					count = aFlexOp.index
-					newExpression = ""
-					intermediateExp = stack.Pop()
-					newExpression += intermediateExp.theExpression
-					For j As Integer = 2 To count
-						intermediateExp = stack.Pop()
-						newExpression += " * " + intermediateExp.theExpression
-					Next
-					intermediateExp = stack.Pop()
-					newExpression = intermediateExp.theExpression + " * (1 - " + newExpression + ")"
-					newExpression = "(" + newExpression + ")"
-					stack.Push(New IntermediateExpression(newExpression, 5))
-					'TODO: SourceMdlFlexOp.STUDIO_DME_LOWER_EYELID
-					'ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_DME_LOWER_EYELID Then
-					'	Dim x As Integer = 42
-					'TODO: SourceMdlFlexOp.STUDIO_DME_UPPER_EYELID
-					'ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_DME_UPPER_EYELID Then
-					'	Dim x As Integer = 42
-				Else
-					stack.Clear()
-					Exit For
-				End If
-			Next
+	'				Dim newExpr As String = " min(" + leftExpr + ", " + rightExpr + ")"
+	'				stack.Push(New IntermediateExpression(newExpr, 5))
+	'				'TODO: SourceMdlFlexOp.STUDIO_2WAY_0
+	'				'ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_2WAY_0 Then
+	'				'	'	'#define STUDIO_2WAY_0	15	// Fetch a value from a 2 Way slider for the 1st value RemapVal( 0.0, 0.5, 0.0, 1.0 )
+	'				'	'	'int m = pFlexcontroller( (LocalFlexController_t)pops->d.index )->localToGlobal;
+	'				'	'	'stack[ k ] = RemapValClamped( src[m], -1.0f, 0.0f, 1.0f, 0.0f );
+	'				'	'	'k++; 
+	'				'	Dim newExpression As String
+	'				'	'newExpression = CStr(Me.RemapValClamped(aFlexOp.value, -1, 0, 1, 0))
+	'				'	newExpression = "RemapValClamped(" + theSourceEngineModel.theMdlFileHeader.theFlexControllers(aFlexOp.index).theName + ", -1, 0, 1, 0)"
+	'				'	stack.Push(New IntermediateExpression(newExpression, 5))
+	'				'TODO: SourceMdlFlexOp.STUDIO_2WAY_1
+	'				'ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_2WAY_1 Then
+	'				'	'#define STUDIO_2WAY_1	16	// Fetch a value from a 2 Way slider for the 2nd value RemapVal( 0.5, 1.0, 0.0, 1.0 )
+	'				'	'int m = pFlexcontroller( (LocalFlexController_t)pops->d.index )->localToGlobal;
+	'				'	'stack[ k ] = RemapValClamped( src[m], 0.0f, 1.0f, 0.0f, 1.0f );
+	'				'	'k++; 
+	'				'	Dim newExpression As String
+	'				'	'newExpression = CStr(Me.RemapValClamped(aFlexOp.value, 0, 1, 0, 1))
+	'				'	newExpression = "RemapValClamped(" + theSourceEngineModel.theMdlFileHeader.theFlexControllers(aFlexOp.index).theName + ", 0, 1, 0, 1)"
+	'				'	stack.Push(New IntermediateExpression(newExpression, 5))
+	'				'TODO: SourceMdlFlexOp.STUDIO_NWAY
+	'				'ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_NWAY Then
+	'				'	Dim x As Integer = 42
+	'			ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_COMBO Then
+	'				'#define STUDIO_COMBO	18	// Perform a combo operation (essentially multiply the last N values on the stack)
+	'				'int m = pops->d.index;
+	'				'int km = k - m;
+	'				'for ( int i = km + 1; i < k; ++i )
+	'				'{
+	'				'	stack[ km ] *= stack[ i ];
+	'				'}
+	'				'k = k - m + 1;
+	'				Dim count As Integer
+	'				Dim newExpression As String
+	'				Dim intermediateExp As IntermediateExpression
+	'				count = aFlexOp.index
+	'				newExpression = ""
+	'				intermediateExp = stack.Pop()
+	'				newExpression += intermediateExp.theExpression
+	'				For j As Integer = 2 To count
+	'					intermediateExp = stack.Pop()
+	'					newExpression += " * " + intermediateExp.theExpression
+	'				Next
+	'				newExpression = "(" + newExpression + ")"
+	'				stack.Push(New IntermediateExpression(newExpression, 5))
+	'			ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_DOMINATE Then
+	'				'int m = pops->d.index;
+	'				'int km = k - m;
+	'				'float dv = stack[ km ];
+	'				'for ( int i = km + 1; i < k; ++i )
+	'				'{
+	'				'	dv *= stack[ i ];
+	'				'}
+	'				'stack[ km - 1 ] *= 1.0f - dv;
+	'				'k -= m;
+	'				Dim count As Integer
+	'				Dim newExpression As String
+	'				Dim intermediateExp As IntermediateExpression
+	'				count = aFlexOp.index
+	'				newExpression = ""
+	'				intermediateExp = stack.Pop()
+	'				newExpression += intermediateExp.theExpression
+	'				For j As Integer = 2 To count
+	'					intermediateExp = stack.Pop()
+	'					newExpression += " * " + intermediateExp.theExpression
+	'				Next
+	'				intermediateExp = stack.Pop()
+	'				newExpression = intermediateExp.theExpression + " * (1 - " + newExpression + ")"
+	'				newExpression = "(" + newExpression + ")"
+	'				stack.Push(New IntermediateExpression(newExpression, 5))
+	'				'TODO: SourceMdlFlexOp.STUDIO_DME_LOWER_EYELID
+	'				'ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_DME_LOWER_EYELID Then
+	'				'	Dim x As Integer = 42
+	'				'TODO: SourceMdlFlexOp.STUDIO_DME_UPPER_EYELID
+	'				'ElseIf aFlexOp.op = SourceMdlFlexOp.STUDIO_DME_UPPER_EYELID Then
+	'				'	Dim x As Integer = 42
+	'			Else
+	'				stack.Clear()
+	'				Exit For
+	'			End If
+	'		Next
 
-			' The loop above leaves the final expression on the top of the stack.
-			If stack.Count = 1 Then
-				flexRuleEquation += stack.Peek().theExpression
-			ElseIf stack.Count = 0 OrElse stack.Count > 1 Then
-				flexRuleEquation = "// [Decompiler failed to parse expression. Please report the error with the following info: this qc file, the mdl filename that was decompiled, and where the mdl file was found (e.g. the game's name or a web link).]"
-			Else
-				flexRuleEquation = "// [Empty flex rule found and ignored.]"
-			End If
-		End If
-		Return flexRuleEquation
-	End Function
+	'		' The loop above leaves the final expression on the top of the stack.
+	'		If stack.Count = 1 Then
+	'			flexRuleEquation += stack.Peek().theExpression
+	'		ElseIf stack.Count = 0 OrElse stack.Count > 1 Then
+	'			flexRuleEquation = "// [Decompiler failed to parse expression. Please report the error with the following info: this qc file, the mdl filename that was decompiled, and where the mdl file was found (e.g. the game's name or a web link).]"
+	'		Else
+	'			flexRuleEquation = "// [Empty flex rule found and ignored.]"
+	'		End If
+	'	End If
+	'	Return flexRuleEquation
+	'End Function
 
 	Public Sub WriteGroupLod()
 		Me.WriteLodCommand()
@@ -1350,10 +1407,14 @@ Public Class SourceQcFile49
 	Public Sub WritePoseParameterCommand()
 		Dim line As String = ""
 
+		'NOTE: According to source code for v44 and v48, not having "loop" means the last value is ignored:
 		'$poseparameter body_pitch -90.00 90.00 360.00
 		'$poseparameter body_yaw -90.00 90.00 360.00
 		'$poseparameter head_pitch -90.00 90.00 360.00
 		'$poseparameter head_yaw -90.00 90.00 360.00
+		'NOTE: These 2 lines are equivalent:
+		'$poseparameter head_yaw -90.00 90.00 loop 180.00
+		'$poseparameter head_yaw -90.00 90.00 wrap
 		If Me.theMdlFileData.thePoseParamDescs IsNot Nothing Then
 			line = ""
 			Me.theOutputFileStreamWriter.WriteLine(line)
@@ -1371,7 +1432,7 @@ Public Class SourceQcFile49
 				line += aPoseParamDesc.startingValue.ToString("0.######", TheApp.InternalNumberFormat)
 				line += " "
 				line += aPoseParamDesc.endingValue.ToString("0.######", TheApp.InternalNumberFormat)
-				line += " "
+				line += " loop "
 				line += aPoseParamDesc.loopingRange.ToString("0.######", TheApp.InternalNumberFormat)
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			Next
@@ -1970,6 +2031,7 @@ Public Class SourceQcFile49
 		Me.WritePoseParameterCommand()
 		'NOTE: IkChain commands must be before Animation and Sequence commands because either could refer to IkChain via ikrule option.
 		Me.WriteIkChainCommand()
+		Me.WriteIkAutoPlayLockCommand()
 		Me.FillInWeightLists()
 		'NOTE: Must write $WeightList lines before animations or sequences that use them.
 		Me.WriteWeightListCommand()
@@ -1985,7 +2047,6 @@ Public Class SourceQcFile49
 			Dim debug As Integer = 4242
 		End Try
 		Me.WriteIncludeModelCommand()
-		Me.WriteIkAutoPlayLockCommand()
 		Me.WriteBoneSaveFrameCommand()
 	End Sub
 

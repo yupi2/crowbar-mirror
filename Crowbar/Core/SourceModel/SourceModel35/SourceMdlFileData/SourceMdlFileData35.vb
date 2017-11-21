@@ -228,7 +228,7 @@
 
 	Public unused(8) As Integer
 
-	Public theAnimationDescs As List(Of SourceMdlAnimationDesc36)
+	Public theAnimationDescs As List(Of SourceMdlAnimationDesc35)
 	'Public theAnimGroups As List(Of SourceMdlAnimGroup37)
 	Public theAttachments As List(Of SourceMdlAttachment37)
 	Public theBodyParts As List(Of SourceMdlBodyPart37)
@@ -243,7 +243,7 @@
 	Public theIkLocks As List(Of SourceMdlIkLock37)
 	Public theMouths As List(Of SourceMdlMouth)
 	Public thePoseParamDescs As List(Of SourceMdlPoseParamDesc)
-	Public theSequenceDescs As List(Of SourceMdlSequenceDesc36)
+	Public theSequenceDescs As List(Of SourceMdlSequenceDesc35)
 	Public theSequenceGroups As List(Of SourceMdlSequenceGroup37)
 	Public theSkinFamilies As List(Of List(Of Short))
 	Public theSurfacePropName As String
@@ -256,7 +256,7 @@
 
 	Public theBoneNameToBoneIndexMap As New SortedList(Of String, Integer)()
 	Public theEyelidFlexFrameIndexes As List(Of Integer)
-	Public theFirstAnimationDesc As SourceMdlAnimationDesc36
+	Public theFirstAnimationDesc As SourceMdlAnimationDesc35
 	Public theFirstAnimationDescFrameLines As New SortedList(Of Integer, AnimationFrameLine)()
 	Public theFlexFrames As List(Of FlexFrame)
 	Public theWeightLists As New List(Of SourceMdlWeightList)()

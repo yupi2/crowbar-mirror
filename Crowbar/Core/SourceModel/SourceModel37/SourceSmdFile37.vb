@@ -9,7 +9,7 @@ Public Class SourceSmdFile37
 		Me.theMdlFileData = mdlFileData
 	End Sub
 
-	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal mdlFileData As SourceMdlFileData37, ByVal phyFileData As SourcePhyFileData37)
+	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal mdlFileData As SourceMdlFileData37, ByVal phyFileData As SourcePhyFileData)
 		Me.theOutputFileStreamWriter = outputFileStream
 		Me.theMdlFileData = mdlFileData
 		Me.thePhyFileData = phyFileData
@@ -341,11 +341,14 @@ Public Class SourceSmdFile37
 		Dim line As String = ""
 		Dim boneIndex As Integer
 		Dim aFrameLine As AnimationFrameLine
+		Dim endFrameLine As AnimationFrameLine
+		'Dim previousFrameRootBonePosition As New SourceVector()
 		Dim position As New SourceVector()
+		Dim previousFrameRootBoneRotation As New SourceVector()
 		Dim rotation As New SourceVector()
-		Dim tempRotation As New SourceVector()
 		Dim aSequenceDesc As SourceMdlSequenceDesc
 		Dim anAnimationDesc As SourceMdlAnimationDesc37
+		Dim tempValue As Double
 
 		aSequenceDesc = CType(aSequenceDescBase, SourceMdlSequenceDesc)
 		anAnimationDesc = CType(anAnimationDescBase, SourceMdlAnimationDesc37)
@@ -367,6 +370,7 @@ Public Class SourceSmdFile37
 			line += CStr(frameIndex)
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
+			endFrameLine = Me.theAnimationFrameLines.Values(Me.theAnimationFrameLines.Count - 1)
 			For i As Integer = 0 To Me.theAnimationFrameLines.Count - 1
 				boneIndex = Me.theAnimationFrameLines.Keys(i)
 				aFrameLine = Me.theAnimationFrameLines.Values(i)
@@ -375,9 +379,133 @@ Public Class SourceSmdFile37
 				position.y = aFrameLine.position.y
 				position.z = aFrameLine.position.z
 
+				If Me.theMdlFileData.theBones(boneIndex).parentBoneIndex = -1 Then
+					If anAnimationDesc.theMovements IsNot Nothing Then
+						'Dim perFrameMovement As Double
+						Dim startFrameIndex As Integer = 0
+						Dim endFrameIndex As Integer = 0
+
+						'If frameIndex = 0 Then
+						'	previousFrameRootBonePosition.x = position.x
+						'	previousFrameRootBonePosition.y = position.y
+						'	previousFrameRootBonePosition.z = position.z
+						'End If
+
+						For Each aMovement As SourceMdlMovement In anAnimationDesc.theMovements
+							endFrameIndex = aMovement.endframeIndex
+
+							'If frameIndex >= startFrameIndex AndAlso frameIndex <= endFrameIndex Then
+							'	If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LX) > 0 Then
+							'		perFrameMovement = aMovement.position.x / (endFrameIndex - startFrameIndex)
+							'		position.x = previousFrameRootBonePosition.x + perFrameMovement
+							'		aFrameLine.position.debug_text += " [x]"
+							'	End If
+							'	If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LY) > 0 Then
+							'		perFrameMovement = aMovement.position.y / (endFrameIndex - startFrameIndex)
+							'		position.y = previousFrameRootBonePosition.y + perFrameMovement
+							'		aFrameLine.position.debug_text += " [y]"
+							'	End If
+							'	If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LZ) > 0 Then
+							'		perFrameMovement = aMovement.position.z / (endFrameIndex - startFrameIndex)
+							'		position.z = previousFrameRootBonePosition.z + perFrameMovement
+							'		aFrameLine.position.debug_text += " [z]"
+							'	End If
+							'End If
+							'------
+							'Dim t As Double
+							'Dim scale As Double
+							't = frameIndex / (aMovement.endframeIndex - startFrameIndex + 1)
+							'scale = aMovement.v0 * t + 0.5 * (aMovement.v1 - aMovement.v0) * t * t
+							'If scale <> 0 Then
+							'	scale = 1 / scale
+							'End If
+							If frameIndex >= startFrameIndex AndAlso frameIndex <= endFrameIndex Then
+								If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LX) > 0 Then
+									'position.x = aFrameLine.position.x + scale * endFrameLine.position.x
+									position.x = aFrameLine.position.x + aMovement.position.x
+									aFrameLine.position.debug_text += " [x]"
+								End If
+								If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LY) > 0 Then
+									'position.y = aFrameLine.position.y + scale * endFrameLine.position.y
+									position.y = aFrameLine.position.y + aMovement.position.y
+									aFrameLine.position.debug_text += " [y]"
+								End If
+								If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LZ) > 0 Then
+									'position.z = aFrameLine.position.z + scale * endFrameLine.position.z
+									position.z = aFrameLine.position.z + aMovement.position.z
+									aFrameLine.position.debug_text += " [z]"
+								End If
+							End If
+
+							startFrameIndex = endFrameIndex + 1
+						Next
+
+						'If frameIndex > endFrameIndex AndAlso frameIndex < anAnimationDesc.frameCount Then
+						'	position.x = previousFrameRootBonePosition.x
+						'	position.y = previousFrameRootBonePosition.y
+						'	position.z = previousFrameRootBonePosition.z
+						'End If
+
+						'previousFrameRootBonePosition.x = position.x
+						'previousFrameRootBonePosition.y = position.y
+						'previousFrameRootBonePosition.z = position.z
+					End If
+
+					tempValue = position.x
+					position.x = position.y
+					position.y = -tempValue
+				End If
+
 				rotation.x = aFrameLine.rotation.x
 				rotation.y = aFrameLine.rotation.y
 				rotation.z = aFrameLine.rotation.z
+				If Me.theMdlFileData.theBones(boneIndex).parentBoneIndex = -1 Then
+					'If anAnimationDesc.theMovements IsNot Nothing Then
+					'	Dim perFrameMovement As Double
+					'	Dim startFrameIndex As Integer = 0
+					'	Dim endFrameIndex As Integer = 0
+
+					'	If frameIndex = 0 Then
+					'		previousFrameRootBoneRotation.x = rotation.x
+					'		previousFrameRootBoneRotation.y = rotation.y
+					'		previousFrameRootBoneRotation.z = rotation.z
+					'	End If
+
+					'	For Each aMovement As SourceMdlMovement In anAnimationDesc.theMovements
+					'		endFrameIndex = aMovement.endframeIndex
+
+					'		If frameIndex >= startFrameIndex AndAlso frameIndex <= aMovement.endframeIndex Then
+					'			If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LXR) > 0 Then
+					'				perFrameMovement = MathModule.DegreesToRadians(aMovement.angle) / (endFrameIndex - startFrameIndex)
+					'				rotation.x = previousFrameRootBoneRotation.x + perFrameMovement
+					'				aFrameLine.rotation.debug_text += " [x]"
+					'			End If
+					'			If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LYR) > 0 Then
+					'				perFrameMovement = MathModule.DegreesToRadians(aMovement.angle) / (endFrameIndex - startFrameIndex)
+					'				rotation.y = previousFrameRootBoneRotation.y + perFrameMovement
+					'				aFrameLine.rotation.debug_text += " [y]"
+					'			End If
+					'			If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LZR) > 0 Then
+					'				perFrameMovement = MathModule.DegreesToRadians(aMovement.angle) / (endFrameIndex - startFrameIndex)
+					'				rotation.z = previousFrameRootBoneRotation.z + perFrameMovement
+					'				aFrameLine.rotation.debug_text += " [z]"
+					'			End If
+					'		End If
+					'	Next
+
+					'	If frameIndex > endFrameIndex AndAlso frameIndex < anAnimationDesc.frameCount Then
+					'		rotation.x = previousFrameRootBoneRotation.x
+					'		rotation.y = previousFrameRootBoneRotation.y
+					'		rotation.z = previousFrameRootBoneRotation.z
+					'	End If
+
+					'	previousFrameRootBoneRotation.x = rotation.x
+					'	previousFrameRootBoneRotation.y = rotation.y
+					'	previousFrameRootBoneRotation.z = rotation.z
+					'End If
+
+					rotation.z = aFrameLine.rotation.z + MathModule.DegreesToRadians(-90)
+				End If
 
 				line = "    "
 				line += boneIndex.ToString(TheApp.InternalNumberFormat)
@@ -433,15 +561,6 @@ Public Class SourceSmdFile37
 			aVtxVertexIndex = aStripGroup.theVtxIndexes(aVtxIndexIndex)
 			aVtxVertex = aStripGroup.theVtxVertexes(aVtxVertexIndex)
 			vertexIndex = aVtxVertex.originalMeshVertexIndex + bodyPartVertexIndexStart + meshVertexIndexStart
-			'If Me.theVvdFileData.fixupCount = 0 Then
-			'	aVertex = Me.theVvdFileData.theVertexes(vertexIndex)
-			'Else
-			'	'NOTE: I don't know why lodIndex is not needed here, but using only lodIndex=0 matches what MDL Decompiler produces.
-			'	'      Maybe the listing by lodIndex is only needed internally by graphics engine.
-			'	'aVertex = Me.theSourceEngineModel.theVvdFileData.theFixedVertexesByLod(lodIndex)(aVtxVertex.originalMeshVertexIndex + meshVertexIndexStart)
-			'	aVertex = Me.theVvdFileData.theFixedVertexesByLod(0)(vertexIndex)
-			'	'aVertex = Me.theSourceEngineModel.theVvdFileHeader.theFixedVertexesByLod(lodIndex)(aVtxVertex.originalMeshVertexIndex + meshVertexIndexStart)
-			'End If
 			aVertex = Me.theMdlFileData.theBodyParts(0).theModels(0).theVertexes(vertexIndex)
 
 			line = "  "
@@ -499,17 +618,6 @@ Public Class SourceSmdFile37
 		Dim aVectorTransformed As New SourceVector
 		Dim aVector As New SourceVector()
 
-		'If Me.thePhyFileData.theSourcePhyIsCollisionModel Then
-		'	aVectorTransformed.x = 1 / 0.0254 * vertex.z
-		'	aVectorTransformed.y = 1 / 0.0254 * -vertex.x
-		'	aVectorTransformed.z = 1 / 0.0254 * -vertex.y
-		'Else
-		'	aVector.x = 1 / 0.0254 * vertex.x
-		'	aVector.y = 1 / 0.0254 * vertex.z
-		'	aVector.z = 1 / 0.0254 * -vertex.y
-		'	aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'End If
-		'======
 		'aVector.x = 1 / 0.0254 * vertex.x
 		'aVector.y = 1 / 0.0254 * vertex.z
 		'aVector.z = 1 / 0.0254 * -vertex.y
@@ -1040,6 +1148,7 @@ Public Class SourceSmdFile37
 			End If
 		Next
 	End Sub
+
 	Private Function CalcBoneRotation(ByVal frameIndex As Integer, ByVal s As Double, ByVal aBone As SourceMdlBone37, ByVal anAnimation As SourceMdlAnimation37, ByRef rotationQuat As SourceQuaternion) As SourceVector
 		Dim angleVector As New SourceVector()
 
@@ -1217,7 +1326,7 @@ Public Class SourceSmdFile37
 	Private theOutputFileStreamWriter As StreamWriter
 	'Private theAniFileData As SourceAniFileData44
 	Private theMdlFileData As SourceMdlFileData37
-	Private thePhyFileData As SourcePhyFileData37
+	Private thePhyFileData As SourcePhyFileData
 	'Private theVtxFileData As SourceVtxFileData44
 	'Private theVvdFileData As SourceVvdFileData37
 	'Private theModelName As String

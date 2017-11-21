@@ -281,62 +281,62 @@ Public Class SourceSmdFile32
 		Me.theOutputFileStreamWriter.WriteLine(line)
 	End Sub
 
-	'TODO: Write the firstAnimDesc's first frame's frameLines because it is used for "subtract" option.
-	Public Sub CalculateFirstAnimDescFrameLinesForSubtract()
-		Dim boneIndex As Integer
-		Dim aFrameLine As AnimationFrameLine
-		Dim frameIndex As Integer
-		Dim aSequenceDesc As SourceMdlSequenceDesc
-		Dim anAnimationDesc As SourceMdlAnimationDesc32
+	''TODO: Write the firstAnimDesc's first frame's frameLines because it is used for "subtract" option.
+	'Public Sub CalculateFirstAnimDescFrameLinesForSubtract()
+	'	Dim boneIndex As Integer
+	'	Dim aFrameLine As AnimationFrameLine
+	'	Dim frameIndex As Integer
+	'	Dim aSequenceDesc As SourceMdlSequenceDesc
+	'	Dim anAnimationDesc As SourceMdlAnimationDesc32
 
-		aSequenceDesc = Nothing
-		anAnimationDesc = Me.theMdlFileData.theFirstAnimationDesc
+	'	aSequenceDesc = Nothing
+	'	anAnimationDesc = Me.theMdlFileData.theFirstAnimationDesc
 
-		Me.theAnimationFrameLines = New SortedList(Of Integer, AnimationFrameLine)()
-		frameIndex = 0
-		Me.theAnimationFrameLines.Clear()
-		If (anAnimationDesc.flags And SourceMdlAnimationDesc.STUDIO_ALLZEROS) = 0 Then
-			Me.CalcAnimation(aSequenceDesc, anAnimationDesc, frameIndex)
-		End If
+	'	Me.theAnimationFrameLines = New SortedList(Of Integer, AnimationFrameLine)()
+	'	frameIndex = 0
+	'	Me.theAnimationFrameLines.Clear()
+	'	If (anAnimationDesc.flags And SourceMdlAnimationDesc.STUDIO_ALLZEROS) = 0 Then
+	'		Me.CalcAnimation(aSequenceDesc, anAnimationDesc, frameIndex)
+	'	End If
 
-		For i As Integer = 0 To Me.theAnimationFrameLines.Count - 1
-			boneIndex = Me.theAnimationFrameLines.Keys(i)
-			aFrameLine = Me.theAnimationFrameLines.Values(i)
+	'	For i As Integer = 0 To Me.theAnimationFrameLines.Count - 1
+	'		boneIndex = Me.theAnimationFrameLines.Keys(i)
+	'		aFrameLine = Me.theAnimationFrameLines.Values(i)
 
-			Dim aFirstAnimationDescFrameLine As New AnimationFrameLine()
-			aFirstAnimationDescFrameLine.rotation = New SourceVector()
-			aFirstAnimationDescFrameLine.position = New SourceVector()
+	'		Dim aFirstAnimationDescFrameLine As New AnimationFrameLine()
+	'		aFirstAnimationDescFrameLine.rotation = New SourceVector()
+	'		aFirstAnimationDescFrameLine.position = New SourceVector()
 
-			'NOTE: Only rotate by -90 deg if bone is a root bone.  Do not know why.
-			'If Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).parentBoneIndex = -1 Then
-			'TEST: Try this version, because of "sequence_blend from Game Zombie" model.
-			aFirstAnimationDescFrameLine.rotation.x = aFrameLine.rotation.x
-			aFirstAnimationDescFrameLine.rotation.y = aFrameLine.rotation.y
-			If Me.theMdlFileData.theBones(boneIndex).parentBoneIndex = -1 AndAlso (aFrameLine.rotation.debug_text.StartsWith("raw") OrElse aFrameLine.rotation.debug_text = "anim+bone") Then
-				Dim z As Double
-				z = aFrameLine.rotation.z
-				z += MathModule.DegreesToRadians(-90)
-				aFirstAnimationDescFrameLine.rotation.z = z
-			Else
-				aFirstAnimationDescFrameLine.rotation.z = aFrameLine.rotation.z
-			End If
+	'		'NOTE: Only rotate by -90 deg if bone is a root bone.  Do not know why.
+	'		'If Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).parentBoneIndex = -1 Then
+	'		'TEST: Try this version, because of "sequence_blend from Game Zombie" model.
+	'		aFirstAnimationDescFrameLine.rotation.x = aFrameLine.rotation.x
+	'		aFirstAnimationDescFrameLine.rotation.y = aFrameLine.rotation.y
+	'		If Me.theMdlFileData.theBones(boneIndex).parentBoneIndex = -1 AndAlso (aFrameLine.rotation.debug_text.StartsWith("raw") OrElse aFrameLine.rotation.debug_text = "anim+bone") Then
+	'			Dim z As Double
+	'			z = aFrameLine.rotation.z
+	'			z += MathModule.DegreesToRadians(-90)
+	'			aFirstAnimationDescFrameLine.rotation.z = z
+	'		Else
+	'			aFirstAnimationDescFrameLine.rotation.z = aFrameLine.rotation.z
+	'		End If
 
-			'NOTE: Only adjust position if bone is a root bone. Do not know why.
-			'If Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).parentBoneIndex = -1 Then
-			'TEST: Try this version, because of "sequence_blend from Game Zombie" model.
-			If Me.theMdlFileData.theBones(boneIndex).parentBoneIndex = -1 AndAlso (aFrameLine.position.debug_text.StartsWith("raw") OrElse aFrameLine.rotation.debug_text = "anim+bone") Then
-				aFirstAnimationDescFrameLine.position.x = aFrameLine.position.y
-				aFirstAnimationDescFrameLine.position.y = (-aFrameLine.position.x)
-				aFirstAnimationDescFrameLine.position.z = aFrameLine.position.z
-			Else
-				aFirstAnimationDescFrameLine.position.x = aFrameLine.position.x
-				aFirstAnimationDescFrameLine.position.y = aFrameLine.position.y
-				aFirstAnimationDescFrameLine.position.z = aFrameLine.position.z
-			End If
+	'		'NOTE: Only adjust position if bone is a root bone. Do not know why.
+	'		'If Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).parentBoneIndex = -1 Then
+	'		'TEST: Try this version, because of "sequence_blend from Game Zombie" model.
+	'		If Me.theMdlFileData.theBones(boneIndex).parentBoneIndex = -1 AndAlso (aFrameLine.position.debug_text.StartsWith("raw") OrElse aFrameLine.rotation.debug_text = "anim+bone") Then
+	'			aFirstAnimationDescFrameLine.position.x = aFrameLine.position.y
+	'			aFirstAnimationDescFrameLine.position.y = (-aFrameLine.position.x)
+	'			aFirstAnimationDescFrameLine.position.z = aFrameLine.position.z
+	'		Else
+	'			aFirstAnimationDescFrameLine.position.x = aFrameLine.position.x
+	'			aFirstAnimationDescFrameLine.position.y = aFrameLine.position.y
+	'			aFirstAnimationDescFrameLine.position.z = aFrameLine.position.z
+	'		End If
 
-			Me.theMdlFileData.theFirstAnimationDescFrameLines.Add(boneIndex, aFirstAnimationDescFrameLine)
-		Next
-	End Sub
+	'		Me.theMdlFileData.theFirstAnimationDescFrameLines.Add(boneIndex, aFirstAnimationDescFrameLine)
+	'	Next
+	'End Sub
 
 	Public Sub WriteSkeletonSectionForAnimation(ByVal aSequenceDescBase As SourceMdlSequenceDescBase, ByVal anAnimationDescBase As SourceMdlAnimationDescBase)
 		Dim line As String = ""
@@ -344,11 +344,11 @@ Public Class SourceSmdFile32
 		Dim aFrameLine As AnimationFrameLine
 		Dim position As New SourceVector()
 		Dim rotation As New SourceVector()
-		Dim tempRotation As New SourceVector()
-		Dim aSequenceDesc As SourceMdlSequenceDesc
+		'Dim tempRotation As New SourceVector()
+		Dim aSequenceDesc As SourceMdlSequenceDesc32
 		Dim anAnimationDesc As SourceMdlAnimationDesc32
 
-		aSequenceDesc = CType(aSequenceDescBase, SourceMdlSequenceDesc)
+		aSequenceDesc = CType(aSequenceDescBase, SourceMdlSequenceDesc32)
 		anAnimationDesc = CType(anAnimationDescBase, SourceMdlAnimationDesc32)
 
 		'skeleton
@@ -1000,7 +1000,7 @@ Public Class SourceSmdFile32
 	'	}
 	'
 	'}
-	Private Sub CalcAnimation(ByVal aSequenceDesc As SourceMdlSequenceDesc, ByVal anAnimationDesc As SourceMdlAnimationDesc32, ByVal frameIndex As Integer)
+	Private Sub CalcAnimation(ByVal aSequenceDesc As SourceMdlSequenceDesc32, ByVal anAnimationDesc As SourceMdlAnimationDesc32, ByVal frameIndex As Integer)
 		Dim s As Double
 		Dim aBone As SourceMdlBone37
 		Dim anAnimation As SourceMdlAnimation37
@@ -1041,6 +1041,7 @@ Public Class SourceSmdFile32
 			End If
 		Next
 	End Sub
+
 	Private Function CalcBoneRotation(ByVal frameIndex As Integer, ByVal s As Double, ByVal aBone As SourceMdlBone37, ByVal anAnimation As SourceMdlAnimation37, ByRef rotationQuat As SourceQuaternion) As SourceVector
 		Dim angleVector As New SourceVector()
 

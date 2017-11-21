@@ -422,9 +422,16 @@ Public Class SourceQcFile10
 		Dim line As String = ""
 		Dim modelPathFileName As String
 
-		modelPathFileName = Me.theMdlFileData.theName
+		modelPathFileName = Me.theMdlFileData.theModelName
 
 		Me.theOutputFileStreamWriter.WriteLine()
+
+		If Path.GetExtension(modelPathFileName) <> ".mdl" Then
+			line = "// Stored modelname (without quotes): """ + modelPathFileName + """"
+			Me.theOutputFileStreamWriter.WriteLine(line)
+
+			modelPathFileName = Me.theMdlFileData.theFileName + ".mdl"
+		End If
 
 		If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
 			line = "$ModelName "
@@ -531,7 +538,11 @@ Public Class SourceQcFile10
 				line += " {"
 				Me.theOutputFileStreamWriter.WriteLine(line)
 
-				Me.WriteSequenceOptions(aSequence)
+				Try
+					Me.WriteSequenceOptions(aSequence)
+				Catch ex As Exception
+					Dim debug As Integer = 4242
+				End Try
 
 				line = "}"
 				Me.theOutputFileStreamWriter.WriteLine(line)
@@ -749,8 +760,14 @@ Public Class SourceQcFile10
 		Next
 
 		If aSequenceDesc.activityId > 0 Then
+			Dim activityName As String
+			If aSequenceDesc.activityId < SourceModule10.activityMap.Length Then
+				activityName = SourceModule10.activityMap(aSequenceDesc.activityId)
+			Else
+				activityName = "ACT_" + aSequenceDesc.activityId.ToString(TheApp.InternalNumberFormat)
+			End If
 			line = vbTab
-			line += SourceModule10.activityMap(aSequenceDesc.activityId)
+			line += activityName
 			line += " "
 			line += aSequenceDesc.activityWeight.ToString(TheApp.InternalNumberFormat)
 			Me.theOutputFileStreamWriter.WriteLine(line)
@@ -810,7 +827,20 @@ Public Class SourceQcFile10
 			Me.theOutputFileStreamWriter.WriteLine(line)
 		End If
 
-		'Me.WriteSequenceNodeInfo(aSequenceDesc)
+		If aSequenceDesc.thePivots IsNot Nothing AndAlso aSequenceDesc.thePivots.Count > 0 Then
+			For pivotIndex As Integer = 0 To aSequenceDesc.thePivots.Count - 1
+				line = vbTab
+				line += "pivot "
+				line += pivotIndex.ToString(TheApp.InternalNumberFormat)
+				line += " "
+				line += aSequenceDesc.thePivots(0).pivotStart.ToString(TheApp.InternalNumberFormat)
+				line += " "
+				line += aSequenceDesc.thePivots(0).pivotEnd.ToString(TheApp.InternalNumberFormat)
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			Next
+		End If
+
+		Me.WriteSequenceNodeInfo(aSequenceDesc)
 
 		'If (aSequenceDesc.flags And SourceMdlAnimationDesc.STUDIO_AUTOPLAY) > 0 Then
 		'	line = vbTab
@@ -825,46 +855,38 @@ Public Class SourceQcFile10
 		'End If
 	End Sub
 
-	'Private Sub WriteSequenceNodeInfo(ByVal aSeqDesc As SourceMdlSequenceDesc)
-	'	Dim line As String = ""
+	Private Sub WriteSequenceNodeInfo(ByVal aSeqDesc As SourceMdlSequenceDesc10)
+		Dim line As String = ""
 
-	'	'If aSeqDesc.localEntryNodeIndex > 0 Then
-	'	'	If aSeqDesc.localEntryNodeIndex = aSeqDesc.localExitNodeIndex Then
-	'	'		'node (name)
-	'	'		line = vbTab
-	'	'		line += "node"
-	'	'		line += " """
-	'	'		'NOTE: Use the "-1" at end because the indexing is one-based in the mdl file.
-	'	'		line += Me.theMdlFileData.theLocalNodeNames(aSeqDesc.localEntryNodeIndex - 1)
-	'	'		line += """"
-	'	'		Me.theOutputFileStreamWriter.WriteLine(line)
-	'	'	ElseIf (aSeqDesc.nodeFlags And 1) = 0 Then
-	'	'		'transition (from) (to) 
-	'	'		line = vbTab
-	'	'		line += "transition"
-	'	'		line += " """
-	'	'		'NOTE: Use the "-1" at end because the indexing is one-based in the mdl file.
-	'	'		line += Me.theMdlFileData.theLocalNodeNames(aSeqDesc.localEntryNodeIndex - 1)
-	'	'		line += """ """
-	'	'		'NOTE: Use the "-1" at end because the indexing is one-based in the mdl file.
-	'	'		line += Me.theMdlFileData.theLocalNodeNames(aSeqDesc.localExitNodeIndex - 1)
-	'	'		line += """"
-	'	'		Me.theOutputFileStreamWriter.WriteLine(line)
-	'	'	Else
-	'	'		'rtransition (name1) (name2) 
-	'	'		line = vbTab
-	'	'		line += "rtransition"
-	'	'		line += " """
-	'	'		'NOTE: Use the "-1" at end because the indexing is one-based in the mdl file.
-	'	'		line += Me.theMdlFileData.theLocalNodeNames(aSeqDesc.localEntryNodeIndex - 1)
-	'	'		line += """ """
-	'	'		'NOTE: Use the "-1" at end because the indexing is one-based in the mdl file.
-	'	'		line += Me.theMdlFileData.theLocalNodeNames(aSeqDesc.localExitNodeIndex - 1)
-	'	'		line += """"
-	'	'		Me.theOutputFileStreamWriter.WriteLine(line)
-	'	'	End If
-	'	'End If
-	'End Sub
+		If aSeqDesc.entryNodeIndex > 0 Then
+			If aSeqDesc.entryNodeIndex = aSeqDesc.exitNodeIndex Then
+				'node (name)
+				line = vbTab
+				line += "node"
+				line += " "
+				line += (aSeqDesc.entryNodeIndex).ToString(TheApp.InternalNumberFormat)
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			ElseIf (aSeqDesc.nodeFlags And 1) = 0 Then
+				'transition (from) (to) 
+				line = vbTab
+				line += "transition"
+				line += " "
+				line += (aSeqDesc.entryNodeIndex).ToString(TheApp.InternalNumberFormat)
+				line += " "
+				line += (aSeqDesc.exitNodeIndex).ToString(TheApp.InternalNumberFormat)
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			Else
+				'rtransition (name1) (name2) 
+				line = vbTab
+				line += "rtransition"
+				line += " "
+				line += (aSeqDesc.entryNodeIndex).ToString(TheApp.InternalNumberFormat)
+				line += " "
+				line += (aSeqDesc.exitNodeIndex).ToString(TheApp.InternalNumberFormat)
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			End If
+		End If
+	End Sub
 
 	Private Sub WriteTexRenderModeLine(ByVal textureFileName As String, ByVal renderMode As String, ByVal lineIsCommented As Boolean)
 		Dim line As String = ""
