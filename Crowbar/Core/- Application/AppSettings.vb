@@ -13,8 +13,8 @@ Public Class AppSettings
 		Me.theWindowLocation = New Point(0, 0)
 		Me.theWindowSize = New Size(800, 600)
 		Me.theWindowState = FormWindowState.Normal
-		'NOTE: 2 means the Decompile tab.
-		Me.theMainWindowSelectedTabIndex = 2
+		'NOTE: 0 means the Set Up Games tab.
+		Me.theMainWindowSelectedTabIndex = 0
 
 		Me.thePreviewDataViewerIsRunning = False
 		'Me.thePreviewerIsRunning = False
@@ -22,6 +22,11 @@ Public Class AppSettings
 		Me.theCompilerIsRunning = False
 		Me.theViewDataViewerIsRunning = False
 		'Me.theViewerIsRunning = False
+
+		Me.theGameSetups = New BindingListExAutoSort(Of GameSetup)("GameName")
+		Me.theSteamAppPathFileName = "C:\Program Files (x86)\Steam\Steam.exe"
+		Me.theSteamLibraryPaths = New BindingListEx(Of SteamLibraryPath)()
+		Me.theSetUpGamesGameSetupSelectedIndex = 0
 
 		Me.theUnpackContainerType = ContainerType.VPK
 		Me.theUnpackVpkPathFolderOrFileName = ""
@@ -60,10 +65,6 @@ Public Class AppSettings
 		Me.SetDefaultOptionsAutoOpenOptions()
 		Me.SetDefaultOptionsDragAndDropOptions()
 		Me.SetDefaultOptionsContextMenuOptions()
-
-		Me.theGameSetups = New BindingListExAutoSort(Of GameSetup)("GameName")
-		Me.theSteamAppPathFileName = "C:\Program Files (x86)\Steam\Steam.exe"
-		Me.theSteamLibraryPaths = New BindingListEx(Of SteamLibraryPath)()
 
 		'Me.Init()
 	End Sub
@@ -115,6 +116,59 @@ Public Class AppSettings
 		End Get
 		Set(ByVal value As Integer)
 			theMainWindowSelectedTabIndex = value
+		End Set
+	End Property
+
+	Public Property GameSetups() As BindingListExAutoSort(Of GameSetup)
+		Get
+			Return Me.theGameSetups
+		End Get
+		Set(ByVal value As BindingListExAutoSort(Of GameSetup))
+			Me.theGameSetups = value
+			NotifyPropertyChanged("GameSetups")
+		End Set
+	End Property
+
+	<XmlIgnore()> _
+	Public ReadOnly Property SteamAppPathFileName() As String
+		Get
+			Return TheApp.GetProcessedPathFileName(Me.theSteamAppPathFileName)
+		End Get
+		'Set(ByVal value As String)
+		'	Me.theSteamAppPathFileName = value
+		'	NotifyPropertyChanged("SteamAppPathFileName")
+		'End Set
+	End Property
+
+	<XmlElement("SteamAppPathFileName")> _
+	Public Property SteamAppPathFileNameUnprocessed() As String
+		Get
+			Return Me.theSteamAppPathFileName
+		End Get
+		Set(ByVal value As String)
+			Me.theSteamAppPathFileName = value
+			NotifyPropertyChanged("SteamAppPathFileName")
+			NotifyPropertyChanged("SteamAppPathFileNameUnprocessed")
+		End Set
+	End Property
+
+	Public Property SteamLibraryPaths() As BindingListEx(Of SteamLibraryPath)
+		Get
+			Return Me.theSteamLibraryPaths
+		End Get
+		Set(ByVal value As BindingListEx(Of SteamLibraryPath))
+			Me.theSteamLibraryPaths = value
+			NotifyPropertyChanged("SteamLibraryPaths")
+		End Set
+	End Property
+
+	Public Property SetUpGamesGameSetupSelectedIndex() As Integer
+		Get
+			Return Me.theSetUpGamesGameSetupSelectedIndex
+		End Get
+		Set(ByVal value As Integer)
+			Me.theSetUpGamesGameSetupSelectedIndex = value
+			NotifyPropertyChanged("SetUpGamesGameSetupSelectedIndex")
 		End Set
 	End Property
 
@@ -380,16 +434,6 @@ Public Class AppSettings
 		Set(ByVal value As Boolean)
 			Me.theDecompileReferenceMeshSmdFileIsChecked = value
 			NotifyPropertyChanged("DecompileReferenceMeshSmdFileIsChecked")
-		End Set
-	End Property
-
-	Public Property DecompileApplyRightHandFixIsChecked() As Boolean
-		Get
-			Return Me.theDecompileApplyRightHandFixIsChecked
-		End Get
-		Set(ByVal value As Boolean)
-			Me.theDecompileApplyRightHandFixIsChecked = value
-			NotifyPropertyChanged("DecompileApplyRightHandFixIsChecked")
 		End Set
 	End Property
 
@@ -1024,49 +1068,6 @@ Public Class AppSettings
 		End Set
 	End Property
 
-	Public Property GameSetups() As BindingListExAutoSort(Of GameSetup)
-		Get
-			Return Me.theGameSetups
-		End Get
-		Set(ByVal value As BindingListExAutoSort(Of GameSetup))
-			Me.theGameSetups = value
-			NotifyPropertyChanged("GameSetups")
-		End Set
-	End Property
-
-	<XmlIgnore()> _
-	Public ReadOnly Property SteamAppPathFileName() As String
-		Get
-			Return TheApp.GetProcessedPathFileName(Me.theSteamAppPathFileName)
-		End Get
-		'Set(ByVal value As String)
-		'	Me.theSteamAppPathFileName = value
-		'	NotifyPropertyChanged("SteamAppPathFileName")
-		'End Set
-	End Property
-
-	<XmlElement("SteamAppPathFileName")> _
-	Public Property SteamAppPathFileNameUnprocessed() As String
-		Get
-			Return Me.theSteamAppPathFileName
-		End Get
-		Set(ByVal value As String)
-			Me.theSteamAppPathFileName = value
-			NotifyPropertyChanged("SteamAppPathFileName")
-			NotifyPropertyChanged("SteamAppPathFileNameUnprocessed")
-		End Set
-	End Property
-
-	Public Property SteamLibraryPaths() As BindingListEx(Of SteamLibraryPath)
-		Get
-			Return Me.theSteamLibraryPaths
-		End Get
-		Set(ByVal value As BindingListEx(Of SteamLibraryPath))
-			Me.theSteamLibraryPaths = value
-			NotifyPropertyChanged("SteamLibraryPaths")
-		End Set
-	End Property
-
 #End Region
 
 #Region "Core Event Handlers"
@@ -1097,12 +1098,11 @@ Public Class AppSettings
 		Me.DecompileGroupIntoQciFilesIsChecked = False
 		Me.DecompileQcSkinFamilyOnSingleLineIsChecked = True
 		Me.DecompileQcOnlyChangedMaterialsInTextureGroupLinesIsChecked = True
-		Me.DecompileQcIncludeDefineBoneLinesIsChecked = False
+		Me.DecompileQcIncludeDefineBoneLinesIsChecked = True
 		Me.DecompileQcUseMixedCaseForKeywordsIsChecked = False
 
 		Me.DecompileReferenceMeshSmdFileIsChecked = True
 		Me.DecompileRemovePathFromSmdMaterialFileNamesIsChecked = True
-		Me.DecompileApplyRightHandFixIsChecked = False
 
 		Me.DecompileBoneAnimationSmdFilesIsChecked = True
 		Me.DecompileBoneAnimationPlaceInSubfolderIsChecked = True
@@ -1208,6 +1208,13 @@ Public Class AppSettings
 	Private theWindowState As FormWindowState
 	Private theMainWindowSelectedTabIndex As Integer
 
+	' Set Up Games tab
+
+	Private theGameSetups As BindingListExAutoSort(Of GameSetup)
+	Private theSteamAppPathFileName As String
+	Private theSteamLibraryPaths As BindingListEx(Of SteamLibraryPath)
+	Private theSetUpGamesGameSetupSelectedIndex As Integer
+
 	' Unpack tab
 
 	Private theUnpackContainerType As ContainerType
@@ -1250,7 +1257,6 @@ Public Class AppSettings
 	Private theDecompileQcUseMixedCaseForKeywordsIsChecked As Boolean
 
 	Private theDecompileReferenceMeshSmdFileIsChecked As Boolean
-	Private theDecompileApplyRightHandFixIsChecked As Boolean
 
 	Private theDecompileBoneAnimationSmdFilesIsChecked As Boolean
 	Private theDecompileBoneAnimationPlaceInSubfolderIsChecked As Boolean
@@ -1344,12 +1350,6 @@ Public Class AppSettings
 	Private theOptionsCompileQcFileIsChecked As Boolean
 	Private theOptionsCompileFolderIsChecked As Boolean
 	Private theOptionsCompileFolderAndSubfoldersIsChecked As Boolean
-
-	' Set Up Games window
-
-	Private theGameSetups As BindingListExAutoSort(Of GameSetup)
-	Private theSteamAppPathFileName As String
-	Private theSteamLibraryPaths As BindingListEx(Of SteamLibraryPath)
 
 #End Region
 

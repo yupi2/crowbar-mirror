@@ -652,11 +652,11 @@ Public Class FileManager
 		ElseIf Directory.Exists(pathFileName) Then
 			Process.Start("explorer.exe", "/e,""" + pathFileName + """")
 		Else
-			'Process.Start("explorer.exe", "/e,""" + System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + """")
-			'======
 			Dim shorterPathFileName As String
 			shorterPathFileName = FileManager.GetPath(pathFileName)
-			FileManager.OpenWindowsExplorer(shorterPathFileName)
+			If Not String.IsNullOrWhiteSpace(shorterPathFileName) Then
+				FileManager.OpenWindowsExplorer(shorterPathFileName)
+			End If
 		End If
 	End Sub
 

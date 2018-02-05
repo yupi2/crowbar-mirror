@@ -337,9 +337,7 @@
 	Public eyePositionY As Single
 	Public eyePositionZ As Single
 	'5C  Vector				illumposition;	// illumination center
-	Public illuminationPositionX As Single
-	Public illuminationPositionY As Single
-	Public illuminationPositionZ As Single
+	Public illuminationPosition As New SourceVector()
 	'68  Vector				hull_min;		// ideal movement hull size
 	Public hullMinPositionX As Single
 	Public hullMinPositionY As Single
@@ -541,7 +539,7 @@
 	Public sourceBoneTransformCount As Integer
 	Public sourceBoneTransformOffset As Integer
 	Public illumPositionAttachmentIndex As Integer
-	Public maxEyeDeflection As Double
+	Public maxEyeDeflection As Single
 	Public linearBoneOffset As Integer
 
 	Public nameCopyOffset As Integer
@@ -589,16 +587,18 @@
 	Public theSectionFrameMinFrameCount As Integer
 
 	'Public theActualFileSize As Long
-	Public theModelCommandIsUsed As Boolean
-	Public theBodyPartIndexThatShouldUseModelCommand As Integer
-	Public theFlexFrames As List(Of FlexFrame)
+	'Public theModelCommandIsUsed As Boolean
+	'Public theBodyPartIndexThatShouldUseModelCommand As Integer
+	'Public theFlexFrames As List(Of FlexFrame)
 	'Public theEyelidFlexFrameIndexes As List(Of Integer)
 	'Public theUpperEyelidFlexFrameIndexes As List(Of Integer)
 
-	Public theFirstAnimationDesc As SourceMdlAnimationDesc49
-	Public theFirstAnimationDescFrameLines As SortedList(Of Integer, AnimationFrameLine)
 	'Public theMdlFileOnlyHasAnimations As Boolean
 	Public theProceduralBonesCommandIsUsed As Boolean
+	Public theAnimBlockSizeNoStallOptionIsUsed As Boolean
+
+	Public theFirstAnimationDesc As SourceMdlAnimationDesc49
+	Public theFirstAnimationDescFrameLines As SortedList(Of Integer, AnimationFrameLine)
 	Public theWeightLists As List(Of SourceMdlWeightList)
 
 	Public theBoneTransforms As List(Of SourceMdlBoneTransform)

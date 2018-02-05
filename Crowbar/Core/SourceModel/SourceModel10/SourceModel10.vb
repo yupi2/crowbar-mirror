@@ -66,8 +66,8 @@ Public Class SourceModel10
 
 #Region "Methods"
 
-	Public Overrides Function CheckForRequiredFiles() As StatusMessage
-		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+	Public Overrides Function CheckForRequiredFiles() As FilesFoundFlags
+		Dim status As AppEnums.FilesFoundFlags = FilesFoundFlags.AllFilesFound
 
 		Dim mdlPath As String
 		Dim mdlFileNameWithoutExtension As String
@@ -98,7 +98,7 @@ Public Class SourceModel10
 				Me.theSequenceGroupMdlPathFileNames.Add(aSequenceGroupMdlPathFileName)
 
 				If Not File.Exists(aSequenceGroupMdlPathFileName) Then
-					status = StatusMessage.ErrorRequiredSequenceGroupMdlFileNotFound
+					status = FilesFoundFlags.ErrorRequiredSequenceGroupMdlFileNotFound
 					Return status
 				End If
 			Next
@@ -107,12 +107,12 @@ Public Class SourceModel10
 				textureMdlFileName = mdlFileNameWithoutExtension + "T" + mdlExtension
 				Me.theTextureMdlPathFileName = Path.Combine(mdlPath, textureMdlFileName)
 				If Not File.Exists(Me.theTextureMdlPathFileName) Then
-					status = StatusMessage.ErrorRequiredTextureMdlFileNotFound
+					status = FilesFoundFlags.ErrorRequiredTextureMdlFileNotFound
 					Return status
 				End If
 			End If
 		Catch ex As Exception
-			status = StatusMessage.Error
+			status = FilesFoundFlags.Error
 		End Try
 
 		Return status
@@ -141,9 +141,9 @@ Public Class SourceModel10
 	Public Overrides Function ReadTextureMdlFile() As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
-		If String.IsNullOrEmpty(Me.theTextureMdlPathFileName) Then
-			status = Me.CheckForRequiredFiles()
-		End If
+		'If String.IsNullOrEmpty(Me.theTextureMdlPathFileName) Then
+		'	status = Me.CheckForRequiredFiles()
+		'End If
 
 		If status = StatusMessage.Success Then
 			Try
@@ -517,6 +517,8 @@ Public Class SourceModel10
 		' Read what WriteTextures() writes.
 		mdlFile.ReadTextures()
 		mdlFile.ReadSkins()
+
+		mdlFile.ReadUnreadBytes()
 
 		' Post-processing.
 		mdlFile.BuildBoneTransforms()

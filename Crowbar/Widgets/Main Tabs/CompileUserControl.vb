@@ -130,10 +130,10 @@ Public Class CompileUserControl
 
 #Region "Child Widget Event Handlers"
 
-	Private Sub QcPathFileNameTextBox_Validated(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles QcPathFileNameTextBox.Validated
-		'Me.QcPathFileNameTextBox.Text = FileManager.GetCleanPathFileName(Me.QcPathFileNameTextBox.Text)
-		Me.SetCompilerOptionsText()
-	End Sub
+	'Private Sub QcPathFileNameTextBox_Validated(ByVal sender As System.Object, ByVal e As System.EventArgs)
+	'	'Me.QcPathFileNameTextBox.Text = FileManager.GetCleanPathFileName(Me.QcPathFileNameTextBox.Text)
+	'	Me.SetCompilerOptionsText()
+	'End Sub
 
 	Private Sub BrowseForQcPathFolderOrFileNameButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BrowseForQcPathFolderOrFileNameButton.Click
 		Dim openFileWdw As New OpenFileDialog()
@@ -167,7 +167,7 @@ Public Class CompileUserControl
 				TheApp.Settings.CompileQcPathFileName = openFileWdw.FileName
 			End If
 
-			Me.SetCompilerOptionsText()
+			'Me.SetCompilerOptionsText()
 		End If
 	End Sub
 
@@ -257,21 +257,21 @@ Public Class CompileUserControl
 	'	Me.UpdateCompilerOptions(TheApp.Settings.GameSetups(TheApp.Settings.CompileGameSetupSelectedIndex), TheApp.Settings.GameSetups(Me.GameSetupComboBox.SelectedIndex))
 	'End Sub
 
-	Private Sub SetUpGamesButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles EditGameSetupButton.Click
-		Dim gameSetupWdw As New GameSetupForm()
-		Dim gameSetupFormInfo As New GameSetupFormInfo()
+	'Private Sub SetUpGamesButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles EditGameSetupButton.Click
+	'	Dim gameSetupWdw As New GameSetupForm()
+	'	Dim gameSetupFormInfo As New GameSetupFormInfo()
 
-		'gameSetupFormInfo.GameSetupIndex = Me.GameSetupComboBox.SelectedIndex
-		gameSetupFormInfo.GameSetupIndex = TheApp.Settings.CompileGameSetupSelectedIndex
-		gameSetupFormInfo.GameSetups = TheApp.Settings.GameSetups
-		gameSetupWdw.DataSource = gameSetupFormInfo
+	'	'gameSetupFormInfo.GameSetupIndex = Me.GameSetupComboBox.SelectedIndex
+	'	gameSetupFormInfo.GameSetupIndex = TheApp.Settings.CompileGameSetupSelectedIndex
+	'	gameSetupFormInfo.GameSetups = TheApp.Settings.GameSetups
+	'	gameSetupWdw.DataSource = gameSetupFormInfo
 
-		gameSetupWdw.ShowDialog()
+	'	gameSetupWdw.ShowDialog()
 
-		'Me.GameSetupComboBox.SelectedIndex = CType(gameSetupWdw.DataSource, GameSetupFormInfo).GameSetupIndex
-		'TheApp.Settings.SelectedGameSetup = TheApp.Settings.GameSetups(Me.GameSetupComboBox.SelectedIndex).GameName
-		TheApp.Settings.CompileGameSetupSelectedIndex = CType(gameSetupWdw.DataSource, GameSetupFormInfo).GameSetupIndex
-	End Sub
+	'	'Me.GameSetupComboBox.SelectedIndex = CType(gameSetupWdw.DataSource, GameSetupFormInfo).GameSetupIndex
+	'	'TheApp.Settings.SelectedGameSetup = TheApp.Settings.GameSetups(Me.GameSetupComboBox.SelectedIndex).GameName
+	'	TheApp.Settings.CompileGameSetupSelectedIndex = CType(gameSetupWdw.DataSource, GameSetupFormInfo).GameSetupIndex
+	'End Sub
 
 	'Private Sub CompilerOptionNoP4CheckBox_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CompilerOptionNoP4CheckBox.CheckedChanged
 	'	Me.EditCompilerOptionsText("nop4", Me.CompilerOptionNoP4CheckBox.Checked)
@@ -343,6 +343,7 @@ Public Class CompileUserControl
 	Private Sub AppSettings_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
 		If e.PropertyName = "CompileQcPathFileName" Then
 			Me.UpdateCompileMode()
+			Me.SetCompilerOptionsText()
 		ElseIf e.PropertyName = "CompileOutputFolderOption" Then
 			Me.UpdateOutputPathWidgets()
 		ElseIf e.PropertyName = "CompileGameSetupSelectedIndex" Then
@@ -605,21 +606,15 @@ Public Class CompileUserControl
 
 	Private Sub UpdateCompileMode()
 		Dim anEnumList As IList
-		'Dim qcPathFileNameExists As Boolean
-		'Dim qcPathFileNameIsFolder As Boolean
+		Dim previousSelectedInputOption As InputOptions
 
 		anEnumList = EnumHelper.ToList(GetType(InputOptions))
+		previousSelectedInputOption = TheApp.Settings.DecompileMode
 		Me.CompileComboBox.DataBindings.Clear()
 		Try
-			'qcPathFileNameExists = File.Exists(TheApp.Settings.CompileQcPathFileName)
-			'qcPathFileNameIsFolder = ((File.GetAttributes(TheApp.Settings.CompileQcPathFileName) And FileAttributes.Directory) = FileAttributes.Directory)
-			'If qcPathFileNameIsFolder Then
-			'	anEnumList.RemoveAt(ActionMode.File)
-			'ElseIf Not qcPathFileNameExists Then
-			'	Exit Try
-			'End If
 			If File.Exists(TheApp.Settings.CompileQcPathFileName) Then
-				' Do nothing; this is okay.
+				' Set file mode when a file is selected.
+				previousSelectedInputOption = InputOptions.File
 			ElseIf Directory.Exists(TheApp.Settings.CompileQcPathFileName) Then
 				'NOTE: Remove in reverse index order.
 				If Directory.GetFiles(TheApp.Settings.CompileQcPathFileName, "*.qc").Length = 0 Then
@@ -635,7 +630,11 @@ Public Class CompileUserControl
 			Me.CompileComboBox.DataSource = anEnumList
 			Me.CompileComboBox.DataBindings.Add("SelectedValue", TheApp.Settings, "CompileMode", False, DataSourceUpdateMode.OnPropertyChanged)
 
-			Me.CompileComboBox.SelectedIndex = 0
+			If EnumHelper.Contains(previousSelectedInputOption, anEnumList) Then
+				Me.CompileComboBox.SelectedIndex = EnumHelper.IndexOf(previousSelectedInputOption, anEnumList)
+			Else
+				Me.CompileComboBox.SelectedIndex = 0
+			End If
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		End Try

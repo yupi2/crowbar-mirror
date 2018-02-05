@@ -110,7 +110,9 @@ Public Class MacroDataGridView
 		'
 		Me.CopyToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
 		Me.CopyToolStripMenuItem.Name = "CopyToolStripMenuItem"
-		Me.CopyToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
+		'NOTE: Do not add in the standard CTRL-C shortcut key, because it works without adding, 
+		'      and adding it causes a selection of text within a cell to return Nothing from Me.GetClipboardContent().
+		'Me.CopyToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
 		Me.CopyToolStripMenuItem.Size = New System.Drawing.Size(176, 22)
 		Me.CopyToolStripMenuItem.Text = "Copy"
 		''
@@ -314,15 +316,13 @@ Public Class MacroDataGridView
 	Private Sub CopyData()
 		Dim data As DataObject
 		data = Me.GetClipboardContent()
-		'If data Is Nothing Then
-		'	'if selection is a single cell and cell is combobox, then grab value some other way
-		'	If Me.SelectedCells.Count = 1 AndAlso TypeOf Me.SelectedCells(0) Is DataGridViewComboBoxCell Then
-		'		data = New DataObject(Me.SelectedCells(0).FormattedValue)
-		'		Clipboard.SetDataObject(data)
-		'	End If
-		'Else
-		Clipboard.SetDataObject(data)
-		'End If
+		Try
+			If data IsNot Nothing Then
+				Clipboard.SetDataObject(data)
+			End If
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		End Try
 	End Sub
 
 	'Private Sub PasteData()

@@ -435,7 +435,7 @@ Public Class SourceQcFile37
 						'line += Path.GetFileNameWithoutExtension(CStr(Me.theSourceEngineModel.theMdlFileHeader.theBodyParts(0).theModels(0).name).Trim(Chr(0)))
 						'line += ".vta"" "
 						line += " """
-						line += SourceFileNamesModule.GetVtaFileName(Me.theModelName)
+						line += SourceFileNamesModule.GetVtaFileName(Me.theModelName, 0)
 						line += """ "
 						line += "lowerer "
 						'TODO: The frame indexes here and for raiser need correcting.
@@ -485,7 +485,7 @@ Public Class SourceQcFile37
 						'line += Path.GetFileNameWithoutExtension(CStr(Me.theSourceEngineModel.theMdlFileHeader.theBodyParts(0).theModels(0).name).Trim(Chr(0)))
 						'line += ".vta"" "
 						line += " """
-						line += SourceFileNamesModule.GetVtaFileName(Me.theModelName)
+						line += SourceFileNamesModule.GetVtaFileName(Me.theModelName, 0)
 						line += """ "
 						line += "lowerer "
 						'line += theSourceEngineModel.theMdlFileHeader.theFlexDescs(anEyeball.lowerFlexDesc(0)).theVtaFrameIndex.ToString()
@@ -599,7 +599,7 @@ Public Class SourceQcFile37
 			'line += Path.GetFileNameWithoutExtension(CStr(Me.theSourceEngineModel.theMdlFileHeader.theBodyParts(0).theModels(0).name).Trim(Chr(0)))
 			'line += ".vta"""
 			line += " """
-			line += SourceFileNamesModule.GetVtaFileName(Me.theModelName)
+			line += SourceFileNamesModule.GetVtaFileName(Me.theModelName, 0)
 			line += """ "
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
@@ -744,8 +744,9 @@ Public Class SourceQcFile37
 				line += aFlexController.min.ToString("0.######", TheApp.InternalNumberFormat)
 				line += " "
 				line += aFlexController.max.ToString("0.######", TheApp.InternalNumberFormat)
-				line += " "
+				line += " """
 				line += aFlexController.theName
+				line += """"
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			Next
 		End If
@@ -1824,30 +1825,19 @@ Public Class SourceQcFile37
 	End Sub
 
 	Public Sub WriteIllumPositionCommand()
-		Dim line As String = ""
+		Dim line As String
 		Dim offsetX As Double
 		Dim offsetY As Double
 		Dim offsetZ As Double
 
-		line = ""
-		Me.theOutputFileStreamWriter.WriteLine(line)
-
-		line = ""
-		line += "// "
-		line += "Only set this if you know what it does, and need it for special circumstances, such as with gibs."
-		Me.theOutputFileStreamWriter.WriteLine(line)
-
-		'$illumposition -2.533 -0.555 32.487
-		'NOTE: These are stored in different order in MDL file.
-		'FROM: utils\studiomdl\studiomdl.cpp Cmd_Illumposition()
-		'illumposition[1] = verify_atof (token);
-		'illumposition[0] = -verify_atof (token);
-		'illumposition[2] = verify_atof (token);
 		offsetX = Math.Round(Me.theMdlFileData.illuminationPosition.y, 3)
 		offsetY = -Math.Round(Me.theMdlFileData.illuminationPosition.x, 3)
 		offsetZ = Math.Round(Me.theMdlFileData.illuminationPosition.z, 3)
+
 		line = ""
-		line += "// "
+		Me.theOutputFileStreamWriter.WriteLine(line)
+
+		line = ""
 		If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
 			line += "$IllumPosition "
 		Else
@@ -1878,7 +1868,6 @@ Public Class SourceQcFile37
 		Catch ex As Exception
 		End Try
 		Me.WriteIncludeModelCommands()
-		Me.WriteBoneSaveFrameCommand()
 	End Sub
 
 	Private Sub FillInWeightLists()
@@ -2394,8 +2383,9 @@ Public Class SourceQcFile37
 			For Each anIkRule As SourceMdlIkRule37 In anAnimationDesc.theIkRules
 				line = vbTab
 				line += "ikrule"
-				line += " "
+				line += " """
 				line += Me.theMdlFileData.theIkChains(anIkRule.chain).theName
+				line += """"
 				If anIkRule.type = SourceMdlIkRule.IK_SELF Then
 					line += " touch """
 					If anIkRule.bone >= 0 Then
@@ -2453,31 +2443,31 @@ Public Class SourceQcFile37
 			Me.theOutputFileStreamWriter.WriteLine(line)
 		End If
 
-		'TODO: This seems valid according to source code, but it checks same flag (STUDIO_DELTA) as "delta" option.
-		'      Unsure how to determine which option is intended or if both are intended.
-		If (anAnimationDesc.flags And SourceMdlAnimationDesc.STUDIO_DELTA) > 0 Then
-			line = vbTab
-			line += "// This subtract line guesses the animation name and frame index. There is no way to determine which $animation and which frame was used. Change as needed."
-			Me.theOutputFileStreamWriter.WriteLine(line)
+		''TODO: This seems valid according to source code, but it checks same flag (STUDIO_DELTA) as "delta" option.
+		''      Unsure how to determine which option is intended or if both are intended.
+		'If (anAnimationDesc.flags And SourceMdlAnimationDesc.STUDIO_DELTA) > 0 Then
+		'	line = vbTab
+		'	line += "// This subtract line guesses the animation name and frame index. There is no way to determine which $animation and which frame was used. Change as needed."
+		'	Me.theOutputFileStreamWriter.WriteLine(line)
 
-			line = vbTab
-			'line += "// "
-			line += "subtract"
-			line += " """
-			'TODO: Change to writing anim_name.
-			' Doesn't seem to be direct way to get this name.
-			' For now, do what MDL Decompiler seems to do; use the first animation name.
-			'line += "[anim_name]"
-			'line += Me.theFirstAnimationDescName
-			line += Me.theMdlFileData.theFirstAnimationDesc.theName
-			line += """ "
-			'TODO: Change to writing frameIndex.
-			' Doesn't seem to be direct way to get this value.
-			' For now, do what MDL Decompiler seems to do; use zero for the frameIndex.
-			'line += "[frameIndex]"
-			line += "0"
-			Me.theOutputFileStreamWriter.WriteLine(line)
-		End If
+		'	line = vbTab
+		'	'line += "// "
+		'	line += "subtract"
+		'	line += " """
+		'	'TODO: Change to writing anim_name.
+		'	' Doesn't seem to be direct way to get this name.
+		'	' For now, do what MDL Decompiler seems to do; use the first animation name.
+		'	'line += "[anim_name]"
+		'	'line += Me.theFirstAnimationDescName
+		'	line += Me.theMdlFileData.theFirstAnimationDesc.theName
+		'	line += """ "
+		'	'TODO: Change to writing frameIndex.
+		'	' Doesn't seem to be direct way to get this value.
+		'	' For now, do what MDL Decompiler seems to do; use zero for the frameIndex.
+		'	'line += "[frameIndex]"
+		'	line += "0"
+		'	Me.theOutputFileStreamWriter.WriteLine(line)
+		'End If
 
 		If aSequenceDesc Is Nothing AndAlso anAnimationDesc.theMovements IsNot Nothing Then
 			For Each aMovement As SourceMdlMovement In anAnimationDesc.theMovements
@@ -2763,53 +2753,6 @@ Public Class SourceQcFile37
 					line += " "
 					line += ikLock.localQWeight.ToString("0.######", TheApp.InternalNumberFormat)
 					Me.theOutputFileStreamWriter.WriteLine(line)
-				Next
-			End If
-		Catch ex As Exception
-
-		End Try
-	End Sub
-
-	Private Sub WriteBoneSaveFrameCommand()
-		Dim line As String = ""
-
-		'$bonesaveframe <bone name> ["position"] ["rotation"]
-		'$BoneSaveFrame "Dog_Model.Pelvis" position rotation
-		'$BoneSaveFrame "Dog_Model.Leg1_L" rotation
-		Try
-			If Me.theMdlFileData.theBones IsNot Nothing Then
-				Dim aBone As SourceMdlBone37
-				Dim emptyLineIsAlreadyWritten As Boolean
-
-				emptyLineIsAlreadyWritten = False
-				For i As Integer = 0 To Me.theMdlFileData.theBones.Count - 1
-					aBone = Me.theMdlFileData.theBones(i)
-
-					If (aBone.flags And SourceMdlBone.BONE_HAS_SAVEFRAME_POS) > 0 OrElse (aBone.flags And SourceMdlBone.BONE_HAS_SAVEFRAME_ROT) > 0 Then
-						If Not emptyLineIsAlreadyWritten Then
-							line = ""
-							Me.theOutputFileStreamWriter.WriteLine(line)
-							emptyLineIsAlreadyWritten = True
-						End If
-
-						If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
-							line = "$BoneSaveFrame "
-						Else
-							line = "$bonesaveframe "
-						End If
-						line += """"
-						line += aBone.theName
-						line += """"
-						If (aBone.flags And SourceMdlBone.BONE_HAS_SAVEFRAME_POS) > 0 Then
-							line += " "
-							line += "position"
-						End If
-						If (aBone.flags And SourceMdlBone.BONE_HAS_SAVEFRAME_ROT) > 0 Then
-							line += " "
-							line += "rotation"
-						End If
-						Me.theOutputFileStreamWriter.WriteLine(line)
-					End If
 				Next
 			End If
 		Catch ex As Exception
@@ -3480,14 +3423,11 @@ Public Class SourceQcFile37
 			Me.theOutputFileStreamWriter.WriteLine(line)
 		End If
 
-		If hitBoxWasAutoGenerated AndAlso TheApp.Settings.DecompileDebugInfoFilesIsChecked Then
+		If hitBoxWasAutoGenerated Then
 			line = "// The hitbox info below was automatically generated when compiled because no hitbox info was provided."
 			Me.theOutputFileStreamWriter.WriteLine(line)
-		End If
 
-		'TODO: Maybe make a checkbox option for whether to write lines or not instead of using comments.
-		'NOTE: Always comment-out the hbox lines if in main QC file.
-		If Not TheApp.Settings.DecompileGroupIntoQciFilesIsChecked Then
+			'NOTE: Only comment-out the hbox lines if auto-generated.
 			commentTag = "// "
 		End If
 

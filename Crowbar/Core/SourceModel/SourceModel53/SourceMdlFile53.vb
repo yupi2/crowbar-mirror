@@ -67,9 +67,9 @@ Public Class SourceMdlFile53
 		Me.theMdlFileData.eyePositionZ = Me.theInputFileReader.ReadSingle()
 
 		' Offsets: 0x5C, 0x60, 0x64
-		Me.theMdlFileData.illuminationPositionX = Me.theInputFileReader.ReadSingle()
-		Me.theMdlFileData.illuminationPositionY = Me.theInputFileReader.ReadSingle()
-		Me.theMdlFileData.illuminationPositionZ = Me.theInputFileReader.ReadSingle()
+		Me.theMdlFileData.illuminationPosition.x = Me.theInputFileReader.ReadSingle()
+		Me.theMdlFileData.illuminationPosition.y = Me.theInputFileReader.ReadSingle()
+		Me.theMdlFileData.illuminationPosition.z = Me.theInputFileReader.ReadSingle()
 
 		' Offsets: 0x68, 0x6C, 0x70
 		Me.theMdlFileData.hullMinPositionX = Me.theInputFileReader.ReadSingle()
@@ -1055,7 +1055,6 @@ Public Class SourceMdlFile53
 							Next
 						End If
 					ElseIf anAnimationDesc.animBlock = 0 Then
-						'NOTE: This code is reached by L4D2's pak01_dir.vpk\models\v_models\v_huntingrifle.mdl.
 						fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
 						Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 16, "anAnimationDesc.theAnimations [ReadAnimationFrameByBone()] pre-alignment (NOTE: Should end at: " + CStr(animInputFileStreamPosition + anAnimationDesc.animOffset - 1) + ")")
 
@@ -3894,53 +3893,57 @@ Public Class SourceMdlFile53
 		End If
 	End Sub
 
-	Public Sub ReadFinalBytesAlignment()
-		Me.theMdlFileData.theFileSeekLog.LogAndAlignFromFileSeekLogEnd(Me.theInputFileReader, 4, "Final bytes alignment")
-	End Sub
+	'Public Sub ReadFinalBytesAlignment()
+	'	Me.theMdlFileData.theFileSeekLog.LogAndAlignFromFileSeekLogEnd(Me.theInputFileReader, 4, "Final bytes alignment")
+	'End Sub
 
-	Public Sub ReadUnknownValues(ByVal aFileSeekLog As FileSeekLog)
-		'Me.theMdlFileData.theUnknownValues = New List(Of UnknownValue)()
+	'Public Sub ReadUnknownValues(ByVal aFileSeekLog As FileSeekLog)
+	'	'Me.theMdlFileData.theUnknownValues = New List(Of UnknownValue)()
 
-		Dim offsetStart As Long
-		Dim offsetEnd As Long
-		Dim offsetGapStart As Long
-		Dim offsetGapEnd As Long
-		offsetStart = -1
-		Try
-			For i As Integer = 0 To aFileSeekLog.theFileSeekList.Count - 1
-				If offsetStart = -1 Then
-					offsetStart = aFileSeekLog.theFileSeekList.Keys(i)
-				End If
-				offsetEnd = aFileSeekLog.theFileSeekList.Values(i)
-				If (i = aFileSeekLog.theFileSeekList.Count - 1) Then
-					Exit For
-				ElseIf (offsetEnd + 1 <> aFileSeekLog.theFileSeekList.Keys(i + 1)) Then
-					offsetGapStart = offsetEnd + 1
-					offsetGapEnd = aFileSeekLog.theFileSeekList.Keys(i + 1) - 1
-					Me.theInputFileReader.BaseStream.Seek(offsetGapStart, SeekOrigin.Begin)
-					For offset As Long = offsetGapStart To offsetGapEnd Step 4
-						If offsetGapEnd - offset < 3 Then
-							For byteOffset As Long = offset To offsetGapEnd
-								Dim anUnknownValue As New UnknownValue()
-								anUnknownValue.offset = byteOffset
-								anUnknownValue.type = "Byte"
-								anUnknownValue.value = Me.theInputFileReader.ReadByte()
-								Me.theMdlFileData.theUnknownValues.Add(anUnknownValue)
-							Next
-						Else
-							Dim anUnknownValue As New UnknownValue()
-							anUnknownValue.offset = offset
-							anUnknownValue.type = "Int32"
-							anUnknownValue.value = Me.theInputFileReader.ReadInt32()
-							Me.theMdlFileData.theUnknownValues.Add(anUnknownValue)
-						End If
-					Next
-					offsetStart = -1
-				End If
-			Next
-		Catch
+	'	Dim offsetStart As Long
+	'	Dim offsetEnd As Long
+	'	Dim offsetGapStart As Long
+	'	Dim offsetGapEnd As Long
+	'	offsetStart = -1
+	'	Try
+	'		For i As Integer = 0 To aFileSeekLog.theFileSeekList.Count - 1
+	'			If offsetStart = -1 Then
+	'				offsetStart = aFileSeekLog.theFileSeekList.Keys(i)
+	'			End If
+	'			offsetEnd = aFileSeekLog.theFileSeekList.Values(i)
+	'			If (i = aFileSeekLog.theFileSeekList.Count - 1) Then
+	'				Exit For
+	'			ElseIf (offsetEnd + 1 <> aFileSeekLog.theFileSeekList.Keys(i + 1)) Then
+	'				offsetGapStart = offsetEnd + 1
+	'				offsetGapEnd = aFileSeekLog.theFileSeekList.Keys(i + 1) - 1
+	'				Me.theInputFileReader.BaseStream.Seek(offsetGapStart, SeekOrigin.Begin)
+	'				For offset As Long = offsetGapStart To offsetGapEnd Step 4
+	'					If offsetGapEnd - offset < 3 Then
+	'						For byteOffset As Long = offset To offsetGapEnd
+	'							Dim anUnknownValue As New UnknownValue()
+	'							anUnknownValue.offset = byteOffset
+	'							anUnknownValue.type = "Byte"
+	'							anUnknownValue.value = Me.theInputFileReader.ReadByte()
+	'							Me.theMdlFileData.theUnknownValues.Add(anUnknownValue)
+	'						Next
+	'					Else
+	'						Dim anUnknownValue As New UnknownValue()
+	'						anUnknownValue.offset = offset
+	'						anUnknownValue.type = "Int32"
+	'						anUnknownValue.value = Me.theInputFileReader.ReadInt32()
+	'						Me.theMdlFileData.theUnknownValues.Add(anUnknownValue)
+	'					End If
+	'				Next
+	'				offsetStart = -1
+	'			End If
+	'		Next
+	'	Catch
 
-		End Try
+	'	End Try
+	'End Sub
+
+	Public Sub ReadUnreadBytes()
+		Me.theMdlFileData.theFileSeekLog.LogUnreadBytes(Me.theInputFileReader)
 	End Sub
 
 	Public Sub CreateFlexFrameList()

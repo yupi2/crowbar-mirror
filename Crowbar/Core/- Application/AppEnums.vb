@@ -43,8 +43,23 @@ Public Module AppEnums
 		<Description("ErrorInvalidInternalMdlFileSize")> ErrorInvalidInternalMdlFileSize
 	End Enum
 
+	<FlagsAttribute>
+	Public Enum FilesFoundFlags
+		<Description("AllFilesFound")> AllFilesFound = 0
+		<Description("ErrorRequiredSequenceGroupMdlFileNotFound")> ErrorRequiredSequenceGroupMdlFileNotFound = 1
+		<Description("ErrorRequiredTextureMdlFileNotFound")> ErrorRequiredTextureMdlFileNotFound = 2
+
+		<Description("ErrorRequiredMdlFileNotFound")> ErrorRequiredMdlFileNotFound = 4
+		<Description("ErrorRequiredAniFileNotFound")> ErrorRequiredAniFileNotFound = 8
+		<Description("ErrorRequiredVtxFileNotFound")> ErrorRequiredVtxFileNotFound = 16
+		<Description("ErrorRequiredVvdFileNotFound")> ErrorRequiredVvdFileNotFound = 32
+
+		<Description("Error")> [Error] = 64
+	End Enum
+
 	Public Enum ActionType
 		<Description("Unknown")> Unknown
+		<Description("SetUpGames")> SetUpGames
 		<Description("Unpack")> Unpack
 		<Description("Preview")> Preview
 		<Description("Decompile")> Decompile

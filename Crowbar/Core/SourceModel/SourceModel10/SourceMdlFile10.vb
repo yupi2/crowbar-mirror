@@ -713,6 +713,10 @@ Public Class SourceMdlFile10
 		Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "SequenceGroupMDL File Header")
 	End Sub
 
+	Public Sub ReadUnreadBytes()
+		Me.theMdlFileData.theFileSeekLog.LogUnreadBytes(Me.theInputFileReader)
+	End Sub
+
 	'FROM: [1999] HLStandardSDK\SourceCode\utils\studiomdl\studiomdl.c
 	'void Build_Reference( s_model_t *pmodel)
 	'{

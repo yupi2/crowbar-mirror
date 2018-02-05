@@ -107,6 +107,10 @@ Public Class SourceVvdFile48
 		End If
 	End Sub
 
+	Public Sub ReadUnreadBytes()
+		Me.theVvdFileData.theFileSeekLog.LogUnreadBytes(Me.theInputFileReader)
+	End Sub
+
 #End Region
 
 #Region "Private Methods"

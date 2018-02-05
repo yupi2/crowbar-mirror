@@ -135,10 +135,8 @@ Public Class SourceMdlAnimationDesc49
 	''	inline char * const pszName( void ) const { return ((char *)this) + sznameindex; }
 	'Public theName As String
 
-	'Public theAnimations As List(Of SourceMdlAnimation)
 	Public theSectionsOfAnimations As List(Of List(Of SourceMdlAnimation))
-	Public theSectionsOfFrameAnims As List(Of List(Of SourceAniFrameAnim))
-	'Public theAniFrameAnim As SourceAniFrameAnim
+	Public theSectionsOfFrameAnim As List(Of SourceAniFrameAnim)
 	Public theIkRules As List(Of SourceMdlIkRule)
 	Public theSections As List(Of SourceMdlAnimationSection)
 	Public theMovements As List(Of SourceMdlMovement)
@@ -146,6 +144,7 @@ Public Class SourceMdlAnimationDesc49
 
 	Public theAnimIsLinkedToSequence As Boolean
 	Public theLinkedSequences As List(Of SourceMdlSequenceDesc)
+	Public theOffsetStart As Long
 
 
 

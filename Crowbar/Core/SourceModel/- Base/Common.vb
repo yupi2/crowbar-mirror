@@ -199,7 +199,7 @@ Module Common
 					lessThanEqualZ = "-(min(1, (-min(0, (" + filterRampZ.theExpression + " - " + flValue + ")))) - 1)"
 					greaterThanZ = "min(1, (-min(0, (" + filterRampZ.theExpression + " - " + flValue + "))))"
 					lessThanW = "min(1, (-min(0, (" + flValue + " - " + filterRampW.theExpression + "))))"
-					remapZ = "1 - (min(max((" + flValue + " - " + filterRampZ.theExpression + ") / (" + filterRampW.theExpression + " - " + filterRampZ.theExpression + "), 0), 1))"
+					remapZ = "(1 - (min(max((" + flValue + " - " + filterRampZ.theExpression + ") / (" + filterRampW.theExpression + " - " + filterRampZ.theExpression + "), 0), 1)))"
 
 					flValue = "((" + greaterThanX + " * " + lessThanY + ") * " + remapX + ") + (" + greaterThanEqualY + " * " + lessThanEqualZ + ") + ((" + greaterThanZ + " * " + lessThanW + ") * " + remapZ + ")"
 

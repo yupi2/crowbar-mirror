@@ -39,11 +39,14 @@ Public Class FileSeekLog
 			Return Me.theFileSize
 		End Get
 		Set(value As Long)
-			Me.theFileSize = value
+			If Me.theFileSize <> value Then
+				Me.theFileSize = value
+				Me.Add(Me.theFileSize, Me.theFileSize, "END OF FILE + 1 (File size)")
+			End If
 		End Set
 	End Property
 
-	Public Sub LogToEndAndAlignToNextStart(ByVal inputFileReader As BinaryReader, ByVal fileOffsetEnd As Long, ByVal byteAlignmentCount As Integer, ByVal description As String)
+	Public Sub LogToEndAndAlignToNextStart(ByVal inputFileReader As BinaryReader, ByVal fileOffsetEnd As Long, ByVal byteAlignmentCount As Integer, ByVal description As String, Optional ByVal expectedAlignOffsetEnd As Long = -1)
 		Dim fileOffsetStart2 As Long
 		Dim fileOffsetEnd2 As Long
 
@@ -51,24 +54,124 @@ Public Class FileSeekLog
 		fileOffsetEnd2 = MathModule.AlignLong(fileOffsetStart2, byteAlignmentCount) - 1
 		inputFileReader.BaseStream.Seek(fileOffsetEnd2 + 1, SeekOrigin.Begin)
 		If fileOffsetEnd2 >= fileOffsetStart2 Then
+			Dim allZeroesWereFound As Boolean
+			If expectedAlignOffsetEnd > -1 AndAlso expectedAlignOffsetEnd <> fileOffsetEnd2 Then
+				description = "[ERROR: Should end at " + CStr(expectedAlignOffsetEnd) + "] " + description
+				description += " - " + fileOffsetStart2.ToString() + ":" + Me.GetByteValues(inputFileReader, fileOffsetStart2, fileOffsetEnd2, allZeroesWereFound)
+				description += " - " + (fileOffsetEnd2 + 1).ToString() + ":" + Me.GetByteValues(inputFileReader, fileOffsetEnd2 + 1, expectedAlignOffsetEnd, allZeroesWereFound)
+			Else
+				description += Me.GetByteValues(inputFileReader, fileOffsetStart2, fileOffsetEnd2, allZeroesWereFound)
+			End If
+
 			Me.Add(fileOffsetStart2, fileOffsetEnd2, description)
 		End If
 	End Sub
 
 	Public Sub LogAndAlignFromFileSeekLogEnd(ByVal inputFileReader As BinaryReader, ByVal byteAlignmentCount As Integer, ByVal description As String)
-		Dim fileOffsetStart2 As Long
-		Dim fileOffsetEnd2 As Long
+		'Dim fileOffsetStart2 As Long
+		'Dim fileOffsetEnd2 As Long
 
-		fileOffsetStart2 = Me.theFileSeekList.Values(Me.theFileSeekList.Count - 1) + 1
-		fileOffsetEnd2 = MathModule.AlignLong(fileOffsetStart2, byteAlignmentCount) - 1
-		inputFileReader.BaseStream.Seek(fileOffsetEnd2 + 1, SeekOrigin.Begin)
-		If fileOffsetEnd2 >= fileOffsetStart2 Then
-			Me.Add(fileOffsetStart2, fileOffsetEnd2, description)
-		End If
+		'fileOffsetStart2 = Me.theFileSeekList.Values(Me.theFileSeekList.Count - 1) + 1
+		'fileOffsetEnd2 = MathModule.AlignLong(fileOffsetStart2, byteAlignmentCount) - 1
+		'inputFileReader.BaseStream.Seek(fileOffsetEnd2 + 1, SeekOrigin.Begin)
+		'If fileOffsetEnd2 >= fileOffsetStart2 Then
+		'	Me.Add(fileOffsetStart2, fileOffsetEnd2, description)
+		'End If
+		'Me.LogToEndAndAlignToNextStart(inputFileReader, Me.theFileSeekList.Values(Me.theFileSeekList.Count - 1), byteAlignmentCount, description)
+		'NOTE: The "- 2" skips the final value that should be the "END OF FILE + 1 (File size)".
+		Me.LogToEndAndAlignToNextStart(inputFileReader, Me.theFileSeekList.Values(Me.theFileSeekList.Count - 2), byteAlignmentCount, description)
+	End Sub
+
+	Public Sub LogUnreadBytes(ByVal inputFileReader As BinaryReader)
+		Dim offsetStart As Long
+		Dim offsetEnd As Long
+		Dim description As String
+		Dim byteValues As String
+		Dim allZeroesWereFound As Boolean
+		Dim tempFileSeekList As New SortedList(Of Long, Long)()
+		Dim tempFileSeekDescriptionList As New SortedList(Of Long, String)()
+
+		offsetStart = -1
+		offsetEnd = -1
+		Try
+			For i As Integer = 0 To Me.theFileSeekList.Count - 1
+				offsetStart = Me.theFileSeekList.Keys(i)
+
+				If offsetEnd < offsetStart - 1 Then
+					description = "[ERROR] Unread bytes"
+					byteValues = Me.GetByteValues(inputFileReader, offsetEnd + 1, offsetStart - 1, allZeroesWereFound)
+					If allZeroesWereFound Then
+						description += " (all zeroes)"
+					End If
+					description += byteValues
+
+					' Can't add into the list that is being iterated, so use temp list.
+					If Me.theFileSeekList.ContainsKey(offsetEnd + 1) Then
+						Dim temp As String
+						temp = Me.theFileSeekDescriptionList(offsetEnd + 1)
+						Me.theFileSeekDescriptionList(offsetEnd + 1) = "[ERROR] "
+						Me.theFileSeekDescriptionList(offsetEnd + 1) += temp + "; [" + (offsetEnd + 1).ToString() + " - " + (offsetStart - 1).ToString() + "] " + description
+					Else
+						tempFileSeekList.Add(offsetEnd + 1, offsetStart - 1)
+						tempFileSeekDescriptionList.Add(offsetEnd + 1, description)
+					End If
+				End If
+
+				offsetEnd = Me.theFileSeekList.Values(i)
+			Next
+
+			For i As Integer = 0 To tempFileSeekList.Count - 1
+				Me.Add(tempFileSeekList.Keys(i), tempFileSeekList.Values(i), tempFileSeekDescriptionList.Values(i))
+			Next
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		End Try
 	End Sub
 
 	Public theFileSize As Long
 	Public theFileSeekList As SortedList(Of Long, Long)
 	Public theFileSeekDescriptionList As SortedList(Of Long, String)
+
+	Private Function GetByteValues(ByVal inputFileReader As BinaryReader, ByVal fileOffsetStart2 As Long, ByVal fileOffsetEnd2 As Long, ByRef allZeroesWereFound As Boolean) As String
+		Dim byteValues As String
+
+		Dim inputFileStreamPosition As Long
+		inputFileStreamPosition = inputFileReader.BaseStream.Position
+
+		Dim byteValue As Byte
+
+		Dim adjustedFileOffsetEnd2 As Long
+		If (fileOffsetEnd2 - fileOffsetStart2) > 20 Then
+			adjustedFileOffsetEnd2 = fileOffsetStart2 + 20
+		Else
+			adjustedFileOffsetEnd2 = fileOffsetEnd2
+		End If
+
+		Try
+			inputFileReader.BaseStream.Seek(fileOffsetStart2, SeekOrigin.Begin)
+			allZeroesWereFound = True
+			byteValues = " ["
+			For byteOffset As Long = fileOffsetStart2 To adjustedFileOffsetEnd2
+				byteValue = inputFileReader.ReadByte()
+				byteValues += " " + byteValue.ToString("X2")
+				If byteValue <> 0 Then
+					allZeroesWereFound = False
+				End If
+			Next
+			If (fileOffsetEnd2 - fileOffsetStart2) > 20 Then
+				byteValues += " ..."
+				'NOTE: Indicate non-zeroes if more than 20 bytes unread because might be non-zeroes past the first 20.
+				allZeroesWereFound = False
+			End If
+			byteValues += " ]"
+
+			inputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
+		Catch ex As Exception
+			allZeroesWereFound = False
+			byteValues = "[incomplete read due to error]"
+		End Try
+
+		Return byteValues
+	End Function
 
 End Class

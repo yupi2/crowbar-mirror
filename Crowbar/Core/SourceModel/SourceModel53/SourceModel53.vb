@@ -119,13 +119,13 @@ Public Class SourceModel53
 
 #Region "Methods"
 
-	Public Overrides Function CheckForRequiredFiles() As StatusMessage
-		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+	Public Overrides Function CheckForRequiredFiles() As FilesFoundFlags
+		Dim status As AppEnums.FilesFoundFlags = FilesFoundFlags.AllFilesFound
 
 		If Me.theMdlFileData.animBlockCount > 0 Then
 			Me.theAniPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".ani")
 			If Not File.Exists(Me.theAniPathFileName) Then
-				status = StatusMessage.ErrorRequiredAniFileNotFound
+				status = status Or FilesFoundFlags.ErrorRequiredAniFileNotFound
 			End If
 		End If
 
@@ -142,7 +142,7 @@ Public Class SourceModel53
 						If Not File.Exists(Me.theVtxPathFileName) Then
 							Me.theVtxPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".vtx")
 							If Not File.Exists(Me.theVtxPathFileName) Then
-								status = StatusMessage.ErrorRequiredVtxFileNotFound
+								status = status Or FilesFoundFlags.ErrorRequiredVtxFileNotFound
 							End If
 						End If
 					End If
@@ -151,7 +151,7 @@ Public Class SourceModel53
 
 			Me.theVvdPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".vvd")
 			If Not File.Exists(Me.theVvdPathFileName) Then
-				status = StatusMessage.ErrorRequiredVvdFileNotFound
+				status = status Or FilesFoundFlags.ErrorRequiredVvdFileNotFound
 			End If
 		End If
 
@@ -161,9 +161,9 @@ Public Class SourceModel53
 	Public Overrides Function ReadPhyFile() As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
-		If String.IsNullOrEmpty(Me.thePhyPathFileName) Then
-			status = Me.CheckForRequiredFiles()
-		End If
+		'If String.IsNullOrEmpty(Me.thePhyPathFileName) Then
+		'	status = Me.CheckForRequiredFiles()
+		'End If
 
 		If status = StatusMessage.Success Then
 			Try
@@ -303,7 +303,7 @@ Public Class SourceModel53
 		aniFile.ReadMdlHeader00("ANI File Header 00")
 		aniFile.ReadMdlHeader01("ANI File Header 01")
 
-		aniFile.ReadAniBlocks()
+		aniFile.ReadAnimationAniBlocks()
 	End Sub
 
 	Protected Overrides Sub ReadMdlFile_Internal()
@@ -380,6 +380,7 @@ Public Class SourceModel53
 
 		'mdlFile.ReadFinalBytesAlignment()
 		'mdlFile.ReadUnknownValues(Me.theMdlFileData.theFileSeekLog)
+		mdlFile.ReadUnreadBytes()
 
 		' Post-processing.
 		'mdlFile.CreateFlexFrameList()
@@ -391,7 +392,7 @@ Public Class SourceModel53
 			Me.thePhyFileDataGeneric = New SourcePhyFileData()
 		End If
 
-		Dim phyFile As New SourcePhyFile49(Me.theInputFileReader, Me.thePhyFileDataGeneric)
+		Dim phyFile As New SourcePhyFile(Me.theInputFileReader, Me.thePhyFileDataGeneric)
 
 		phyFile.ReadSourcePhyHeader()
 		If Me.thePhyFileDataGeneric.solidCount > 0 Then
@@ -407,10 +408,10 @@ Public Class SourceModel53
 
 	Protected Overrides Sub ReadVtxFile_Internal()
 		If Me.theVtxFileData49 Is Nothing Then
-			Me.theVtxFileData49 = New SourceVtxFileData49()
+			Me.theVtxFileData49 = New SourceVtxFileData07()
 		End If
 
-		Dim vtxFile As New SourceVtxFile49(Me.theInputFileReader, Me.theVtxFileData49)
+		Dim vtxFile As New SourceVtxFile07(Me.theInputFileReader, Me.theVtxFileData49, True)
 
 		vtxFile.ReadSourceVtxHeader()
 		If Me.theVtxFileData49.lodCount > 0 Then
@@ -453,9 +454,7 @@ Public Class SourceModel53
 			qcFile.WriteJointSurfacePropCommand()
 			qcFile.WriteContentsCommand()
 			qcFile.WriteJointContentsCommand()
-			If TheApp.Settings.DecompileDebugInfoFilesIsChecked Then
-				qcFile.WriteIllumPositionCommand()
-			End If
+			qcFile.WriteIllumPositionCommand()
 
 			qcFile.WriteEyePositionCommand()
 			qcFile.WriteMaxEyeDeflectionCommand()
@@ -664,7 +663,7 @@ Public Class SourceModel53
 		End Try
 	End Sub
 
-	Protected Overrides Sub WriteVertexAnimationVtaFile()
+	Protected Overrides Sub WriteVertexAnimationVtaFile(ByVal bodyPart As SourceMdlBodyPart)
 		Dim vertexAnimationVtaFile As New SourceVtaFile53(Me.theOutputFileTextWriter, Me.theMdlFileData, Me.theVvdFileData49)
 
 		Try
@@ -699,7 +698,7 @@ Public Class SourceModel53
 	Private theAniFileData49 As SourceAniFileData49
 	Private theMdlFileData As SourceMdlFileData53
 	'Private thePhyFileData49 As SourcePhyFileData49
-	Private theVtxFileData49 As SourceVtxFileData49
+	Private theVtxFileData49 As SourceVtxFileData07
 	Private theVvdFileData49 As SourceVvdFileData49
 
 #End Region

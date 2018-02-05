@@ -243,6 +243,33 @@ Public Class SourceQcFile31
 	'	End If
 	'End Sub
 
+	Public Sub WriteIllumPositionCommand()
+		Dim line As String
+		Dim offsetX As Double
+		Dim offsetY As Double
+		Dim offsetZ As Double
+
+		offsetX = Math.Round(Me.theMdlFileData.illuminationPosition.y, 3)
+		offsetY = -Math.Round(Me.theMdlFileData.illuminationPosition.x, 3)
+		offsetZ = Math.Round(Me.theMdlFileData.illuminationPosition.z, 3)
+
+		line = ""
+		Me.theOutputFileStreamWriter.WriteLine(line)
+
+		line = ""
+		If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+			line += "$IllumPosition "
+		Else
+			line += "$illumposition "
+		End If
+		line += offsetX.ToString("0.######", TheApp.InternalNumberFormat)
+		line += " "
+		line += offsetY.ToString("0.######", TheApp.InternalNumberFormat)
+		line += " "
+		line += offsetZ.ToString("0.######", TheApp.InternalNumberFormat)
+		Me.theOutputFileStreamWriter.WriteLine(line)
+	End Sub
+
 #End Region
 
 #Region "Private Delegates"
@@ -736,8 +763,9 @@ Public Class SourceQcFile31
 	'			line += aFlexController.min.ToString("0.######", TheApp.InternalNumberFormat)
 	'			line += " "
 	'			line += aFlexController.max.ToString("0.######", TheApp.InternalNumberFormat)
-	'			line += " "
+	'			line += " """
 	'			line += aFlexController.theName
+	'			line += """"
 	'			Me.theOutputFileStreamWriter.WriteLine(line)
 	'		Next
 	'	End If
@@ -1836,6 +1864,7 @@ Public Class SourceQcFile31
 	'End Sub
 
 	'Public Sub WriteGroupAnimation()
+	'	Me.WriteBoneSaveFrameCommand()
 	'	Me.WritePoseParameterCommand()
 	'	Me.WriteIkChainCommand()
 	'	Me.WriteIkAutoPlayLockCommand()
@@ -1852,7 +1881,6 @@ Public Class SourceQcFile31
 	'	Catch ex As Exception
 	'	End Try
 	'	Me.WriteIncludeModelCommands()
-	'	Me.WriteBoneSaveFrameCommand()
 	'End Sub
 
 	'Private Sub FillInWeightLists()
