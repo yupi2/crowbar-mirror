@@ -423,6 +423,10 @@ Public Class Unpacker
 			archivePath = archivePathFileName
 		End If
 
+		If archivePath = "" Then
+			Exit Sub
+		End If
+
 		Me.theArchivePathFileNameToFileDataMap = New SortedList(Of String, VpkFileData)()
 
 		Try
@@ -480,7 +484,7 @@ Public Class Unpacker
 				Try
 					Me.theInputFileReader = New BinaryReader(inputFileStream, System.Text.Encoding.ASCII)
 
-					Dim vpkFile As New VpkFile(Me.theInputFileReader, aVpkFileData)
+					Dim vpkFile As New VpkFile(Me.theArchiveDirectoryInputFileReader, Me.theInputFileReader, aVpkFileData)
 
 					vpkFile.ReadHeader()
 					vpkFile.ReadEntries()
@@ -510,7 +514,7 @@ Public Class Unpacker
 			Dim archivePathFileName As String
 			Dim vpkPath As String
 			Dim vpkFileNameWithoutExtension As String
-			Dim vpkFileNameWithoutIndex As String
+			Dim vpkFileNamePrefix As String
 
 			Me.UpdateProgressInternal(1, "")
 			For i As Integer = 0 To aVpkFileData.theEntries.Count - 1
@@ -518,8 +522,8 @@ Public Class Unpacker
 				If entry.archiveIndex <> &H7FFF Then
 					vpkPath = FileManager.GetPath(archiveDirectoryPathFileName)
 					vpkFileNameWithoutExtension = Path.GetFileNameWithoutExtension(archiveDirectoryPathFileName)
-					vpkFileNameWithoutIndex = vpkFileNameWithoutExtension.Substring(0, vpkFileNameWithoutExtension.LastIndexOf("_dir"))
-					archivePathFileName = Path.Combine(vpkPath, vpkFileNameWithoutIndex + "_" + entry.archiveIndex.ToString("000") + ".vpk")
+					vpkFileNamePrefix = vpkFileNameWithoutExtension.Substring(0, vpkFileNameWithoutExtension.LastIndexOf("_dir"))
+					archivePathFileName = Path.Combine(vpkPath, vpkFileNamePrefix + "_" + entry.archiveIndex.ToString("000") + ".vpk")
 				Else
 					archivePathFileName = archiveDirectoryPathFileName
 				End If
@@ -664,6 +668,7 @@ Public Class Unpacker
 			Dim archivePathFileName As String
 			Dim archiveEntryIndexes As List(Of Integer)
 
+			Me.theArchiveDirectoryFileNamePrefix = ""
 			For i As Integer = 0 To archivePathFileNameToEntryIndexMap.Count - 1
 				archivePathFileName = archivePathFileNameToEntryIndexMap.Keys(i)
 				archiveEntryIndexes = archivePathFileNameToEntryIndexMap.Values(i)
@@ -673,8 +678,12 @@ Public Class Unpacker
 				vpkPath = FileManager.GetPath(archivePathFileName)
 				vpkFileName = Path.GetFileName(archivePathFileName)
 
+				Me.OpenArchiveDirectoryFile(archivePathFileName)
 				Me.DoUnpackAction(Me.theArchivePathFileNameToFileDataMap(archivePathFileName), vpkPath, vpkFileName, archiveEntryIndexes)
 			Next
+			If Me.theArchiveDirectoryFileNamePrefix <> "" Then
+				Me.CloseArchiveDirectoryFile()
+			End If
 		Catch ex As Exception
 			status = StatusMessage.Error
 		End Try
@@ -786,6 +795,7 @@ Public Class Unpacker
 			Dim archivePathFileName As String
 			Dim archiveEntryIndexes As List(Of Integer)
 
+			Me.theArchiveDirectoryFileNamePrefix = ""
 			For i As Integer = 0 To archivePathFileNameToEntryIndexMap.Count - 1
 				archivePathFileName = archivePathFileNameToEntryIndexMap.Keys(i)
 				archiveEntryIndexes = archivePathFileNameToEntryIndexMap.Values(i)
@@ -793,11 +803,13 @@ Public Class Unpacker
 				vpkPath = FileManager.GetPath(archivePathFileName)
 				vpkFileName = Path.GetFileName(archivePathFileName)
 
+				Me.OpenArchiveDirectoryFile(archivePathFileName)
 				Me.DoUnpackAction(Me.theArchivePathFileNameToFileDataMap(archivePathFileName), vpkPath, vpkFileName, archiveEntryIndexes)
 			Next
+			If Me.theArchiveDirectoryFileNamePrefix <> "" Then
+				Me.CloseArchiveDirectoryFile()
+			End If
 			'End If
-
-
 
 			If Me.CancellationPending Then
 				Me.UpdateProgress(1, "... Unpacking from """ + vpkRelativePathFileName + """ canceled. Check above for any errors.")
@@ -805,7 +817,7 @@ Public Class Unpacker
 				Me.UpdateProgress(1, "... Unpacking from """ + vpkRelativePathFileName + """ finished. Check above for any errors.")
 			End If
 		Catch ex As Exception
-			Dim debug As Integer = 4242
+			status = StatusMessage.Error
 		Finally
 			If Me.theLogFileStream IsNot Nothing Then
 				Me.theLogFileStream.Flush()
@@ -816,6 +828,52 @@ Public Class Unpacker
 
 		Return status
 	End Function
+
+	Private Sub OpenArchiveDirectoryFile(ByVal archivePathFileName As String)
+		Dim archiveDirectoryPathFileName As String
+		Dim vpkFileNameWithoutExtension As String
+		Dim vpkFileNamePrefix As String
+
+		vpkFileNameWithoutExtension = Path.GetFileNameWithoutExtension(archivePathFileName)
+		vpkFileNamePrefix = vpkFileNameWithoutExtension.Substring(0, vpkFileNameWithoutExtension.LastIndexOf("_"))
+
+		If vpkFileNamePrefix <> Me.theArchiveDirectoryFileNamePrefix Then
+			Me.CloseArchiveDirectoryFile()
+
+			Try
+				Me.theArchiveDirectoryFileNamePrefix = vpkFileNamePrefix
+
+				Dim vpkPath As String
+				vpkPath = FileManager.GetPath(archivePathFileName)
+				archiveDirectoryPathFileName = Path.Combine(vpkPath, vpkFileNamePrefix + "_dir.vpk")
+
+				If File.Exists(archiveDirectoryPathFileName) Then
+					Me.theArchiveDirectoryInputFileStream = New FileStream(archiveDirectoryPathFileName, FileMode.Open, FileAccess.Read, FileShare.Read)
+					If Me.theArchiveDirectoryInputFileStream IsNot Nothing Then
+						Try
+							Me.theArchiveDirectoryInputFileReader = New BinaryReader(Me.theArchiveDirectoryInputFileStream, System.Text.Encoding.ASCII)
+						Catch ex As Exception
+							Throw
+						End Try
+					End If
+				End If
+			Catch ex As Exception
+				Me.CloseArchiveDirectoryFile()
+				Throw
+			End Try
+		End If
+	End Sub
+
+	Private Sub CloseArchiveDirectoryFile()
+		If Me.theArchiveDirectoryInputFileReader IsNot Nothing Then
+			Me.theArchiveDirectoryInputFileReader.Close()
+			Me.theArchiveDirectoryInputFileReader = Nothing
+		End If
+		If Me.theArchiveDirectoryInputFileStream IsNot Nothing Then
+			Me.theArchiveDirectoryInputFileStream.Close()
+			Me.theArchiveDirectoryInputFileStream = Nothing
+		End If
+	End Sub
 
 	Private Sub DoUnpackAction(ByVal vpkFileData As VpkFileData, ByVal vpkPath As String, ByVal vpkFileName As String, ByVal entryIndexes As List(Of Integer))
 		If vpkFileData Is Nothing Then
@@ -879,7 +937,7 @@ Public Class Unpacker
 				Try
 					Me.theInputFileReader = New BinaryReader(inputFileStream, System.Text.Encoding.ASCII)
 
-					Dim vpkFile As New VpkFile(Me.theInputFileReader, vpkFileData)
+					Dim vpkFile As New VpkFile(Me.theArchiveDirectoryInputFileReader, Me.theInputFileReader, vpkFileData)
 
 					For Each entry As VpkDirectoryEntry In entries
 						'Me.UnpackEntryDataToFile(vpkFile, entry, extractPath)
@@ -974,6 +1032,9 @@ Public Class Unpacker
 
 	'Private theVpkFileData As VpkFileData
 	Private theArchivePathFileNameToFileDataMap As SortedList(Of String, VpkFileData)
+	Private theArchiveDirectoryFileNamePrefix As String
+	Private theArchiveDirectoryInputFileStream As FileStream
+	Private theArchiveDirectoryInputFileReader As BinaryReader
 	Private theInputFileReader As BinaryReader
 
 #End Region

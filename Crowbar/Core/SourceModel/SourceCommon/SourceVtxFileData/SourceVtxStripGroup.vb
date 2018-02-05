@@ -85,7 +85,7 @@ Public Class SourceVtxStripGroup
 	Public flags As Byte
 
 	'------
-	' VERSION 49 adds these two fields
+	' MDL VERSION 49 (except L4D and L4D2?) adds these two fields
 	'	int numTopologyIndices;
 	'	int topologyOffset;
 	Public topologyIndexCount As Integer
@@ -96,6 +96,7 @@ Public Class SourceVtxStripGroup
 	Public theVtxVertexes As List(Of SourceVtxVertex)
 	Public theVtxIndexes As List(Of UShort)
 	Public theVtxStrips As List(Of SourceVtxStrip)
+	Public theVtxTopologyIndexes As List(Of UShort)
 
 
 	'FROM: SourceEngine2003_source HL2 Beta 2003\src_main\common\optimize.h

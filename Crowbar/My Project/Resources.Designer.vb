@@ -110,41 +110,6 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to Special thanks to:
-        '''	arby26
-        '''	Artfunkel
-        '''	atrblizzard
-        '''	Avengito
-        '''	BANG!
-        '''	BinaryRifle
-        '''	Cra0kalo
-        '''	da1barker
-        '''	Doktor haus
-        '''	Drsalvador
-        '''	Funreal
-        '''	Game Zombie
-        '''	GeckoN
-        '''	GPZ
-        '''	k@rt
-        '''	K1CHWA
-        '''	mrlanky
-        '''	Pajama
-        '''	pappaskurtz
-        '''	Rantis
-        '''	Seraphim
-        '''	Splinks
-        '''	Stiffy360
-        '''	Stay Puft
-        '''	The303
-        '''	Vincentor.
-        '''</summary>
-        Friend ReadOnly Property About_SpecialThanksText() As String
-            Get
-                Return ResourceManager.GetString("About_SpecialThanksText", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
         '''  Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         '''</summary>
         Friend ReadOnly Property crowbar_icon() As System.Drawing.Icon

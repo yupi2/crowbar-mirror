@@ -19,7 +19,7 @@ Public Class GameSetup
 		Me.theCompilerPathFileName = "C:\Program Files (x86)\Steam\steamapps\common\left 4 dead 2\bin\studiomdl.exe"
 		Me.theViewerPathFileName = "C:\Program Files (x86)\Steam\steamapps\common\left 4 dead 2\bin\hlmv.exe"
 		Me.theMappingToolPathFileName = "C:\Program Files (x86)\Steam\steamapps\common\left 4 dead 2\bin\hammer.exe"
-		Me.theUnpackerPathFileName = "C:\Program Files (x86)\Steam\steamapps\common\left 4 dead 2\bin\vpk.exe"
+		Me.thePackerPathFileName = "C:\Program Files (x86)\Steam\steamapps\common\left 4 dead 2\bin\vpk.exe"
 	End Sub
 
 	Protected Sub New(ByVal originalObject As GameSetup)
@@ -37,7 +37,7 @@ Public Class GameSetup
 		Me.theCompilerPathFileName = originalObject.CompilerPathFileNameUnprocessed
 		Me.theViewerPathFileName = originalObject.ViewerPathFileNameUnprocessed
 		Me.theMappingToolPathFileName = originalObject.MappingToolPathFileNameUnprocessed
-		Me.theUnpackerPathFileName = originalObject.UnpackerPathFileNameUnprocessed
+		Me.thePackerPathFileName = originalObject.PackerPathFileNameUnprocessed
 	End Sub
 
 	Public Function Clone() As Object Implements System.ICloneable.Clone
@@ -198,25 +198,25 @@ Public Class GameSetup
 	End Property
 
 	<XmlIgnore()> _
-	Public ReadOnly Property UnpackerPathFileName() As String
+	Public ReadOnly Property PackerPathFileName() As String
 		Get
-			Return TheApp.GetProcessedPathFileName(Me.theUnpackerPathFileName)
+			Return TheApp.GetProcessedPathFileName(Me.thePackerPathFileName)
 		End Get
 		'Set(ByVal value As String)
 		'	Me.theUnpackerPathFileName = value
-		'	NotifyPropertyChanged("UnpackerPathFileName")
+		'	NotifyPropertyChanged("PackerPathFileName")
 		'End Set
 	End Property
 
-	<XmlElement("UnpackerPathFileName")> _
-	Public Property UnpackerPathFileNameUnprocessed() As String
+	<XmlElement("PackerPathFileName")> _
+	Public Property PackerPathFileNameUnprocessed() As String
 		Get
-			Return Me.theUnpackerPathFileName
+			Return Me.thePackerPathFileName
 		End Get
 		Set(ByVal value As String)
-			Me.theUnpackerPathFileName = value
-			NotifyPropertyChanged("UnpackerPathFileName")
-			NotifyPropertyChanged("UnpackerPathFileNameUnprocessed")
+			Me.thePackerPathFileName = value
+			NotifyPropertyChanged("PackerPathFileName")
+			NotifyPropertyChanged("PackerPathFileNameUnprocessed")
 		End Set
 	End Property
 
@@ -251,7 +251,7 @@ Public Class GameSetup
 	Private theCompilerPathFileName As String
 	Private theViewerPathFileName As String
 	Private theMappingToolPathFileName As String
-	Private theUnpackerPathFileName As String
+	Private thePackerPathFileName As String
 
 #End Region
 

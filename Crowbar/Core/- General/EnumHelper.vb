@@ -26,4 +26,16 @@ Public NotInheritable Class EnumHelper
 		Return list
 	End Function
 
+	Public Shared Sub RemoveFromList(ByVal value As System.Enum, ByRef list As IList)
+		list.Remove(New KeyValuePair(Of System.Enum, String)(value, GetDescription(value)))
+	End Sub
+
+	Public Shared Function Contains(ByVal value As System.Enum, ByVal list As IList) As Boolean
+		Return list.Contains(New KeyValuePair(Of System.Enum, String)(value, GetDescription(value)))
+	End Function
+
+	Public Shared Function IndexOf(ByVal value As System.Enum, ByVal list As IList) As Integer
+		Return list.IndexOf(New KeyValuePair(Of System.Enum, String)(value, GetDescription(value)))
+	End Function
+
 End Class

@@ -52,8 +52,8 @@ Public Class SourceModel06
 
 #Region "Methods"
 
-	Public Overrides Function CheckForRequiredFiles() As StatusMessage
-		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+	Public Overrides Function CheckForRequiredFiles() As FilesFoundFlags
+		Dim status As AppEnums.FilesFoundFlags = FilesFoundFlags.AllFilesFound
 
 		Return status
 	End Function
@@ -265,6 +265,8 @@ Public Class SourceModel06
 
 		mdlFile.ReadTextures()
 		mdlFile.ReadSkins()
+
+		mdlFile.ReadUnreadBytes()
 
 		' Post-processing.
 		mdlFile.GetBoneDataFromFirstSequenceFirstFrame()

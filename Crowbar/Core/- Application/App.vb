@@ -225,7 +225,7 @@ Public Class App
 			'customDataPath += "Crowbar"
 			customDataPath += My.Application.Info.ProductName
 			customDataPath += " "
-			customDataPath += My.Application.Info.Version.ToString()
+			customDataPath += My.Application.Info.Version.ToString(2)
 		End If
 
 		Return customDataPath
@@ -259,7 +259,7 @@ Public Class App
 
 		result = My.Application.Info.ProductName
 		result += " "
-		result += My.Application.Info.Version.ToString()
+		result += My.Application.Info.Version.ToString(2)
 
 		Return result
 	End Function

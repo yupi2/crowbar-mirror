@@ -338,9 +338,7 @@
 	Public eyePositionY As Single
 	Public eyePositionZ As Single
 	'5C  Vector				illumposition;	// illumination center
-	Public illuminationPositionX As Single
-	Public illuminationPositionY As Single
-	Public illuminationPositionZ As Single
+	Public illuminationPosition As New SourceVector()
 	'68  Vector				hull_min;		// ideal movement hull size
 	Public hullMinPositionX As Single
 	Public hullMinPositionY As Single

@@ -6,7 +6,7 @@ Public Class SourceQcFile44
 
 #Region "Creation and Destruction"
 
-	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal outputPathFileName As String, ByVal mdlFileData As SourceMdlFileData44, ByVal vtxFileData As SourceVtxFileData44, ByVal phyFileData As SourcePhyFileData, ByVal aniFileData As SourceAniFileData44, ByVal modelName As String)
+	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal outputPathFileName As String, ByVal mdlFileData As SourceMdlFileData44, ByVal vtxFileData As SourceVtxFileData07, ByVal phyFileData As SourcePhyFileData, ByVal aniFileData As SourceAniFileData44, ByVal modelName As String)
 		Me.theOutputFileStreamWriter = outputFileStream
 		Me.theMdlFileData = mdlFileData
 		Me.thePhyFileData = phyFileData
@@ -279,18 +279,13 @@ Public Class SourceQcFile44
 		'//-doesn't work     eyeball lefteye ValveBiped.Bip01_Head1 1.260 -0.086 64.594 eyeball_l 1.050  -3.000 producer_head 0.530
 		'     mouth 0 "mouth"  ValveBiped.Bip01_Head1 0.000 1.000 0.000
 		'}
-		If Me.theMdlFileData.theBodyParts IsNot Nothing AndAlso Me.theMdlFileData.theBodyParts.Count > 0 Then
-			If Me.theMdlFileData.theModelCommandIsUsed Then
-				aBodyPart = Me.theMdlFileData.theBodyParts(Me.theMdlFileData.theBodyPartIndexThatShouldUseModelCommand)
-			Else
-				Exit Sub
-			End If
-
+		If Me.theMdlFileData.theModelCommandIsUsed AndAlso Me.theMdlFileData.theBodyParts IsNot Nothing AndAlso Me.theMdlFileData.theBodyParts.Count > 0 Then
 			eyeballNames = New List(Of String)()
 
-			line = ""
-			Me.theOutputFileStreamWriter.WriteLine(line)
+			'line = ""
+			'Me.theOutputFileStreamWriter.WriteLine(line)
 
+			aBodyPart = Me.theMdlFileData.theBodyParts(Me.theMdlFileData.theBodyPartIndexThatShouldUseModelCommand)
 			aBodyModel = aBodyPart.theModels(0)
 			'referenceSmdFileName = Me.GetModelPathFileName(Me.theSourceEngineModel.theMdlFileHeader.theBodyParts(0).theModels(0))
 			'referenceSmdFileName = theSourceEngineModel.GetLodSmdFileName(0)
@@ -497,7 +492,7 @@ Public Class SourceQcFile44
 						'line += Path.GetFileNameWithoutExtension(CStr(Me.theSourceEngineModel.theMdlFileHeader.theBodyParts(0).theModels(0).name).Trim(Chr(0)))
 						'line += ".vta"" "
 						line += " """
-						line += SourceFileNamesModule.GetVtaFileName(Me.theModelName)
+						line += SourceFileNamesModule.GetVtaFileName(Me.theModelName, 0)
 						line += """ "
 						line += "lowerer "
 						'TODO: The frame indexes here and for raiser need correcting.
@@ -547,7 +542,7 @@ Public Class SourceQcFile44
 						'line += Path.GetFileNameWithoutExtension(CStr(Me.theSourceEngineModel.theMdlFileHeader.theBodyParts(0).theModels(0).name).Trim(Chr(0)))
 						'line += ".vta"" "
 						line += " """
-						line += SourceFileNamesModule.GetVtaFileName(Me.theModelName)
+						line += SourceFileNamesModule.GetVtaFileName(Me.theModelName, 0)
 						line += """ "
 						line += "lowerer "
 						'line += theSourceEngineModel.theMdlFileHeader.theFlexDescs(anEyeball.lowerFlexDesc(0)).theVtaFrameIndex.ToString()
@@ -661,7 +656,7 @@ Public Class SourceQcFile44
 			'line += Path.GetFileNameWithoutExtension(CStr(Me.theSourceEngineModel.theMdlFileHeader.theBodyParts(0).theModels(0).name).Trim(Chr(0)))
 			'line += ".vta"""
 			line += " """
-			line += SourceFileNamesModule.GetVtaFileName(Me.theModelName)
+			line += SourceFileNamesModule.GetVtaFileName(Me.theModelName, 0)
 			line += """ "
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
@@ -806,8 +801,9 @@ Public Class SourceQcFile44
 				line += aFlexController.min.ToString("0.######", TheApp.InternalNumberFormat)
 				line += " "
 				line += aFlexController.max.ToString("0.######", TheApp.InternalNumberFormat)
-				line += " "
+				line += " """
 				line += aFlexController.theName
+				line += """"
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			Next
 		End If
@@ -1097,21 +1093,18 @@ Public Class SourceQcFile44
 
 		'NOTE: Data is from VTX file.
 		'$lod 10
-		' {
+		'{
 		'  replacemodel "producer_model_merged.dmx" "lod1_producer_model_merged.dmx"
 		'}
 		'$lod 15
-		' {
+		'{
 		'  replacemodel "producer_model_merged.dmx" "lod2_producer_model_merged.dmx"
 		'}
 		'$lod 40
-		' {
+		'{
 		'  replacemodel "producer_model_merged.dmx" "lod3_producer_model_merged.dmx"
 		'}
 		If Me.theVtxFileData IsNot Nothing AndAlso Me.theMdlFileData.theBodyParts IsNot Nothing Then
-			'Dim referenceSmdFileName As String
-			'Dim lodSmdFileName As String
-
 			If Me.theVtxFileData.theVtxBodyParts Is Nothing Then
 				Return
 			End If
@@ -1122,64 +1115,18 @@ Public Class SourceQcFile44
 				Return
 			End If
 
-			'referenceSmdFileName = theSourceEngineModel.GetBodyGroupSmdFileName(0, 0, 0)
-
-			'line = ""
-			'Me.theOutputFileStreamWriter.WriteLine(line)
-
-			''NOTE: Start loop at 1 to skip first LOD, which isn't needed for the $lod command.
-			'For lodIndex As Integer = 1 To theSourceEngineModel.theVtxFileHeader.lodCount - 1
-			'	Dim switchPoint As Single
-			'	'TODO: Need to check that each of these objects exist first before using them.
-			'	If lodIndex >= theSourceEngineModel.theVtxFileHeader.theVtxBodyParts(0).theVtxModels(0).theVtxModelLods.Count Then
-			'		Return
-			'	End If
-
-			'	switchPoint = theSourceEngineModel.theVtxFileHeader.theVtxBodyParts(0).theVtxModels(0).theVtxModelLods(lodIndex).switchPoint
-
-			'	lodSmdFileName = theSourceEngineModel.GetBodyGroupSmdFileName(0, 0, lodIndex)
-
-			'	line = ""
-			'	If switchPoint = -1 Then
-			'		'// Shadow lod reserves -1 as switch value
-			'		'// which uniquely identifies a shadow lod
-			'		'newLOD.switchValue = -1.0f;
-			'		line += "$shadowlod"
-			'	Else
-			'If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
-			'	line += "$LOD "
-			'Else
-			'	line += "$lod "
-			'End If
-			'		line += switchPoint.ToString("0.######", TheApp.InternalNumberFormat)
-			'	End If
-			'	Me.theOutputFileStreamWriter.WriteLine(line)
-
-			'	line = "{"
-			'	Me.theOutputFileStreamWriter.WriteLine(line)
-
-			'	line = vbTab
-			'	line += "replacemodel "
-			'	line += """"
-			'	line += referenceSmdFileName
-			'	line += """ """
-			'	line += lodSmdFileName
-			'	line += """"
-			'	Me.theOutputFileStreamWriter.WriteLine(line)
-
-			'	line = "}"
-			'	Me.theOutputFileStreamWriter.WriteLine(line)
-			'Next
-			'======
 			Dim aBodyPart As SourceVtxBodyPart
 			Dim aVtxModel As SourceVtxModel
 			Dim aBodyModel As SourceMdlModel
+			Dim lodIndex As Integer
 			Dim aLodQcInfo As LodQcInfo
 			Dim aLodQcInfoList As List(Of LodQcInfo)
 			Dim aLodList As SortedList(Of Single, List(Of LodQcInfo))
+			Dim aLodListOfFacialFlags As SortedList(Of Single, Boolean)
 			Dim switchPoint As Single
 
 			aLodList = New SortedList(Of Single, List(Of LodQcInfo))()
+			aLodListOfFacialFlags = New SortedList(Of Single, Boolean)()
 			For bodyPartIndex As Integer = 0 To Me.theVtxFileData.theVtxBodyParts.Count - 1
 				aBodyPart = Me.theVtxFileData.theVtxBodyParts(bodyPartIndex)
 
@@ -1189,31 +1136,23 @@ Public Class SourceQcFile44
 
 						If aVtxModel.theVtxModelLods IsNot Nothing Then
 							aBodyModel = Me.theMdlFileData.theBodyParts(bodyPartIndex).theModels(modelIndex)
-							'If aModel.name(0) = ChrW(0) Then
-							'	Continue For
-							'End If
+							'NOTE: This check is for skipping "blank" bodygroup. Example: the third bodygroup of L4D2's "infected/common_female_tshirt_skirt.mdl".
+							If aBodyModel.name(0) = ChrW(0) AndAlso aVtxModel.theVtxModelLods(0).theVtxMeshes Is Nothing Then
+								Continue For
+							End If
 
 							'NOTE: Start loop at 1 to skip first LOD, which isn't needed for the $lod command.
-							For lodIndex As Integer = 1 To Me.theVtxFileData.lodCount - 1
+							For lodIndex = 1 To Me.theVtxFileData.lodCount - 1
 								'TODO: Why would this count be different than the file header count?
 								If lodIndex >= aVtxModel.theVtxModelLods.Count Then
 									Exit For
 								End If
 
-								'If lodIndex = 0 Then
-								'    If Not TheApp.Settings.DecompileReferenceMeshSmdFileIsChecked Then
-								'        Continue For
-								'    End If
-								'ElseIf lodIndex > 0 Then
-								'    If Not TheApp.Settings.DecompileLodMeshSmdFilesIsChecked Then
-								'        Exit For
-								'    End If
-								'End If
-
 								switchPoint = aVtxModel.theVtxModelLods(lodIndex).switchPoint
 								If Not aLodList.ContainsKey(switchPoint) Then
 									aLodQcInfoList = New List(Of LodQcInfo)()
 									aLodList.Add(switchPoint, aLodQcInfoList)
+									aLodListOfFacialFlags.Add(switchPoint, aVtxModel.theVtxModelLods(lodIndex).theVtxModelLodUsesFacial)
 								Else
 									aLodQcInfoList = aLodList(switchPoint)
 								End If
@@ -1236,6 +1175,7 @@ Public Class SourceQcFile44
 			Dim lodQcInfoListOfShadowLod As List(Of LodQcInfo)
 			lodQcInfoListOfShadowLod = Nothing
 
+			lodIndex = 0
 			For lodListIndex As Integer = 0 To aLodList.Count - 1
 				switchPoint = aLodList.Keys(lodListIndex)
 				If switchPoint = -1 Then
@@ -1243,6 +1183,7 @@ Public Class SourceQcFile44
 					lodQcInfoListOfShadowLod = aLodList.Values(lodListIndex)
 					Continue For
 				End If
+				lodIndex += 1
 
 				aLodQcInfoList = aLodList.Values(lodListIndex)
 
@@ -1256,25 +1197,13 @@ Public Class SourceQcFile44
 
 				line = "{"
 				Me.theOutputFileStreamWriter.WriteLine(line)
-
-				For i As Integer = 0 To aLodQcInfoList.Count - 1
-					aLodQcInfo = aLodQcInfoList(i)
-
-					line = vbTab
-					line += "replacemodel "
-					line += """"
-					line += aLodQcInfo.referenceFileName
-					line += """ """
-					line += aLodQcInfo.lodFileName
-					line += """"
-					Me.theOutputFileStreamWriter.WriteLine(line)
-				Next
-
+				Me.WriteLodOptions(lodIndex, aLodListOfFacialFlags.Values(lodListIndex), aLodQcInfoList)
 				line = "}"
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			Next
 
 			'NOTE: As a requirement for the compiler, write $shadowlod last.
+			lodIndex = aLodList.Count - 1
 			If lodQcInfoListOfShadowLod IsNot Nothing Then
 				'// Shadow lod reserves -1 as switch value
 				'// which uniquely identifies a shadow lod
@@ -1288,23 +1217,105 @@ Public Class SourceQcFile44
 
 				line = "{"
 				Me.theOutputFileStreamWriter.WriteLine(line)
-
-				For i As Integer = 0 To lodQcInfoListOfShadowLod.Count - 1
-					aLodQcInfo = lodQcInfoListOfShadowLod(i)
-
-					line = vbTab
-					line += "replacemodel "
-					line += """"
-					line += aLodQcInfo.referenceFileName
-					line += """ """
-					line += aLodQcInfo.lodFileName
-					line += """"
-					Me.theOutputFileStreamWriter.WriteLine(line)
-				Next
-
+				Me.WriteLodOptions(lodIndex, False, lodQcInfoListOfShadowLod)
 				line = "}"
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			End If
+		End If
+	End Sub
+
+	Private Sub WriteLodOptions(ByVal lodIndex As Integer, ByVal lodUsesFacial As Boolean, ByVal aLodQcInfoList As List(Of LodQcInfo))
+		Dim line As String = ""
+		Dim aLodQcInfo As LodQcInfo
+
+		For i As Integer = 0 To aLodQcInfoList.Count - 1
+			aLodQcInfo = aLodQcInfoList(i)
+
+			If aLodQcInfo.lodFileName = "" Then
+				line = vbTab
+				line += "removemodel "
+				line += """"
+				line += aLodQcInfo.referenceFileName
+				line += """"
+			Else
+				line = vbTab
+				line += "replacemodel "
+				line += """"
+				line += aLodQcInfo.referenceFileName
+				line += """ """
+				line += aLodQcInfo.lodFileName
+				line += """"
+			End If
+
+			Me.theOutputFileStreamWriter.WriteLine(line)
+		Next
+
+		'TEST: replacematerial option
+		Try
+			Dim materialReplacementList As SourceVtxMaterialReplacementList07
+			materialReplacementList = Me.theVtxFileData.theVtxMaterialReplacementLists(lodIndex)
+			If materialReplacementList.theVtxMaterialReplacements IsNot Nothing Then
+				For Each materialReplacement As SourceVtxMaterialReplacement07 In materialReplacementList.theVtxMaterialReplacements
+					line = vbTab
+					line += "replacematerial "
+					line += """"
+					line += Me.theMdlFileData.theModifiedTextureFileNames(materialReplacement.materialIndex)
+					line += """ """
+					line += materialReplacement.theName
+					line += """"
+
+					Me.theOutputFileStreamWriter.WriteLine(line)
+				Next
+			End If
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		End Try
+
+		For Each aBone As SourceMdlBone In Me.theMdlFileData.theBones
+			If (lodIndex = 1 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD1) = 0) _
+				OrElse (lodIndex = 2 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD2) = 0) _
+				OrElse (lodIndex = 3 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD3) = 0) _
+				OrElse (lodIndex = 4 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD4) = 0) _
+				OrElse (lodIndex = 5 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD5) = 0) _
+				OrElse (lodIndex = 6 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD6) = 0) _
+				OrElse (lodIndex = 7 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD7) = 0) Then
+				'replacebone "ValveBiped.Bip01_Neck1" "ValveBiped.Bip01_Head1"
+				line = vbTab
+				line += "replacebone "
+				line += """"
+				line += aBone.theName
+				line += """ """
+				line += Me.theMdlFileData.theBones(aBone.parentBoneIndex).theName
+				line += """"
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			End If
+		Next
+
+		line = vbTab
+		If lodUsesFacial Then
+			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+				line += "Facial"
+			Else
+				line += "facial"
+			End If
+		Else
+			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+				line += "NoFacial"
+			Else
+				line += "nofacial"
+			End If
+		End If
+		Me.theOutputFileStreamWriter.WriteLine(line)
+
+		If (Me.theMdlFileData.flags And SourceMdlFileData.STUDIOHDR_FLAGS_USE_SHADOWLOD_MATERIALS) > 0 Then
+			Me.theOutputFileStreamWriter.WriteLine()
+
+			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+				line = "Use_ShadowLOD_Materials"
+			Else
+				line = "use_shadowlod_materials"
+			End If
+			Me.theOutputFileStreamWriter.WriteLine(line)
 		End If
 	End Sub
 
@@ -1375,7 +1386,7 @@ Public Class SourceQcFile44
 		Dim line As String = ""
 
 		'$ambientboost
-		If (Me.theMdlFileData.flags And SourceMdlFileData.STUDIOHDR_FLAGS_AMBIENT_BOOST) > 0 Then
+		If (Me.theMdlFileData.flags And SourceMdlFileData.STUDIOHDR_FLAGS_AMBIENT_BOOST_MDL44) > 0 Then
 			Me.theOutputFileStreamWriter.WriteLine()
 
 			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
@@ -1895,15 +1906,6 @@ Public Class SourceQcFile44
 		Dim offsetY As Double
 		Dim offsetZ As Double
 
-		line = ""
-		Me.theOutputFileStreamWriter.WriteLine(line)
-
-		line = ""
-		line += "// "
-		line += "Only set this if you know what it does, and need it for special circumstances, such as with gibs."
-		Me.theOutputFileStreamWriter.WriteLine(line)
-
-		'$illumposition -2.533 -0.555 32.487
 		'NOTE: These are stored in different order in MDL file.
 		'FROM: utils\studiomdl\studiomdl.cpp Cmd_Illumposition()
 		'illumposition[1] = verify_atof (token);
@@ -1912,8 +1914,12 @@ Public Class SourceQcFile44
 		offsetX = Math.Round(Me.theMdlFileData.illuminationPosition.y, 3)
 		offsetY = -Math.Round(Me.theMdlFileData.illuminationPosition.x, 3)
 		offsetZ = Math.Round(Me.theMdlFileData.illuminationPosition.z, 3)
+
 		line = ""
-		line += "// "
+		Me.theOutputFileStreamWriter.WriteLine(line)
+
+		'$illumposition -2.533 -0.555 32.487
+		line = ""
 		If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
 			line += "$IllumPosition "
 		Else
@@ -1929,6 +1935,7 @@ Public Class SourceQcFile44
 
 	Public Sub WriteGroupAnimation()
 		Me.WriteAnimBlockSizeCommand()
+		Me.WriteBoneSaveFrameCommand()
 		Me.WriteSectionFramesCommand()
 		Me.WritePoseParameterCommand()
 		Me.WriteIkChainCommand()
@@ -1946,7 +1953,6 @@ Public Class SourceQcFile44
 		Catch ex As Exception
 		End Try
 		Me.WriteIncludeModelCommands()
-		Me.WriteBoneSaveFrameCommand()
 	End Sub
 
 	Private Sub WriteAnimBlockSizeCommand()
@@ -2525,31 +2531,31 @@ Public Class SourceQcFile44
 			Me.theOutputFileStreamWriter.WriteLine(line)
 		End If
 
-		'TODO: This seems valid according to source code, but it checks same flag (STUDIO_DELTA) as "delta" option.
-		'      Unsure how to determine which option is intended or if both are intended.
-		If (anAnimationDesc.flags And SourceMdlAnimationDesc.STUDIO_DELTA) > 0 Then
-			line = vbTab
-			line += "// This subtract line guesses the animation name and frame index. There is no way to determine which $animation and which frame was used. Change as needed."
-			Me.theOutputFileStreamWriter.WriteLine(line)
+		''TODO: This seems valid according to source code, but it checks same flag (STUDIO_DELTA) as "delta" option.
+		''      Unsure how to determine which option is intended or if both are intended.
+		'If (anAnimationDesc.flags And SourceMdlAnimationDesc.STUDIO_DELTA) > 0 Then
+		'	line = vbTab
+		'	line += "// This subtract line guesses the animation name and frame index. There is no way to determine which $animation and which frame was used. Change as needed."
+		'	Me.theOutputFileStreamWriter.WriteLine(line)
 
-			line = vbTab
-			'line += "// "
-			line += "subtract"
-			line += " """
-			'TODO: Change to writing anim_name.
-			' Doesn't seem to be direct way to get this name.
-			' For now, do what MDL Decompiler seems to do; use the first animation name.
-			'line += "[anim_name]"
-			'line += Me.theFirstAnimationDescName
-			line += Me.theMdlFileData.theFirstAnimationDesc.theName
-			line += """ "
-			'TODO: Change to writing frameIndex.
-			' Doesn't seem to be direct way to get this value.
-			' For now, do what MDL Decompiler seems to do; use zero for the frameIndex.
-			'line += "[frameIndex]"
-			line += "0"
-			Me.theOutputFileStreamWriter.WriteLine(line)
-		End If
+		'	line = vbTab
+		'	'line += "// "
+		'	line += "subtract"
+		'	line += " """
+		'	'TODO: Change to writing anim_name.
+		'	' Doesn't seem to be direct way to get this name.
+		'	' For now, do what MDL Decompiler seems to do; use the first animation name.
+		'	'line += "[anim_name]"
+		'	'line += Me.theFirstAnimationDescName
+		'	line += Me.theMdlFileData.theFirstAnimationDesc.theName
+		'	line += """ "
+		'	'TODO: Change to writing frameIndex.
+		'	' Doesn't seem to be direct way to get this value.
+		'	' For now, do what MDL Decompiler seems to do; use zero for the frameIndex.
+		'	'line += "[frameIndex]"
+		'	line += "0"
+		'	Me.theOutputFileStreamWriter.WriteLine(line)
+		'End If
 
 		'TODO: Can probably reduce the info written in v0.24.
 		' weightlist "top_bottom"
@@ -3518,7 +3524,7 @@ Public Class SourceQcFile44
 					line += aBone.theJiggleBone.yawDamping.ToString("0.######", TheApp.InternalNumberFormat)
 					Me.theOutputFileStreamWriter.WriteLine(line)
 
-					If (aBone.theJiggleBone.flags And SourceMdlJiggleBone.JIGGLE_HAS_LENGTH_CONSTRAINT) > 0 Then
+					If (aBone.theJiggleBone.flags And SourceMdlJiggleBone.JIGGLE_HAS_LENGTH_CONSTRAINT) = 0 Then
 						line = vbTab
 						line += vbTab
 						line += "allow_length_flex"
@@ -3826,14 +3832,11 @@ Public Class SourceQcFile44
 			Me.theOutputFileStreamWriter.WriteLine(line)
 		End If
 
-		If hitBoxWasAutoGenerated AndAlso TheApp.Settings.DecompileDebugInfoFilesIsChecked Then
+		If hitBoxWasAutoGenerated Then
 			line = "// The hitbox info below was automatically generated when compiled because no hitbox info was provided."
 			Me.theOutputFileStreamWriter.WriteLine(line)
-		End If
 
-		'TODO: Maybe make a checkbox option for whether to write lines or not instead of using comments.
-		'NOTE: Always comment-out the hbox lines if in main QC file.
-		If Not TheApp.Settings.DecompileGroupIntoQciFilesIsChecked Then
+			'NOTE: Only comment-out the hbox lines if auto-generated.
 			commentTag = "// "
 		End If
 
@@ -3982,6 +3985,7 @@ Public Class SourceQcFile44
 
 			For bodyPartIndex As Integer = 0 To Me.theMdlFileData.theBodyParts.Count - 1
 				If Me.theMdlFileData.theModelCommandIsUsed AndAlso bodyPartIndex = Me.theMdlFileData.theBodyPartIndexThatShouldUseModelCommand Then
+					Me.WriteModelCommand()
 					Continue For
 				End If
 				aBodyPart = Me.theMdlFileData.theBodyParts(bodyPartIndex)
@@ -4357,7 +4361,7 @@ Public Class SourceQcFile44
 	Private theAniFileData As SourceAniFileData44
 	Private theMdlFileData As SourceMdlFileData44
 	Private thePhyFileData As SourcePhyFileData
-	Private theVtxFileData As SourceVtxFileData44
+	Private theVtxFileData As SourceVtxFileData07
 	Private theModelName As String
 
 	Private theOutputPath As String

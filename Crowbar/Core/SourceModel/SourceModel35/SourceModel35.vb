@@ -1,7 +1,7 @@
 ﻿Imports System.IO
 
 Public Class SourceModel35
-	Inherits SourceModel29
+	Inherits SourceModel32
 
 #Region "Creation and Destruction"
 
@@ -130,8 +130,8 @@ Public Class SourceModel35
 
 #Region "Methods"
 
-	Public Overrides Function CheckForRequiredFiles() As StatusMessage
-		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+	Public Overrides Function CheckForRequiredFiles() As FilesFoundFlags
+		Dim status As AppEnums.FilesFoundFlags = FilesFoundFlags.AllFilesFound
 
 		If Not Me.theMdlFileDataGeneric.theMdlFileOnlyHasAnimations Then
 			Me.thePhyPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".phy")
@@ -146,7 +146,7 @@ Public Class SourceModel35
 						If Not File.Exists(Me.theVtxPathFileName) Then
 							Me.theVtxPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".vtx")
 							If Not File.Exists(Me.theVtxPathFileName) Then
-								status = StatusMessage.ErrorRequiredVtxFileNotFound
+								status = FilesFoundFlags.ErrorRequiredVtxFileNotFound
 							End If
 						End If
 					End If
@@ -160,9 +160,9 @@ Public Class SourceModel35
 	Public Overrides Function ReadPhyFile() As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
-		If String.IsNullOrEmpty(Me.thePhyPathFileName) Then
-			status = Me.CheckForRequiredFiles()
-		End If
+		'If String.IsNullOrEmpty(Me.thePhyPathFileName) Then
+		'	status = Me.CheckForRequiredFiles()
+		'End If
 
 		If Not String.IsNullOrEmpty(Me.thePhyPathFileName) Then
 			If status = StatusMessage.Success Then
@@ -290,8 +290,6 @@ Public Class SourceModel35
 		If Me.theMdlFileData Is Nothing Then
 			Me.theMdlFileData = New SourceMdlFileData35()
 			Me.theMdlFileDataGeneric = Me.theMdlFileData
-		Else
-			Me.theMdlFileData.theFileSeekLog.Clear()
 		End If
 
 		Dim mdlFile As New SourceMdlFile35(Me.theInputFileReader, Me.theMdlFileData)
@@ -304,8 +302,6 @@ Public Class SourceModel35
 		If Me.theMdlFileData Is Nothing Then
 			Me.theMdlFileData = New SourceMdlFileData35()
 			Me.theMdlFileDataGeneric = Me.theMdlFileData
-		Else
-			Me.theMdlFileData.theFileSeekLog.Clear()
 		End If
 
 		Dim mdlFile As New SourceMdlFile35(Me.theInputFileReader, Me.theMdlFileData)
@@ -321,8 +317,6 @@ Public Class SourceModel35
 		If Me.theMdlFileData Is Nothing Then
 			Me.theMdlFileData = New SourceMdlFileData35()
 			Me.theMdlFileDataGeneric = Me.theMdlFileData
-		Else
-			Me.theMdlFileData.theFileSeekLog.Clear()
 		End If
 
 		Dim mdlFile As New SourceMdlFile35(Me.theInputFileReader, Me.theMdlFileData)
@@ -365,10 +359,11 @@ Public Class SourceModel35
 		'' Read what WriteKeyValues() writes.
 		'mdlFile.ReadKeyValues()
 
+		'mdlFile.ReadFinalBytesAlignment()
+		mdlFile.ReadUnreadBytes()
+
 		'' Post-processing.
 		'mdlFile.BuildBoneTransforms()
-
-		mdlFile.ReadFinalBytesAlignment()
 	End Sub
 
 	Protected Overrides Sub ReadPhyFile_Internal()
@@ -426,9 +421,7 @@ Public Class SourceModel35
 			qcFile.WriteJointSurfacePropCommand()
 			qcFile.WriteContentsCommand()
 			qcFile.WriteJointContentsCommand()
-			If TheApp.Settings.DecompileDebugInfoFilesIsChecked Then
-				qcFile.WriteIllumPositionCommand()
-			End If
+			qcFile.WriteIllumPositionCommand()
 
 			qcFile.WriteEyePositionCommand()
 			qcFile.WriteNoForcedFadeCommand()

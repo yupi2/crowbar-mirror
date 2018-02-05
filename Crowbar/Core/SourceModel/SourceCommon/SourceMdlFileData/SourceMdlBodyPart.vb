@@ -23,5 +23,7 @@ Public Class SourceMdlBodyPart
 
 	Public theName As String
 	Public theModels As List(Of SourceMdlModel)
+	Public theModelCommandIsUsed As Boolean
+	Public theFlexFrames As List(Of FlexFrame)
 
 End Class

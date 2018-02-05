@@ -35,13 +35,16 @@ Public Class MainForm
 
 			Dim aScreen As Screen
 			aScreen = Screen.FromControl(Me)
+			'WorkingArea means the area of the screen without the Windows taskbar.
+			Dim aScreenWorkingArea As Rectangle
+			aScreenWorkingArea = aScreen.WorkingArea
 			' Ensure at least 60 px of Title Bar visible
-			If Me.Location.X < aScreen.Bounds.Left OrElse Me.Location.X + 60 > aScreen.Bounds.Left + aScreen.Bounds.Width Then
-				Me.Left = aScreen.Bounds.Left
+			If Me.Location.X < aScreenWorkingArea.Left OrElse Me.Location.X + 60 > aScreenWorkingArea.Left + aScreenWorkingArea.Width Then
+				Me.Left = aScreenWorkingArea.Left
 			End If
 			' Ensure top visible
-			If Me.Location.Y < aScreen.Bounds.Top OrElse Me.Location.Y + Me.Size.Height > aScreen.Bounds.Top + aScreen.Bounds.Height Then
-				Me.Top = aScreen.Bounds.Top
+			If Me.Location.Y < aScreenWorkingArea.Top OrElse Me.Location.Y + Me.Size.Height > aScreenWorkingArea.Top + aScreenWorkingArea.Height Then
+				Me.Top = aScreenWorkingArea.Top
 			End If
 		Catch ex As Exception
 			Dim debug As Integer = 4242
@@ -61,34 +64,43 @@ Public Class MainForm
 			'Next
 			'MessageBox.Show(text.ToString())
 		End If
+
 		Me.UnpackUserControl1.RunUnpackerToGetListOfVpkContents()
 		Me.PreviewViewUserControl.RunDataViewer()
 		Me.ViewViewUserControl.RunDataViewer()
 
+		AddHandler Me.SetUpGamesUserControl1.GoBackButton.Click, AddressOf Me.SetUpGamesGoBackButton_Click
 		AddHandler Me.UnpackUserControl1.UseAllInDecompileButton.Click, AddressOf Me.UnpackUserControl_UseAllInDecompileButton_Click
 		AddHandler Me.UnpackUserControl1.UseInPreviewButton.Click, AddressOf Me.UnpackUserControl_UseInPreviewButton_Click
 		AddHandler Me.UnpackUserControl1.UseInDecompileButton.Click, AddressOf Me.UnpackUserControl_UseInDecompileButton_Click
+		AddHandler Me.PreviewViewUserControl.EditGameSetupButton.Click, AddressOf Me.PreviewSetUpGamesButton_Click
 		AddHandler Me.PreviewViewUserControl.UseInDecompileButton.Click, AddressOf Me.ViewUserControl_UseInDecompileButton_Click
 		AddHandler Me.DecompilerUserControl1.UseAllInCompileButton.Click, AddressOf Me.DecompilerUserControl1_UseAllInCompileButton_Click
 		'AddHandler Me.DecompilerUserControl1.UseInEditButton.Click, AddressOf Me.DecompilerUserControl1_UseInEditButton_Click
 		AddHandler Me.DecompilerUserControl1.UseInCompileButton.Click, AddressOf Me.DecompilerUserControl1_UseInCompileButton_Click
+		AddHandler Me.CompilerUserControl1.EditGameSetupButton.Click, AddressOf Me.CompileSetUpGamesButton_Click
 		'AddHandler Me.CompilerUserControl1.UseAllInPackButton.Click, AddressOf Me.CompilerUserControl1_UseAllInPackButton_Click
 		AddHandler Me.CompilerUserControl1.UseInViewButton.Click, AddressOf Me.CompilerUserControl1_UseInViewButton_Click
 		'AddHandler Me.CompilerUserControl1.UseInPackButton.Click, AddressOf Me.CompilerUserControl1_UseInPackButton_Click
+		AddHandler Me.ViewViewUserControl.EditGameSetupButton.Click, AddressOf Me.ViewSetUpGamesButton_Click
 		AddHandler Me.ViewViewUserControl.UseInDecompileButton.Click, AddressOf Me.ViewUserControl_UseInDecompileButton_Click
 	End Sub
 
 	Private Sub Free()
+		RemoveHandler Me.SetUpGamesUserControl1.GoBackButton.Click, AddressOf Me.SetUpGamesGoBackButton_Click
 		RemoveHandler Me.UnpackUserControl1.UseAllInDecompileButton.Click, AddressOf Me.UnpackUserControl_UseAllInDecompileButton_Click
 		RemoveHandler Me.UnpackUserControl1.UseInPreviewButton.Click, AddressOf Me.UnpackUserControl_UseInPreviewButton_Click
 		RemoveHandler Me.UnpackUserControl1.UseInDecompileButton.Click, AddressOf Me.UnpackUserControl_UseInDecompileButton_Click
+		RemoveHandler Me.PreviewViewUserControl.EditGameSetupButton.Click, AddressOf Me.PreviewSetUpGamesButton_Click
 		RemoveHandler Me.PreviewViewUserControl.UseInDecompileButton.Click, AddressOf Me.ViewUserControl_UseInDecompileButton_Click
 		RemoveHandler Me.DecompilerUserControl1.UseAllInCompileButton.Click, AddressOf Me.DecompilerUserControl1_UseAllInCompileButton_Click
 		'RemoveHandler Me.DecompilerUserControl1.UseInEditButton.Click, AddressOf Me.DecompilerUserControl1_UseInEditButton_Click
 		RemoveHandler Me.DecompilerUserControl1.UseInCompileButton.Click, AddressOf Me.DecompilerUserControl1_UseInCompileButton_Click
+		RemoveHandler Me.CompilerUserControl1.EditGameSetupButton.Click, AddressOf Me.CompileSetUpGamesButton_Click
 		'RemoveHandler Me.CompilerUserControl1.UseAllInPackButton.Click, AddressOf Me.CompilerUserControl1_UseAllInPackButton_Click
 		RemoveHandler Me.CompilerUserControl1.UseInViewButton.Click, AddressOf Me.CompilerUserControl1_UseInViewButton_Click
 		'RemoveHandler Me.CompilerUserControl1.UseInPackButton.Click, AddressOf Me.CompilerUserControl1_UseInPackButton_Click
+		RemoveHandler Me.ViewViewUserControl.EditGameSetupButton.Click, AddressOf Me.ViewSetUpGamesButton_Click
 		RemoveHandler Me.ViewViewUserControl.UseInDecompileButton.Click, AddressOf Me.ViewUserControl_UseInDecompileButton_Click
 
 		If Me.WindowState = FormWindowState.Normal Then
@@ -133,6 +145,22 @@ Public Class MainForm
 
 #Region "Child Widget Event Handlers"
 
+	Private Sub SetUpGamesGoBackButton_Click(sender As Object, e As EventArgs)
+		Dim gameSetupIndex As Integer
+		gameSetupIndex = TheApp.Settings.SetUpGamesGameSetupSelectedIndex
+
+		If Me.theTabThatCalledSetUpGames Is Me.PreviewTabPage Then
+			TheApp.Settings.PreviewGameSetupSelectedIndex = gameSetupIndex
+		ElseIf Me.theTabThatCalledSetUpGames Is Me.CompileTabPage Then
+			TheApp.Settings.CompileGameSetupSelectedIndex = gameSetupIndex
+		ElseIf Me.theTabThatCalledSetUpGames Is Me.ViewTabPage Then
+			TheApp.Settings.ViewGameSetupSelectedIndex = gameSetupIndex
+		End If
+
+		Me.SetUpGamesUserControl1.GoBackButton.Enabled = False
+		Me.MainTabControl.SelectTab(Me.theTabThatCalledSetUpGames)
+	End Sub
+
 	Private Sub UnpackUserControl_UseAllInDecompileButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
 		Me.MainTabControl.SelectTab(Me.DecompileTabPage)
 	End Sub
@@ -143,6 +171,11 @@ Public Class MainForm
 
 	Private Sub UnpackUserControl_UseInDecompileButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
 		Me.MainTabControl.SelectTab(Me.DecompileTabPage)
+	End Sub
+
+	Private Sub PreviewSetUpGamesButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
+		Me.theTabThatCalledSetUpGames = Me.PreviewTabPage
+		Me.SelectSetUpGamesFromAnotherTab(TheApp.Settings.PreviewGameSetupSelectedIndex)
 	End Sub
 
 	Private Sub DecompilerUserControl1_UseAllInCompileButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
@@ -157,6 +190,11 @@ Public Class MainForm
 		Me.MainTabControl.SelectTab(Me.CompileTabPage)
 	End Sub
 
+	Private Sub CompileSetUpGamesButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
+		Me.theTabThatCalledSetUpGames = Me.CompileTabPage
+		Me.SelectSetUpGamesFromAnotherTab(TheApp.Settings.CompileGameSetupSelectedIndex)
+	End Sub
+
 	'Private Sub CompilerUserControl1_UseAllInPackButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
 	'	Me.MainTabControl.SelectTab(Me.PackTabPage)
 	'End Sub
@@ -168,6 +206,11 @@ Public Class MainForm
 	'Private Sub CompilerUserControl1_UseInPackButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
 	'	Me.MainTabControl.SelectTab(Me.PackTabPage)
 	'End Sub
+
+	Private Sub ViewSetUpGamesButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
+		Me.theTabThatCalledSetUpGames = Me.ViewTabPage
+		Me.SelectSetUpGamesFromAnotherTab(TheApp.Settings.ViewGameSetupSelectedIndex)
+	End Sub
 
 	Private Sub ViewUserControl_UseInDecompileButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
 		Me.MainTabControl.SelectTab(Me.DecompileTabPage)
@@ -333,9 +376,18 @@ Public Class MainForm
 		End If
 	End Sub
 
+	Private Sub SelectSetUpGamesFromAnotherTab(ByVal gameSetupIndex As Integer)
+		TheApp.Settings.SetUpGamesGameSetupSelectedIndex = gameSetupIndex
+
+		Me.SetUpGamesUserControl1.GoBackButton.Enabled = True
+		Me.MainTabControl.SelectTab(Me.SetUpGamesTabPage)
+	End Sub
+
 #End Region
 
 #Region "Data"
+
+	Private theTabThatCalledSetUpGames As TabPage
 
 #End Region
 

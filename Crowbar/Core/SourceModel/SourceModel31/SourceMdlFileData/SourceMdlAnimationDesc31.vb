@@ -20,7 +20,7 @@
 
 	Public theAnimations As List(Of SourceMdlAnimation31)
 	'Public theIkRules As List(Of SourceMdlIkRule37)
-	'Public theMovements As List(Of SourceMdlMovement)
+	Public theMovements As List(Of SourceMdlMovement)
 	''Public theName As String
 
 	'Public theAnimIsLinkedToSequence As Boolean = False

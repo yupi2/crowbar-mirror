@@ -208,6 +208,10 @@ Public Class SourceMdlFile04
 	'	Next
 	'End Sub
 
+	Public Sub ReadUnreadBytes()
+		Me.theMdlFileData.theFileSeekLog.LogUnreadBytes(Me.theInputFileReader)
+	End Sub
+
 #End Region
 
 #Region "Private Methods"
@@ -287,7 +291,7 @@ Public Class SourceMdlFile04
 				Next
 
 				fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-				Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aSequence.theUnknownValues " + aSequence.thePositionsAndRotations.Count.ToString())
+				Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aSequence.thePositionsAndRotations " + aSequence.thePositionsAndRotations.Count.ToString())
 
 				'Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "theMdlFileData.theBones alignment")
 			Catch ex As Exception

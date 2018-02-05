@@ -314,16 +314,18 @@ Public Class Viewer
 			gameModelsPath = Path.Combine(gamePath, "models")
 
 			If Not Me.theInputMdlPathFileName.StartsWith(gameModelsPath) Then
-				Me.ModifyGameInfoFile()
-
+				'NOTE: Avoid any changes and copying if user used the "View" button.
 				If Me.theInputMdlIsViewedAsReplacement Then
+					Me.ModifyGameInfoFile()
+
 					Me.theInputMdlRelativePathName = Me.CreateReplacementModelFiles()
 					If String.IsNullOrEmpty(Me.theInputMdlRelativePathName) Then
 						Exit Sub
 					End If
-				End If
 
-				Me.CopyMaterialAndTextureFiles()
+					'TODO: Uncomment this after it only copies the files used by the model.
+					'Me.CopyMaterialAndTextureFiles()
+				End If
 			End If
 		End If
 	End Sub
@@ -336,7 +338,8 @@ Public Class Viewer
 				Me.DeleteReplacementModelFiles()
 			End If
 
-			Me.DeleteMaterialAndTextureFiles()
+			'TODO: Uncomment this after CopyMaterialAndTextureFiles() has been redone.
+			'Me.DeleteMaterialAndTextureFiles()
 		End If
 	End Sub
 
@@ -513,7 +516,8 @@ Public Class Viewer
 					'errorMessage = "Crowbar tried to create """ + gameMaterialsPath + """, but it failed."
 				End If
 			Catch ex As Exception
-				Throw
+				Dim debug As Integer = 4242
+				'Throw
 			End Try
 		End If
 	End Sub

@@ -68,29 +68,44 @@ Public Class SourceSmdFile04
 		For boneIndex As Integer = 0 To Me.theMdlFileData.theBones.Count - 1
 			aBone = Me.theMdlFileData.theBones(boneIndex)
 
-			position.x = aBone.position.x
-			position.y = aBone.position.y
-			position.z = aBone.position.z
-			''If aBone.parentBoneIndex = -1 Then
-			''	position.x = aBone.positionY
-			''	position.y = -aBone.positionX
-			''	position.z = aBone.positionZ
+			If aBone.parentBoneIndex = -1 Then
+				position.x = aBone.position.y
+				position.y = -aBone.position.x
+				position.z = aBone.position.z
 
-			''	rotation.x = MathModule.DegreesToRadians(aBone.rotationX)
-			''	rotation.y = MathModule.DegreesToRadians(aBone.rotationY)
-			''	rotation.z = MathModule.DegreesToRadians(aBone.rotationZ) + MathModule.DegreesToRadians(-90)
-			''Else
-			'position.x = aBone.positionX.TheFloatValue
-			'position.y = aBone.positionY.TheFloatValue
-			'position.z = aBone.positionZ.TheFloatValue
+				rotation.x = 0
+				rotation.y = 0
+				rotation.z = MathModule.DegreesToRadians(-90)
+			Else
+				position.x = aBone.position.x
+				position.y = aBone.position.y
+				position.z = aBone.position.z
 
-			''rotation.x = MathModule.DegreesToRadians(aBone.rotationX / 200)
-			''rotation.y = MathModule.DegreesToRadians(aBone.rotationY / 200)
-			''rotation.z = MathModule.DegreesToRadians(aBone.rotationZ / 200)
-			'rotation.x = aBone.rotationX.TheFloatValue
-			'rotation.y = aBone.rotationY.TheFloatValue
-			'rotation.z = aBone.rotationZ.TheFloatValue
-			''End If
+				rotation.x = 0
+				rotation.y = 0
+				rotation.z = 0
+			End If
+
+			'If aBone.parentBoneIndex = -1 Then
+			'	position.x = aBone.positionY.TheFloatValue
+			'	position.y = -aBone.positionX.TheFloatValue
+			'	position.z = aBone.positionZ.TheFloatValue
+
+			'	rotation.x = aBone.rotationX.TheFloatValue
+			'	rotation.y = aBone.rotationY.TheFloatValue
+			'	rotation.z = aBone.rotationZ.TheFloatValue + MathModule.DegreesToRadians(-90)
+			'Else
+			'	position.x = aBone.positionX.TheFloatValue
+			'	position.y = aBone.positionY.TheFloatValue
+			'	position.z = aBone.positionZ.TheFloatValue
+
+			'	''rotation.x = MathModule.DegreesToRadians(aBone.rotationX / 200)
+			'	''rotation.y = MathModule.DegreesToRadians(aBone.rotationY / 200)
+			'	''rotation.z = MathModule.DegreesToRadians(aBone.rotationZ / 200)
+			'	rotation.x = aBone.rotationX.TheFloatValue
+			'	rotation.y = aBone.rotationY.TheFloatValue
+			'	rotation.z = aBone.rotationZ.TheFloatValue
+			'End If
 
 			line = "    "
 			line += boneIndex.ToString(TheApp.InternalNumberFormat)
@@ -266,12 +281,18 @@ Public Class SourceSmdFile04
 			boneIndex = aBodyModel.theVertexes(aVertexInfo.vertexIndex).index
 			aBone = Me.theMdlFileData.theBones(boneIndex)
 
-			position.x = aBone.position.x + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.x
-			position.y = aBone.position.y + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.y
+			'position.x = aBone.position.x + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.x
+			'position.y = aBone.position.y + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.y
+			'position.z = aBone.position.z + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.z
+			position.x = aBone.position.y + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.y
+			position.y = -(aBone.position.x + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.x)
 			position.z = aBone.position.z + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.z
 
 			'position.x = aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.x
 			'position.y = aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.y
+			'position.z = aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.z
+			'position.x = aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.y
+			'position.y = -(aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.x)
 			'position.z = aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.z
 
 			normal.x = aBodyModel.theNormals(aVertexInfo.vertexIndex).vector.x

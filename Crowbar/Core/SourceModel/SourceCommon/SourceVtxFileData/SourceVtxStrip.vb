@@ -42,6 +42,9 @@ Public Class SourceVtxStrip
 	Public boneStateChangeCount As Integer
 	Public boneStateChangeOffset As Integer
 
+	Public unknownBytes01 As Integer
+	Public unknownBytes02 As Integer
+
 
 
 	Public theVtxBoneStateChanges As List(Of SourceVtxBoneStateChange)

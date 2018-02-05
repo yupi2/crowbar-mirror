@@ -329,9 +329,7 @@ Public Class SourceMdlFileData48
 	Public eyePositionY As Single
 	Public eyePositionZ As Single
 	'5C  Vector				illumposition;	// illumination center
-	Public illuminationPositionX As Single
-	Public illuminationPositionY As Single
-	Public illuminationPositionZ As Single
+	Public illuminationPosition As New SourceVector()
 	'68  Vector				hull_min;		// ideal movement hull size
 	Public hullMinPositionX As Single
 	Public hullMinPositionY As Single
@@ -516,11 +514,11 @@ Public Class SourceMdlFileData48
 	' sutdiohdr2:
 	Public sourceBoneTransformCount As Integer
 	Public sourceBoneTransformOffset As Integer
-	Public illumPositionAttachmentIndex As Integer
+	Public illumPositionAttachmentNumber As Integer
 	Public maxEyeDeflection As Double
 	Public linearBoneOffset As Integer
 	'	int sznameindex;
-	Public nameOffset As Integer
+	Public nameCopyOffset As Integer
 	Public reserved(57) As Integer
 	'======
 	'Public studiohdr2(63) As Integer
@@ -550,6 +548,7 @@ Public Class SourceMdlFileData48
 	Public theLocalNodes As List(Of List(Of Byte))
 	Public theModelGroups As List(Of SourceMdlModelGroup)
 	Public theMouths As List(Of SourceMdlMouth)
+	Public theNameCopy As String
 	Public thePoseParamDescs As List(Of SourceMdlPoseParamDesc)
 	Public theSequenceDescs As List(Of SourceMdlSequenceDesc)
 	Public theSkinFamilies As List(Of List(Of Short))
@@ -561,8 +560,10 @@ Public Class SourceMdlFileData48
 	Public theSectionFrameMinFrameCount As Integer
 
 	Public theModelCommandIsUsed As Boolean
+	Public theBodyPartIndexThatShouldUseModelCommand As Integer
 	'Public theMdlFileOnlyHasAnimations As Boolean
 	Public theProceduralBonesCommandIsUsed As Boolean
+	Public theAnimBlockSizeNoStallOptionIsUsed As Boolean
 
 	Public theBoneNameToBoneIndexMap As New SortedList(Of String, Integer)()
 	'Public theEyelidFlexFrameIndexes As List(Of Integer)

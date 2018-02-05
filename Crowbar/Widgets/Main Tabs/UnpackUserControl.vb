@@ -394,23 +394,23 @@ Public Class UnpackUserControl
 	'	Me.SetCompilerOptionsText()
 	'End Sub
 
-	Private Sub SetUpGamesButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles EditGameSetupButton.Click
-		Dim gameSetupWdw As New GameSetupForm()
-		Dim gameSetupFormInfo As New GameSetupFormInfo()
+	'Private Sub SetUpGamesButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles EditGameSetupButton.Click
+	'	Dim gameSetupWdw As New GameSetupForm()
+	'	Dim gameSetupFormInfo As New GameSetupFormInfo()
 
-		gameSetupFormInfo.GameSetupIndex = TheApp.Settings.UnpackGameSetupSelectedIndex
-		gameSetupFormInfo.GameSetups = TheApp.Settings.GameSetups
-		gameSetupWdw.DataSource = gameSetupFormInfo
+	'	gameSetupFormInfo.GameSetupIndex = TheApp.Settings.UnpackGameSetupSelectedIndex
+	'	gameSetupFormInfo.GameSetups = TheApp.Settings.GameSetups
+	'	gameSetupWdw.DataSource = gameSetupFormInfo
 
-		gameSetupWdw.ShowDialog()
+	'	gameSetupWdw.ShowDialog()
 
-		TheApp.Settings.UnpackGameSetupSelectedIndex = CType(gameSetupWdw.DataSource, GameSetupFormInfo).GameSetupIndex
+	'	TheApp.Settings.UnpackGameSetupSelectedIndex = CType(gameSetupWdw.DataSource, GameSetupFormInfo).GameSetupIndex
 
-		'If Not String.IsNullOrEmpty(TheApp.Settings.UnpackVpkPathFolderOrFileName) Then
-		'	'Me.UnpackerLogTextBox.Text = ""
-		'	Me.RunUnpackerToGetListOfVpkContents()
-		'End If
-	End Sub
+	'	'If Not String.IsNullOrEmpty(TheApp.Settings.UnpackVpkPathFolderOrFileName) Then
+	'	'	'Me.UnpackerLogTextBox.Text = ""
+	'	'	Me.RunUnpackerToGetListOfVpkContents()
+	'	'End If
+	'End Sub
 
 	Private Sub UnpackOptionsUseDefaultsButton_Click(sender As Object, e As EventArgs) Handles UnpackOptionsUseDefaultsButton.Click
 		TheApp.Settings.SetDefaultUnpackOptions()
@@ -959,12 +959,15 @@ Public Class UnpackUserControl
 
 	Private Sub UpdateUnpackMode()
 		Dim anEnumList As IList
+		Dim previousSelectedInputOption As InputOptions
 
 		anEnumList = EnumHelper.ToList(GetType(InputOptions))
+		previousSelectedInputOption = TheApp.Settings.DecompileMode
 		Me.UnpackComboBox.DataBindings.Clear()
 		Try
 			If File.Exists(TheApp.Settings.UnpackVpkPathFolderOrFileName) Then
-				' Do nothing; this is okay.
+				' Set file mode when a file is selected.
+				previousSelectedInputOption = InputOptions.File
 			ElseIf Directory.Exists(TheApp.Settings.UnpackVpkPathFolderOrFileName) Then
 				'NOTE: Remove in reverse index order.
 				If Directory.GetFiles(TheApp.Settings.UnpackVpkPathFolderOrFileName, "*.vpk").Length = 0 Then
@@ -980,7 +983,11 @@ Public Class UnpackUserControl
 			Me.UnpackComboBox.DataSource = anEnumList
 			Me.UnpackComboBox.DataBindings.Add("SelectedValue", TheApp.Settings, "UnpackMode", False, DataSourceUpdateMode.OnPropertyChanged)
 
-			Me.UnpackComboBox.SelectedIndex = 0
+			If EnumHelper.Contains(previousSelectedInputOption, anEnumList) Then
+				Me.UnpackComboBox.SelectedIndex = EnumHelper.IndexOf(previousSelectedInputOption, anEnumList)
+			Else
+				Me.UnpackComboBox.SelectedIndex = 0
+			End If
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		End Try
@@ -1059,6 +1066,8 @@ Public Class UnpackUserControl
 
 				Me.VpkListView.Items.Add(item)
 			Next
+
+			Me.VpkListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent)
 
 			Me.UpdateSelectionCounts()
 		End If

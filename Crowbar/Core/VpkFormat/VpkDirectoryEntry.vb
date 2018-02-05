@@ -33,12 +33,13 @@
 	'};
 
 	Public crc As UInt32
-	Public preloadBytes As UInt16
+	Public preloadByteCount As UInt16
 	Public archiveIndex As UInt16
 	Public dataOffset As UInt32
 	Public dataLength As UInt32
 	Public endBytes As UInt16
 
 	Public thePathFileName As String
+	Public preloadBytesOffset As Long
 
 End Class

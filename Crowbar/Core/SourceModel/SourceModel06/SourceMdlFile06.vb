@@ -427,6 +427,10 @@ Public Class SourceMdlFile06
 		End If
 	End Sub
 
+	Public Sub ReadUnreadBytes()
+		Me.theMdlFileData.theFileSeekLog.LogUnreadBytes(Me.theInputFileReader)
+	End Sub
+
 	' The bone positions and rotations are all zeroes, so get them from the first sequence's first frame.
 	Public Sub GetBoneDataFromFirstSequenceFirstFrame()
 		Dim aSequence As SourceMdlSequenceDesc06

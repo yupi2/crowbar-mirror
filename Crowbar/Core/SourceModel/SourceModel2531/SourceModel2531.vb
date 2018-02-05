@@ -120,8 +120,8 @@ Public Class SourceModel2531
 
 #Region "Methods"
 
-	Public Overrides Function CheckForRequiredFiles() As StatusMessage
-		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+	Public Overrides Function CheckForRequiredFiles() As FilesFoundFlags
+		Dim status As AppEnums.FilesFoundFlags = FilesFoundFlags.AllFilesFound
 
 		If Not Me.theMdlFileDataGeneric.theMdlFileOnlyHasAnimations Then
 			Me.thePhyPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".phy")
@@ -132,7 +132,7 @@ Public Class SourceModel2531
 				If Not File.Exists(Me.theVtxPathFileName) Then
 					Me.theVtxPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".vtx")
 					If Not File.Exists(Me.theVtxPathFileName) Then
-						status = StatusMessage.ErrorRequiredVtxFileNotFound
+						status = FilesFoundFlags.ErrorRequiredVtxFileNotFound
 					End If
 				End If
 			End If
@@ -144,9 +144,9 @@ Public Class SourceModel2531
 	Public Overrides Function ReadPhyFile() As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
-		If String.IsNullOrEmpty(Me.thePhyPathFileName) Then
-			status = Me.CheckForRequiredFiles()
-		End If
+		'If String.IsNullOrEmpty(Me.thePhyPathFileName) Then
+		'	status = Me.CheckForRequiredFiles()
+		'End If
 
 		If status = StatusMessage.Success Then
 			Try
@@ -255,11 +255,37 @@ Public Class SourceModel2531
 		Return status
 	End Function
 
-	Public Overrides Function WriteVertexAnimationVtaFile(ByVal vtaPathFileName As String) As AppEnums.StatusMessage
+	'Public Overrides Function WriteVertexAnimationVtaFile(ByVal vtaPathFileName As String) As AppEnums.StatusMessage
+	'	Dim status As AppEnums.StatusMessage = StatusMessage.Success
+
+	'	Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, vtaPathFileName)
+	'	Me.WriteTextFile(vtaPathFileName, AddressOf Me.WriteVertexAnimationVtaFile)
+	'	Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, vtaPathFileName)
+
+	'	Return status
+	'End Function
+
+	Public Overrides Function WriteVertexAnimationVtaFiles(ByVal modelOutputPath As String) As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+		Dim vtaFileName As String
+		Dim vtaPathFileName As String
+
+		vtaFileName = SourceFileNamesModule.GetVtaFileName(Me.Name, 0)
+		vtaPathFileName = Path.Combine(modelOutputPath, vtaFileName)
 
 		Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, vtaPathFileName)
-		Me.WriteTextFile(vtaPathFileName, AddressOf Me.WriteVertexAnimationVtaFile)
+		Try
+			Me.theOutputFileTextWriter = File.CreateText(vtaPathFileName)
+
+			Me.WriteVertexAnimationVtaFile(Nothing)
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		Finally
+			If Me.theOutputFileTextWriter IsNot Nothing Then
+				Me.theOutputFileTextWriter.Flush()
+				Me.theOutputFileTextWriter.Close()
+			End If
+		End Try
 		Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, vtaPathFileName)
 
 		Return status
@@ -383,6 +409,8 @@ Public Class SourceModel2531
 
 		mdlFile.ReadIncludeModels()
 
+		mdlFile.ReadUnreadBytes()
+
 		' Post-processing.
 		mdlFile.CreateFlexFrameList()
 	End Sub
@@ -430,6 +458,7 @@ Public Class SourceModel2531
 
 			qcFile.WriteStaticPropCommand()
 			'qcFile.WriteFlagsCommand()
+			qcFile.WriteIllumPositionCommand()
 			qcFile.WriteEyePositionCommand()
 			qcFile.WriteSurfacePropCommand()
 
@@ -554,7 +583,7 @@ Public Class SourceModel2531
 		End Try
 	End Sub
 
-	Protected Overrides Sub WriteVertexAnimationVtaFile()
+	Protected Overrides Sub WriteVertexAnimationVtaFile(ByVal bodyPart As SourceMdlBodyPart)
 		Dim vertexAnimationVtaFile As New SourceVtaFile2531(Me.theOutputFileTextWriter, Me.theMdlFileData)
 
 		Try

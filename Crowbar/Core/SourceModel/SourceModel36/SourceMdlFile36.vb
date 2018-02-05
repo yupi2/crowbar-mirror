@@ -584,6 +584,10 @@ Public Class SourceMdlFile36
 						aSeqDesc.unused(x) = Me.theInputFileReader.ReadInt32()
 					Next
 
+					'NOTE: Not sure why these bytes were ever included; they are always zeroes.
+					inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+					Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition + 3584, SeekOrigin.Begin)
+
 					Me.theMdlFileData.theSequenceDescs.Add(aSeqDesc)
 
 					inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
@@ -1450,8 +1454,12 @@ Public Class SourceMdlFile36
 		End If
 	End Sub
 
-	Public Sub ReadFinalBytesAlignment()
-		Me.theMdlFileData.theFileSeekLog.LogAndAlignFromFileSeekLogEnd(Me.theInputFileReader, 4, "Final bytes alignment")
+	'Public Sub ReadFinalBytesAlignment()
+	'	Me.theMdlFileData.theFileSeekLog.LogAndAlignFromFileSeekLogEnd(Me.theInputFileReader, 4, "Final bytes alignment")
+	'End Sub
+
+	Public Sub ReadUnreadBytes()
+		Me.theMdlFileData.theFileSeekLog.LogUnreadBytes(Me.theInputFileReader)
 	End Sub
 
 #End Region

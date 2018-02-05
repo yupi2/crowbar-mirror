@@ -10,7 +10,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Alien Swarm</GameName>
@@ -21,7 +21,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Alien Swarm\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Alien Swarm\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Alien Swarm\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Alien Swarm\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Alien Swarm\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Alien Swarm: Reactive Drop</GameName>
@@ -32,7 +32,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Alien Swarm Reactive Drop\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Alien Swarm Reactive Drop\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Alien Swarm Reactive Drop\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Alien Swarm Reactive Drop\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Alien Swarm Reactive Drop\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Anarchy Arcade</GameName>
@@ -43,7 +43,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Anarchy Arcade\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Anarchy Arcade\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Anarchy Arcade\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Anarchy Arcade\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Anarchy Arcade\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Aperture Tag: The Paint Gun Testing Initiative</GameName>
@@ -54,7 +54,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Aperture Tag\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Aperture Tag\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Aperture Tag\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Aperture Tag\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Aperture Tag\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Black Mesa</GameName>
@@ -65,7 +65,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Black Mesa\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Black Mesa\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Black Mesa\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Black Mesa\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Black Mesa\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Blade Symphony</GameName>
@@ -76,7 +76,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Blade Symphony\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Blade Symphony\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Blade Symphony\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Blade Symphony\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Blade Symphony\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Bloody Good Time (using Source SDK Base 2013 MP)</GameName>
@@ -87,10 +87,10 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
-      <GameName>Brain Bread 2</GameName>
+      <GameName>BrainBread 2</GameName>
       <GameEngine>Source</GameEngine>
       <GamePathFileName>&lt;library1&gt;\steamapps\common\brainbread2\brainbread2\gameinfo.txt</GamePathFileName>
       <GameAppPathFileName>&lt;library1&gt;\steamapps\common\brainbread2\hl2.exe</GameAppPathFileName>
@@ -98,7 +98,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\brainbread2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\brainbread2\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\brainbread2\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\brainbread2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\brainbread2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Codename CURE</GameName>
@@ -109,7 +109,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Codename CURE\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Codename CURE\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Codename CURE\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Codename CURE\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Codename CURE\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>CONSORTIUM</GameName>
@@ -120,7 +120,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Portal 2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Portal 2\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Portal 2\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Portal 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Portal 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Contagion</GameName>
@@ -131,7 +131,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Contagion\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Contagion\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Contagion\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Contagion\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Contagion\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Counter-Strike</GameName>
@@ -142,7 +142,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Model Tools\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Jed's Half-Life Model Viewer 1.3.6\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Hammer Editor\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Counter-Strike: Condition Zero</GameName>
@@ -153,7 +153,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Model Tools\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Jed's Half-Life Model Viewer 1.3.6\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Hammer Editor\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Counter-Strike: Condition Zero Deleted Scenes</GameName>
@@ -164,7 +164,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Model Tools\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Jed's Half-Life Model Viewer 1.3.6\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Hammer Editor\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Counter-Strike: Global Offensive</GameName>
@@ -175,7 +175,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Counter-Strike Global Offensive\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Counter-Strike Global Offensive\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Counter-Strike Global Offensive\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Counter-Strike Global Offensive\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Counter-Strike Global Offensive\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Counter-Strike: Source</GameName>
@@ -186,7 +186,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Counter-Strike Source\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Counter-Strike Source\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Counter-Strike Source\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Counter-Strike Source\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Counter-Strike Source\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Cry of Fear</GameName>
@@ -197,7 +197,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Model Tools\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Jed's Half-Life Model Viewer 1.3.6\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Hammer Editor\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>D.I.P.R.I.P. Warm Up</GameName>
@@ -208,7 +208,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Dark Messiah Might &amp; Magic Multi-Player</GameName>
@@ -219,7 +219,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Dark Messiah Might &amp; Magic Single Player</GameName>
@@ -230,7 +230,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Day of Defeat</GameName>
@@ -241,7 +241,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Model Tools\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Jed's Half-Life Model Viewer 1.3.6\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Hammer Editor\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Day of Defeat: Source</GameName>
@@ -252,7 +252,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Day of Defeat Source\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Day of Defeat Source\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Day of Defeat Source\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Day of Defeat Source\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Day of Defeat Source\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Day of Infamy</GameName>
@@ -263,7 +263,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\dayofinfamy\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\dayofinfamy\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\dayofinfamy\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\dayofinfamy\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\dayofinfamy\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Dear Esther</GameName>
@@ -274,7 +274,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2009\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2009\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2009\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2009\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2009\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Deathmatch Classic</GameName>
@@ -285,7 +285,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Model Tools\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Jed's Half-Life Model Viewer 1.3.6\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Hammer Editor\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Dino D-Day</GameName>
@@ -296,7 +296,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Dino D-Day\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Dino D-Day\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Dino D-Day\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Dino D-Day\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Dino D-Day\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Double Action: Boogaloo</GameName>
@@ -307,7 +307,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Double Action\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Double Action\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Double Action\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Double Action\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Double Action\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Dystopia</GameName>
@@ -318,7 +318,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Dystopia\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Dystopia\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Dystopia\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Dystopia\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Dystopia\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>E.Y.E: Divine Cybermancy</GameName>
@@ -329,7 +329,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Empires</GameName>
@@ -340,7 +340,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Empires\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Empires\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Empires\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Empires\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Empires\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Estranged: Act I</GameName>
@@ -351,7 +351,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Estranged Act I\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Estranged Act I\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Estranged Act I\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Estranged Act I\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Estranged Act I\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Eternal Silence</GameName>
@@ -362,7 +362,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\ep1\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\ep1\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\ep1\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\ep1\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\ep1\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>FIREFIGHT RELOADED</GameName>
@@ -373,7 +373,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\FIREFIGHT RELOADED\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\FIREFIGHT RELOADED\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\FIREFIGHT RELOADED\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\FIREFIGHT RELOADED\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\FIREFIGHT RELOADED\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Fistful of Frags</GameName>
@@ -384,7 +384,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Fistful of Frags\sdk\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Fistful of Frags\sdk\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Fistful of Frags\sdk\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Fistful of Frags\sdk\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Fistful of Frags\sdk\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Garry's Mod</GameName>
@@ -395,7 +395,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\GarrysMod\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\GarrysMod\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\GarrysMod\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\GarrysMod\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\GarrysMod\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life</GameName>
@@ -406,7 +406,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Model Tools\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Jed's Half-Life Model Viewer 1.3.6\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Hammer Editor\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life 2</GameName>
@@ -417,7 +417,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life 2: Deathmatch</GameName>
@@ -428,7 +428,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2 Deathmatch\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2 Deathmatch\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2 Deathmatch\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2 Deathmatch\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2 Deathmatch\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life 2: Downfall</GameName>
@@ -439,7 +439,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2 DownFall\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2 DownFall\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2 DownFall\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2 DownFall\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2 DownFall\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life 2: Episode One</GameName>
@@ -450,7 +450,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life 2: Episode Two</GameName>
@@ -461,7 +461,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life 2: Lost Coast</GameName>
@@ -472,7 +472,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life 2: Update</GameName>
@@ -483,7 +483,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life Deathmatch: Source</GameName>
@@ -494,7 +494,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 1 Source Deathmatch\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 1 Source Deathmatch\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 1 Source Deathmatch\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 1 Source Deathmatch\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 1 Source Deathmatch\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life SDK</GameName>
@@ -505,7 +505,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Model Tools\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Jed's Half-Life Model Viewer 1.3.6\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Hammer Editor\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life: Before</GameName>
@@ -516,7 +516,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Model Tools\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Jed's Half-Life Model Viewer 1.3.6\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Hammer Editor\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life: Blue Shift</GameName>
@@ -527,7 +527,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Model Tools\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Jed's Half-Life Model Viewer 1.3.6\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Hammer Editor\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life: Opposing Force</GameName>
@@ -538,7 +538,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Model Tools\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Jed's Half-Life Model Viewer 1.3.6\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Hammer Editor\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Half-Life: Source</GameName>
@@ -549,7 +549,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>INFRA</GameName>
@@ -560,7 +560,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\infra\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\infra\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\infra\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Insurgency</GameName>
@@ -571,7 +571,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\insurgency2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\insurgency2\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\insurgency2\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\insurgency2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\insurgency2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Insurgency: Modern Infantry Combat</GameName>
@@ -582,7 +582,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Lambda Wars Beta</GameName>
@@ -593,7 +593,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Portal 2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Portal 2\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Portal 2\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Portal 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Portal 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Left 4 Dead</GameName>
@@ -604,7 +604,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\left 4 dead\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\left 4 dead\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\left 4 dead\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\left 4 dead\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\left 4 dead\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Left 4 Dead 2</GameName>
@@ -615,7 +615,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>MINERVA: Metastasis</GameName>
@@ -626,7 +626,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\orangebox\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\orangebox\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\orangebox\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Modular Combat</GameName>
@@ -637,7 +637,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>NEOTOKYO</GameName>
@@ -648,7 +648,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>No More Room in Hell</GameName>
@@ -659,7 +659,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\nmrih\sdk\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\nmrih\sdk\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\nmrih\sdk\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\nmrih\sdk\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\nmrih\sdk\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Nuclear Dawn</GameName>
@@ -670,7 +670,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Nuclear Dawn\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Nuclear Dawn\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Nuclear Dawn\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Nuclear Dawn\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Nuclear Dawn\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Pirates, Vikings and Knights II</GameName>
@@ -681,7 +681,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\pirates, vikings and knights ii\sdkbase_pvkii\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\pirates, vikings and knights ii\sdkbase_pvkii\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\pirates, vikings and knights ii\sdkbase_pvkii\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\pirates, vikings and knights ii\sdkbase_pvkii\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\pirates, vikings and knights ii\sdkbase_pvkii\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Portal</GameName>
@@ -692,7 +692,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Portal\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Portal\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Portal\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Portal\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Portal\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Portal 2</GameName>
@@ -703,7 +703,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Portal 2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Portal 2\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Portal 2\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Portal 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Portal 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Portal Stories: Mel</GameName>
@@ -714,7 +714,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Portal 2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Portal 2\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Portal 2\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Portal 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Portal 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Postal 3</GameName>
@@ -725,7 +725,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Postal III\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Postal III\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Postal III\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Prospekt</GameName>
@@ -736,7 +736,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Prospekt\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Prospekt\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Prospekt\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Prospekt\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Prospekt\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Revelations 2012</GameName>
@@ -747,7 +747,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Rexaura</GameName>
@@ -758,7 +758,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Rexaura\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Rexaura\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Rexaura\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Rexaura\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Rexaura\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Ricochet</GameName>
@@ -769,7 +769,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Model Tools\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Jed's Half-Life Model Viewer 1.3.6\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Hammer Editor\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>SiN Episodes: Emergence</GameName>
@@ -780,7 +780,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\SinEpisodesSDK\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\SinEpisodesSDK\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\SinEpisodesSDK\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Team Fortress 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Team Fortress 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Smashball</GameName>
@@ -791,7 +791,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Source Filmmaker</GameName>
@@ -802,7 +802,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\SourceFilmmaker\game\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\SourceFilmmaker\game\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\SourceFilmmaker\game\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\SourceFilmmaker\game\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\SourceFilmmaker\game\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Source SDK 2013 Multiplayer</GameName>
@@ -813,7 +813,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Source SDK 2013 Singleplayer</GameName>
@@ -824,7 +824,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Singleplayer\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Singleplayer\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Singleplayer\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Singleplayer\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Singleplayer\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Sven Co-op</GameName>
@@ -835,7 +835,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Sven Co-op SDK\modelling\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Jed's Half-Life Model Viewer 1.3.6\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Sven Co-op SDK\mapping\hammer\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Synergy</GameName>
@@ -846,7 +846,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Synergy\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Synergy\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Synergy\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Synergy\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Synergy\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Team Fortress 2</GameName>
@@ -857,7 +857,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Team Fortress 2\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Team Fortress 2\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Team Fortress 2\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Team Fortress 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Team Fortress 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Team Fortress Classic</GameName>
@@ -868,7 +868,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Model Tools\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>C:\Program Files (x86)\Jed's Half-Life Model Viewer 1.3.6\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Half-Life SDK\Hammer Editor\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>The Forgotten Ones</GameName>
@@ -879,7 +879,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\tfo\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\tfo\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\tfo\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\tfo\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\tfo\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>The Ship</GameName>
@@ -890,7 +890,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\ep1\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\ep1\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\ep1\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\ep1\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\ep1\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>The Stanley Parable</GameName>
@@ -901,7 +901,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Thinking with Time Machine</GameName>
@@ -912,7 +912,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Thinking with Time Machine\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Thinking with Time Machine\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Thinking with Time Machine\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Thinking with Time Machine\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Thinking with Time Machine\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Transmissions: Element 120</GameName>
@@ -923,7 +923,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Transmissions Element 120\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Transmissions Element 120\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Transmissions Element 120\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Transmissions Element 120\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Transmissions Element 120\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Wilson Chronicles - Beta</GameName>
@@ -934,7 +934,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\Wilson Chronicles\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\Wilson Chronicles\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Source SDK Base 2013 Multiplayer\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Zeno Clash</GameName>
@@ -945,7 +945,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\ep1\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\ep1\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\ep1\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\ep1\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\ep1\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
     <GameSetup>
       <GameName>Zombie Panic! Source</GameName>
@@ -956,7 +956,7 @@
       <CompilerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\studiomdl.exe</CompilerPathFileName>
       <ViewerPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\hlmv.exe</ViewerPathFileName>
       <MappingToolPathFileName>&lt;library1&gt;\steamapps\common\SourceSDK\bin\source2007\bin\hammer.exe</MappingToolPathFileName>
-      <UnpackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</UnpackerPathFileName>
+      <PackerPathFileName>&lt;library1&gt;\steamapps\common\Left 4 Dead 2\bin\vpk.exe</PackerPathFileName>
     </GameSetup>
   </GameSetups>
 </AppSettings>

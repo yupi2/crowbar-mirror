@@ -4,10 +4,11 @@ Public Class SourceVtaFile49
 
 #Region "Creation and Destruction"
 
-	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal mdlFileData As SourceMdlFileData49, ByVal vvdFileData As SourceVvdFileData49)
+	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal mdlFileData As SourceMdlFileData49, ByVal vvdFileData As SourceVvdFileData49, ByVal bodyPart As SourceMdlBodyPart)
 		Me.theOutputFileStreamWriter = outputFileStream
 		Me.theMdlFileData = mdlFileData
 		Me.theVvdFileData = vvdFileData
+		Me.theBodyPart = bodyPart
 	End Sub
 
 #End Region
@@ -225,8 +226,10 @@ Public Class SourceVtaFile49
 
 		timeIndex = 1
 		'NOTE: The first frame was written in code above.
-		For flexTimeIndex = 1 To Me.theMdlFileData.theFlexFrames.Count - 1
-			aFlexFrame = Me.theMdlFileData.theFlexFrames(flexTimeIndex)
+		'For flexTimeIndex = 1 To Me.theMdlFileData.theFlexFrames.Count - 1
+		'	aFlexFrame = Me.theMdlFileData.theFlexFrames(flexTimeIndex)
+		For flexTimeIndex = 1 To Me.theBodyPart.theFlexFrames.Count - 1
+			aFlexFrame = Me.theBodyPart.theFlexFrames(flexTimeIndex)
 
 			If TheApp.Settings.DecompileStricterFormatIsChecked Then
 				line = "time "
@@ -572,8 +575,10 @@ Public Class SourceVtaFile49
 
 		timeIndex = 1
 		'NOTE: The first frame was written in code above.
-		For flexTimeIndex = 1 To Me.theMdlFileData.theFlexFrames.Count - 1
-			aFlexFrame = Me.theMdlFileData.theFlexFrames(flexTimeIndex)
+		'For flexTimeIndex = 1 To Me.theMdlFileData.theFlexFrames.Count - 1
+		'	aFlexFrame = Me.theMdlFileData.theFlexFrames(flexTimeIndex)
+		For flexTimeIndex = 1 To Me.theBodyPart.theFlexFrames.Count - 1
+			aFlexFrame = Me.theBodyPart.theFlexFrames(flexTimeIndex)
 
 			If TheApp.Settings.DecompileStricterFormatIsChecked Then
 				line = "time "
@@ -747,6 +752,7 @@ Public Class SourceVtaFile49
 	Private theOutputFileStreamWriter As StreamWriter
 	Private theMdlFileData As SourceMdlFileData49
 	Private theVvdFileData As SourceVvdFileData49
+	Private theBodyPart As SourceMdlBodyPart
 
 #End Region
 

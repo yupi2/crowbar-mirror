@@ -36,6 +36,7 @@ Partial Class DecompileUserControl
 		Me.DecompileComboBox = New System.Windows.Forms.ComboBox()
 		Me.BrowseForOutputPathButton = New System.Windows.Forms.Button()
 		Me.OutputPathTextBox = New Crowbar.TextBoxEx()
+		Me.OutputSubfolderTextBox = New Crowbar.TextBoxEx()
 		Me.OutputPathComboBox = New System.Windows.Forms.ComboBox()
 		Me.Label3 = New System.Windows.Forms.Label()
 		Me.UseDefaultOutputSubfolderButton = New System.Windows.Forms.Button()
@@ -68,13 +69,11 @@ Partial Class DecompileUserControl
 		Me.PhysicsMeshSmdFileCheckBox = New System.Windows.Forms.CheckBox()
 		Me.ReferenceMeshSmdFileCheckBox = New System.Windows.Forms.CheckBox()
 		Me.QcFileCheckBox = New System.Windows.Forms.CheckBox()
-		Me.ApplyRightHandFixCheckBox = New System.Windows.Forms.CheckBox()
 		Me.UseInCompileButton = New System.Windows.Forms.Button()
 		Me.UseInEditButton = New System.Windows.Forms.Button()
 		Me.DecompilerLogTextBox = New Crowbar.RichTextBoxEx()
 		Me.DecompiledFilesComboBox = New System.Windows.Forms.ComboBox()
 		Me.GotoDecompiledFileButton = New System.Windows.Forms.Button()
-		Me.OutputSubfolderTextBox = New Crowbar.TextBoxEx()
 		Me.Panel2.SuspendLayout()
 		CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
 		Me.SplitContainer1.Panel1.SuspendLayout()
@@ -225,6 +224,16 @@ Partial Class DecompileUserControl
 		Me.OutputPathTextBox.Size = New System.Drawing.Size(445, 21)
 		Me.OutputPathTextBox.TabIndex = 16
 		'
+		'OutputSubfolderTextBox
+		'
+		Me.OutputSubfolderTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.OutputSubfolderTextBox.Location = New System.Drawing.Point(209, 34)
+		Me.OutputSubfolderTextBox.Name = "OutputSubfolderTextBox"
+		Me.OutputSubfolderTextBox.Size = New System.Drawing.Size(445, 21)
+		Me.OutputSubfolderTextBox.TabIndex = 20
+		Me.OutputSubfolderTextBox.Visible = False
+		'
 		'OutputPathComboBox
 		'
 		Me.OutputPathComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
@@ -302,14 +311,14 @@ Partial Class DecompileUserControl
 		'
 		'SplitContainer1.Panel2
 		'
-		Me.SplitContainer1.Panel2.Controls.Add(Me.UseInCompileButton)
-		Me.SplitContainer1.Panel2.Controls.Add(Me.UseInEditButton)
 		Me.SplitContainer1.Panel2.Controls.Add(Me.DecompilerLogTextBox)
 		Me.SplitContainer1.Panel2.Controls.Add(Me.DecompiledFilesComboBox)
+		Me.SplitContainer1.Panel2.Controls.Add(Me.UseInCompileButton)
 		Me.SplitContainer1.Panel2.Controls.Add(Me.GotoDecompiledFileButton)
+		Me.SplitContainer1.Panel2.Controls.Add(Me.UseInEditButton)
 		Me.SplitContainer1.Panel2MinSize = 90
 		Me.SplitContainer1.Size = New System.Drawing.Size(770, 472)
-		Me.SplitContainer1.SplitterDistance = 290
+		Me.SplitContainer1.SplitterDistance = 275
 		Me.SplitContainer1.TabIndex = 12
 		'
 		'OptionsGroupBox
@@ -320,7 +329,7 @@ Partial Class DecompileUserControl
 		Me.OptionsGroupBox.Controls.Add(Me.Panel3)
 		Me.OptionsGroupBox.Location = New System.Drawing.Point(551, 0)
 		Me.OptionsGroupBox.Name = "OptionsGroupBox"
-		Me.OptionsGroupBox.Size = New System.Drawing.Size(219, 258)
+		Me.OptionsGroupBox.Size = New System.Drawing.Size(219, 243)
 		Me.OptionsGroupBox.TabIndex = 6
 		Me.OptionsGroupBox.TabStop = False
 		Me.OptionsGroupBox.Text = "Options"
@@ -336,7 +345,7 @@ Partial Class DecompileUserControl
 		Me.Panel3.Dock = System.Windows.Forms.DockStyle.Fill
 		Me.Panel3.Location = New System.Drawing.Point(3, 17)
 		Me.Panel3.Name = "Panel3"
-		Me.Panel3.Size = New System.Drawing.Size(213, 238)
+		Me.Panel3.Size = New System.Drawing.Size(213, 223)
 		Me.Panel3.TabIndex = 0
 		'
 		'FolderForEachModelCheckBox
@@ -353,7 +362,7 @@ Partial Class DecompileUserControl
 		'
 		Me.UseAllInCompileButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
 		Me.UseAllInCompileButton.Enabled = False
-		Me.UseAllInCompileButton.Location = New System.Drawing.Point(378, 264)
+		Me.UseAllInCompileButton.Location = New System.Drawing.Point(378, 249)
 		Me.UseAllInCompileButton.Name = "UseAllInCompileButton"
 		Me.UseAllInCompileButton.Size = New System.Drawing.Size(120, 23)
 		Me.UseAllInCompileButton.TabIndex = 5
@@ -364,7 +373,7 @@ Partial Class DecompileUserControl
 		'
 		Me.CancelDecompileButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
 		Me.CancelDecompileButton.Enabled = False
-		Me.CancelDecompileButton.Location = New System.Drawing.Point(252, 264)
+		Me.CancelDecompileButton.Location = New System.Drawing.Point(252, 249)
 		Me.CancelDecompileButton.Name = "CancelDecompileButton"
 		Me.CancelDecompileButton.Size = New System.Drawing.Size(120, 23)
 		Me.CancelDecompileButton.TabIndex = 4
@@ -375,7 +384,7 @@ Partial Class DecompileUserControl
 		'
 		Me.SkipCurrentModelButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
 		Me.SkipCurrentModelButton.Enabled = False
-		Me.SkipCurrentModelButton.Location = New System.Drawing.Point(126, 264)
+		Me.SkipCurrentModelButton.Location = New System.Drawing.Point(126, 249)
 		Me.SkipCurrentModelButton.Name = "SkipCurrentModelButton"
 		Me.SkipCurrentModelButton.Size = New System.Drawing.Size(120, 23)
 		Me.SkipCurrentModelButton.TabIndex = 3
@@ -385,7 +394,7 @@ Partial Class DecompileUserControl
 		'DecompileButton
 		'
 		Me.DecompileButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-		Me.DecompileButton.Location = New System.Drawing.Point(0, 264)
+		Me.DecompileButton.Location = New System.Drawing.Point(0, 249)
 		Me.DecompileButton.Name = "DecompileButton"
 		Me.DecompileButton.Size = New System.Drawing.Size(120, 23)
 		Me.DecompileButton.TabIndex = 2
@@ -399,7 +408,7 @@ Partial Class DecompileUserControl
 		Me.ReCreateFilesGroupBox.Controls.Add(Me.Panel1)
 		Me.ReCreateFilesGroupBox.Location = New System.Drawing.Point(0, 0)
 		Me.ReCreateFilesGroupBox.Name = "ReCreateFilesGroupBox"
-		Me.ReCreateFilesGroupBox.Size = New System.Drawing.Size(545, 258)
+		Me.ReCreateFilesGroupBox.Size = New System.Drawing.Size(545, 243)
 		Me.ReCreateFilesGroupBox.TabIndex = 0
 		Me.ReCreateFilesGroupBox.TabStop = False
 		Me.ReCreateFilesGroupBox.Text = "Re-Create Files"
@@ -425,11 +434,10 @@ Partial Class DecompileUserControl
 		Me.Panel1.Controls.Add(Me.PhysicsMeshSmdFileCheckBox)
 		Me.Panel1.Controls.Add(Me.ReferenceMeshSmdFileCheckBox)
 		Me.Panel1.Controls.Add(Me.QcFileCheckBox)
-		Me.Panel1.Controls.Add(Me.ApplyRightHandFixCheckBox)
 		Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
 		Me.Panel1.Location = New System.Drawing.Point(3, 17)
 		Me.Panel1.Name = "Panel1"
-		Me.Panel1.Size = New System.Drawing.Size(539, 238)
+		Me.Panel1.Size = New System.Drawing.Size(539, 223)
 		Me.Panel1.TabIndex = 11
 		'
 		'OnlyChangedMaterialsInTextureGroupLinesCheckBox
@@ -464,7 +472,7 @@ Partial Class DecompileUserControl
 		'
 		'DecompileOptionsUseDefaultsButton
 		'
-		Me.DecompileOptionsUseDefaultsButton.Location = New System.Drawing.Point(318, 204)
+		Me.DecompileOptionsUseDefaultsButton.Location = New System.Drawing.Point(318, 197)
 		Me.DecompileOptionsUseDefaultsButton.Name = "DecompileOptionsUseDefaultsButton"
 		Me.DecompileOptionsUseDefaultsButton.Size = New System.Drawing.Size(90, 23)
 		Me.DecompileOptionsUseDefaultsButton.TabIndex = 37
@@ -513,7 +521,7 @@ Partial Class DecompileUserControl
 		'PlaceInAnimsSubfolderCheckBox
 		'
 		Me.PlaceInAnimsSubfolderCheckBox.AutoSize = True
-		Me.PlaceInAnimsSubfolderCheckBox.Location = New System.Drawing.Point(20, 210)
+		Me.PlaceInAnimsSubfolderCheckBox.Location = New System.Drawing.Point(20, 187)
 		Me.PlaceInAnimsSubfolderCheckBox.Name = "PlaceInAnimsSubfolderCheckBox"
 		Me.PlaceInAnimsSubfolderCheckBox.Size = New System.Drawing.Size(148, 17)
 		Me.PlaceInAnimsSubfolderCheckBox.TabIndex = 9
@@ -543,7 +551,7 @@ Partial Class DecompileUserControl
 		'BoneAnimationSmdFilesCheckBox
 		'
 		Me.BoneAnimationSmdFilesCheckBox.AutoSize = True
-		Me.BoneAnimationSmdFilesCheckBox.Location = New System.Drawing.Point(3, 187)
+		Me.BoneAnimationSmdFilesCheckBox.Location = New System.Drawing.Point(3, 164)
 		Me.BoneAnimationSmdFilesCheckBox.Name = "BoneAnimationSmdFilesCheckBox"
 		Me.BoneAnimationSmdFilesCheckBox.Size = New System.Drawing.Size(145, 17)
 		Me.BoneAnimationSmdFilesCheckBox.TabIndex = 8
@@ -590,21 +598,11 @@ Partial Class DecompileUserControl
 		Me.QcFileCheckBox.Text = "QC file"
 		Me.QcFileCheckBox.UseVisualStyleBackColor = True
 		'
-		'ApplyRightHandFixCheckBox
-		'
-		Me.ApplyRightHandFixCheckBox.AutoSize = True
-		Me.ApplyRightHandFixCheckBox.Location = New System.Drawing.Point(20, 164)
-		Me.ApplyRightHandFixCheckBox.Name = "ApplyRightHandFixCheckBox"
-		Me.ApplyRightHandFixCheckBox.Size = New System.Drawing.Size(268, 17)
-		Me.ApplyRightHandFixCheckBox.TabIndex = 4
-		Me.ApplyRightHandFixCheckBox.Text = "Apply ""Right-Hand Fix"" (only for survivors in L4D2)"
-		Me.ApplyRightHandFixCheckBox.UseVisualStyleBackColor = True
-		'
 		'UseInCompileButton
 		'
 		Me.UseInCompileButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.UseInCompileButton.Enabled = False
-		Me.UseInCompileButton.Location = New System.Drawing.Point(630, 150)
+		Me.UseInCompileButton.Location = New System.Drawing.Point(627, 170)
 		Me.UseInCompileButton.Name = "UseInCompileButton"
 		Me.UseInCompileButton.Size = New System.Drawing.Size(94, 23)
 		Me.UseInCompileButton.TabIndex = 3
@@ -615,7 +613,7 @@ Partial Class DecompileUserControl
 		'
 		Me.UseInEditButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.UseInEditButton.Enabled = False
-		Me.UseInEditButton.Location = New System.Drawing.Point(553, 150)
+		Me.UseInEditButton.Location = New System.Drawing.Point(553, 171)
 		Me.UseInEditButton.Name = "UseInEditButton"
 		Me.UseInEditButton.Size = New System.Drawing.Size(72, 23)
 		Me.UseInEditButton.TabIndex = 2
@@ -633,7 +631,7 @@ Partial Class DecompileUserControl
 		Me.DecompilerLogTextBox.Location = New System.Drawing.Point(0, 0)
 		Me.DecompilerLogTextBox.Name = "DecompilerLogTextBox"
 		Me.DecompilerLogTextBox.ReadOnly = True
-		Me.DecompilerLogTextBox.Size = New System.Drawing.Size(770, 144)
+		Me.DecompilerLogTextBox.Size = New System.Drawing.Size(770, 164)
 		Me.DecompilerLogTextBox.TabIndex = 0
 		Me.DecompilerLogTextBox.Text = ""
 		Me.DecompilerLogTextBox.WordWrap = False
@@ -644,30 +642,20 @@ Partial Class DecompileUserControl
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.DecompiledFilesComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
 		Me.DecompiledFilesComboBox.FormattingEnabled = True
-		Me.DecompiledFilesComboBox.Location = New System.Drawing.Point(0, 151)
+		Me.DecompiledFilesComboBox.Location = New System.Drawing.Point(0, 171)
 		Me.DecompiledFilesComboBox.Name = "DecompiledFilesComboBox"
-		Me.DecompiledFilesComboBox.Size = New System.Drawing.Size(624, 21)
+		Me.DecompiledFilesComboBox.Size = New System.Drawing.Size(621, 21)
 		Me.DecompiledFilesComboBox.TabIndex = 1
 		'
 		'GotoDecompiledFileButton
 		'
 		Me.GotoDecompiledFileButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.GotoDecompiledFileButton.Location = New System.Drawing.Point(727, 150)
+		Me.GotoDecompiledFileButton.Location = New System.Drawing.Point(727, 170)
 		Me.GotoDecompiledFileButton.Name = "GotoDecompiledFileButton"
 		Me.GotoDecompiledFileButton.Size = New System.Drawing.Size(43, 23)
 		Me.GotoDecompiledFileButton.TabIndex = 4
 		Me.GotoDecompiledFileButton.Text = "Goto"
 		Me.GotoDecompiledFileButton.UseVisualStyleBackColor = True
-		'
-		'OutputSubfolderTextBox
-		'
-		Me.OutputSubfolderTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.OutputSubfolderTextBox.Location = New System.Drawing.Point(209, 34)
-		Me.OutputSubfolderTextBox.Name = "OutputSubfolderTextBox"
-		Me.OutputSubfolderTextBox.Size = New System.Drawing.Size(445, 21)
-		Me.OutputSubfolderTextBox.TabIndex = 20
-		Me.OutputSubfolderTextBox.Visible = False
 		'
 		'DecompileUserControl
 		'
@@ -705,7 +693,6 @@ Partial Class DecompileUserControl
 	Friend WithEvents DebugInfoCheckBox As System.Windows.Forms.CheckBox
 	Friend WithEvents ReferenceMeshSmdFileCheckBox As System.Windows.Forms.CheckBox
 	Friend WithEvents QcFileCheckBox As System.Windows.Forms.CheckBox
-	Friend WithEvents ApplyRightHandFixCheckBox As System.Windows.Forms.CheckBox
 	Friend WithEvents Panel2 As System.Windows.Forms.Panel
 	Friend WithEvents DecompilerLogTextBox As Crowbar.RichTextBoxEx
 	Friend WithEvents CancelDecompileButton As System.Windows.Forms.Button

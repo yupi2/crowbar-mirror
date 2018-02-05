@@ -18,11 +18,9 @@ Public Class EditUserControl
 #Region "Init and Free"
 
 	Private Sub Init()
-		Me.ApplyRightHandFixCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileApplyRightHandFixIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 	End Sub
 
 	Private Sub Free()
-		Me.ApplyRightHandFixCheckBox.DataBindings.Clear()
 	End Sub
 
 #End Region

@@ -1,6 +1,13 @@
 
 
 
+### [2017-12-19] Visual Studio builds Crowbar where Decompile and Compile input textboxes fail to resize their right sides.
+
+Solution: Open the MainForm designer (where it should show something changed, even without changing anything).
+	Save the changes. Looking in the Undo list shows that Compile and Decompile controls were resized.
+
+
+
 ### Widget Class Template
 ################################################################################
 

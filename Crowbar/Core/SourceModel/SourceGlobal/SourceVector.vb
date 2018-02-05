@@ -142,6 +142,18 @@ Public Class SourceVector
 
 
 
+	Public Sub New()
+		x = 0
+		y = 0
+		z = 0
+	End Sub
+
+	Public Sub New(ByVal iX As Double, ByVal iY As Double, ByVal iZ As Double)
+		x = iX
+		y = iY
+		z = iZ
+	End Sub
+
 	Public x As Double
 	Public y As Double
 	Public z As Double

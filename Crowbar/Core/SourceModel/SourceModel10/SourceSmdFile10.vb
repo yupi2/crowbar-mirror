@@ -390,6 +390,10 @@ Public Class SourceSmdFile10
 			'      void TextureCoordRanges( s_mesh_t *pmesh, s_texture_t *ptexture  )
 			'	pmesh->triangle[i][j].s = pmesh->triangle[i][j].u * (ptexture->srcwidth - 1);
 			'	pmesh->triangle[i][j].t = pmesh->triangle[i][j].v * (ptexture->srcheight - 1);
+			'FROM: StudioMDL with Texture Shifting fix v1.02\sources\studiomdl.c
+			'      void TextureCoordRanges( s_mesh_t *pmesh, s_texture_t *ptexture  )
+			'			pmesh->triangle[i][j].s = adjust_texcoord(pmesh->triangle[i][j].u*(ptexture->srcwidth));
+			'			pmesh->triangle[i][j].t = adjust_texcoord(pmesh->triangle[i][j].v*(ptexture->srcheight));
 			If aTexture.width = 1 OrElse aTexture.height = 1 Then
 				If aTexture.theFileName(0) = "#" Then
 					Dim width As UInteger
@@ -403,8 +407,11 @@ Public Class SourceSmdFile10
 					texCoordY = aVertexInfo.t
 				End If
 			Else
-				texCoordX = aVertexInfo.s / (aTexture.width - 1)
-				texCoordY = aVertexInfo.t / (aTexture.height - 1)
+				' Changed this to match DoomMusic's StudioMDL (StudioMDL with Texture Shifting fix v1.02) because that compiler fixes texture shifting as well as some other stuff.
+				'texCoordX = aVertexInfo.s / (aTexture.width - 1)
+				'texCoordY = aVertexInfo.t / (aTexture.height - 1)
+				texCoordX = aVertexInfo.s / (aTexture.width)
+				texCoordY = aVertexInfo.t / (aTexture.height)
 			End If
 
 			line = "  "

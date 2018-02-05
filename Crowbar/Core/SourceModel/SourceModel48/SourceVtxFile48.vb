@@ -77,6 +77,29 @@ Public Class SourceVtxFile48
 
 #Region "Private Methods"
 
+	'Private Sub ReadVtxMaterialReplacements()
+	'	If Me.theVtxFileData.materialReplacementListOffset > 0 Then
+	'		Dim inputFileStreamPosition As Long
+
+	'		inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+
+	'		Try
+	'			Me.theInputFileReader.BaseStream.Seek(Me.theVtxFileData.materialReplacementListOffset, SeekOrigin.Begin)
+
+	'			Me.theVtxFileData.theVtxMaterialReplacements = New List(Of String)()
+	'			For j As Integer = 0 To aBodyPart.modelCount - 1
+	'				Dim aModel As New SourceVtxModel()
+	'				aModel.lodCount = Me.theInputFileReader.ReadInt32()
+	'				aBodyPart.theVtxModels.Add(aModel)
+	'			Next
+	'		Catch ex As Exception
+	'			Dim debug As Integer = 4242
+	'		End Try
+
+	'		Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
+	'	End If
+	'End Sub
+
 	Private Sub ReadSourceVtxModels(ByVal bodyPartInputFileStreamPosition As Long, ByVal aBodyPart As SourceVtxBodyPart)
 		Dim modelInputFileStreamPosition As Long
 		Dim inputFileStreamPosition As Long
