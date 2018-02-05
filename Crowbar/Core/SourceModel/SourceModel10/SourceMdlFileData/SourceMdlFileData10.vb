@@ -182,6 +182,7 @@
 	Public theAttachments As List(Of SourceMdlAttachment10)
 	Public theBodyParts As List(Of SourceMdlBodyPart10)
 	Public theBones As List(Of SourceMdlBone10)
+	'Public theBones As List(Of SourceMdlBone10Single)
 	Public theBoneControllers As List(Of SourceMdlBoneController10)
 	Public theHitboxes As List(Of SourceMdlHitbox10)
 	Public theSequences As List(Of SourceMdlSequenceDesc10)
@@ -192,6 +193,7 @@
 	Public theTransitions As List(Of List(Of Byte))
 
 	Public theBoneTransforms As List(Of SourceBoneTransform10)
+	'Public theBoneTransforms As List(Of SourceBoneTransform10Single)
 
 	Public theSmdFileNames As List(Of String)
 

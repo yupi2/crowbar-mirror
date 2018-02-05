@@ -15,7 +15,7 @@ Public Class SourceVtxModelLod06
 
 	Public meshCount As Integer
 	Public meshOffset As Integer
-	Public switchPoint As Double
+	Public switchPoint As Single
 
 	Public theVtxMeshes As List(Of SourceVtxMesh06)
 

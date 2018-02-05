@@ -36,6 +36,8 @@ Public Class ViewUserControl
 #Region "Init and Free"
 
 	Private Sub Init()
+		Me.theModelViewers = New List(Of Viewer)()
+
 		Me.UpdateDataBindings()
 
 		Me.UpdateWidgets(False)
@@ -52,7 +54,9 @@ Public Class ViewUserControl
 
 		Me.FreeDataViewer()
 		Me.FreeModelViewerWithModel()
-		Me.FreeModelViewer()
+		For Each aModelViewer As Viewer In Me.theModelViewers
+			Me.FreeModelViewer(aModelViewer)
+		Next
 	End Sub
 
 #End Region
@@ -144,18 +148,18 @@ Public Class ViewUserControl
 	'	End If
 	'End Sub
 
-	Private Sub SetUpGamesButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles EditGameSetupButton.Click
-		Dim gameSetupWdw As New GameSetupForm()
-		Dim gameSetupFormInfo As New GameSetupFormInfo()
+	'Private Sub SetUpGamesButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles EditGameSetupButton.Click
+	'	Dim gameSetupWdw As New GameSetupForm()
+	'	Dim gameSetupFormInfo As New GameSetupFormInfo()
 
-		gameSetupFormInfo.GameSetupIndex = Me.AppSettingGameSetupSelectedIndex
-		gameSetupFormInfo.GameSetups = TheApp.Settings.GameSetups
-		gameSetupWdw.DataSource = gameSetupFormInfo
+	'	gameSetupFormInfo.GameSetupIndex = Me.AppSettingGameSetupSelectedIndex
+	'	gameSetupFormInfo.GameSetups = TheApp.Settings.GameSetups
+	'	gameSetupWdw.DataSource = gameSetupFormInfo
 
-		gameSetupWdw.ShowDialog()
+	'	gameSetupWdw.ShowDialog()
 
-		Me.AppSettingGameSetupSelectedIndex = CType(gameSetupWdw.DataSource, GameSetupFormInfo).GameSetupIndex
-	End Sub
+	'	Me.AppSettingGameSetupSelectedIndex = CType(gameSetupWdw.DataSource, GameSetupFormInfo).GameSetupIndex
+	'End Sub
 
 	Private Sub ViewButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ViewButton.Click
 		Me.RunViewer(False)
@@ -219,7 +223,11 @@ Public Class ViewUserControl
 		If e.ProgressPercentage = 0 Then
 			Me.MessageTextBox.Text = ""
 			Me.MessageTextBox.AppendText(line + vbCr)
-			Me.UpdateWidgets(True)
+
+			Dim modelViewer As Viewer = CType(sender, Viewer)
+			If modelViewer Is Me.theModelViewerWithModel Then
+				Me.UpdateWidgets(True)
+			End If
 		ElseIf e.ProgressPercentage = 1 Then
 			Me.MessageTextBox.AppendText(line + vbCr)
 		ElseIf e.ProgressPercentage = 100 Then
@@ -229,13 +237,12 @@ Public Class ViewUserControl
 
 	Private Sub ViewerBackgroundWorker_RunWorkerCompleted(ByVal sender As System.Object, ByVal e As System.ComponentModel.RunWorkerCompletedEventArgs)
 		Dim modelViewer As Viewer = CType(sender, Viewer)
-		If modelViewer Is Me.theModelViewer Then
-			Me.FreeModelViewer()
-		Else
+		If modelViewer Is Me.theModelViewerWithModel Then
 			Me.FreeModelViewerWithModel()
+			Me.UpdateWidgets(False)
+		Else
+			Me.FreeModelViewer(modelViewer)
 		End If
-
-		Me.UpdateWidgets(False)
 	End Sub
 
 	Private Sub MappingToolBackgroundWorker_ProgressChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.ProgressChangedEventArgs)
@@ -428,10 +435,13 @@ Public Class ViewUserControl
 	End Sub
 
 	Private Sub OpenViewer()
-		Me.theModelViewer = New Viewer()
-		AddHandler Me.theModelViewer.ProgressChanged, AddressOf Me.ViewerBackgroundWorker_ProgressChanged
-		AddHandler Me.theModelViewer.RunWorkerCompleted, AddressOf Me.ViewerBackgroundWorker_RunWorkerCompleted
-		Me.theModelViewer.Run(Me.AppSettingGameSetupSelectedIndex)
+		Dim aModelViewer As Viewer
+		aModelViewer = New Viewer()
+		AddHandler aModelViewer.ProgressChanged, AddressOf Me.ViewerBackgroundWorker_ProgressChanged
+		AddHandler aModelViewer.RunWorkerCompleted, AddressOf Me.ViewerBackgroundWorker_RunWorkerCompleted
+		aModelViewer.Run(Me.AppSettingGameSetupSelectedIndex)
+
+		Me.theModelViewers.Add(aModelViewer)
 
 		'TODO: If viewer is not running, give user indication of what prevents viewing.
 	End Sub
@@ -474,12 +484,14 @@ Public Class ViewUserControl
 		End If
 	End Sub
 
-	Private Sub FreeModelViewer()
-		If Me.theModelViewer IsNot Nothing Then
-			RemoveHandler Me.theModelViewer.ProgressChanged, AddressOf Me.ViewerBackgroundWorker_ProgressChanged
-			RemoveHandler Me.theModelViewer.RunWorkerCompleted, AddressOf Me.ViewerBackgroundWorker_RunWorkerCompleted
-			Me.theModelViewer.Dispose()
-			Me.theModelViewer = Nothing
+	Private Sub FreeModelViewer(ByVal aModelViewer As Viewer)
+		If aModelViewer IsNot Nothing Then
+			RemoveHandler aModelViewer.ProgressChanged, AddressOf Me.ViewerBackgroundWorker_ProgressChanged
+			RemoveHandler aModelViewer.RunWorkerCompleted, AddressOf Me.ViewerBackgroundWorker_RunWorkerCompleted
+			aModelViewer.Dispose()
+			aModelViewer = Nothing
+
+			Me.theModelViewers.Remove(aModelViewer)
 		End If
 	End Sub
 
@@ -491,7 +503,7 @@ Public Class ViewUserControl
 
 	Dim theDataViewer As Viewer
 	Dim theModelViewerWithModel As Viewer
-	Dim theModelViewer As Viewer
+	Dim theModelViewers As List(Of Viewer)
 
 #End Region
 

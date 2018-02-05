@@ -5,7 +5,8 @@ Public Class VpkFile
 
 #Region "Creation and Destruction"
 
-	Public Sub New(ByVal vpkFileReader As BinaryReader, ByVal vpkFileData As VpkFileData)
+	Public Sub New(ByVal archiveDirectoryFileReader As BinaryReader, ByVal vpkFileReader As BinaryReader, ByVal vpkFileData As VpkFileData)
+		Me.theArchiveDirectoryInputFileReader = archiveDirectoryFileReader
 		Me.theInputFileReader = vpkFileReader
 		Me.theVpkFileData = vpkFileData
 	End Sub
@@ -19,7 +20,6 @@ Public Class VpkFile
 			Return Me.theVpkFileData
 		End Get
 	End Property
-
 
 #End Region
 
@@ -113,14 +113,15 @@ Public Class VpkFile
 
 					entry = New VpkDirectoryEntry()
 					entry.crc = Me.theInputFileReader.ReadUInt32()
-					entry.preloadBytes = Me.theInputFileReader.ReadUInt16()
+					entry.preloadByteCount = Me.theInputFileReader.ReadUInt16()
 					entry.archiveIndex = Me.theInputFileReader.ReadUInt16()
 					entry.dataOffset = Me.theInputFileReader.ReadUInt32()
 					entry.dataLength = Me.theInputFileReader.ReadUInt32()
 					entry.endBytes = Me.theInputFileReader.ReadUInt16()
 
-					If entry.preloadBytes > 0 Then
-						Me.theInputFileReader.ReadBytes(entry.preloadBytes)
+					If entry.preloadByteCount > 0 Then
+						entry.preloadBytesOffset = Me.theInputFileReader.BaseStream.Position
+						Me.theInputFileReader.ReadBytes(entry.preloadByteCount)
 					End If
 
 					If entryPath = " " Then
@@ -139,10 +140,10 @@ Public Class VpkFile
 					'Me.theVpkFileData.theEntryDataOutputTexts.Add(entryDataOutputText)
 					entryDataOutputText.Append(entry.thePathFileName)
 					entryDataOutputText.Append(" crc=0x" + entry.crc.ToString("X8"))
-					entryDataOutputText.Append(" metadatasz=" + entry.preloadBytes.ToString("G0"))
+					entryDataOutputText.Append(" metadatasz=" + entry.preloadByteCount.ToString("G0"))
 					entryDataOutputText.Append(" fnumber=" + entry.archiveIndex.ToString("G0"))
 					entryDataOutputText.Append(" ofs=0x" + entry.dataOffset.ToString("X8"))
-					entryDataOutputText.Append(" sz=" + entry.dataLength.ToString("G0"))
+					entryDataOutputText.Append(" sz=" + (entry.preloadByteCount + entry.dataLength).ToString("G0"))
 					Me.theVpkFileData.theEntryDataOutputTexts.Add(entryDataOutputText.ToString())
 					entryDataOutputText.Clear()
 				End While
@@ -161,6 +162,12 @@ Public Class VpkFile
 				Try
 					Me.theOutputFileWriter = New BinaryWriter(outputFileStream, System.Text.Encoding.ASCII)
 
+					If entry.preloadByteCount > 0 Then
+						Me.theArchiveDirectoryInputFileReader.BaseStream.Seek(entry.preloadBytesOffset, SeekOrigin.Begin)
+						Dim preloadBytes() As Byte
+						preloadBytes = Me.theArchiveDirectoryInputFileReader.ReadBytes(CInt(entry.preloadByteCount))
+						Me.theOutputFileWriter.Write(preloadBytes)
+					End If
 					If entry.archiveIndex = &H7FFF Then
 						Me.theInputFileReader.BaseStream.Seek(Me.theVpkFileData.theDirectoryOffset + Me.theVpkFileData.directoryLength + entry.dataOffset, SeekOrigin.Begin)
 					Else
@@ -194,6 +201,7 @@ Public Class VpkFile
 
 #Region "Data"
 
+	Private theArchiveDirectoryInputFileReader As BinaryReader
 	Private theInputFileReader As BinaryReader
 	Private theOutputFileWriter As BinaryWriter
 	Private theVpkFileData As VpkFileData

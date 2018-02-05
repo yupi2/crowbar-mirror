@@ -25,6 +25,8 @@ Partial Class MainForm
 		Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
 		Me.AboutCrowbarToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
 		Me.MainTabControl = New System.Windows.Forms.TabControl()
+		Me.SetUpGamesTabPage = New System.Windows.Forms.TabPage()
+		Me.SetUpGamesUserControl1 = New Crowbar.SetUpGamesUserControl()
 		Me.UnpackTabPage = New System.Windows.Forms.TabPage()
 		Me.UnpackUserControl1 = New Crowbar.UnpackUserControl()
 		Me.PreviewTabPage = New System.Windows.Forms.TabPage()
@@ -45,6 +47,7 @@ Partial Class MainForm
 		Me.AboutCrowbarToolStripMenuItem2 = New System.Windows.Forms.ToolStripMenuItem()
 		Me.MainToolTip = New System.Windows.Forms.ToolTip(Me.components)
 		Me.MainTabControl.SuspendLayout()
+		Me.SetUpGamesTabPage.SuspendLayout()
 		Me.UnpackTabPage.SuspendLayout()
 		Me.PreviewTabPage.SuspendLayout()
 		Me.DecompileTabPage.SuspendLayout()
@@ -73,6 +76,7 @@ Partial Class MainForm
 		'
 		'MainTabControl
 		'
+		Me.MainTabControl.Controls.Add(Me.SetUpGamesTabPage)
 		Me.MainTabControl.Controls.Add(Me.UnpackTabPage)
 		Me.MainTabControl.Controls.Add(Me.PreviewTabPage)
 		Me.MainTabControl.Controls.Add(Me.DecompileTabPage)
@@ -84,6 +88,18 @@ Partial Class MainForm
 		resources.ApplyResources(Me.MainTabControl, "MainTabControl")
 		Me.MainTabControl.Name = "MainTabControl"
 		Me.MainTabControl.SelectedIndex = 0
+		'
+		'SetUpGamesTabPage
+		'
+		Me.SetUpGamesTabPage.Controls.Add(Me.SetUpGamesUserControl1)
+		resources.ApplyResources(Me.SetUpGamesTabPage, "SetUpGamesTabPage")
+		Me.SetUpGamesTabPage.Name = "SetUpGamesTabPage"
+		Me.SetUpGamesTabPage.UseVisualStyleBackColor = True
+		'
+		'SetUpGamesUserControl1
+		'
+		resources.ApplyResources(Me.SetUpGamesUserControl1, "SetUpGamesUserControl1")
+		Me.SetUpGamesUserControl1.Name = "SetUpGamesUserControl1"
 		'
 		'UnpackTabPage
 		'
@@ -211,6 +227,7 @@ Partial Class MainForm
 		Me.Controls.Add(Me.MainTabControl)
 		Me.Name = "MainForm"
 		Me.MainTabControl.ResumeLayout(False)
+		Me.SetUpGamesTabPage.ResumeLayout(False)
 		Me.UnpackTabPage.ResumeLayout(False)
 		Me.PreviewTabPage.ResumeLayout(False)
 		Me.DecompileTabPage.ResumeLayout(False)
@@ -247,5 +264,7 @@ Partial Class MainForm
 	Friend WithEvents UnpackUserControl1 As Crowbar.UnpackUserControl
 	Friend WithEvents HelpTabPage As System.Windows.Forms.TabPage
 	Friend WithEvents HelpUserControl1 As Crowbar.HelpUserControl
+	Friend WithEvents SetUpGamesTabPage As System.Windows.Forms.TabPage
+	Friend WithEvents SetUpGamesUserControl1 As Crowbar.SetUpGamesUserControl
 
 End Class

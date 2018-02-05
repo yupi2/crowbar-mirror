@@ -35,8 +35,8 @@ Public Class SourceModel04
 
 #Region "Methods"
 
-	Public Overrides Function CheckForRequiredFiles() As StatusMessage
-		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+	Public Overrides Function CheckForRequiredFiles() As FilesFoundFlags
+		Dim status As AppEnums.FilesFoundFlags = FilesFoundFlags.AllFilesFound
 
 		Return status
 	End Function
@@ -149,8 +149,6 @@ Public Class SourceModel04
 		If Me.theMdlFileData Is Nothing Then
 			Me.theMdlFileData = New SourceMdlFileData04()
 			Me.theMdlFileDataGeneric = Me.theMdlFileData
-		Else
-			Me.theMdlFileData.theFileSeekLog.Clear()
 		End If
 
 		Dim mdlFile As New SourceMdlFile04(Me.theInputFileReader, Me.theMdlFileData)
@@ -162,8 +160,6 @@ Public Class SourceModel04
 		If Me.theMdlFileData Is Nothing Then
 			Me.theMdlFileData = New SourceMdlFileData04()
 			Me.theMdlFileDataGeneric = Me.theMdlFileData
-		Else
-			Me.theMdlFileData.theFileSeekLog.Clear()
 		End If
 
 
@@ -176,8 +172,6 @@ Public Class SourceModel04
 		If Me.theMdlFileData Is Nothing Then
 			Me.theMdlFileData = New SourceMdlFileData04()
 			Me.theMdlFileDataGeneric = Me.theMdlFileData
-		Else
-			Me.theMdlFileData.theFileSeekLog.Clear()
 		End If
 
 
@@ -188,6 +182,8 @@ Public Class SourceModel04
 		mdlFile.ReadBones()
 		mdlFile.ReadSequenceDescs()
 		mdlFile.ReadBodyParts()
+
+		mdlFile.ReadUnreadBytes()
 
 		' Post-processing.
 		'mdlFile.GetBoneDataFromFirstSequenceFirstFrame()

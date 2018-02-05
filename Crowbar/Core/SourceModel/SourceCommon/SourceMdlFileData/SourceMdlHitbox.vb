@@ -61,9 +61,11 @@ Public Class SourceMdlHitbox
 
 	Public unused(7) As Integer
 	'------
-	'VERSION 49
+	'VERSION 49 CSGO compiler requires boundingBoxPitchYawRoll values be written to QC file, otherwise gives this error: "Line X is incomplete."
+	'    L4D2 requires boundingBoxPitchYawRoll values NOT be written to QC file, otherwise gives this error: "ERROR: e:\l4d2modelwip\infected_tank\animations\decompiled 0.52\anim_hulk.qc(21): - bad command 0".
 	Public boundingBoxPitchYawRoll As SourceVector
-	Public unused_VERSION49(4) As Integer
+	Public unknown As Double
+	Public unused_VERSION49(3) As Integer
 
 
 

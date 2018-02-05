@@ -27,7 +27,7 @@ Public Class AboutUserControl
 		Me.GotoSteamGroupLinkLabel.Text = My.Resources.About_GotoSteamGroupText
 		Me.GotoSteamGroupLinkLabel.Links.Add(0, My.Resources.About_GotoSteamGroupText.Length(), My.Resources.About_ProductLink)
 
-		Me.ProductInfoTextBox.Text = String.Format("Version {0}", My.Application.Info.Version.ToString) + vbCrLf
+		Me.ProductInfoTextBox.Text = "Version " + My.Application.Info.Version.ToString(2) + vbCrLf
 		Me.ProductInfoTextBox.Text += My.Application.Info.Copyright + vbCrLf
 		Me.ProductInfoTextBox.Text += My.Application.Info.CompanyName
 
@@ -38,8 +38,6 @@ Public Class AboutUserControl
 		Me.GotoSteamProfileLinkLabel.Links.Add(0, My.Resources.About_GotoSteamProfileText.Length(), My.Resources.About_AuthorLink)
 
 		Me.ProductDescriptionTextBox.Text = My.Resources.About_ProductDescription
-
-		Me.CreditsTextBox.Text = My.Resources.About_SpecialThanksText
 	End Sub
 
 	'Private Sub Free()

@@ -649,7 +649,6 @@ Public Class SourcePhyFile37
 			Dim aSourcePhyCollisionPair As SourcePhyCollisionPair
 			Me.thePhyFileData.theSourcePhyCollisionPairs = New List(Of SourcePhyCollisionPair)()
 			Do
-				aSourcePhyCollisionPair = New SourcePhyCollisionPair()
 				tempStreamOffset = Me.theInputFileReader.BaseStream.Position
 				line = FileManager.ReadTextLine(Me.theInputFileReader)
 				If line Is Nothing OrElse line <> "collisionrules {" Then
@@ -665,10 +664,10 @@ Public Class SourcePhyFile37
 						If key = "collisionpair" Then
 							tokens = value.Split(delimiters, StringSplitOptions.RemoveEmptyEntries)
 							If tokens.Length = 2 Then
-								'aSourcePhyCollisionPair.obj0 = CInt(tokens(0))
-								'aSourcePhyCollisionPair.obj1 = CInt(tokens(1))
+								aSourcePhyCollisionPair = New SourcePhyCollisionPair()
 								aSourcePhyCollisionPair.obj0 = Integer.Parse(tokens(0), TheApp.InternalNumberFormat)
 								aSourcePhyCollisionPair.obj1 = Integer.Parse(tokens(1), TheApp.InternalNumberFormat)
+								Me.thePhyFileData.theSourcePhyCollisionPairs.Add(aSourcePhyCollisionPair)
 							End If
 						ElseIf key = "selfcollisions" Then
 							Me.thePhyFileData.theSourcePhySelfCollides = False
@@ -680,7 +679,6 @@ Public Class SourcePhyFile37
 				If key Is Nothing OrElse key <> "}" Then
 					Exit Do
 				End If
-				Me.thePhyFileData.theSourcePhyCollisionPairs.Add(aSourcePhyCollisionPair)
 				thereIsAValue = True
 			Loop Until line Is Nothing
 		Catch
@@ -756,13 +754,19 @@ Public Class SourcePhyFile37
 		'Try
 		'	streamLastPosition = Me.theInputFileReader.BaseStream.Length() - 1
 
+		'	If streamLastPosition > Me.theInputFileReader.BaseStream.Position Then
 		'	'NOTE: Use -1 to drop the null terminator character.
 		'	Me.thePhyFileData.theSourcePhyCollisionText = Me.theInputFileReader.ReadChars(CInt(streamLastPosition - Me.theInputFileReader.BaseStream.Position - 1))
-		'Catch
-		'Finally
+		'	End If
+		'Catch ex As Exception
+		'	Dim debug As Integer = 4242
 		'End Try
 
 		Me.thePhyFileData.theSourcePhyCollisionText = Common.ReadPhyCollisionTextSection(Me.theInputFileReader)
+	End Sub
+
+	Public Sub ReadUnreadBytes()
+		Me.thePhyFileData.theFileSeekLog.LogUnreadBytes(Me.theInputFileReader)
 	End Sub
 
 #End Region

@@ -5,7 +5,7 @@
 '          combine_spike.dx80.vtx
 '          combine_spike.mdl
 Public Class SourceModel31
-	Inherits SourceModel29
+	Inherits SourceModel30
 
 #Region "Creation and Destruction"
 
@@ -135,8 +135,8 @@ Public Class SourceModel31
 
 #Region "Methods"
 
-	Public Overrides Function CheckForRequiredFiles() As StatusMessage
-		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+	Public Overrides Function CheckForRequiredFiles() As FilesFoundFlags
+		Dim status As AppEnums.FilesFoundFlags = FilesFoundFlags.AllFilesFound
 
 		If Not Me.theMdlFileDataGeneric.theMdlFileOnlyHasAnimations Then
 			'Me.thePhyPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".phy")
@@ -151,7 +151,7 @@ Public Class SourceModel31
 						If Not File.Exists(Me.theVtxPathFileName) Then
 							Me.theVtxPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".vtx")
 							If Not File.Exists(Me.theVtxPathFileName) Then
-								status = StatusMessage.ErrorRequiredVtxFileNotFound
+								status = FilesFoundFlags.ErrorRequiredVtxFileNotFound
 							End If
 						End If
 					End If
@@ -295,8 +295,6 @@ Public Class SourceModel31
 		If Me.theMdlFileData Is Nothing Then
 			Me.theMdlFileData = New SourceMdlFileData31()
 			Me.theMdlFileDataGeneric = Me.theMdlFileData
-		Else
-			Me.theMdlFileData.theFileSeekLog.Clear()
 		End If
 
 		Dim mdlFile As New SourceMdlFile31(Me.theInputFileReader, Me.theMdlFileData)
@@ -309,8 +307,6 @@ Public Class SourceModel31
 		If Me.theMdlFileData Is Nothing Then
 			Me.theMdlFileData = New SourceMdlFileData31()
 			Me.theMdlFileDataGeneric = Me.theMdlFileData
-		Else
-			Me.theMdlFileData.theFileSeekLog.Clear()
 		End If
 
 		Dim mdlFile As New SourceMdlFile31(Me.theInputFileReader, Me.theMdlFileData)
@@ -326,8 +322,6 @@ Public Class SourceModel31
 		If Me.theMdlFileData Is Nothing Then
 			Me.theMdlFileData = New SourceMdlFileData31()
 			Me.theMdlFileDataGeneric = Me.theMdlFileData
-		Else
-			Me.theMdlFileData.theFileSeekLog.Clear()
 		End If
 
 		Dim mdlFile As New SourceMdlFile31(Me.theInputFileReader, Me.theMdlFileData)
@@ -372,10 +366,11 @@ Public Class SourceModel31
 		' '' Read what WriteKeyValues() writes.
 		''mdlFile.ReadKeyValues()
 
+		'mdlFile.ReadFinalBytesAlignment()
+		mdlFile.ReadUnreadBytes()
+
 		' '' Post-processing.
 		''mdlFile.BuildBoneTransforms()
-
-		'mdlFile.ReadFinalBytesAlignment()
 	End Sub
 
 	'Protected Overrides Sub ReadPhyFile_Internal()
@@ -434,9 +429,7 @@ Public Class SourceModel31
 			'qcFile.WriteJointSurfacePropCommand()
 			'qcFile.WriteContentsCommand()
 			'qcFile.WriteJointContentsCommand()
-			'If TheApp.Settings.DecompileDebugInfoFilesIsChecked Then
-			'	qcFile.WriteIllumPositionCommand()
-			'End If
+			qcFile.WriteIllumPositionCommand()
 
 			'qcFile.WriteEyePositionCommand()
 			'qcFile.WriteNoForcedFadeCommand()

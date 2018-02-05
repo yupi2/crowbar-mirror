@@ -8,6 +8,8 @@ Public Class SourceVtxFile06
 	Public Sub New(ByVal vtxFileReader As BinaryReader, ByVal vtxFileData As SourceVtxFileData06)
 		Me.theInputFileReader = vtxFileReader
 		Me.theVtxFileData = vtxFileData
+
+		Me.theVtxFileData.theFileSeekLog.FileSize = Me.theInputFileReader.BaseStream.Length
 	End Sub
 
 #End Region
@@ -98,7 +100,8 @@ Public Class SourceVtxFile06
 				fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
 				Me.theVtxFileData.theVtxMaterialReplacementLists = New List(Of SourceVtxMaterialReplacementList06)(Me.theVtxFileData.bodyPartCount)
-				For i As Integer = 0 To Me.theVtxFileData.bodyPartCount - 1
+				'For i As Integer = 0 To Me.theVtxFileData.bodyPartCount - 1
+				For i As Integer = 0 To Me.theVtxFileData.lodCount - 1
 					materialReplacementListInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 					Dim aMaterialReplacementList As New SourceVtxMaterialReplacementList06()
 
@@ -120,6 +123,10 @@ Public Class SourceVtxFile06
 				Dim debug As Integer = 4242
 			End Try
 		End If
+	End Sub
+
+	Public Sub ReadUnreadBytes()
+		Me.theVtxFileData.theFileSeekLog.LogUnreadBytes(Me.theInputFileReader)
 	End Sub
 
 #End Region
@@ -406,42 +413,54 @@ Public Class SourceVtxFile06
 	End Sub
 
 	Private Sub ReadSourceVtxBoneStateChanges(ByVal stripInputFileStreamPosition As Long, ByVal aStrip As SourceVtxStrip06)
-		'Dim modelInputFileStreamPosition As Long
-		'Dim inputFileStreamPosition As Long
-		Dim fileOffsetStart As Long
-		Dim fileOffsetEnd As Long
-		'Dim fileOffsetStart2 As Long
-		'Dim fileOffsetEnd2 As Long
+		'TEST: 
+		'NOTE: It seems that if boneCount = 0 then a SourceVtxBoneStateChange is stored.
+		Dim boneStateChangeCount As Integer
+		boneStateChangeCount = aStrip.boneStateChangeCount
+		If aStrip.boneCount = 0 AndAlso aStrip.boneStateChangeOffset <> 0 Then
+			boneStateChangeCount = 1
+		End If
 
-		Try
-			Me.theInputFileReader.BaseStream.Seek(stripInputFileStreamPosition + aStrip.boneStateChangeOffset, SeekOrigin.Begin)
-			fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+		If boneStateChangeCount > 0 AndAlso aStrip.boneStateChangeOffset <> 0 Then
+			'Dim modelInputFileStreamPosition As Long
+			'Dim inputFileStreamPosition As Long
+			Dim fileOffsetStart As Long
+			Dim fileOffsetEnd As Long
+			'Dim fileOffsetStart2 As Long
+			'Dim fileOffsetEnd2 As Long
 
-			aStrip.theVtxBoneStateChanges = New List(Of SourceVtxBoneStateChange06)(aStrip.boneStateChangeCount)
-			For j As Integer = 0 To aStrip.boneStateChangeCount - 1
-				'modelInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
-				'fileOffsetStart = Me.theInputFileReader.BaseStream.Position
-				Dim aBoneStateChange As New SourceVtxBoneStateChange06()
+			Try
+				Me.theInputFileReader.BaseStream.Seek(stripInputFileStreamPosition + aStrip.boneStateChangeOffset, SeekOrigin.Begin)
+				fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
-				aBoneStateChange.hardwareId = Me.theInputFileReader.ReadInt32()
-				aBoneStateChange.newBoneId = Me.theInputFileReader.ReadInt32()
+				'aStrip.theVtxBoneStateChanges = New List(Of SourceVtxBoneStateChange06)(aStrip.boneStateChangeCount)
+				aStrip.theVtxBoneStateChanges = New List(Of SourceVtxBoneStateChange06)(boneStateChangeCount)
+				'For j As Integer = 0 To aStrip.boneStateChangeCount - 1
+				For j As Integer = 0 To boneStateChangeCount - 1
+					'modelInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+					'fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+					Dim aBoneStateChange As New SourceVtxBoneStateChange06()
 
-				aStrip.theVtxBoneStateChanges.Add(aBoneStateChange)
+					aBoneStateChange.hardwareId = Me.theInputFileReader.ReadInt32()
+					aBoneStateChange.newBoneId = Me.theInputFileReader.ReadInt32()
 
-				'fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-				'Me.theVtxFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aStrip")
+					aStrip.theVtxBoneStateChanges.Add(aBoneStateChange)
 
-				'inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+					'fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+					'Me.theVtxFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aStrip")
 
-				'Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
-			Next
+					'inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 
-			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-			Me.theVtxFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aStrip.theVtxBoneStateChanges " + aStrip.theVtxBoneStateChanges.Count.ToString())
-		Catch ex As Exception
-			'NOTE: It can reach here if Crowbar is still trying to figure out if the extra 8 bytes are needed.
-			Dim debug As Integer = 4242
-		End Try
+					'Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
+				Next
+
+				fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+				Me.theVtxFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aStrip.theVtxBoneStateChanges " + aStrip.theVtxBoneStateChanges.Count.ToString())
+			Catch ex As Exception
+				'NOTE: It can reach here if Crowbar is still trying to figure out if the extra 8 bytes are needed.
+				Dim debug As Integer = 4242
+			End Try
+		End If
 	End Sub
 
 	Private Sub ReadSourceVtxMaterialReplacements(ByVal materialReplacementListInputFileStreamPosition As Long, ByVal aMaterialReplacementList As SourceVtxMaterialReplacementList06)

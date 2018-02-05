@@ -218,10 +218,12 @@ Module SourceFileNamesModule
 		Return vrdFileName
 	End Function
 
-	Public Function GetVtaFileName(ByVal modelName As String) As String
+	Public Function GetVtaFileName(ByVal modelName As String, ByVal bodyPartIndex As Integer) As String
 		Dim vtaFileName As String
 
 		vtaFileName = modelName
+		vtaFileName += "_"
+		vtaFileName += (bodyPartIndex + 1).ToString("00")
 		vtaFileName += ".vta"
 
 		Return vtaFileName

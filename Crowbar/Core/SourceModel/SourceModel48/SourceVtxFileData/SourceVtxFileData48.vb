@@ -53,7 +53,6 @@
 
 	Public lodCount As Integer
 
-	'TODO: Is this used in $LOD QC command?
 	Public materialReplacementListOffset As Integer
 
 	Public bodyPartCount As Integer
@@ -62,5 +61,6 @@
 
 
 	Public theVtxBodyParts As List(Of SourceVtxBodyPart)
+	Public theVtxMaterialReplacements As List(Of String)
 
 End Class

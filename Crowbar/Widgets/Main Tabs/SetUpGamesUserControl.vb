@@ -1,7 +1,7 @@
-Imports System.ComponentModel
+﻿Imports System.ComponentModel
 Imports System.IO
 
-Public Class GameSetupForm
+Public Class SetUpGamesUserControl
 
 #Region "Creation and Destruction"
 
@@ -9,19 +9,22 @@ Public Class GameSetupForm
 		' This call is required by the Windows Form Designer.
 		InitializeComponent()
 
-		'NOTE: Override any nonsense that the Visual Designer does to the size.
-		Me.Size = New System.Drawing.Size(640, 789)
+		'NOTE: Try-Catch is needed so that widget will be shown in MainForm without raising exception.
+		Try
+			Me.Init()
+		Catch
+		End Try
 	End Sub
 
 #End Region
 
 #Region "Init and Free"
 
-	Protected Sub InitDataBinding()
+	Protected Sub Init()
 		Me.GameSetupComboBox.DisplayMember = "GameName"
 		Me.GameSetupComboBox.ValueMember = "GameName"
-		Me.GameSetupComboBox.DataSource = Me.theGameSetupFormInfo.GameSetups
-		Me.GameSetupComboBox.SelectedIndex = Me.theGameSetupFormInfo.GameSetupIndex
+		Me.GameSetupComboBox.DataSource = TheApp.Settings.GameSetups
+		Me.GameSetupComboBox.DataBindings.Add("SelectedIndex", TheApp.Settings, "SetUpGamesGameSetupSelectedIndex", False, DataSourceUpdateMode.OnPropertyChanged)
 
 		Dim textColumn As DataGridViewTextBoxColumn
 		Dim buttonColumn As DataGridViewButtonColumn
@@ -29,10 +32,10 @@ Public Class GameSetupForm
 		Me.SteamLibraryPathsDataGridView.DataSource = TheApp.Settings.SteamLibraryPaths
 
 		textColumn = New DataGridViewTextBoxColumn()
+		textColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.None
 		textColumn.DataPropertyName = "Macro"
 		textColumn.DefaultCellStyle.BackColor = SystemColors.Control
 		textColumn.DisplayIndex = 0
-		textColumn.FillWeight = 25
 		textColumn.HeaderText = "Macro"
 		textColumn.Name = "Macro"
 		textColumn.ReadOnly = True
@@ -50,9 +53,9 @@ Public Class GameSetupForm
 		Me.SteamLibraryPathsDataGridView.Columns.Add(textColumn)
 
 		buttonColumn = New DataGridViewButtonColumn()
+		buttonColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.None
 		buttonColumn.DisplayIndex = 2
 		buttonColumn.DefaultCellStyle.BackColor = SystemColors.Control
-		buttonColumn.FillWeight = 25
 		buttonColumn.HeaderText = "Browse"
 		buttonColumn.Name = "Browse"
 		buttonColumn.SortMode = DataGridViewColumnSortMode.NotSortable
@@ -61,10 +64,10 @@ Public Class GameSetupForm
 		Me.SteamLibraryPathsDataGridView.Columns.Add(buttonColumn)
 
 		textColumn = New DataGridViewTextBoxColumn()
+		textColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.None
 		textColumn.DataPropertyName = "UseCount"
 		textColumn.DefaultCellStyle.BackColor = SystemColors.Control
 		textColumn.DisplayIndex = 4
-		textColumn.FillWeight = 25
 		textColumn.HeaderText = "Use Count"
 		textColumn.Name = "UseCount"
 		textColumn.SortMode = DataGridViewColumnSortMode.NotSortable
@@ -80,7 +83,7 @@ Public Class GameSetupForm
 		End If
 
 		AddHandler TheApp.Settings.PropertyChanged, AddressOf Me.AppSettings_PropertyChanged
-		AddHandler Me.theGameSetupFormInfo.GameSetups.ListChanged, AddressOf Me.GameSetups_ListChanged
+		AddHandler TheApp.Settings.GameSetups.ListChanged, AddressOf Me.GameSetups_ListChanged
 		AddHandler Me.SteamLibraryPathsDataGridView.SetMacroInSelectedGameSetupToolStripMenuItem.Click, AddressOf Me.SetMacroInSelectedGameSetupToolStripMenuItem_Click
 		AddHandler Me.SteamLibraryPathsDataGridView.SetMacroInAllGameSetupsToolStripMenuItem.Click, AddressOf Me.SetMacroInAllGameSetupsToolStripMenuItem_Click
 		AddHandler Me.SteamLibraryPathsDataGridView.ClearMacroInSelectedGameSetupToolStripMenuItem.Click, AddressOf Me.ClearMacroInSelectedGameSetupToolStripMenuItem_Click
@@ -89,9 +92,9 @@ Public Class GameSetupForm
 		AddHandler Me.SteamLibraryPathsDataGridView.ChangeToThisMacroInAllGameSetupsToolStripMenuItem.Click, AddressOf Me.ChangeToThisMacroInAllGameSetupsToolStripMenuItem_Click
 	End Sub
 
-	Protected Sub FreeDataBinding()
+	Protected Sub Free()
 		RemoveHandler TheApp.Settings.PropertyChanged, AddressOf Me.AppSettings_PropertyChanged
-		RemoveHandler Me.theGameSetupFormInfo.GameSetups.ListChanged, AddressOf Me.GameSetups_ListChanged
+		RemoveHandler TheApp.Settings.GameSetups.ListChanged, AddressOf Me.GameSetups_ListChanged
 		RemoveHandler Me.SteamLibraryPathsDataGridView.SetMacroInSelectedGameSetupToolStripMenuItem.Click, AddressOf Me.SetMacroInSelectedGameSetupToolStripMenuItem_Click
 		RemoveHandler Me.SteamLibraryPathsDataGridView.SetMacroInAllGameSetupsToolStripMenuItem.Click, AddressOf Me.SetMacroInAllGameSetupsToolStripMenuItem_Click
 		RemoveHandler Me.SteamLibraryPathsDataGridView.ClearMacroInSelectedGameSetupToolStripMenuItem.Click, AddressOf Me.ClearMacroInSelectedGameSetupToolStripMenuItem_Click
@@ -99,6 +102,7 @@ Public Class GameSetupForm
 		RemoveHandler Me.SteamLibraryPathsDataGridView.ChangeToThisMacroInSelectedGameSetupToolStripMenuItem.Click, AddressOf Me.ChangeToThisMacroInSelectedGameSetupToolStripMenuItem_Click
 		RemoveHandler Me.SteamLibraryPathsDataGridView.ChangeToThisMacroInAllGameSetupsToolStripMenuItem.Click, AddressOf Me.ChangeToThisMacroInAllGameSetupsToolStripMenuItem_Click
 
+		Me.GameSetupComboBox.DataSource = Nothing
 		Me.GameSetupComboBox.DataBindings.Clear()
 		Me.SteamAppPathFileNameTextBox.DataBindings.Clear()
 		Me.SteamLibraryPathsDataGridView.DataSource = Nothing
@@ -107,35 +111,6 @@ Public Class GameSetupForm
 #End Region
 
 #Region "Properties"
-
-	<Category("Data")> _
-	Public Property DataSource() As Object
-		Get
-			Return Me.theGameSetupFormInfo
-		End Get
-		Set(ByVal value As Object)
-			If Me.DesignMode Then
-				Exit Property
-			End If
-			If value Is Nothing Then
-				If Me.theGameSetupFormInfo IsNot Nothing Then
-					Me.FreeDataBinding()
-					Me.theGameSetupFormInfo = Nothing
-				End If
-			ElseIf TypeOf value Is GameSetupFormInfo Then
-				If Me.theGameSetupFormInfo IsNot CType(value, GameSetupFormInfo) Then
-					If Me.theGameSetupFormInfo IsNot Nothing Then
-						Me.FreeDataBinding()
-					End If
-					Me.theGameSetupFormInfo = CType(value, GameSetupFormInfo)
-					Me.InitDataBinding()
-				End If
-			Else
-				'not a valid data source for this purpose
-				Throw New System.Exception("Invalid DataSource")
-			End If
-		End Set
-	End Property
 
 #End Region
 
@@ -147,32 +122,24 @@ Public Class GameSetupForm
 
 	Private Sub GameSetupComboBox_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles GameSetupComboBox.SelectedIndexChanged
 		Me.UpdateWidgets()
-	End Sub
-
-	Private Sub GameEngineRadioButton_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles GoldSourceRadioButton.CheckedChanged, SourceRadioButton.CheckedChanged, Source2RadioButton.CheckedChanged
-		If Me.GoldSourceRadioButton.Checked Then
-			Me.SetGameEngineOption(GameEngine.GoldSource)
-		ElseIf Me.SourceRadioButton.Checked Then
-			Me.SetGameEngineOption(GameEngine.Source)
-		ElseIf Me.Source2RadioButton.Checked Then
-			Me.SetGameEngineOption(GameEngine.Source2)
-		End If
-
 		Me.UpdateWidgetsBasedOnGameEngine()
 	End Sub
 
 	Private Sub AddGameSetupButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AddGameSetupButton.Click
 		Dim gamesetup As New GameSetup()
 		gamesetup.GameName = "<New Game>"
-		Me.theGameSetupFormInfo.GameSetups.Add(gamesetup)
+		TheApp.Settings.GameSetups.Add(gamesetup)
 
-		Me.GameSetupComboBox.SelectedIndex = Me.theGameSetupFormInfo.GameSetups.IndexOf(gamesetup)
+		Me.GameSetupComboBox.SelectedIndex = TheApp.Settings.GameSetups.IndexOf(gamesetup)
 
 		Me.UpdateWidgets()
 		Me.UpdateUseCounts()
 	End Sub
 
 	Private Sub BrowseForGamePathFileNameButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BrowseForGamePathFileNameButton.Click
+		Dim selectedGameSetup As GameSetup
+		selectedGameSetup = TheApp.Settings.GameSetups(Me.GameSetupComboBox.SelectedIndex)
+
 		Dim openFileWdw As New OpenFileDialog()
 		If Me.theSelectedGameSetup.GameEngine = GameEngine.GoldSource Then
 			openFileWdw.Title = "Select GoldSource Engine LibList.gam File"
@@ -186,17 +153,20 @@ Public Class GameSetupForm
 		End If
 		openFileWdw.AddExtension = True
 		openFileWdw.ValidateNames = True
-		openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).GamePathFileName)
-		openFileWdw.FileName = Path.GetFileName(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).GamePathFileName)
+		openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(selectedGameSetup.GamePathFileName)
+		openFileWdw.FileName = Path.GetFileName(selectedGameSetup.GamePathFileName)
 		If openFileWdw.ShowDialog() = Windows.Forms.DialogResult.OK Then
 			' Allow dialog window to completely disappear.
 			Application.DoEvents()
 
-			Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).GamePathFileNameUnprocessed = openFileWdw.FileName
+			SetPathFileNameField(openFileWdw.FileName, selectedGameSetup.GamePathFileNameUnprocessed)
 		End If
 	End Sub
 
 	Private Sub BrowseForGameAppPathFileNameButton_Click(sender As Object, e As EventArgs) Handles BrowseForGameAppPathFileNameButton.Click
+		Dim selectedGameSetup As GameSetup
+		selectedGameSetup = TheApp.Settings.GameSetups(Me.GameSetupComboBox.SelectedIndex)
+
 		Dim openFileWdw As New OpenFileDialog()
 		If Me.theSelectedGameSetup.GameEngine = GameEngine.GoldSource Then
 			openFileWdw.Title = "Select GoldSource Engine Game's Executable File"
@@ -208,13 +178,13 @@ Public Class GameSetupForm
 		openFileWdw.Filter = "Executable Files (*.exe)|*.exe|All Files (*.*)|*.*"
 		openFileWdw.AddExtension = True
 		openFileWdw.ValidateNames = True
-		openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).GameAppPathFileName)
-		openFileWdw.FileName = Path.GetFileName(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).GameAppPathFileName)
+		openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(selectedGameSetup.GameAppPathFileName)
+		openFileWdw.FileName = Path.GetFileName(selectedGameSetup.GameAppPathFileName)
 		If openFileWdw.ShowDialog() = Windows.Forms.DialogResult.OK Then
 			' Allow dialog window to completely disappear.
 			Application.DoEvents()
 
-			Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).GameAppPathFileNameUnprocessed = openFileWdw.FileName
+			SetPathFileNameField(openFileWdw.FileName, selectedGameSetup.GameAppPathFileNameUnprocessed)
 		End If
 	End Sub
 
@@ -223,6 +193,9 @@ Public Class GameSetupForm
 	End Sub
 
 	Private Sub BrowseForCompilerPathFileNameButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BrowseForCompilerPathFileNameButton.Click
+		Dim selectedGameSetup As GameSetup
+		selectedGameSetup = TheApp.Settings.GameSetups(Me.GameSetupComboBox.SelectedIndex)
+
 		Dim openFileWdw As New OpenFileDialog()
 		If Me.theSelectedGameSetup.GameEngine = GameEngine.GoldSource Then
 			openFileWdw.Title = "Select GoldSource Engine Model Compiler Tool"
@@ -236,17 +209,20 @@ Public Class GameSetupForm
 		End If
 		openFileWdw.AddExtension = True
 		openFileWdw.ValidateNames = True
-		openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).CompilerPathFileName)
-		openFileWdw.FileName = Path.GetFileName(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).CompilerPathFileName)
+		openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(selectedGameSetup.CompilerPathFileName)
+		openFileWdw.FileName = Path.GetFileName(selectedGameSetup.CompilerPathFileName)
 		If openFileWdw.ShowDialog() = Windows.Forms.DialogResult.OK Then
 			' Allow dialog window to completely disappear.
 			Application.DoEvents()
 
-			Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).CompilerPathFileNameUnprocessed = openFileWdw.FileName
+			SetPathFileNameField(openFileWdw.FileName, selectedGameSetup.CompilerPathFileNameUnprocessed)
 		End If
 	End Sub
 
 	Private Sub BrowseForViewerPathFileNameButton_Click(sender As Object, e As EventArgs) Handles BrowseForViewerPathFileNameButton.Click
+		Dim selectedGameSetup As GameSetup
+		selectedGameSetup = TheApp.Settings.GameSetups(Me.GameSetupComboBox.SelectedIndex)
+
 		Dim openFileWdw As New OpenFileDialog()
 		If Me.theSelectedGameSetup.GameEngine = GameEngine.GoldSource Then
 			openFileWdw.Title = "Select GoldSource Engine Model Viewer Tool"
@@ -260,17 +236,20 @@ Public Class GameSetupForm
 		End If
 		openFileWdw.AddExtension = True
 		openFileWdw.ValidateNames = True
-		openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).ViewerPathFileName)
-		openFileWdw.FileName = Path.GetFileName(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).ViewerPathFileName)
+		openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(selectedGameSetup.ViewerPathFileName)
+		openFileWdw.FileName = Path.GetFileName(selectedGameSetup.ViewerPathFileName)
 		If openFileWdw.ShowDialog() = Windows.Forms.DialogResult.OK Then
 			' Allow dialog window to completely disappear.
 			Application.DoEvents()
 
-			Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).ViewerPathFileNameUnprocessed = openFileWdw.FileName
+			SetPathFileNameField(openFileWdw.FileName, selectedGameSetup.ViewerPathFileNameUnprocessed)
 		End If
 	End Sub
 
 	Private Sub BrowseForMappingToolPathFileNameButton_Click(sender As Object, e As EventArgs) Handles BrowseForMappingToolPathFileNameButton.Click
+		Dim selectedGameSetup As GameSetup
+		selectedGameSetup = TheApp.Settings.GameSetups(Me.GameSetupComboBox.SelectedIndex)
+
 		Dim openFileWdw As New OpenFileDialog()
 		If Me.theSelectedGameSetup.GameEngine = GameEngine.GoldSource Then
 			openFileWdw.Title = "Select GoldSource Engine Mapping Tool"
@@ -284,17 +263,20 @@ Public Class GameSetupForm
 		End If
 		openFileWdw.AddExtension = True
 		openFileWdw.ValidateNames = True
-		openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).MappingToolPathFileName)
-		openFileWdw.FileName = Path.GetFileName(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).MappingToolPathFileName)
+		openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(selectedGameSetup.MappingToolPathFileName)
+		openFileWdw.FileName = Path.GetFileName(selectedGameSetup.MappingToolPathFileName)
 		If openFileWdw.ShowDialog() = Windows.Forms.DialogResult.OK Then
 			' Allow dialog window to completely disappear.
 			Application.DoEvents()
 
-			Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).MappingToolPathFileNameUnprocessed = openFileWdw.FileName
+			SetPathFileNameField(openFileWdw.FileName, selectedGameSetup.MappingToolPathFileNameUnprocessed)
 		End If
 	End Sub
 
 	Private Sub BrowseForUnpackerPathFileNameButton_Click(sender As Object, e As EventArgs) Handles BrowseForUnpackerPathFileNameButton.Click
+		Dim selectedGameSetup As GameSetup
+		selectedGameSetup = TheApp.Settings.GameSetups(Me.GameSetupComboBox.SelectedIndex)
+
 		Dim openFileWdw As New OpenFileDialog()
 		If Me.theSelectedGameSetup.GameEngine = GameEngine.GoldSource Then
 			openFileWdw.Title = "Select GoldSource Engine Packer/Unpacker Tool"
@@ -308,13 +290,13 @@ Public Class GameSetupForm
 		End If
 		openFileWdw.AddExtension = True
 		openFileWdw.ValidateNames = True
-		openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).UnpackerPathFileName)
-		openFileWdw.FileName = Path.GetFileName(Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).UnpackerPathFileName)
+		openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(selectedGameSetup.PackerPathFileName)
+		openFileWdw.FileName = Path.GetFileName(selectedGameSetup.PackerPathFileName)
 		If openFileWdw.ShowDialog() = Windows.Forms.DialogResult.OK Then
 			' Allow dialog window to completely disappear.
 			Application.DoEvents()
 
-			Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex).UnpackerPathFileNameUnprocessed = openFileWdw.FileName
+			SetPathFileNameField(openFileWdw.FileName, selectedGameSetup.PackerPathFileNameUnprocessed)
 		End If
 	End Sub
 
@@ -322,16 +304,16 @@ Public Class GameSetupForm
 		Dim selectedIndex As Integer
 
 		selectedIndex = Me.GameSetupComboBox.SelectedIndex
-		If selectedIndex >= 0 AndAlso Me.theGameSetupFormInfo.GameSetups.Count > 1 Then
+		If selectedIndex >= 0 AndAlso TheApp.Settings.GameSetups.Count > 1 Then
 			Dim selectedGameSetup As GameSetup
-			selectedGameSetup = Me.theGameSetupFormInfo.GameSetups(selectedIndex)
+			selectedGameSetup = TheApp.Settings.GameSetups(selectedIndex)
 
 			Dim cloneGameSetup As GameSetup
 			cloneGameSetup = CType(selectedGameSetup.Clone(), GameSetup)
 			cloneGameSetup.GameName = "Clone of " + selectedGameSetup.GameName
-			Me.theGameSetupFormInfo.GameSetups.Add(cloneGameSetup)
+			TheApp.Settings.GameSetups.Add(cloneGameSetup)
 
-			Me.GameSetupComboBox.SelectedIndex = Me.theGameSetupFormInfo.GameSetups.IndexOf(cloneGameSetup)
+			Me.GameSetupComboBox.SelectedIndex = TheApp.Settings.GameSetups.IndexOf(cloneGameSetup)
 		End If
 
 		Me.UpdateWidgets()
@@ -342,8 +324,8 @@ Public Class GameSetupForm
 		Dim selectedIndex As Integer
 
 		selectedIndex = Me.GameSetupComboBox.SelectedIndex
-		If selectedIndex >= 0 AndAlso Me.theGameSetupFormInfo.GameSetups.Count > 1 Then
-			Me.theGameSetupFormInfo.GameSetups.RemoveAt(selectedIndex)
+		If selectedIndex >= 0 AndAlso TheApp.Settings.GameSetups.Count > 1 Then
+			TheApp.Settings.GameSetups.RemoveAt(selectedIndex)
 		End If
 
 		Me.UpdateWidgets()
@@ -352,6 +334,7 @@ Public Class GameSetupForm
 
 	Private Sub CreateModelsFolderTreeButton_Click(sender As Object, e As EventArgs) Handles CreateModelsFolderTreeButton.Click
 		'TODO: Call a function in Unpacker to do the unpacking.
+		Dim debug As Integer = 4242
 	End Sub
 
 	Private Sub BrowseForSteamAppPathFileNameButton_Click(sender As Object, e As EventArgs) Handles BrowseForSteamAppPathFileNameButton.Click
@@ -445,16 +428,14 @@ Public Class GameSetupForm
 		End If
 	End Sub
 
-	Private Sub SaveButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SaveButton.Click
-		TheApp.SaveAppSettings()
-	End Sub
+	'Private Sub SaveButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SaveButton.Click
+	'	TheApp.SaveAppSettings()
+	'End Sub
 
-	Private Sub SaveAndCloseButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SaveAndCloseButton.Click
-		TheApp.SaveAppSettings()
-
-		Me.theGameSetupFormInfo.GameSetupIndex = Me.GameSetupComboBox.SelectedIndex
-		Me.Close()
-	End Sub
+	'Private Sub GoBackButton_Click(sender As Object, e As EventArgs) Handles GoBackButton.Click
+	'	'TODO: Go back to the tab that opened the Set Up Games tab.
+	'	Dim debug As Integer = 4242
+	'End Sub
 
 #End Region
 
@@ -472,8 +453,10 @@ Public Class GameSetupForm
 		'ElseIf e.ListChangedType = ListChangedType.ItemChanged Then
 		If e.ListChangedType = ListChangedType.ItemChanged Then
 			If e.PropertyDescriptor IsNot Nothing Then
-				If e.PropertyDescriptor.Name = "GamePathFileName" OrElse e.PropertyDescriptor.Name = "GameAppPathFileName" OrElse e.PropertyDescriptor.Name = "CompilerPathFileName" OrElse e.PropertyDescriptor.Name = "ViewerPathFileName" OrElse e.PropertyDescriptor.Name = "MappingToolPathFileName" OrElse e.PropertyDescriptor.Name = "UnpackerPathFileName" Then
+				If e.PropertyDescriptor.Name = "GamePathFileName" OrElse e.PropertyDescriptor.Name = "GameAppPathFileName" OrElse e.PropertyDescriptor.Name = "CompilerPathFileName" OrElse e.PropertyDescriptor.Name = "ViewerPathFileName" OrElse e.PropertyDescriptor.Name = "MappingToolPathFileName" OrElse e.PropertyDescriptor.Name = "PackerPathFileName" Then
 					Me.UpdateUseCounts()
+				ElseIf e.PropertyDescriptor.Name = "GameEngine" Then
+					Me.UpdateWidgetsBasedOnGameEngine()
 				End If
 			End If
 		End If
@@ -485,7 +468,7 @@ Public Class GameSetupForm
 
 	Private Sub UpdateWidgets()
 		Dim gameSetupCount As Integer
-		gameSetupCount = Me.theGameSetupFormInfo.GameSetups.Count
+		gameSetupCount = TheApp.Settings.GameSetups.Count
 
 		Me.GameSetupComboBox.Enabled = (gameSetupCount > 0)
 
@@ -504,7 +487,7 @@ Public Class GameSetupForm
 		Me.MappingToolPathFileNameTextBox.Enabled = (gameSetupCount > 0)
 		Me.BrowseForMappingToolPathFileNameButton.Enabled = (gameSetupCount > 0)
 
-		Me.UnpackerPathFileNameTextBox.Enabled = (gameSetupCount > 0)
+		Me.PackerPathFileNameTextBox.Enabled = (gameSetupCount > 0)
 		Me.BrowseForUnpackerPathFileNameButton.Enabled = (gameSetupCount > 0)
 
 		Me.CloneGameSetupButton.Enabled = (gameSetupCount > 0)
@@ -512,14 +495,12 @@ Public Class GameSetupForm
 
 		'NOTE: Reset the bindings, because a new game setup has been chosen.
 
-		Me.theSelectedGameSetup = Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex)
+		Me.theSelectedGameSetup = TheApp.Settings.GameSetups(Me.GameSetupComboBox.SelectedIndex)
 
 		Me.GameNameTextBox.DataBindings.Clear()
 		Me.GameNameTextBox.DataBindings.Add("Text", Me.theSelectedGameSetup, "GameName", False, DataSourceUpdateMode.OnValidation)
 
-		Me.GoldSourceRadioButton.Checked = (Me.theSelectedGameSetup.GameEngine = GameEngine.GoldSource)
-		Me.SourceRadioButton.Checked = (Me.theSelectedGameSetup.GameEngine = GameEngine.Source)
-		Me.Source2RadioButton.Checked = (Me.theSelectedGameSetup.GameEngine = GameEngine.Source2)
+		Me.UpdateGameEngineComboBox()
 
 		Me.GamePathFileNameTextBox.DataBindings.Clear()
 		Me.GamePathFileNameTextBox.DataBindings.Add("Text", Me.theSelectedGameSetup, "GamePathFileNameUnprocessed", False, DataSourceUpdateMode.OnValidation)
@@ -538,28 +519,49 @@ Public Class GameSetupForm
 		Me.MappingToolPathFileNameTextBox.DataBindings.Clear()
 		Me.MappingToolPathFileNameTextBox.DataBindings.Add("Text", Me.theSelectedGameSetup, "MappingToolPathFileNameUnprocessed", False, DataSourceUpdateMode.OnValidation)
 
-		Me.UnpackerPathFileNameTextBox.DataBindings.Clear()
-		Me.UnpackerPathFileNameTextBox.DataBindings.Add("Text", Me.theSelectedGameSetup, "UnpackerPathFileNameUnprocessed", False, DataSourceUpdateMode.OnValidation)
+		Me.PackerPathFileNameTextBox.DataBindings.Clear()
+		Me.PackerPathFileNameTextBox.DataBindings.Add("Text", Me.theSelectedGameSetup, "PackerPathFileNameUnprocessed", False, DataSourceUpdateMode.OnValidation)
 	End Sub
 
-	Private Sub SetGameEngineOption(ByVal givenGameEngine As GameEngine)
-		Dim selectedGameSetup As GameSetup
-		selectedGameSetup = Me.theGameSetupFormInfo.GameSetups(Me.GameSetupComboBox.SelectedIndex)
-		selectedGameSetup.GameEngine = givenGameEngine
+	Private Sub UpdateGameEngineComboBox()
+		Dim anEnumList As IList
+
+		anEnumList = EnumHelper.ToList(GetType(GameEngine))
+		'NOTE: For now, remove the Source 2 value.
+		EnumHelper.RemoveFromList(GameEngine.Source2, anEnumList)
+
+		Me.EngineComboBox.DataBindings.Clear()
+		Try
+			Me.EngineComboBox.DisplayMember = "Value"
+			Me.EngineComboBox.ValueMember = "Key"
+			Me.EngineComboBox.DataSource = anEnumList
+			Me.EngineComboBox.DataBindings.Add("SelectedValue", Me.theSelectedGameSetup, "GameEngine", False, DataSourceUpdateMode.OnPropertyChanged)
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		End Try
 	End Sub
 
 	Private Sub UpdateWidgetsBasedOnGameEngine()
 		If Me.theSelectedGameSetup.GameEngine = GameEngine.GoldSource Then
-			Me.GamePathLabel.Text = "Game info file (liblist.gam):"
+			Me.GamePathLabel.Text = "LibList.gam:"
 		ElseIf Me.theSelectedGameSetup.GameEngine = GameEngine.Source Then
-			Me.GamePathLabel.Text = "Game info file (gameinfo.txt):"
+			Me.GamePathLabel.Text = "GameInfo.txt:"
 		ElseIf Me.theSelectedGameSetup.GameEngine = GameEngine.Source2 Then
-			Me.GamePathLabel.Text = "Game info file (gameinfo.gi):"
+			Me.GamePathLabel.Text = "GameInfo.gi:"
 		End If
 
-		Me.UnpackerLabel.Visible = Me.theSelectedGameSetup.GameEngine = GameEngine.Source
-		Me.UnpackerPathFileNameTextBox.Visible = Me.theSelectedGameSetup.GameEngine = GameEngine.Source
+		Me.PackerLabel.Visible = Me.theSelectedGameSetup.GameEngine = GameEngine.Source
+		Me.PackerPathFileNameTextBox.Visible = Me.theSelectedGameSetup.GameEngine = GameEngine.Source
 		Me.BrowseForUnpackerPathFileNameButton.Visible = Me.theSelectedGameSetup.GameEngine = GameEngine.Source
+	End Sub
+
+	Private Sub SetPathFileNameField(ByVal inputText As String, ByRef outputText As String)
+		If outputText(0) = "<" Then
+			For Each aSteamLibraryPath As SteamLibraryPath In TheApp.Settings.SteamLibraryPaths
+				SetMacroInText(aSteamLibraryPath.LibraryPath, aSteamLibraryPath.Macro, inputText)
+			Next
+		End If
+		outputText = inputText
 	End Sub
 
 	Private Sub UpdateUseCounts()
@@ -586,7 +588,7 @@ Public Class GameSetupForm
 				If aGameSetup.MappingToolPathFileNameUnprocessed.StartsWith(aMacro) Then
 					useCount += 1
 				End If
-				If aGameSetup.UnpackerPathFileNameUnprocessed.StartsWith(aMacro) Then
+				If aGameSetup.PackerPathFileNameUnprocessed.StartsWith(aMacro) Then
 					useCount += 1
 				End If
 			Next
@@ -665,7 +667,7 @@ Public Class GameSetupForm
 		SetMacroInText(oldText, newText, aGameSetup.CompilerPathFileNameUnprocessed)
 		SetMacroInText(oldText, newText, aGameSetup.ViewerPathFileNameUnprocessed)
 		SetMacroInText(oldText, newText, aGameSetup.MappingToolPathFileNameUnprocessed)
-		SetMacroInText(oldText, newText, aGameSetup.UnpackerPathFileNameUnprocessed)
+		SetMacroInText(oldText, newText, aGameSetup.PackerPathFileNameUnprocessed)
 	End Sub
 
 	Private Sub SetMacroInText(ByVal oldText As String, ByVal newText As String, ByRef fullText As String)
@@ -688,7 +690,6 @@ Public Class GameSetupForm
 
 #Region "Data"
 
-	Private theGameSetupFormInfo As GameSetupFormInfo
 	Private theSelectedGameSetup As GameSetup
 
 #End Region

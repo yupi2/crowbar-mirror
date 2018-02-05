@@ -18,28 +18,31 @@ Public MustInherit Class SourceModel
 				model = New SourceModel06(mdlPathFileName, version)
 			ElseIf version = 10 Then
 				model = New SourceModel10(mdlPathFileName, version)
+			ElseIf version = 14 Then
+				'NOT IMPLEMENTED YET.
+				'model = New SourceModel14(mdlPathFileName, version)
 			ElseIf version = 2531 Then
 				model = New SourceModel2531(mdlPathFileName, version)
 			ElseIf version = 27 Then
-				'NOT IMPLEMENTED YET.
-				'model = New SourceModel27(mdlPathFileName, version)
+				'NOT FULLY IMPLEMENTED YET.
+				model = New SourceModel27(mdlPathFileName, version)
 			ElseIf version = 28 Then
-				'NOT IMPLEMENTED YET.
-				'model = New SourceModel28(mdlPathFileName, version)
+				'NOT FULLY IMPLEMENTED YET.
+				model = New SourceModel28(mdlPathFileName, version)
 			ElseIf version = 29 Then
-				'NOT IMPLEMENTED YET.
-				'model = New SourceModel29(mdlPathFileName, version)
+				'NOT FULLY IMPLEMENTED YET.
+				model = New SourceModel29(mdlPathFileName, version)
 			ElseIf version = 30 Then
-				'NOT IMPLEMENTED YET.
-				'model = New SourceModel30(mdlPathFileName, version)
+				'NOT FULLY IMPLEMENTED YET.
+				model = New SourceModel30(mdlPathFileName, version)
 			ElseIf version = 31 Then
-				'NOT IMPLEMENTED YET.
+				'NOT FULLY IMPLEMENTED YET.
 				model = New SourceModel31(mdlPathFileName, version)
 			ElseIf version = 32 Then
-				'NOT IMPLEMENTED YET.
+				'NOT FULLY IMPLEMENTED YET.
 				model = New SourceModel32(mdlPathFileName, version)
 			ElseIf version = 35 Then
-				'NOT IMPLEMENTED YET.
+				'NOT FULLY IMPLEMENTED YET.
 				model = New SourceModel35(mdlPathFileName, version)
 			ElseIf version = 36 Then
 				'NOT FULLY IMPLEMENTED YET.
@@ -48,7 +51,7 @@ Public MustInherit Class SourceModel
 				'NOT FULLY IMPLEMENTED YET.
 				model = New SourceModel37(mdlPathFileName, version)
 			ElseIf version = 38 Then
-				'NOT IMPLEMENTED YET.
+				'NOT IMPLEMENTED YET, because can't find any models that use this version number.
 				'model = New SourceModel38(mdlPathFileName, version)
 			ElseIf version = 44 Then
 				model = New SourceModel44(mdlPathFileName, version)
@@ -65,9 +68,7 @@ Public MustInherit Class SourceModel
 			ElseIf version = 49 Then
 				model = New SourceModel49(mdlPathFileName, version)
 			ElseIf version = 52 Then
-				'TODO: Properly decompile v52, but for now it is decompiled as v49.
-				'model = New SourceModel52(mdlPathFileName, version)
-				model = New SourceModel49(mdlPathFileName, version)
+				model = New SourceModel52(mdlPathFileName, version)
 			ElseIf version = 53 Then
 				'TODO: Properly decompile v53.
 				'model = New SourceModel53(mdlPathFileName, version)
@@ -300,10 +301,10 @@ Public MustInherit Class SourceModel
 		Return status
 	End Function
 
-	Public Overridable Function CheckForRequiredFiles() As StatusMessage
-		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+	Public Overridable Function CheckForRequiredFiles() As FilesFoundFlags
+		Dim status As AppEnums.FilesFoundFlags
 
-		status = StatusMessage.Error
+		status = FilesFoundFlags.AllFilesFound
 
 		Return status
 	End Function
@@ -355,9 +356,9 @@ Public MustInherit Class SourceModel
 	Public Overridable Function ReadVtxFile() As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
-		If String.IsNullOrEmpty(Me.theVtxPathFileName) Then
-			status = Me.CheckForRequiredFiles()
-		End If
+		'If String.IsNullOrEmpty(Me.theVtxPathFileName) Then
+		'	status = Me.CheckForRequiredFiles()
+		'End If
 
 		If status = StatusMessage.Success Then
 			Me.ReadFile(Me.theVtxPathFileName, AddressOf Me.ReadVtxFile_Internal)
@@ -369,9 +370,9 @@ Public MustInherit Class SourceModel
 	Public Overridable Function ReadVvdFile() As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
-		If String.IsNullOrEmpty(Me.theVvdPathFileName) Then
-			status = Me.CheckForRequiredFiles()
-		End If
+		'If String.IsNullOrEmpty(Me.theVvdPathFileName) Then
+		'	status = Me.CheckForRequiredFiles()
+		'End If
 
 		If status = StatusMessage.Success Then
 			Me.ReadFile(Me.theVvdPathFileName, AddressOf Me.ReadVvdFile_Internal)
@@ -454,6 +455,12 @@ Public MustInherit Class SourceModel
 		Return status
 	End Function
 
+	Public Overridable Function WriteVertexAnimationVtaFiles(ByVal modelOutputPath As String) As AppEnums.StatusMessage
+		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+
+		Return status
+	End Function
+
 	Public Overridable Function WriteBoneAnimationSmdFile(ByVal smdPathFileName As String, ByVal aSequenceDesc As SourceMdlSequenceDescBase, ByVal anAnimationDesc As SourceMdlAnimationDescBase) As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
@@ -476,8 +483,24 @@ Public MustInherit Class SourceModel
 		Return status
 	End Function
 
-	Public Overridable Function WriteVertexAnimationVtaFile(ByVal vtaPathFileName As String) As AppEnums.StatusMessage
+	Public Overridable Function WriteVertexAnimationVtaFile(ByVal vtaPathFileName As String, ByVal bodyPart As SourceMdlBodyPart) As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+
+		Try
+			theOutputFileTextWriter = File.CreateText(vtaPathFileName)
+
+			Me.WriteVertexAnimationVtaFile(bodyPart)
+		Catch ex As PathTooLongException
+			Dim debug As Integer = 4242
+			'TODO: Show warning to user explaining that file was not created and why.
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		Finally
+			If theOutputFileTextWriter IsNot Nothing Then
+				theOutputFileTextWriter.Flush()
+				theOutputFileTextWriter.Close()
+			End If
+		End Try
 
 		Return status
 	End Function
@@ -660,7 +683,7 @@ Public MustInherit Class SourceModel
 
 	End Sub
 
-	Protected Overridable Sub WriteVertexAnimationVtaFile()
+	Protected Overridable Sub WriteVertexAnimationVtaFile(ByVal bodyPart As SourceMdlBodyPart)
 
 	End Sub
 
@@ -800,6 +823,14 @@ Public MustInherit Class SourceModel
 #Region "Private Methods"
 
 	Private Sub GetHeaderDataFromMdlFile(ByVal ioTextLines As List(Of String))
+		'Dim mdlFileData48 As SourceMdlFileData48 = Nothing
+		'Dim mdlFileData49 As SourceMdlFileData49 = Nothing
+		'If Me.theMdlFileDataGeneric.version = 48 Then
+		'	mdlFileData48 = CType(Me.theMdlFileDataGeneric, SourceMdlFileData48)
+		'ElseIf Me.theMdlFileDataGeneric.version = 49 Then
+		'	mdlFileData49 = CType(Me.theMdlFileDataGeneric, SourceMdlFileData49)
+		'End If
+
 		ioTextLines.Add("=== General Info ===")
 		ioTextLines.Add("")
 
@@ -813,6 +844,12 @@ Public MustInherit Class SourceModel
 
 		ioTextLines.Add("MDL file version: " + Me.theMdlFileDataGeneric.version.ToString("N0"))
 		ioTextLines.Add("MDL stored file name: """ + Me.theMdlFileDataGeneric.theModelName + """")
+		'If mdlFileData48 IsNot Nothing AndAlso mdlFileData48.nameCopyOffset > 0 Then
+		'	ioTextLines.Add("MDL stored file name copy: """ + mdlFileData48.theNameCopy + """")
+		'End If
+		'If mdlFileData49 IsNot Nothing AndAlso mdlFileData49.nameCopyOffset > 0 Then
+		'	ioTextLines.Add("MDL stored file name copy: """ + mdlFileData49.theNameCopy + """")
+		'End If
 
 		Dim storedFileSize As Long
 		Dim actualFileSize As Long
@@ -849,13 +886,14 @@ Public MustInherit Class SourceModel
 
 		ioTextLines.Add("""" + Path.GetFileName(Me.theMdlPathFileName) + """")
 
-		If Me.SequenceGroupMdlFilesAreUsed Then
-			'If File.Exists(Me.thePhyPathFileName) Then
-			'	ioTextLines.Add("""" + Path.GetFileName(Me.thePhyPathFileName) + """")
-			'Else
-			'	ioTextLines.Add("ERROR: File not found: """ + Path.GetFileName(Me.thePhyPathFileName) + """")
-			'End If
-		End If
+		'TODO: For GoldSource, list all SequenceGroup MDL files.
+		'If Me.SequenceGroupMdlFilesAreUsed Then
+		'	'If File.Exists(Me.thePhyPathFileName) Then
+		'	'	ioTextLines.Add("""" + Path.GetFileName(Me.thePhyPathFileName) + """")
+		'	'Else
+		'	'	ioTextLines.Add("ERROR: File not found: """ + Path.GetFileName(Me.thePhyPathFileName) + """")
+		'	'End If
+		'End If
 
 		If Me.TextureMdlFileIsUsed Then
 			If File.Exists(Me.theTextureMdlPathFileName) Then
@@ -873,6 +911,7 @@ Public MustInherit Class SourceModel
 			End If
 		End If
 
+		'TODO: List all vtx files, not just the one used for decompiling.
 		If Me.VtxFileIsUsed Then
 			If File.Exists(Me.theVtxPathFileName) Then
 				ioTextLines.Add("""" + Path.GetFileName(Me.theVtxPathFileName) + """")
@@ -916,7 +955,7 @@ Public MustInherit Class SourceModel
 
 			ioTextLines.Add("")
 
-			ioTextLines.Add("Material File Names (file names in mesh SMD files): ")
+			ioTextLines.Add("Material File Names (file names in mesh SMD files and in QC $texturegroup command): ")
 			Dim textureFileNames As List(Of String)
 			textureFileNames = Me.GetTextureFileNames()
 			ioTextLines.Add("(Total used: " + textureFileNames.Count.ToString() + ")")

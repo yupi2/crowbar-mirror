@@ -9,6 +9,7 @@
 
 		Me.theChecksumIsValid = True
 		Me.theMdlFileOnlyHasAnimations = False
+		Me.theUpAxisYCommandWasUsed = False
 	End Sub
 
 	Public id(3) As Char
@@ -25,5 +26,6 @@
 
 	Public theChecksumIsValid As Boolean
 	Public theMdlFileOnlyHasAnimations As Boolean
+	Public theUpAxisYCommandWasUsed As Boolean
 
 End Class

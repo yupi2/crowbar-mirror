@@ -1,6 +1,18 @@
 ﻿Public Class SourceMdlSequenceDesc31
 	Inherits SourceMdlSequenceDescBase
 
+	Public Sub New()
+		'	short				anim[MAXSTUDIOBLENDS][MAXSTUDIOBLENDS];	// f64: 16x16x2 = 512 bytes each anim a short
+		Me.anim = New List(Of List(Of Short))(MAXSTUDIOBLENDS)
+		For rowIndex As Integer = 0 To MAXSTUDIOBLENDS - 1
+			Dim animRow As New List(Of Short)(MAXSTUDIOBLENDS)
+			For columnIndex As Integer = 0 To MAXSTUDIOBLENDS - 1
+				animRow.Add(0)
+			Next
+			Me.anim.Add(animRow)
+		Next
+	End Sub
+
 	Public nameOffset As Integer
 	Public activityNameOffset As Integer
 	Public flags As Integer
@@ -16,6 +28,10 @@
 
 	Public blendCount As Integer
 	Public blendOffset As Integer
+
+	Public anim As List(Of List(Of Short))
+
+	Public movementIndex As Integer
 
 	Public sequenceGroup As Integer
 

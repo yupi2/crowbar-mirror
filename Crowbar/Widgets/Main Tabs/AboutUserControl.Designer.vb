@@ -30,9 +30,13 @@ Partial Class AboutUserControl
 		Me.AuthorLinkLabel = New System.Windows.Forms.LinkLabel()
 		Me.ProductNameLinkLabel = New System.Windows.Forms.LinkLabel()
 		Me.Panel1 = New System.Windows.Forms.Panel()
+		Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+		Me.Credits3TextBox = New System.Windows.Forms.TextBox()
+		Me.Credits2TextBox = New System.Windows.Forms.TextBox()
 		Me.GotoSteamProfileLinkLabel = New System.Windows.Forms.LinkLabel()
 		Me.GotoSteamGroupLinkLabel = New System.Windows.Forms.LinkLabel()
 		Me.Panel1.SuspendLayout()
+		Me.GroupBox1.SuspendLayout()
 		Me.SuspendLayout()
 		'
 		'ProductInfoTextBox
@@ -51,13 +55,10 @@ Partial Class AboutUserControl
 		'
 		'ProductDescriptionTextBox
 		'
-		Me.ProductDescriptionTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.ProductDescriptionTextBox.Location = New System.Drawing.Point(174, 3)
 		Me.ProductDescriptionTextBox.Multiline = True
 		Me.ProductDescriptionTextBox.Name = "ProductDescriptionTextBox"
 		Me.ProductDescriptionTextBox.ReadOnly = True
-		Me.ProductDescriptionTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both
 		Me.ProductDescriptionTextBox.Size = New System.Drawing.Size(594, 73)
 		Me.ProductDescriptionTextBox.TabIndex = 5
 		Me.ProductDescriptionTextBox.TabStop = False
@@ -84,17 +85,16 @@ Partial Class AboutUserControl
 		'
 		'CreditsTextBox
 		'
-		Me.CreditsTextBox.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-			Or System.Windows.Forms.AnchorStyles.Left) _
-			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.CreditsTextBox.Location = New System.Drawing.Point(174, 82)
+		Me.CreditsTextBox.Location = New System.Drawing.Point(6, 20)
 		Me.CreditsTextBox.Multiline = True
 		Me.CreditsTextBox.Name = "CreditsTextBox"
 		Me.CreditsTextBox.ReadOnly = True
-		Me.CreditsTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both
-		Me.CreditsTextBox.Size = New System.Drawing.Size(594, 453)
+		Me.CreditsTextBox.Size = New System.Drawing.Size(190, 187)
 		Me.CreditsTextBox.TabIndex = 6
 		Me.CreditsTextBox.TabStop = False
+		Me.CreditsTextBox.Text = "arby26" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Artfunkel" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "atrblizzard" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Avengito" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "BANG!" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "BinaryRifle" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Cra0kalo" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "CrazyBubb" & _
+	"a" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "da1barker" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Doktor haus" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Drsalvador" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Funreal"
+		Me.CreditsTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
 		'
 		'AuthorLinkLabel
 		'
@@ -126,12 +126,12 @@ Partial Class AboutUserControl
 		'
 		'Panel1
 		'
+		Me.Panel1.Controls.Add(Me.GroupBox1)
 		Me.Panel1.Controls.Add(Me.GotoSteamProfileLinkLabel)
 		Me.Panel1.Controls.Add(Me.GotoSteamGroupLinkLabel)
 		Me.Panel1.Controls.Add(Me.ProductDescriptionTextBox)
 		Me.Panel1.Controls.Add(Me.ProductLogoButton)
 		Me.Panel1.Controls.Add(Me.AuthorIconButton)
-		Me.Panel1.Controls.Add(Me.CreditsTextBox)
 		Me.Panel1.Controls.Add(Me.AuthorLinkLabel)
 		Me.Panel1.Controls.Add(Me.ProductNameLinkLabel)
 		Me.Panel1.Controls.Add(Me.ProductInfoTextBox)
@@ -141,6 +141,44 @@ Partial Class AboutUserControl
 		Me.Panel1.Name = "Panel1"
 		Me.Panel1.Size = New System.Drawing.Size(776, 536)
 		Me.Panel1.TabIndex = 7
+		'
+		'GroupBox1
+		'
+		Me.GroupBox1.Controls.Add(Me.Credits3TextBox)
+		Me.GroupBox1.Controls.Add(Me.Credits2TextBox)
+		Me.GroupBox1.Controls.Add(Me.CreditsTextBox)
+		Me.GroupBox1.Location = New System.Drawing.Point(174, 82)
+		Me.GroupBox1.Name = "GroupBox1"
+		Me.GroupBox1.Size = New System.Drawing.Size(594, 213)
+		Me.GroupBox1.TabIndex = 9
+		Me.GroupBox1.TabStop = False
+		Me.GroupBox1.Text = "Special Thanks"
+		'
+		'Credits3TextBox
+		'
+		Me.Credits3TextBox.Location = New System.Drawing.Point(398, 20)
+		Me.Credits3TextBox.Multiline = True
+		Me.Credits3TextBox.Name = "Credits3TextBox"
+		Me.Credits3TextBox.ReadOnly = True
+		Me.Credits3TextBox.Size = New System.Drawing.Size(190, 187)
+		Me.Credits3TextBox.TabIndex = 8
+		Me.Credits3TextBox.TabStop = False
+		Me.Credits3TextBox.Text = "Pte Jack" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Rantis" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Sage J. Fox" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Salad" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Seraphim" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Splinks" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Stiffy360" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Stay Puft" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Th" & _
+	"e Freakin' Scout's A Spy!" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "The303" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Vincentor" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "YuRaNnNzZZ"
+		Me.Credits3TextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+		'
+		'Credits2TextBox
+		'
+		Me.Credits2TextBox.Location = New System.Drawing.Point(202, 20)
+		Me.Credits2TextBox.Multiline = True
+		Me.Credits2TextBox.Name = "Credits2TextBox"
+		Me.Credits2TextBox.ReadOnly = True
+		Me.Credits2TextBox.Size = New System.Drawing.Size(190, 187)
+		Me.Credits2TextBox.TabIndex = 7
+		Me.Credits2TextBox.TabStop = False
+		Me.Credits2TextBox.Text = "Game Zombie" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "GeckoN" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "GPZ" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Kerry [Valve employee]" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "k@rt" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "K1CHWA" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Lt. Rocky" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Mr. Br" & _
+	"ightside" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "mrlanky" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Nicknine" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Pajama" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "pappaskurtz"
+		Me.Credits2TextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
 		'
 		'GotoSteamProfileLinkLabel
 		'
@@ -179,6 +217,8 @@ Partial Class AboutUserControl
 		Me.Size = New System.Drawing.Size(776, 536)
 		Me.Panel1.ResumeLayout(False)
 		Me.Panel1.PerformLayout()
+		Me.GroupBox1.ResumeLayout(False)
+		Me.GroupBox1.PerformLayout()
 		Me.ResumeLayout(False)
 
 	End Sub
@@ -192,5 +232,8 @@ Partial Class AboutUserControl
 	Friend WithEvents Panel1 As System.Windows.Forms.Panel
 	Friend WithEvents GotoSteamProfileLinkLabel As System.Windows.Forms.LinkLabel
 	Friend WithEvents GotoSteamGroupLinkLabel As System.Windows.Forms.LinkLabel
+	Friend WithEvents GroupBox1 As System.Windows.Forms.GroupBox
+	Friend WithEvents Credits3TextBox As System.Windows.Forms.TextBox
+	Friend WithEvents Credits2TextBox As System.Windows.Forms.TextBox
 
 End Class

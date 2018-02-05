@@ -1,7 +1,7 @@
 Imports System.IO
 Imports System.Text
 
-Public Class SourcePhyFile49
+Public Class SourcePhyFile
 
 #Region "Creation and Destruction"
 
@@ -642,7 +642,6 @@ Public Class SourcePhyFile49
 			Dim aSourcePhyCollisionPair As SourcePhyCollisionPair
 			Me.thePhyFileData.theSourcePhyCollisionPairs = New List(Of SourcePhyCollisionPair)()
 			Do
-				aSourcePhyCollisionPair = New SourcePhyCollisionPair()
 				tempStreamOffset = Me.theInputFileReader.BaseStream.Position
 				line = FileManager.ReadTextLine(Me.theInputFileReader)
 				If line Is Nothing OrElse line <> "collisionrules {" Then
@@ -658,10 +657,10 @@ Public Class SourcePhyFile49
 						If key = "collisionpair" Then
 							tokens = value.Split(delimiters, StringSplitOptions.RemoveEmptyEntries)
 							If tokens.Length = 2 Then
-								'aSourcePhyCollisionPair.obj0 = CInt(tokens(0))
-								'aSourcePhyCollisionPair.obj1 = CInt(tokens(1))
+								aSourcePhyCollisionPair = New SourcePhyCollisionPair()
 								aSourcePhyCollisionPair.obj0 = Integer.Parse(tokens(0), TheApp.InternalNumberFormat)
 								aSourcePhyCollisionPair.obj1 = Integer.Parse(tokens(1), TheApp.InternalNumberFormat)
+								Me.thePhyFileData.theSourcePhyCollisionPairs.Add(aSourcePhyCollisionPair)
 							End If
 						ElseIf key = "selfcollisions" Then
 							Me.thePhyFileData.theSourcePhySelfCollides = False
@@ -673,7 +672,6 @@ Public Class SourcePhyFile49
 				If key Is Nothing OrElse key <> "}" Then
 					Exit Do
 				End If
-				Me.thePhyFileData.theSourcePhyCollisionPairs.Add(aSourcePhyCollisionPair)
 				thereIsAValue = True
 			Loop Until line Is Nothing
 		Catch
@@ -743,6 +741,10 @@ Public Class SourcePhyFile49
 		'End Try
 
 		Me.thePhyFileData.theSourcePhyCollisionText = Common.ReadPhyCollisionTextSection(Me.theInputFileReader)
+	End Sub
+
+	Public Sub ReadUnreadBytes()
+		Me.thePhyFileData.theFileSeekLog.LogUnreadBytes(Me.theInputFileReader)
 	End Sub
 
 #End Region

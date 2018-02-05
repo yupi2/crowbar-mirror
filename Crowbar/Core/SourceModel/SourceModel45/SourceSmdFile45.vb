@@ -41,17 +41,12 @@ Public Class SourceSmdFile45
 		Dim line As String = ""
 		Dim name As String
 
-		Me.theWeaponBoneIndex = -1
-
 		'nodes
 		line = "nodes"
 		Me.theOutputFileStreamWriter.WriteLine(line)
 
 		For boneIndex As Integer = 0 To Me.theMdlFileData.theBones.Count - 1
 			name = Me.theMdlFileData.theBones(boneIndex).theName
-			If TheApp.Settings.DecompileApplyRightHandFixIsChecked AndAlso lodIndex = 0 AndAlso name = "ValveBiped.weapon_bone" Then
-				Me.theWeaponBoneIndex = boneIndex
-			End If
 
 			line = "  "
 			line += boneIndex.ToString(TheApp.InternalNumberFormat)
@@ -83,25 +78,11 @@ Public Class SourceSmdFile45
 			line = "    "
 			line += boneIndex.ToString(TheApp.InternalNumberFormat)
 			line += " "
-			If lodIndex = 0 AndAlso Me.theWeaponBoneIndex = boneIndex Then
-				line += "0.000000 0.000000 0.000000"
-				'ElseIf Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).parentBoneIndex = -1 Then
-				'	'NOTE: Only adjust position if a root bone. Did not seem to help for l4d2's van.mdl.
-				'	line += Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).positionY.ToString("0.000000", TheApp.InternalNumberFormat)
-				'	line += " "
-				'	line += (-Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).positionX).ToString("0.000000", TheApp.InternalNumberFormat)
-				'	line += " "
-				'	line += Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).positionZ.ToString("0.000000", TheApp.InternalNumberFormat)
-			Else
-				line += Me.theMdlFileData.theBones(boneIndex).position.x.ToString("0.000000", TheApp.InternalNumberFormat)
-				line += " "
-				line += Me.theMdlFileData.theBones(boneIndex).position.y.ToString("0.000000", TheApp.InternalNumberFormat)
-				'line += Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).positionY.ToString("0.000000", TheApp.InternalNumberFormat)
-				'line += " "
-				'line += (-Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).positionX).ToString("0.000000", TheApp.InternalNumberFormat)
-				line += " "
-				line += Me.theMdlFileData.theBones(boneIndex).position.z.ToString("0.000000", TheApp.InternalNumberFormat)
-			End If
+			line += Me.theMdlFileData.theBones(boneIndex).position.x.ToString("0.000000", TheApp.InternalNumberFormat)
+			line += " "
+			line += Me.theMdlFileData.theBones(boneIndex).position.y.ToString("0.000000", TheApp.InternalNumberFormat)
+			line += " "
+			line += Me.theMdlFileData.theBones(boneIndex).position.z.ToString("0.000000", TheApp.InternalNumberFormat)
 			line += " "
 			line += Me.theMdlFileData.theBones(boneIndex).rotation.x.ToString("0.000000", TheApp.InternalNumberFormat)
 			line += " "
@@ -1829,7 +1810,6 @@ Public Class SourceSmdFile45
 	Private theVvdFileData As SourceVvdFileData45
 	'Private theModelName As String
 
-	Private theWeaponBoneIndex As Integer
 	Private theAnimationFrameLines As SortedList(Of Integer, AnimationFrameLine)
 
 #End Region

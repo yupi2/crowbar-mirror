@@ -22,5 +22,6 @@ Public Class SourceVtxModelLod
 
 
 	Public theVtxMeshes As List(Of SourceVtxMesh)
+	Public theVtxModelLodUsesFacial As Boolean
 
 End Class

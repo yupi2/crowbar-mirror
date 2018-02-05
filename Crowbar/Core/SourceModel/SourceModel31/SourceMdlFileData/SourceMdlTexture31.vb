@@ -8,6 +8,6 @@
 	Public worldUnitsPerV As Double
 	Public unknown(1) As Integer
 
-	Public theFileName As String
+	Public thePathFileName As String
 
 End Class

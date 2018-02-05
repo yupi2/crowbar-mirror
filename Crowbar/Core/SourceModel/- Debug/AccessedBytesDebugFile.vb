@@ -50,7 +50,10 @@ Public Class AccessedBytesDebugFile
 			'	Me.WriteLogLine(1, offsetStart.ToString("N0") + " - " + offsetEnd.ToString("N0"))
 			'	offsetStart = -1
 			'End If
-			If (i = aFileSeekLog.theFileSeekList.Count - 1) OrElse (offsetEnd + 1 <> aFileSeekLog.theFileSeekList.Keys(i + 1)) Then
+			If aFileSeekLog.theFileSeekDescriptionList.Values(i).StartsWith("[ERROR] Unread bytes") Then
+				Me.WriteLogLine(1, offsetStart.ToString("N0") + " - " + (aFileSeekLog.theFileSeekList.Keys(i) - 1).ToString("N0"))
+				offsetStart = -1
+			ElseIf (i = aFileSeekLog.theFileSeekList.Count - 1) OrElse (offsetEnd + 1 <> aFileSeekLog.theFileSeekList.Keys(i + 1)) Then
 				Me.WriteLogLine(1, offsetStart.ToString("N0") + " - " + offsetEnd.ToString("N0"))
 				offsetStart = -1
 			End If
@@ -61,13 +64,17 @@ Public Class AccessedBytesDebugFile
 		line = "--- Each Section or Loop ---"
 		Me.WriteLogLine(0, line)
 
+		'aFileSeekLog.Add(aFileSeekLog.theFileSize, aFileSeekLog.theFileSize, "END OF FILE + 1 (File size)")
+
 		offsetEnd = -1
 		For i As Integer = 0 To aFileSeekLog.theFileSeekList.Count - 1
 			offsetStart = aFileSeekLog.theFileSeekList.Keys(i)
 
-			If offsetEnd <> offsetStart - 1 Then
-				Me.theOutputFileStreamWriter.WriteLine()
-				Me.theOutputFileStreamWriter.Flush()
+			If offsetEnd < offsetStart - 1 Then
+				'Me.theOutputFileStreamWriter.WriteLine()
+				'Me.theOutputFileStreamWriter.Flush()
+				line = (offsetEnd + 1).ToString("N0") + " - " + (offsetStart - 1).ToString("N0") + " [ERROR] Bytes not read."
+				Me.WriteLogLine(1, line)
 			End If
 
 			offsetEnd = aFileSeekLog.theFileSeekList.Values(i)

@@ -84,7 +84,6 @@
     <Compile Include="Core\Compiler\CompilerOutputInfo.vb" />
     <Compile Include="Core\GameSetup\GameInfoTxtFile.vb" />
     <Compile Include="Core\GameSetup\SteamLibraryPath.vb" />
-    <Compile Include="Core\GameSetup\GameSetupFormInfo.vb" />
     <Compile Include="Core\Debug\AppDebug1File.vb" />
     <Compile Include="Core\Debug\AppDebug2File.vb" />
     <Compile Include="Core\Debug\AppDebug3File.vb" />
@@ -110,6 +109,9 @@
     <Compile Include="Core\Decompiler\Decompiler.vb">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Core\GmaFormat\GmaFile.vb" />
+    <Compile Include="Core\GmaFormat\GmaDirectoryEntry.vb" />
+    <Compile Include="Core\GmaFormat\GmaFileData.vb" />
     <Compile Include="Core\MappingTool\MappingTool.vb">
       <SubType>Component</SubType>
     </Compile>
@@ -134,6 +136,7 @@
     <Compile Include="Core\SourceModel\SourceGlobal\SourceQuaternion48bitsAssumedW.vb" />
     <Compile Include="Core\SourceModel\SourceGlobal\SourceQuaternion48bitsViaBytes.vb" />
     <Compile Include="Core\SourceModel\SourceGlobal\SourceQuaternion48bitsSmallest3.vb" />
+    <Compile Include="Core\SourceModel\SourceGlobal\SourceVectorSingle.vb" />
     <Compile Include="Core\SourceModel\SourceGlobal\SourceVector4D.vb" />
     <Compile Include="Core\SourceModel\SourceModel04\SourceMdlFileData\SourceMdlBodyPart04.vb" />
     <Compile Include="Core\SourceModel\SourceModel04\SourceMdlFileData\SourceMdlFaceVertexInfo04.vb" />
@@ -171,7 +174,9 @@
     <Compile Include="Core\SourceModel\SourceModel06\SourceModule06.vb" />
     <Compile Include="Core\SourceModel\SourceModel06\SourceQcFile06.vb" />
     <Compile Include="Core\SourceModel\SourceModel06\SourceSmdFile06.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceBoneTransform10Single.vb" />
     <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceBoneTransform10.vb" />
+    <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceMdlBone10Single.vb" />
     <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceMeshTriangleStripOrFan10.vb" />
     <Compile Include="Core\SourceModel\SourceModel10\SourceModule10.vb" />
     <Compile Include="Core\SourceModel\SourceModel10\SourceMdlFileData\SourceMdlAnimation10.vb" />
@@ -227,6 +232,25 @@
     <Compile Include="Core\SourceModel\SourceModel2531\SourcePhyFile2531.vb" />
     <Compile Include="Core\SourceModel\SourceModel2531\SourceQcFile2531.vb" />
     <Compile Include="Core\SourceModel\SourceModel2531\SourceVtaFile2531.vb" />
+    <Compile Include="Core\SourceModel\SourceModel27\SourceMdlFileData\SourceMdlBodyPart27.vb" />
+    <Compile Include="Core\SourceModel\SourceModel27\SourceMdlFile27.vb" />
+    <Compile Include="Core\SourceModel\SourceModel27\SourceMdlFileData\SourceMdlBoneWeight27.vb" />
+    <Compile Include="Core\SourceModel\SourceModel27\SourceMdlFileData\SourceMdlFileData27.vb" />
+    <Compile Include="Core\SourceModel\SourceModel27\SourceMdlFileData\SourceMdlMesh27.vb" />
+    <Compile Include="Core\SourceModel\SourceModel27\SourceMdlFileData\SourceMdlModel27.vb" />
+    <Compile Include="Core\SourceModel\SourceModel27\SourceModel27.vb" />
+    <Compile Include="Core\SourceModel\SourceModel27\SourceQcFile27.vb" />
+    <Compile Include="Core\SourceModel\SourceModel27\SourceSmdFile27.vb" />
+    <Compile Include="Core\SourceModel\SourceModel28\SourceMdlFile28.vb" />
+    <Compile Include="Core\SourceModel\SourceModel28\SourceMdlFileData\SourceMdlBodyPart28.vb" />
+    <Compile Include="Core\SourceModel\SourceModel28\SourceMdlFileData\SourceMdlBoneWeight28.vb" />
+    <Compile Include="Core\SourceModel\SourceModel28\SourceMdlFileData\SourceMdlFileData28.vb" />
+    <Compile Include="Core\SourceModel\SourceModel28\SourceMdlFileData\SourceMdlMesh28.vb" />
+    <Compile Include="Core\SourceModel\SourceModel28\SourceMdlFileData\SourceMdlModel28.vb" />
+    <Compile Include="Core\SourceModel\SourceModel28\SourceModel28.vb" />
+    <Compile Include="Core\SourceModel\SourceModel28\SourceQcFile28.vb" />
+    <Compile Include="Core\SourceModel\SourceModel28\SourceSmdFile28.vb" />
+    <Compile Include="Core\SourceModel\SourceModel30\SourceModel30.vb" />
     <Compile Include="Core\SourceModel\SourceModel31\SourceMdlFile31.vb" />
     <Compile Include="Core\SourceModel\SourceModel31\SourceMdlFileData\SourceMdlAnimation31.vb" />
     <Compile Include="Core\SourceModel\SourceModel31\SourceMdlFileData\SourceMdlAnimationDesc31.vb" />
@@ -307,6 +331,17 @@
     <Compile Include="Core\SourceModel\SourceModel46\SourceVvdFileData\SourceVvdFileData46.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceMdlFile48.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceModel48.vb" />
+    <Compile Include="Core\SourceModel\SourceModel52\SourceAniFile52.vb" />
+    <Compile Include="Core\SourceModel\SourceModel52\SourceAniFileData\SourceAniFileData52.vb" />
+    <Compile Include="Core\SourceModel\SourceModel52\SourceAniFileData\SourceAniFrameAnim52.vb" />
+    <Compile Include="Core\SourceModel\SourceModel52\SourceMdlFile52.vb" />
+    <Compile Include="Core\SourceModel\SourceModel52\SourceMdlFileData\SourceMdlAnimationDesc52.vb" />
+    <Compile Include="Core\SourceModel\SourceModel52\SourceMdlFileData\SourceMdlFileData52.vb" />
+    <Compile Include="Core\SourceModel\SourceModel52\SourceModel52.vb" />
+    <Compile Include="Core\SourceModel\SourceModel52\SourceQcFile52.vb" />
+    <Compile Include="Core\SourceModel\SourceModel52\SourceSmdFile52.vb" />
+    <Compile Include="Core\SourceModel\SourceModel52\SourceVrdFile52.vb" />
+    <Compile Include="Core\SourceModel\SourceModel52\SourceVtaFile52.vb" />
     <Compile Include="Core\SourceModel\SourceModel53\SourceMdlFile53.vb" />
     <Compile Include="Core\SourceModel\SourceModel53\SourceMdlFileData\SourceMdlFileData53.vb" />
     <Compile Include="Core\SourceModel\SourceModel53\SourceModel53.vb" />
@@ -316,6 +351,8 @@
     <Compile Include="Core\SourceModel\SourceModel53\SourceVtaFile53.vb" />
     <Compile Include="Core\SourceModel\SourceVtxFile\SourceVtxFile06\SourceVtxMaterialReplacement06.vb" />
     <Compile Include="Core\SourceModel\SourceVtxFile\SourceVtxFile06\SourceVtxMaterialReplacementList06.vb" />
+    <Compile Include="Core\SourceModel\SourceVtxFile\SourceVtxFile07\SourceVtxMaterialReplacement07.vb" />
+    <Compile Include="Core\SourceModel\SourceVtxFile\SourceVtxFile07\SourceVtxMaterialReplacementList07.vb" />
     <Compile Include="Core\SourceModel\SourceVtxFile\SourceVtxFile107\SourceVertex2531.vb" />
     <Compile Include="Core\SourceModel\SourceVtxFile\SourceVtxFile107\SourceVtxFileData107.vb" />
     <Compile Include="Core\SourceModel\SourceVtxFile\SourceVtxFile107\SourceVtxBodyPart107.vb" />
@@ -383,7 +420,6 @@
     <Compile Include="Core\SourceModel\SourceModel44\SourceMdlFileData\SourceMdlAnimationDesc44.vb" />
     <Compile Include="Core\SourceModel\SourceModel44\SourceMdlFileData\SourceMdlFileData44.vb" />
     <Compile Include="Core\SourceModel\SourceModel44\SourceModel44.vb" />
-    <Compile Include="Core\SourceModel\SourceModel44\SourcePhyFile44.vb" />
     <Compile Include="Core\SourceModel\SourceModel44\SourceQcFile44.vb" />
     <Compile Include="Core\SourceModel\SourceModel44\SourceSmdFile44.vb" />
     <Compile Include="Core\SourceModel\SourceModel44\SourceVrdFile44.vb" />
@@ -403,7 +439,6 @@
     <Compile Include="Core\SourceModel\SourceModel48\SourceVtxFileData\SourceVtxFileData48.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceVvdFileData\SourceVvdFileData48.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceAniFile48.vb" />
-    <Compile Include="Core\SourceModel\SourceModel48\SourcePhyFile48.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceQcFile48.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceSmdFile48.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceVrdFile48.vb" />
@@ -413,17 +448,17 @@
     <Compile Include="Core\SourceModel\SourceModel49\SourceAniFileData\SourceAniFileData49.vb" />
     <Compile Include="Core\SourceModel\SourceModel49\SourceMdlFileData\SourceMdlAnimationDesc49.vb" />
     <Compile Include="Core\SourceModel\SourceModel49\SourceMdlFileData\SourceMdlFileData49.vb" />
-    <Compile Include="Core\SourceModel\SourceModel49\SourceVtxFileData\SourceVtxFileData49.vb" />
+    <Compile Include="Core\SourceModel\SourceVtxFile\SourceVtxFile07\SourceVtxFileData07.vb" />
     <Compile Include="Core\SourceModel\SourceModel49\SourceVvdFileData\SourceVvdFileData49.vb" />
     <Compile Include="Core\SourceModel\SourceModel49\SourceModel49.vb" />
     <Compile Include="Core\SourceModel\SourceModel49\SourceAniFile49.vb" />
     <Compile Include="Core\SourceModel\SourceModel49\SourceMdlFile49.vb" />
-    <Compile Include="Core\SourceModel\SourceModel49\SourcePhyFile49.vb" />
+    <Compile Include="Core\SourceModel\SourcePhyFile\SourcePhyFile.vb" />
     <Compile Include="Core\SourceModel\SourceModel49\SourceQcFile49.vb" />
     <Compile Include="Core\SourceModel\SourceModel49\SourceSmdFile49.vb" />
     <Compile Include="Core\SourceModel\SourceModel49\SourceVrdFile49.vb" />
     <Compile Include="Core\SourceModel\SourceModel49\SourceVtaFile49.vb" />
-    <Compile Include="Core\SourceModel\SourceModel49\SourceVtxFile49.vb" />
+    <Compile Include="Core\SourceModel\SourceVtxFile\SourceVtxFile07\SourceVtxFile07.vb" />
     <Compile Include="Core\SourceModel\SourceModel49\SourceVvdFile49.vb" />
     <Compile Include="Core\Unpacker\UnpackerInputInfo.vb" />
     <Compile Include="Core\Unpacker\UnpackerOutputInfo.vb" />
@@ -473,9 +508,9 @@
     <Compile Include="Core\SourceModel\SourceCommon\SourceMdlFileData\SourceMdlQuatInterpBoneInfo.vb" />
     <Compile Include="Core\SourceModel\SourceCommon\SourceMdlFileData\SourceMdlVertAnim.vb" />
     <Compile Include="Core\SourceModel\SourceCommon\SourceMdlFileData\SourceMdlVertAnimWrinkle.vb" />
-    <Compile Include="Core\SourceModel\SourceCommon\SourcePhyFileData\SourcePhyFaceSection.vb" />
-    <Compile Include="Core\SourceModel\SourceCommon\SourcePhyFileData\SourcePhyFace.vb" />
-    <Compile Include="Core\SourceModel\SourceCommon\SourcePhyFileData\SourcePhyVertex.vb" />
+    <Compile Include="Core\SourceModel\SourcePhyFile\SourcePhyFileData\SourcePhyFaceSection.vb" />
+    <Compile Include="Core\SourceModel\SourcePhyFile\SourcePhyFileData\SourcePhyFace.vb" />
+    <Compile Include="Core\SourceModel\SourcePhyFile\SourcePhyFileData\SourcePhyVertex.vb" />
     <Compile Include="Core\SourceModel\SourceCommon\SourceVvdFileData\SourceVvdFileData.vb" />
     <Compile Include="Core\SourceModel\SourceCommon\SourceVtxFileData\SourceVtxBoneStateChange.vb" />
     <Compile Include="Core\SourceModel\SourceCommon\SourceVtxFileData\SourceVtxMaterialReplacement.vb" />
@@ -531,6 +566,12 @@
     <Compile Include="Widgets\Main Tabs\CompileUserControl.vb">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Widgets\Main Tabs\SetUpGamesUserControl.Designer.vb">
+      <DependentUpon>SetUpGamesUserControl.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\Main Tabs\SetUpGamesUserControl.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Widgets\Main Tabs\UnpackUserControl.Designer.vb">
       <DependentUpon>UnpackUserControl.vb</DependentUpon>
     </Compile>
@@ -573,12 +614,6 @@
     <Compile Include="Widgets\Main Tabs\DecompileUserControl.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Widgets\Popups\GameSetupForm.Designer.vb">
-      <DependentUpon>GameSetupForm.vb</DependentUpon>
-    </Compile>
-    <Compile Include="Widgets\Popups\GameSetupForm.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Widgets\Main Tabs\HelpUserControl.Designer.vb">
       <DependentUpon>HelpUserControl.vb</DependentUpon>
     </Compile>
@@ -610,12 +645,12 @@
     </Compile>
     <Compile Include="Core\SourceModel\- Base\SourceMdlFile.vb" />
     <Compile Include="Core\SourceModel\- Base\SourceQcFile.vb" />
-    <Compile Include="Core\SourceModel\SourceCommon\SourcePhyFileData\SourcePhyCollisionPair.vb" />
-    <Compile Include="Core\SourceModel\SourceCommon\SourcePhyFileData\SourcePhyEditParamsSection.vb" />
-    <Compile Include="Core\SourceModel\SourceCommon\SourcePhyFileData\SourcePhyRagdollConstraint.vb" />
-    <Compile Include="Core\SourceModel\SourceCommon\SourcePhyFileData\SourcePhyCollisionData.vb" />
-    <Compile Include="Core\SourceModel\SourceCommon\SourcePhyFileData\SourcePhyFileData.vb" />
-    <Compile Include="Core\SourceModel\SourceCommon\SourcePhyFileData\SourcePhysCollisionModel.vb" />
+    <Compile Include="Core\SourceModel\SourcePhyFile\SourcePhyFileData\SourcePhyCollisionPair.vb" />
+    <Compile Include="Core\SourceModel\SourcePhyFile\SourcePhyFileData\SourcePhyEditParamsSection.vb" />
+    <Compile Include="Core\SourceModel\SourcePhyFile\SourcePhyFileData\SourcePhyRagdollConstraint.vb" />
+    <Compile Include="Core\SourceModel\SourcePhyFile\SourcePhyFileData\SourcePhyCollisionData.vb" />
+    <Compile Include="Core\SourceModel\SourcePhyFile\SourcePhyFileData\SourcePhyFileData.vb" />
+    <Compile Include="Core\SourceModel\SourcePhyFile\SourcePhyFileData\SourcePhysCollisionModel.vb" />
     <Compile Include="Core\SourceModel\SourceCommon\SourceMdlFileData\SourceMdlSkinFamily.vb" />
     <Compile Include="Core\SourceModel\SourceGlobal\SourceVector.vb" />
     <Compile Include="Core\SourceModel\SourceCommon\SourceMdlFileData\SourceMdlAnimationDesc.vb" />
@@ -661,6 +696,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>CompileUserControl.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Widgets\Main Tabs\SetUpGamesUserControl.resx">
+      <DependentUpon>SetUpGamesUserControl.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Widgets\Main Tabs\UnpackUserControl.resx">
       <DependentUpon>UnpackUserControl.vb</DependentUpon>
       <SubType>Designer</SubType>
@@ -688,10 +726,6 @@
     <EmbeddedResource Include="Widgets\Main Tabs\DecompileUserControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>DecompileUserControl.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Widgets\Popups\GameSetupForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>GameSetupForm.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Widgets\Main Tabs\HelpUserControl.resx">
       <SubType>Designer</SubType>
@@ -748,10 +782,6 @@
     <None Include="resources\crowbar_icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Core\SourceModel\SourceModel27\" />
-    <Folder Include="Core\SourceModel\SourceModel28\" />
-    <Folder Include="Core\SourceModel\SourceModel30\" />
-    <Folder Include="Core\SourceModel\SourceModel52\" />
     <Folder Include="Core\SourceModel\SourceModel57\" />
     <Folder Include="Documents\" />
   </ItemGroup>

@@ -336,24 +336,46 @@ Public Class Decompiler
 			Me.UpdateProgress(2, "... Reading MDL file header finished.")
 
 			Me.UpdateProgress(2, "Checking for required files ...")
-			status = model.CheckForRequiredFiles()
-			If status = StatusMessage.ErrorRequiredSequenceGroupMdlFileNotFound Then
+			Dim filesFoundFlags As AppEnums.FilesFoundFlags
+			filesFoundFlags = model.CheckForRequiredFiles()
+			'If status = StatusMessage.ErrorRequiredSequenceGroupMdlFileNotFound Then
+			'	Me.UpdateProgress(2, "ERROR: Sequence Group MDL file not found.")
+			'	Return status
+			'ElseIf status = StatusMessage.ErrorRequiredTextureMdlFileNotFound Then
+			'	Me.UpdateProgress(2, "ERROR: Texture MDL file not found.")
+			'	Return status
+			'ElseIf status = StatusMessage.ErrorRequiredAniFileNotFound Then
+			'	Me.UpdateProgress(2, "ERROR: ANI file not found.")
+			'	Return status
+			'ElseIf status = StatusMessage.ErrorRequiredVtxFileNotFound Then
+			'	Me.UpdateProgress(2, "ERROR: VTX file not found.")
+			'	Return status
+			'ElseIf status = StatusMessage.ErrorRequiredVvdFileNotFound Then
+			'	Me.UpdateProgress(2, "ERROR: VVD file not found.")
+			'	Return status
+			'End If
+			'Me.UpdateProgress(2, "... All required files found.")
+			If filesFoundFlags = AppEnums.FilesFoundFlags.ErrorRequiredSequenceGroupMdlFileNotFound Then
 				Me.UpdateProgress(2, "ERROR: Sequence Group MDL file not found.")
-				Return status
-			ElseIf status = StatusMessage.ErrorRequiredTextureMdlFileNotFound Then
+				Return StatusMessage.ErrorRequiredSequenceGroupMdlFileNotFound
+			ElseIf filesFoundFlags = AppEnums.FilesFoundFlags.ErrorRequiredTextureMdlFileNotFound Then
 				Me.UpdateProgress(2, "ERROR: Texture MDL file not found.")
-				Return status
-			ElseIf status = StatusMessage.ErrorRequiredAniFileNotFound Then
-				Me.UpdateProgress(2, "ERROR: ANI file not found.")
-				Return status
-			ElseIf status = StatusMessage.ErrorRequiredVtxFileNotFound Then
-				Me.UpdateProgress(2, "ERROR: VTX file not found.")
-				Return status
-			ElseIf status = StatusMessage.ErrorRequiredVvdFileNotFound Then
-				Me.UpdateProgress(2, "ERROR: VVD file not found.")
-				Return status
+				Return StatusMessage.ErrorRequiredTextureMdlFileNotFound
 			End If
-			Me.UpdateProgress(2, "... All required files found.")
+			If (filesFoundFlags And AppEnums.FilesFoundFlags.ErrorRequiredAniFileNotFound) > 0 Then
+				Me.UpdateProgress(3, "WARNING: ANI file not found.")
+			End If
+			If (filesFoundFlags And AppEnums.FilesFoundFlags.ErrorRequiredVtxFileNotFound) > 0 Then
+				Me.UpdateProgress(3, "WARNING: VTX file not found.")
+			End If
+			If (filesFoundFlags And AppEnums.FilesFoundFlags.ErrorRequiredVvdFileNotFound) > 0 Then
+				Me.UpdateProgress(3, "WARNING: VVD file not found.")
+			End If
+			If filesFoundFlags = AppEnums.FilesFoundFlags.AllFilesFound Then
+				Me.UpdateProgress(2, "... All required files found.")
+			Else
+				Me.UpdateProgress(2, "... Not all required files found, but decompiling available files.")
+			End If
 
 			If Me.CancellationPending Then
 				Return status
@@ -606,7 +628,7 @@ Public Class Decompiler
 			Return status
 		End If
 
-		status = Me.WriteVertexAnimationFile(model)
+		status = Me.WriteVertexAnimationFiles(model)
 		If status = StatusMessage.Canceled Then
 			Return status
 		ElseIf status = StatusMessage.Skipped Then
@@ -757,25 +779,26 @@ Public Class Decompiler
 		Return status
 	End Function
 
-	Private Function WriteVertexAnimationFile(ByVal model As SourceModel) As AppEnums.StatusMessage
+	Private Function WriteVertexAnimationFiles(ByVal model As SourceModel) As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
 		If TheApp.Settings.DecompileVertexAnimationVtaFileIsChecked Then
 			If model.HasVertexAnimationData Then
 				'Me.UpdateProgress(3, "Writing VTA file ...")
-				Me.UpdateProgress(3, "Vertex animation file: ")
+				Me.UpdateProgress(3, "Vertex animation files: ")
 				Me.theDecompiledFileType = DecompiledFileType.VertexAnimation
 				Me.theFirstDecompiledFileHasBeenAdded = False
 				AddHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
 
-				Dim vtaPathFileName As String
-				vtaPathFileName = Path.Combine(Me.theModelOutputPath, SourceFileNamesModule.GetVtaFileName(model.Name))
+				'Dim vtaPathFileName As String
+				'vtaPathFileName = Path.Combine(Me.theModelOutputPath, SourceFileNamesModule.GetVtaFileName(model.Name))
 
-				status = model.WriteVertexAnimationVtaFile(vtaPathFileName)
+				'status = model.WriteVertexAnimationVtaFile(vtaPathFileName)
+				status = model.WriteVertexAnimationVtaFiles(Me.theModelOutputPath)
 
-				If File.Exists(vtaPathFileName) Then
-					Me.theDecompiledVtaFiles.Add(FileManager.GetRelativePathFileName(Me.theOutputPath, vtaPathFileName))
-				End If
+				'If File.Exists(vtaPathFileName) Then
+				'	Me.theDecompiledVtaFiles.Add(FileManager.GetRelativePathFileName(Me.theOutputPath, vtaPathFileName))
+				'End If
 
 				RemoveHandler model.SourceModelProgress, AddressOf Me.Model_SourceModelProgress
 				'Me.UpdateProgress(3, "... Writing VTA file finished.")

@@ -119,13 +119,13 @@ Public Class SourceModel46
 
 #Region "Methods"
 
-	Public Overrides Function CheckForRequiredFiles() As StatusMessage
-		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+	Public Overrides Function CheckForRequiredFiles() As FilesFoundFlags
+		Dim status As AppEnums.FilesFoundFlags = FilesFoundFlags.AllFilesFound
 
 		If Me.theMdlFileData.animBlockCount > 0 Then
 			Me.theAniPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".ani")
 			If Not File.Exists(Me.theAniPathFileName) Then
-				status = StatusMessage.ErrorRequiredAniFileNotFound
+				status = FilesFoundFlags.ErrorRequiredAniFileNotFound
 			End If
 		End If
 
@@ -142,7 +142,7 @@ Public Class SourceModel46
 						If Not File.Exists(Me.theVtxPathFileName) Then
 							Me.theVtxPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".vtx")
 							If Not File.Exists(Me.theVtxPathFileName) Then
-								status = StatusMessage.ErrorRequiredVtxFileNotFound
+								status = FilesFoundFlags.ErrorRequiredVtxFileNotFound
 							End If
 						End If
 					End If
@@ -151,7 +151,7 @@ Public Class SourceModel46
 
 			Me.theVvdPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".vvd")
 			If Not File.Exists(Me.theVvdPathFileName) Then
-				status = StatusMessage.ErrorRequiredVvdFileNotFound
+				status = FilesFoundFlags.ErrorRequiredVvdFileNotFound
 			End If
 		End If
 
@@ -161,9 +161,9 @@ Public Class SourceModel46
 	Public Overrides Function ReadPhyFile() As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
 
-		If String.IsNullOrEmpty(Me.thePhyPathFileName) Then
-			status = Me.CheckForRequiredFiles()
-		End If
+		'If String.IsNullOrEmpty(Me.thePhyPathFileName) Then
+		'	status = Me.CheckForRequiredFiles()
+		'End If
 
 		If Not String.IsNullOrEmpty(Me.thePhyPathFileName) Then
 			If status = StatusMessage.Success Then
@@ -388,8 +388,9 @@ Public Class SourceModel46
 		'TODO: ReadLocalIkAutoPlayLocks()
 		mdlFile.ReadFlexControllerUis()
 
-		mdlFile.ReadFinalBytesAlignment()
-		mdlFile.ReadUnknownValues(Me.theMdlFileData.theFileSeekLog)
+		'mdlFile.ReadFinalBytesAlignment()
+		'mdlFile.ReadUnknownValues(Me.theMdlFileData.theFileSeekLog)
+		mdlFile.ReadUnreadBytes()
 
 		' Post-processing.
 		mdlFile.CreateFlexFrameList()
@@ -500,9 +501,7 @@ Public Class SourceModel46
 			qcFile.WriteJointSurfacePropCommand()
 			qcFile.WriteContentsCommand()
 			qcFile.WriteJointContentsCommand()
-			If TheApp.Settings.DecompileDebugInfoFilesIsChecked Then
-				qcFile.WriteIllumPositionCommand()
-			End If
+			qcFile.WriteIllumPositionCommand()
 
 			qcFile.WriteEyePositionCommand()
 			qcFile.WriteMaxEyeDeflectionCommand()
@@ -670,7 +669,7 @@ Public Class SourceModel46
 		End Try
 	End Sub
 
-	Protected Overrides Sub WriteVertexAnimationVtaFile()
+	Protected Overrides Sub WriteVertexAnimationVtaFile(ByVal bodyPart As SourceMdlBodyPart)
 		Dim vertexAnimationVtaFile As New SourceVtaFile46(Me.theOutputFileTextWriter, Me.theMdlFileData, Me.theVvdFileData)
 
 		Try

@@ -41,17 +41,12 @@ Public Class SourceSmdFile44
 		Dim line As String = ""
 		Dim name As String
 
-		Me.theWeaponBoneIndex = -1
-
 		'nodes
 		line = "nodes"
 		Me.theOutputFileStreamWriter.WriteLine(line)
 
 		For boneIndex As Integer = 0 To Me.theMdlFileData.theBones.Count - 1
 			name = Me.theMdlFileData.theBones(boneIndex).theName
-			If TheApp.Settings.DecompileApplyRightHandFixIsChecked AndAlso lodIndex = 0 AndAlso name = "ValveBiped.weapon_bone" Then
-				Me.theWeaponBoneIndex = boneIndex
-			End If
 
 			line = "  "
 			line += boneIndex.ToString(TheApp.InternalNumberFormat)
@@ -83,25 +78,11 @@ Public Class SourceSmdFile44
 			line = "    "
 			line += boneIndex.ToString(TheApp.InternalNumberFormat)
 			line += " "
-			If lodIndex = 0 AndAlso Me.theWeaponBoneIndex = boneIndex Then
-				line += "0.000000 0.000000 0.000000"
-				'ElseIf Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).parentBoneIndex = -1 Then
-				'	'NOTE: Only adjust position if a root bone. Did not seem to help for l4d2's van.mdl.
-				'	line += Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).positionY.ToString("0.000000", TheApp.InternalNumberFormat)
-				'	line += " "
-				'	line += (-Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).positionX).ToString("0.000000", TheApp.InternalNumberFormat)
-				'	line += " "
-				'	line += Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).positionZ.ToString("0.000000", TheApp.InternalNumberFormat)
-			Else
-				line += Me.theMdlFileData.theBones(boneIndex).position.x.ToString("0.000000", TheApp.InternalNumberFormat)
-				line += " "
-				line += Me.theMdlFileData.theBones(boneIndex).position.y.ToString("0.000000", TheApp.InternalNumberFormat)
-				'line += Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).positionY.ToString("0.000000", TheApp.InternalNumberFormat)
-				'line += " "
-				'line += (-Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).positionX).ToString("0.000000", TheApp.InternalNumberFormat)
-				line += " "
-				line += Me.theMdlFileData.theBones(boneIndex).position.z.ToString("0.000000", TheApp.InternalNumberFormat)
-			End If
+			line += Me.theMdlFileData.theBones(boneIndex).position.x.ToString("0.000000", TheApp.InternalNumberFormat)
+			line += " "
+			line += Me.theMdlFileData.theBones(boneIndex).position.y.ToString("0.000000", TheApp.InternalNumberFormat)
+			line += " "
+			line += Me.theMdlFileData.theBones(boneIndex).position.z.ToString("0.000000", TheApp.InternalNumberFormat)
 			line += " "
 			line += Me.theMdlFileData.theBones(boneIndex).rotation.x.ToString("0.000000", TheApp.InternalNumberFormat)
 			line += " "
@@ -221,6 +202,8 @@ Public Class SourceSmdFile44
 
 		Try
 			If Me.thePhyFileData.theSourcePhyCollisionDatas IsNot Nothing Then
+				Me.ProcessTransformsForPhysics()
+
 				For collisionDataIndex As Integer = 0 To Me.thePhyFileData.theSourcePhyCollisionDatas.Count - 1
 					collisionData = Me.thePhyFileData.theSourcePhyCollisionDatas(collisionDataIndex)
 
@@ -349,238 +332,71 @@ Public Class SourceSmdFile44
 		Dim tempRotation As New SourceVector()
 		Dim aSequenceDesc As SourceMdlSequenceDesc
 		Dim anAnimationDesc As SourceMdlAnimationDesc44
+		Dim thisIsForFirstSequence As Boolean
 
 		aSequenceDesc = CType(aSequenceDescBase, SourceMdlSequenceDesc)
 		anAnimationDesc = CType(anAnimationDescBase, SourceMdlAnimationDesc44)
+
+		thisIsForFirstSequence = anAnimationDesc.theName(0) = "@" AndAlso anAnimationDesc.theAnimIsLinkedToSequence AndAlso (anAnimationDesc.theLinkedSequences(0) Is Me.theMdlFileData.theSequenceDescs(0))
 
 		'skeleton
 		line = "skeleton"
 		Me.theOutputFileStreamWriter.WriteLine(line)
 
-		Me.theAnimationFrameLines = New SortedList(Of Integer, AnimationFrameLine)()
-		''NOTE: MDL Decompiler uses 0 to frameCount, which is not what I would expect.
-		'For frameIndex As Integer = 0 To anAnimationDesc.frameCount
-		For frameIndex As Integer = 0 To anAnimationDesc.frameCount - 1
-			Me.theAnimationFrameLines.Clear()
-			If (anAnimationDesc.flags And SourceMdlAnimationDesc.STUDIO_ALLZEROS) = 0 Then
+		If Me.theMdlFileData.theBones IsNot Nothing Then
+			Me.theAnimationFrameLines = New SortedList(Of Integer, AnimationFrameLine)()
+			For frameIndex As Integer = 0 To anAnimationDesc.frameCount - 1
+				Me.theAnimationFrameLines.Clear()
+
 				Me.CalcAnimation(aSequenceDesc, anAnimationDesc, frameIndex)
-			End If
 
-			If TheApp.Settings.DecompileStricterFormatIsChecked Then
-				line = "time "
-			Else
-				line = "  time "
-			End If
-			line += CStr(frameIndex)
-			Me.theOutputFileStreamWriter.WriteLine(line)
-
-			For i As Integer = 0 To Me.theAnimationFrameLines.Count - 1
-				boneIndex = Me.theAnimationFrameLines.Keys(i)
-				aFrameLine = Me.theAnimationFrameLines.Values(i)
-
-				'TODO: Decompile blended anims.
-				' Doesn't seem to be direct way to get the animDesc's subtractFrameIndex.
-				' For now, do what MDL Decompiler seems to do; use zero for the animDesc's subtractFrameIndex.
-				If ((anAnimationDesc.flags And SourceMdlAnimationDesc.STUDIO_DELTA) > 0) AndAlso frameIndex = 0 AndAlso Me.theMdlFileData.theFirstAnimationDescFrameLines IsNot Nothing AndAlso Me.theMdlFileData.theFirstAnimationDescFrameLines.ContainsKey(boneIndex) Then
-					Dim aFirstAnimationDescFrameLine As AnimationFrameLine
-					aFirstAnimationDescFrameLine = Me.theMdlFileData.theFirstAnimationDescFrameLines(boneIndex)
-
-					If aFrameLine.position.debug_text = "desc_delta" OrElse aFrameLine.position.debug_text.StartsWith("raw") Then
-						position.x = aFrameLine.position.x + aFirstAnimationDescFrameLine.position.x
-						position.y = aFrameLine.position.y + aFirstAnimationDescFrameLine.position.y
-						position.z = aFrameLine.position.z + aFirstAnimationDescFrameLine.position.z
-						'If aFrameLine.position.debug_text.StartsWith("raw") OrElse aFrameLine.position.debug_text = "anim+bone" Then
-						'	'TEST: Try this version, because of "sequence_blend from Game Zombie" model.
-						'	position.x = aFrameLine.position.y + aFirstAnimationDescFrameLine.position.x
-						'	position.y = -aFrameLine.position.x + aFirstAnimationDescFrameLine.position.y
-						'	position.z = aFrameLine.position.z + aFirstAnimationDescFrameLine.position.z
-						'ElseIf aFrameLine.position.debug_text = "delta" Then
-						'	position.x = aFrameLine.position.x + aFirstAnimationDescFrameLine.position.x
-						'	position.y = aFrameLine.position.y + aFirstAnimationDescFrameLine.position.y
-						'	position.z = aFrameLine.position.z + aFirstAnimationDescFrameLine.position.z
-					Else
-						position.x = aFrameLine.position.x
-						position.y = aFrameLine.position.y
-						position.z = aFrameLine.position.z
-					End If
-
-					If aFrameLine.rotation.debug_text = "desc_delta" OrElse aFrameLine.rotation.debug_text.StartsWith("raw") Then
-						rotation.x = aFrameLine.rotation.x
-						rotation.y = aFrameLine.rotation.y
-						rotation.z = aFrameLine.rotation.z
-
-						Dim quat As New SourceQuaternion()
-						Dim quat2 As New SourceQuaternion()
-						Dim quatResult As New SourceQuaternion()
-						Dim magnitude As Double
-						quat = MathModule.EulerAnglesToQuaternion(rotation)
-						quat2 = MathModule.EulerAnglesToQuaternion(aFirstAnimationDescFrameLine.rotation)
-
-						quat.x *= -1
-						quat.y *= -1
-						quat.z *= -1
-						quatResult.x = quat.w * quat2.x + quat.x * quat2.w + quat.y * quat2.z - quat.z * quat2.y
-						quatResult.y = quat.w * quat2.y - quat.x * quat2.z + quat.y * quat2.w + quat.z * quat2.x
-						quatResult.z = quat.w * quat2.z + quat.x * quat2.y - quat.y * quat2.x + quat.z * quat2.w
-						quatResult.w = quat.w * quat2.w + quat.x * quat2.x + quat.y * quat2.y - quat.z * quat2.z
-
-						magnitude = Math.Sqrt(quatResult.w * quatResult.w + quatResult.x * quatResult.x + quatResult.y * quatResult.y + quatResult.z * quatResult.z)
-						quatResult.x /= magnitude
-						quatResult.y /= magnitude
-						quatResult.z /= magnitude
-						quatResult.w /= magnitude
-
-						'rotation = MathModule.ToEulerAngles(quatResult)
-						tempRotation = MathModule.ToEulerAngles(quatResult)
-						rotation.x = tempRotation.y
-						rotation.y = tempRotation.z
-						rotation.z = tempRotation.x
-						'If aFrameLine.rotation.debug_text.StartsWith("raw") OrElse aFrameLine.rotation.debug_text = "anim+bone" Then
-						'	rotation.x = aFrameLine.rotation.x
-						'	rotation.y = aFrameLine.rotation.y
-						'	rotation.z = aFrameLine.rotation.z
-						'	'rotation.z = aFrameLine.rotation.z + MathModule.DegreesToRadians(-90)
-
-						'	'TODO: Reverse this, which is probably the same as doing it forward, because of scale by -1.
-						'	'QuaternionScale( p, s, p1 );
-						'	'QuaternionMult( p1, q, q1 );
-						'	'	(Q1 * Q2).w = (w1w2 - x1x2 - y1y2 - z1z2)
-						'	'	(Q1 * Q2).x = (w1x2 + x1w2 + y1z2 - z1y2)
-						'	'	(Q1 * Q2).y = (w1y2 - x1z2 + y1w2 + z1x2)
-						'	'	(Q1 * Q2).z = (w1z2 + x1y2 - y1x2 + z1w2
-						'	'QuaternionNormalize( q1 );
-						'	'	magnitude = sqrt(w^2 + x^2 + y^2 + z^2)
-						'	'	w = w / magnitude
-						'	'	x = x / magnitude
-						'	'	y = y / magnitude
-						'	'	z = z / magnitude
-						'	Dim quat As New SourceQuaternion()
-						'	Dim quat2 As New SourceQuaternion()
-						'	Dim quatResult As New SourceQuaternion()
-						'	Dim magnitude As Double
-						'	quat = MathModule.EulerAnglesToQuaternion(rotation)
-						'	quat2 = MathModule.EulerAnglesToQuaternion(aFirstAnimationDescFrameLine.rotation)
-						'	'quat2 = MathModule.EulerAnglesToQuaternion(rotation)
-						'	'quat = MathModule.EulerAnglesToQuaternion(aFirstAnimationDescFrameLine.rotation)
-
-						'	quat.x *= -1
-						'	quat.y *= -1
-						'	quat.z *= -1
-						'	'quat.w *= -1
-						'	quatResult.x = quat.w * quat2.x + quat.x * quat2.w + quat.y * quat2.z - quat.z * quat2.y
-						'	quatResult.y = quat.w * quat2.y - quat.x * quat2.z + quat.y * quat2.w + quat.z * quat2.x
-						'	quatResult.z = quat.w * quat2.z + quat.x * quat2.y - quat.y * quat2.x + quat.z * quat2.w
-						'	quatResult.w = quat.w * quat2.w + quat.x * quat2.x + quat.y * quat2.y - quat.z * quat2.z
-
-						'	magnitude = Math.Sqrt(quatResult.w * quatResult.w + quatResult.x * quatResult.x + quatResult.y * quatResult.y + quatResult.z * quatResult.z)
-						'	quatResult.x /= magnitude
-						'	quatResult.y /= magnitude
-						'	quatResult.z /= magnitude
-						'	quatResult.w /= magnitude
-
-						'	rotation = MathModule.ToEulerAngles(quatResult)
-						'ElseIf aFrameLine.rotation.debug_text = "desc_bone" Then
-						'	rotation.x = aFrameLine.rotation.x
-						'	rotation.y = aFrameLine.rotation.y
-						'	rotation.z = aFrameLine.rotation.z
-
-						'	Dim quat As New SourceQuaternion()
-						'	Dim quat2 As New SourceQuaternion()
-						'	Dim quatResult As New SourceQuaternion()
-						'	Dim magnitude As Double
-						'	quat = MathModule.EulerAnglesToQuaternion(rotation)
-						'	quat2 = MathModule.EulerAnglesToQuaternion(aFirstAnimationDescFrameLine.rotation)
-
-						'	quat.x *= -1
-						'	quat.y *= -1
-						'	quat.z *= -1
-						'	quatResult.x = quat.w * quat2.x + quat.x * quat2.w + quat.y * quat2.z - quat.z * quat2.y
-						'	quatResult.y = quat.w * quat2.y - quat.x * quat2.z + quat.y * quat2.w + quat.z * quat2.x
-						'	quatResult.z = quat.w * quat2.z + quat.x * quat2.y - quat.y * quat2.x + quat.z * quat2.w
-						'	quatResult.w = quat.w * quat2.w + quat.x * quat2.x + quat.y * quat2.y - quat.z * quat2.z
-
-						'	magnitude = Math.Sqrt(quatResult.w * quatResult.w + quatResult.x * quatResult.x + quatResult.y * quatResult.y + quatResult.z * quatResult.z)
-						'	quatResult.x /= magnitude
-						'	quatResult.y /= magnitude
-						'	quatResult.z /= magnitude
-						'	quatResult.w /= magnitude
-
-						'	'NOTE: This gives closer match to values in the source SMD file than trying to use a different ToEulerAngles().
-						'	tempRotation = MathModule.ToEulerAngles(quatResult)
-						'	rotation.x = tempRotation.y
-						'	rotation.y = tempRotation.z
-						'	rotation.z = tempRotation.x
-					Else
-						rotation.x = aFrameLine.rotation.x
-						rotation.y = aFrameLine.rotation.y
-						rotation.z = aFrameLine.rotation.z
-					End If
-				ElseIf Me.theMdlFileData.theBones(boneIndex).parentBoneIndex = -1 Then
-					'If Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).parentBoneIndex = -1 Then
-					'NOTE: Only adjust position if bone is a root bone. Do not know why.
-
-					If aFrameLine.position.debug_text.StartsWith("raw") OrElse aFrameLine.position.debug_text = "anim+bone" Then
-						'TEST: This works for CSS "weapons\v_pist_p228".
-						'If aFrameLine.position.debug_text.StartsWith("raw") OrElse aFrameLine.position.debug_text = "anim+bone" OrElse aFrameLine.rotation.debug_text = "desc_bone" Then
-						'TEST: Try this because of "sequence_blend from Game Zombie" model.
-						position.x = aFrameLine.position.y
-						position.y = -aFrameLine.position.x
-						position.z = aFrameLine.position.z
-					Else
-						position.x = aFrameLine.position.x
-						position.y = aFrameLine.position.y
-						position.z = aFrameLine.position.z
-					End If
-
-					rotation.x = aFrameLine.rotation.x
-					rotation.y = aFrameLine.rotation.y
-					If aFrameLine.rotation.debug_text.StartsWith("raw") OrElse aFrameLine.rotation.debug_text = "anim+bone" Then
-						'TEST: This works for CSS "weapons\v_pist_p228".
-						'If aFrameLine.rotation.debug_text.StartsWith("raw") OrElse aFrameLine.rotation.debug_text = "anim+bone" OrElse aFrameLine.rotation.debug_text = "desc_bone" Then
-						'TEST: Try this because of "sequence_blend from Game Zombie" model.
-						rotation.z = aFrameLine.rotation.z + MathModule.DegreesToRadians(-90)
-					Else
-						rotation.z = aFrameLine.rotation.z
-					End If
+				If TheApp.Settings.DecompileStricterFormatIsChecked Then
+					line = "time "
 				Else
-					position.x = aFrameLine.position.x
-					position.y = aFrameLine.position.y
-					position.z = aFrameLine.position.z
-
-					rotation.x = aFrameLine.rotation.x
-					rotation.y = aFrameLine.rotation.y
-					rotation.z = aFrameLine.rotation.z
+					line = "  time "
 				End If
-
-				line = "    "
-				line += boneIndex.ToString(TheApp.InternalNumberFormat)
-
-				line += " "
-				line += position.x.ToString("0.000000", TheApp.InternalNumberFormat)
-				line += " "
-				line += position.y.ToString("0.000000", TheApp.InternalNumberFormat)
-				line += " "
-				line += position.z.ToString("0.000000", TheApp.InternalNumberFormat)
-
-				line += " "
-				line += rotation.x.ToString("0.000000", TheApp.InternalNumberFormat)
-				line += " "
-				line += rotation.y.ToString("0.000000", TheApp.InternalNumberFormat)
-				line += " "
-				line += rotation.z.ToString("0.000000", TheApp.InternalNumberFormat)
-
-				If TheApp.Settings.DecompileDebugInfoFilesIsChecked Then
-					line += "   # "
-					line += "pos: "
-					line += aFrameLine.position.debug_text
-					line += "   "
-					line += "rot: "
-					line += aFrameLine.rotation.debug_text
-				End If
-
+				line += CStr(frameIndex)
 				Me.theOutputFileStreamWriter.WriteLine(line)
+
+				For i As Integer = 0 To Me.theAnimationFrameLines.Count - 1
+					boneIndex = Me.theAnimationFrameLines.Keys(i)
+					aFrameLine = Me.theAnimationFrameLines.Values(i)
+
+					Dim adjustedPosition As New SourceVector()
+					Dim adjustedRotation As New SourceVector()
+					Me.AdjustPositionAndRotationByPiecewiseMovement(frameIndex, boneIndex, anAnimationDesc.theMovements, aFrameLine.position, aFrameLine.rotation, adjustedPosition, adjustedRotation)
+					Me.AdjustPositionAndRotation(boneIndex, adjustedPosition, adjustedRotation, thisIsForFirstSequence, position, rotation)
+
+					line = "    "
+					line += boneIndex.ToString(TheApp.InternalNumberFormat)
+
+					line += " "
+					line += position.x.ToString("0.000000", TheApp.InternalNumberFormat)
+					line += " "
+					line += position.y.ToString("0.000000", TheApp.InternalNumberFormat)
+					line += " "
+					line += position.z.ToString("0.000000", TheApp.InternalNumberFormat)
+
+					line += " "
+					line += rotation.x.ToString("0.000000", TheApp.InternalNumberFormat)
+					line += " "
+					line += rotation.y.ToString("0.000000", TheApp.InternalNumberFormat)
+					line += " "
+					line += rotation.z.ToString("0.000000", TheApp.InternalNumberFormat)
+
+					If TheApp.Settings.DecompileDebugInfoFilesIsChecked Then
+						line += "   # "
+						line += "pos: "
+						line += aFrameLine.position.debug_text
+						line += "   "
+						line += "rot: "
+						line += aFrameLine.rotation.debug_text
+					End If
+
+					Me.theOutputFileStreamWriter.WriteLine(line)
+				Next
 			Next
-		Next
+		End If
 
 		line = "end"
 		Me.theOutputFileStreamWriter.WriteLine(line)
@@ -593,6 +409,97 @@ Public Class SourceSmdFile44
 #End Region
 
 #Region "Private Methods"
+
+	'NOTE: Testing for this is in MDL v49 code.
+	Private Sub AdjustPositionAndRotation(ByVal boneIndex As Integer, ByVal iPosition As SourceVector, ByVal iRotation As SourceVector, ByVal thisIsForFirstSequence As Boolean, ByRef oPosition As SourceVector, ByRef oRotation As SourceVector)
+		Dim aBone As SourceMdlBone
+		aBone = Me.theMdlFileData.theBones(boneIndex)
+
+		If aBone.parentBoneIndex = -1 Then
+			If thisIsForFirstSequence AndAlso Me.theMdlFileData.theUpAxisYCommandWasUsed Then
+				oPosition.x = iPosition.y
+				oPosition.y = iPosition.z
+				oPosition.z = iPosition.x
+			Else
+				oPosition.x = iPosition.y
+				oPosition.y = -iPosition.x
+				oPosition.z = iPosition.z
+			End If
+		Else
+			oPosition.x = iPosition.x
+			oPosition.y = iPosition.y
+			oPosition.z = iPosition.z
+		End If
+
+		If aBone.parentBoneIndex = -1 Then
+			If thisIsForFirstSequence AndAlso Me.theMdlFileData.theUpAxisYCommandWasUsed Then
+				oRotation.x = iRotation.x + MathModule.DegreesToRadians(-90)
+				oRotation.y = iRotation.y
+				oRotation.z = iRotation.z + MathModule.DegreesToRadians(-90)
+			Else
+				oRotation.x = iRotation.x
+				oRotation.y = iRotation.y
+				oRotation.z = iRotation.z + MathModule.DegreesToRadians(-90)
+			End If
+		Else
+			oRotation.x = iRotation.x
+			oRotation.y = iRotation.y
+			oRotation.z = iRotation.z
+		End If
+	End Sub
+
+	Private Sub AdjustPositionAndRotationByPiecewiseMovement(ByVal frameIndex As Integer, ByVal boneIndex As Integer, ByVal movements As List(Of SourceMdlMovement), ByVal iPosition As SourceVector, ByVal iRotation As SourceVector, ByRef oPosition As SourceVector, ByRef oRotation As SourceVector)
+		Dim aBone As SourceMdlBone
+		aBone = Me.theMdlFileData.theBones(boneIndex)
+
+		oPosition.x = iPosition.x
+		oPosition.y = iPosition.y
+		oPosition.z = iPosition.z
+		oPosition.debug_text = iPosition.debug_text
+		oRotation.x = iRotation.x
+		oRotation.y = iRotation.y
+		oRotation.z = iRotation.z
+		oRotation.debug_text = iRotation.debug_text
+
+		If aBone.parentBoneIndex = -1 Then
+			If movements IsNot Nothing AndAlso frameIndex > 0 Then
+				Dim previousFrameIndex As Integer
+				Dim vecPos As SourceVector
+				Dim vecAngle As SourceVector
+
+				previousFrameIndex = 0
+				vecPos = New SourceVector()
+				vecAngle = New SourceVector()
+
+				For Each aMovement As SourceMdlMovement In movements
+					If frameIndex <= aMovement.endframeIndex Then
+						Dim f As Double
+						Dim d As Double
+						f = (frameIndex - previousFrameIndex) / (aMovement.endframeIndex - previousFrameIndex)
+						d = aMovement.v0 * f + 0.5 * (aMovement.v1 - aMovement.v0) * f * f
+						vecPos.x = vecPos.x + d * aMovement.vector.x
+						vecPos.y = vecPos.y + d * aMovement.vector.y
+						vecPos.z = vecPos.z + d * aMovement.vector.z
+						vecAngle.y = vecAngle.y * (1 - f) + MathModule.DegreesToRadians(aMovement.angle) * f
+
+						Exit For
+					Else
+						previousFrameIndex = aMovement.endframeIndex
+						vecPos.x = aMovement.position.x
+						vecPos.y = aMovement.position.y
+						vecPos.z = aMovement.position.z
+						vecAngle.y = MathModule.DegreesToRadians(aMovement.angle)
+					End If
+				Next
+
+				'NOTE: Testing for this is in MDL v49 code.
+				oPosition.x = iPosition.x + vecPos.x
+				oPosition.y = iPosition.y + vecPos.y
+				oPosition.z = iPosition.z + vecPos.z
+				oRotation.z = iRotation.z + vecAngle.y
+			End If
+		End If
+	End Sub
 
 	Private Function WriteVertexLine(ByVal aStripGroup As SourceVtxStripGroup, ByVal aVtxIndexIndex As Integer, ByVal lodIndex As Integer, ByVal meshVertexIndexStart As Integer, ByVal bodyPartVertexIndexStart As Integer) As String
 		Dim aVtxVertexIndex As UShort
@@ -669,94 +576,91 @@ Public Class SourceSmdFile44
 		Return line
 	End Function
 
-	'NOTE: From disassembling of MDL Decompiler with OllyDbg, the following calculations are used in VPHYSICS.DLL for each face:
-	'      convertedZ = 1.0 / 0.0254 * lastVertex.position.z
-	'      convertedY = 1.0 / 0.0254 * -lastVertex.position.y
-	'      convertedX = 1.0 / 0.0254 * lastVertex.position.x
-	'NOTE: From disassembling of MDL Decompiler with OllyDbg, the following calculations are used after above for each vertex:
-	'      newValue1 = unknownZ1 * convertedZ + unknownY1 * convertedY + unknownX1 * convertedX + unknownW1
-	'      newValue2 = unknownZ2 * convertedZ + unknownY2 * convertedY + unknownX2 * convertedX + unknownW2
-	'      newValue3 = unknownZ3 * convertedZ + unknownY3 * convertedY + unknownX3 * convertedX + unknownW3
-	'Seems to be same as this code:
-	'Dim aBone As SourceMdlBone
-	'aBone = Me.theSourceEngineModel.theMdlFileHeader.theBones(anEyeball.boneIndex)
-	'eyeballPosition = MathModule.VectorITransform(anEyeball.org, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
+	Private Sub CalculateFirstAnimDescFrameLinesForPhysics(ByRef aFirstAnimationDescFrameLine As AnimationFrameLine)
+		Dim boneIndex As Integer
+		Dim aFrameLine As AnimationFrameLine
+		Dim frameIndex As Integer
+		Dim frameLineIndex As Integer
+		Dim aSequenceDesc As SourceMdlSequenceDesc
+		Dim anAnimationDesc As SourceMdlAnimationDesc44
+
+		aSequenceDesc = Nothing
+		anAnimationDesc = Me.theMdlFileData.theAnimationDescs(0)
+
+		Me.theAnimationFrameLines = New SortedList(Of Integer, AnimationFrameLine)()
+		frameIndex = 0
+		Me.theAnimationFrameLines.Clear()
+		'If (anAnimationDesc.flags And SourceMdlAnimationDesc.STUDIO_ALLZEROS) = 0 Then
+		Me.CalcAnimation(aSequenceDesc, anAnimationDesc, frameIndex)
+		'End If
+
+		frameLineIndex = 0
+		boneIndex = Me.theAnimationFrameLines.Keys(frameLineIndex)
+		aFrameLine = Me.theAnimationFrameLines.Values(frameLineIndex)
+
+		aFirstAnimationDescFrameLine.rotation = New SourceVector()
+		aFirstAnimationDescFrameLine.position = New SourceVector()
+
+		aFirstAnimationDescFrameLine.rotation.x = aFrameLine.rotation.x
+		aFirstAnimationDescFrameLine.rotation.y = aFrameLine.rotation.y
+		'If Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).parentBoneIndex = -1 Then
+		'	Dim z As Double
+		'	z = aFrameLine.rotation.z
+		'	z += MathModule.DegreesToRadians(-90)
+		'	aFirstAnimationDescFrameLine.rotation.z = z
+		'Else
+		aFirstAnimationDescFrameLine.rotation.z = aFrameLine.rotation.z
+		'End If
+
+		''NOTE: Only adjust position if bone is a root bone. Do not know why.
+		''If Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).parentBoneIndex = -1 Then
+		''TEST: Try this version, because of "sequence_blend from Game Zombie" model.
+		'If Me.theMdlFileData.theBones(boneIndex).parentBoneIndex = -1 AndAlso (aFrameLine.position.debug_text.StartsWith("raw") OrElse aFrameLine.rotation.debug_text = "anim+bone") Then
+		'	aFirstAnimationDescFrameLine.position.x = aFrameLine.position.y
+		'	aFirstAnimationDescFrameLine.position.y = (-aFrameLine.position.x)
+		'	aFirstAnimationDescFrameLine.position.z = aFrameLine.position.z
+		'Else
+		aFirstAnimationDescFrameLine.position.x = aFrameLine.position.x
+		aFirstAnimationDescFrameLine.position.y = aFrameLine.position.y
+		aFirstAnimationDescFrameLine.position.z = aFrameLine.position.z
+		'End If
+	End Sub
+
+	Private Sub ProcessTransformsForPhysics()
+		If Me.thePhyFileData.theSourcePhyIsCollisionModel Then
+			Dim aFirstAnimationDescFrameLine As New AnimationFrameLine()
+			Me.CalculateFirstAnimDescFrameLinesForPhysics(aFirstAnimationDescFrameLine)
+
+			Dim position As SourceVector
+			Dim rotation As SourceVector
+			position = aFirstAnimationDescFrameLine.position
+			rotation = aFirstAnimationDescFrameLine.rotation
+
+			'MathModule.AngleMatrix(rotation.y, rotation.z, rotation.x, Me.worldToPoseColumn0, Me.worldToPoseColumn1, Me.worldToPoseColumn2, Me.worldToPoseColumn3)
+			'MathModule.AngleMatrix(rotation.x, rotation.y, rotation.z, Me.worldToPoseColumn0, Me.worldToPoseColumn1, Me.worldToPoseColumn2, Me.worldToPoseColumn3)
+			'Me.worldToPoseColumn3.x = position.x
+			'Me.worldToPoseColumn3.y = position.y
+			'Me.worldToPoseColumn3.z = position.z
+			'------
+			'MathModule.AngleMatrix(rotation.x, rotation.y, rotation.z, poseToWorldColumn0, poseToWorldColumn1, poseToWorldColumn2, poseToWorldColumn3)
+			'poseToWorldColumn3.x = position.x
+			'poseToWorldColumn3.y = position.y
+			'poseToWorldColumn3.z = position.z
+			'MathModule.MatrixInvert(poseToWorldColumn0, poseToWorldColumn1, poseToWorldColumn2, poseToWorldColumn3, Me.worldToPoseColumn0, Me.worldToPoseColumn1, Me.worldToPoseColumn2, Me.worldToPoseColumn3)
+			'------
+			MathModule.AngleMatrix(rotation.x, rotation.y, rotation.z + MathModule.DegreesToRadians(-90), poseToWorldColumn0, poseToWorldColumn1, poseToWorldColumn2, poseToWorldColumn3)
+			poseToWorldColumn3.x = position.y
+			poseToWorldColumn3.y = -position.x
+			poseToWorldColumn3.z = position.z
+			MathModule.MatrixInvert(poseToWorldColumn0, poseToWorldColumn1, poseToWorldColumn2, poseToWorldColumn3, Me.worldToPoseColumn0, Me.worldToPoseColumn1, Me.worldToPoseColumn2, Me.worldToPoseColumn3)
+		End If
+	End Sub
+
 	Private Function TransformPhyVertex(ByVal aBone As SourceMdlBone, ByVal vertex As SourceVector) As SourceVector
 		Dim aVectorTransformed As New SourceVector
 		Dim aVector As New SourceVector()
 
-		'NOTE: Too small.
-		'aVectorTransformed.x = vertex.x
-		'aVectorTransformed.y = vertex.y
-		'aVectorTransformed.z = vertex.z
-		'------
-		'NOTE: Rotated for:
-		'      simple_shape
-		'      L4D2 w_models\weapons\w_minigun
-		'aVectorTransformed.x = 1 / 0.0254 * vertex.x
-		'aVectorTransformed.y = 1 / 0.0254 * vertex.y
-		'aVectorTransformed.z = 1 / 0.0254 * vertex.z
-		'------
-		'NOTE: Works for:
-		'      simple_shape
-		'      L4D2 w_models\weapons\w_minigun
-		'      L4D2 w_models\weapons\w_smg_uzi
-		'      L4D2 props_vehicles\van
-		'aVectorTransformed.x = 1 / 0.0254 * vertex.z
-		'aVectorTransformed.y = 1 / 0.0254 * -vertex.x
-		'aVectorTransformed.z = 1 / 0.0254 * -vertex.y
-		'------
-		'NOTE: Rotated for:
-		'      L4D2 w_models\weapons\w_minigun
-		'aVectorTransformed.x = 1 / 0.0254 * vertex.x
-		'aVectorTransformed.y = 1 / 0.0254 * -vertex.y
-		'aVectorTransformed.z = 1 / 0.0254 * vertex.z
-		'------
-		'NOTE: Rotated for:
-		'      L4D2 props_vehicles\van
-		'aVectorTransformed.x = 1 / 0.0254 * vertex.z
-		'aVectorTransformed.y = 1 / 0.0254 * -vertex.y
-		'aVectorTransformed.z = 1 / 0.0254 * vertex.x
-		'------
-		'NOTE: Rotated for:
-		'      L4D2 w_models\weapons\w_minigun
-		'aVector.x = 1 / 0.0254 * vertex.x
-		'aVector.y = 1 / 0.0254 * vertex.y
-		'aVector.z = 1 / 0.0254 * vertex.z
-		'aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'------
-		'NOTE: Rotated for:
-		'      L4D2 w_models\weapons\w_minigun
-		'aVector.x = 1 / 0.0254 * vertex.x
-		'aVector.y = 1 / 0.0254 * -vertex.y
-		'aVector.z = 1 / 0.0254 * vertex.z
-		'aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'------
-		'NOTE: Works for:
-		'      L4D2 w_models\weapons\w_minigun
-		'      L4D2 w_models\weapons\w_smg_uzi
-		'NOTE: Rotated for:
-		'      simple_shape
-		'      L4D2 props_vehicles\van
-		'NOTE: Each mesh piece rotated for:
-		'      L4D2 survivors\survivor_producer
-		'aVector.x = 1 / 0.0254 * vertex.z
-		'aVector.y = 1 / 0.0254 * -vertex.y
-		'aVector.z = 1 / 0.0254 * vertex.x
-		'aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'------
-		'NOTE: Works for:
-		'      simple_shape
-		'      L4D2 props_vehicles\van
-		'      L4D2 survivors\survivor_producer
-		'      L4D2 w_models\weapons\w_autoshot_m4super
-		'      L4D2 w_models\weapons\w_desert_eagle
-		'      L4D2 w_models\weapons\w_minigun
-		'      L4D2 w_models\weapons\w_rifle_m16a2
-		'      L4D2 w_models\weapons\w_smg_uzi
-		'NOTE: Rotated for:
-		'      L4D2 w_models\weapons\w_desert_rifle
-		'      L4D2 w_models\weapons\w_shotgun_spas
+		'TEST: This works for various weapons and vehicles in HL2.
 		If Me.thePhyFileData.theSourcePhyIsCollisionModel Then
 			aVectorTransformed.x = 1 / 0.0254 * vertex.z
 			aVectorTransformed.y = 1 / 0.0254 * -vertex.x
@@ -767,140 +671,35 @@ Public Class SourceSmdFile44
 			aVector.z = 1 / 0.0254 * -vertex.y
 			aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
 		End If
+		'======
+		'TEST: Untested. Copied from SourceSmdFile49.
+		'If Me.thePhyFileData.theSourcePhyIsCollisionModel Then
+		'	If (Me.theMdlFileData.flags And SourceMdlFileData.STUDIOHDR_FLAGS_STATIC_PROP) > 0 Then
+		'		aVector.x = 1 / 0.0254 * vertex.z
+		'		aVector.y = 1 / 0.0254 * -vertex.x
+		'		aVector.z = 1 / 0.0254 * -vertex.y
+		'		aVectorTransformed = MathModule.VectorTransform(aVector, Me.worldToPoseColumn0, Me.worldToPoseColumn1, Me.worldToPoseColumn2, Me.worldToPoseColumn3)
+		'		aVector.x = aVectorTransformed.x
+		'		aVector.y = aVectorTransformed.z
+		'		aVector.z = -aVectorTransformed.y
+		'		aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
+		'	Else
+		'		aVector.x = 1 / 0.0254 * vertex.x
+		'		aVector.y = 1 / 0.0254 * -vertex.y
+		'		aVector.z = 1 / 0.0254 * -vertex.z
 
-
-
-		'------
-		'NOTE: Works for:
-		'      survivor_producer
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * aVector.x
-		'phyVertex.y = 1 / 0.0254 * aVector.z
-		'phyVertex.z = 1 / 0.0254 * -aVector.y
-		'------
-		'NOTE: These two lines match orientation for cstrike it_lampholder1 model, 
-		'      but still doesn't compile properly.
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * aVector.z
-		'phyVertex.y = 1 / 0.0254 * -aVector.x
-		'phyVertex.z = 1 / 0.0254 * -aVector.y
-		'------
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * aVector.y
-		'phyVertex.y = 1 / 0.0254 * aVector.x
-		'phyVertex.z = 1 / 0.0254 * -aVector.z
-		'------
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * aVector.x
-		'phyVertex.y = 1 / 0.0254 * aVector.y
-		'phyVertex.z = 1 / 0.0254 * -aVector.z
-		'------
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * -aVector.y
-		'phyVertex.y = 1 / 0.0254 * aVector.x
-		'phyVertex.z = 1 / 0.0254 * aVector.z
-		'------
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * -aVector.y
-		'phyVertex.y = 1 / 0.0254 * aVector.x
-		'phyVertex.z = 1 / 0.0254 * aVector.z
-		'------
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * aVector.z
-		'phyVertex.y = 1 / 0.0254 * aVector.y
-		'phyVertex.z = 1 / 0.0254 * aVector.x
-		'------
-		'NOTE: Works for:
-		'      w_smg_uzi()
-		'NOTE: Does not work for:
-		'      survivor_producer
-		'phyVertex.x = 1 / 0.0254 * aVector.z
-		'phyVertex.y = 1 / 0.0254 * -aVector.y
-		'phyVertex.z = 1 / 0.0254 * aVector.x
-		'------
-		'phyVertex.x = 1 / 0.0254 * aVector.z
-		'phyVertex.y = 1 / 0.0254 * -aVector.y
-		'phyVertex.z = 1 / 0.0254 * -aVector.x
-		'------
-		''TODO: Find some rationale for why phys model is rotated differently for different models.
-		''      Possibly due to rotation needed to transfrom from pose to bone position.
-		''If Me.theSourceEngineModel.theMdlFileHeader.theAnimationDescs.Count < 2 Then
-		''If (theSourceEngineModel.theMdlFileHeader.flags And SourceMdlFileHeader.STUDIOHDR_FLAGS_STATIC_PROP) > 0 Then
-		'If Me.theSourceEngineModel.thePhyFileHeader.theSourcePhyIsCollisionModel Then
-		'	'TEST: Does not rotate L4D2's van phys mesh correctly.
-		'	'aVector.x = 1 / 0.0254 * phyVertex.vertex.x
-		'	'aVector.y = 1 / 0.0254 * phyVertex.vertex.y
-		'	'aVector.z = 1 / 0.0254 * phyVertex.vertex.z
-		'	'TEST:  Does not rotate L4D2's van phys mesh correctly.
-		'	'aVector.x = 1 / 0.0254 * phyVertex.vertex.y
-		'	'aVector.y = 1 / 0.0254 * -phyVertex.vertex.x
-		'	'aVector.z = 1 / 0.0254 * phyVertex.vertex.z
-		'	'TEST: Does not rotate L4D2's van phys mesh correctly.
-		'	'aVector.x = 1 / 0.0254 * phyVertex.vertex.z
-		'	'aVector.y = 1 / 0.0254 * -phyVertex.vertex.y
-		'	'aVector.z = 1 / 0.0254 * phyVertex.vertex.x
-		'	'TEST: Does not rotate L4D2's van phys mesh correctly.
-		'	'aVector.x = 1 / 0.0254 * phyVertex.vertex.x
-		'	'aVector.y = 1 / 0.0254 * phyVertex.vertex.z
-		'	'aVector.z = 1 / 0.0254 * -phyVertex.vertex.y
-		'	'TEST: Works for L4D2's van phys mesh.
-		'	'      Does not work for L4D2 w_model\weapons\w_minigun.mdl.
-		'	aVector.x = 1 / 0.0254 * vertex.z
-		'	aVector.y = 1 / 0.0254 * -vertex.x
-		'	aVector.z = 1 / 0.0254 * -vertex.y
-
-		'	aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-
-		'	'======
-
-		'	'Dim aVectorTransformed2 As SourceVector
-		'	''aVectorTransformed2 = New SourceVector()
-		'	''aVectorTransformed2 = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'	''aVectorTransformed2.x = aVector.x
-		'	''aVectorTransformed2.y = aVector.y
-		'	''aVectorTransformed2.z = aVector.z
-
-		'	'aVectorTransformed = MathModule.VectorTransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'	''aVectorTransformed = MathModule.VectorTransform(aVectorTransformed2, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'	''aVectorTransformed = New SourceVector()
-		'	''aVectorTransformed.x = aVectorTransformed2.x
-		'	''aVectorTransformed.y = aVectorTransformed2.y
-		'	''aVectorTransformed.z = aVectorTransformed2.z
+		'		aVectorTransformed = MathModule.VectorTransform(aVector, Me.worldToPoseColumn0, Me.worldToPoseColumn1, Me.worldToPoseColumn2, Me.worldToPoseColumn3)
+		'		aVector.x = aVectorTransformed.x
+		'		aVector.y = aVectorTransformed.y
+		'		aVector.z = aVectorTransformed.z
+		'		aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
+		'	End If
 		'Else
-		'	'TEST: Does not work for L4D2 w_model\weapons\w_minigun.mdl.
 		'	aVector.x = 1 / 0.0254 * vertex.x
 		'	aVector.y = 1 / 0.0254 * vertex.z
 		'	aVector.z = 1 / 0.0254 * -vertex.y
-
 		'	aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
 		'End If
-		'------
-		'TEST: Does not rotate L4D2's van phys mesh correctly.
-		'aVector.x = 1 / 0.0254 * phyVertex.vertex.x
-		'aVector.y = 1 / 0.0254 * phyVertex.vertex.y
-		'aVector.z = 1 / 0.0254 * phyVertex.vertex.z
-		'TEST: Does not rotate L4D2's van phys mesh correctly.
-		'aVector.x = 1 / 0.0254 * phyVertex.vertex.y
-		'aVector.y = 1 / 0.0254 * -phyVertex.vertex.x
-		'aVector.z = 1 / 0.0254 * phyVertex.vertex.z
-		'TEST: works for survivor_producer; matches ref and phy meshes of van, but both are rotated 90 degrees on z-axis
-		'aVector.x = 1 / 0.0254 * phyVertex.vertex.x
-		'aVector.y = 1 / 0.0254 * phyVertex.vertex.z
-		'aVector.z = 1 / 0.0254 * -phyVertex.vertex.y
-
-		'aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		''------
-		'''TEST: Only rotate by -90 deg if bone is a root bone.  Do not know why.
-		''If aBone.parentBoneIndex = -1 Then
-		''	aVectorTransformed = MathModule.RotateAboutZAxis(aVectorTransformed, MathModule.DegreesToRadians(-90), aBone)
-		''End If
 
 		Return aVectorTransformed
 	End Function
@@ -1816,8 +1615,16 @@ Public Class SourceSmdFile44
 	Private theVvdFileData As SourceVvdFileData44
 	'Private theModelName As String
 
-	Private theWeaponBoneIndex As Integer
 	Private theAnimationFrameLines As SortedList(Of Integer, AnimationFrameLine)
+
+	Private worldToPoseColumn0 As New SourceVector()
+	Private worldToPoseColumn1 As New SourceVector()
+	Private worldToPoseColumn2 As New SourceVector()
+	Private worldToPoseColumn3 As New SourceVector()
+	Private poseToWorldColumn0 As New SourceVector()
+	Private poseToWorldColumn1 As New SourceVector()
+	Private poseToWorldColumn2 As New SourceVector()
+	Private poseToWorldColumn3 As New SourceVector()
 
 #End Region
 

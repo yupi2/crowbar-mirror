@@ -35,17 +35,12 @@ Public Class SourceSmdFile31
 		Dim line As String = ""
 		Dim name As String
 
-		Me.theWeaponBoneIndex = -1
-
 		'nodes
 		line = "nodes"
 		Me.theOutputFileStreamWriter.WriteLine(line)
 
 		For boneIndex As Integer = 0 To Me.theMdlFileData.theBones.Count - 1
 			name = Me.theMdlFileData.theBones(boneIndex).theName
-			If TheApp.Settings.DecompileApplyRightHandFixIsChecked AndAlso lodIndex = 0 AndAlso name = "ValveBiped.weapon_bone" Then
-				Me.theWeaponBoneIndex = boneIndex
-			End If
 
 			line = "  "
 			line += boneIndex.ToString(TheApp.InternalNumberFormat)
@@ -77,25 +72,11 @@ Public Class SourceSmdFile31
 			line = "    "
 			line += boneIndex.ToString(TheApp.InternalNumberFormat)
 			line += " "
-			If lodIndex = 0 AndAlso Me.theWeaponBoneIndex = boneIndex Then
-				line += "0.000000 0.000000 0.000000"
-				'ElseIf Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).parentBoneIndex = -1 Then
-				'	'NOTE: Only adjust position if a root bone. Did not seem to help for l4d2's van.mdl.
-				'	line += Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).positionY.ToString("0.000000", TheApp.InternalNumberFormat)
-				'	line += " "
-				'	line += (-Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).positionX).ToString("0.000000", TheApp.InternalNumberFormat)
-				'	line += " "
-				'	line += Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).positionZ.ToString("0.000000", TheApp.InternalNumberFormat)
-			Else
-				line += Me.theMdlFileData.theBones(boneIndex).position.x.ToString("0.000000", TheApp.InternalNumberFormat)
-				line += " "
-				line += Me.theMdlFileData.theBones(boneIndex).position.y.ToString("0.000000", TheApp.InternalNumberFormat)
-				'line += Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).positionY.ToString("0.000000", TheApp.InternalNumberFormat)
-				'line += " "
-				'line += (-Me.theSourceEngineModel.theMdlFileHeader.theBones(boneIndex).positionX).ToString("0.000000", TheApp.InternalNumberFormat)
-				line += " "
-				line += Me.theMdlFileData.theBones(boneIndex).position.z.ToString("0.000000", TheApp.InternalNumberFormat)
-			End If
+			line += Me.theMdlFileData.theBones(boneIndex).position.x.ToString("0.000000", TheApp.InternalNumberFormat)
+			line += " "
+			line += Me.theMdlFileData.theBones(boneIndex).position.y.ToString("0.000000", TheApp.InternalNumberFormat)
+			line += " "
+			line += Me.theMdlFileData.theBones(boneIndex).position.z.ToString("0.000000", TheApp.InternalNumberFormat)
 			line += " "
 			line += Me.theMdlFileData.theBones(boneIndex).rotation.x.ToString("0.000000", TheApp.InternalNumberFormat)
 			line += " "
@@ -140,7 +121,7 @@ Public Class SourceSmdFile31
 				For meshIndex As Integer = 0 To aVtxLod.theVtxMeshes.Count - 1
 					aVtxMesh = aVtxLod.theVtxMeshes(meshIndex)
 					materialIndex = aModel.theMeshes(meshIndex).materialIndex
-					materialName = Me.theMdlFileData.theTextures(materialIndex).theFileName
+					materialName = Me.theMdlFileData.theTextures(materialIndex).thePathFileName
 					'TODO: This was used in previous versions, but maybe should leave as above.
 					'materialName = Path.GetFileName(Me.theSourceEngineModel.theMdlFileHeader.theTextures(materialIndex).theName)
 
@@ -362,13 +343,18 @@ Public Class SourceSmdFile31
 				boneIndex = Me.theAnimationFrameLines.Keys(i)
 				aFrameLine = Me.theAnimationFrameLines.Values(i)
 
-				position.x = aFrameLine.position.x
-				position.y = aFrameLine.position.y
-				position.z = aFrameLine.position.z
+				'position.x = aFrameLine.position.x
+				'position.y = aFrameLine.position.y
+				'position.z = aFrameLine.position.z
 
-				rotation.x = aFrameLine.rotation.x
-				rotation.y = aFrameLine.rotation.y
-				rotation.z = aFrameLine.rotation.z
+				'rotation.x = aFrameLine.rotation.x
+				'rotation.y = aFrameLine.rotation.y
+				'rotation.z = aFrameLine.rotation.z
+				'------
+				Dim adjustedPosition As New SourceVector()
+				Dim adjustedRotation As New SourceVector()
+				Me.AdjustPositionAndRotationByPiecewiseMovement(frameIndex, boneIndex, anAnimationDesc.theMovements, aFrameLine.position, aFrameLine.rotation, adjustedPosition, adjustedRotation)
+				Me.AdjustPositionAndRotation(boneIndex, adjustedPosition, adjustedRotation, position, rotation)
 
 				line = "    "
 				line += boneIndex.ToString(TheApp.InternalNumberFormat)
@@ -411,6 +397,85 @@ Public Class SourceSmdFile31
 #End Region
 
 #Region "Private Methods"
+
+	Private Sub AdjustPositionAndRotationByPiecewiseMovement(ByVal frameIndex As Integer, ByVal boneIndex As Integer, ByVal movements As List(Of SourceMdlMovement), ByVal iPosition As SourceVector, ByVal iRotation As SourceVector, ByRef oPosition As SourceVector, ByRef oRotation As SourceVector)
+		Dim aBone As SourceMdlBone31
+		aBone = Me.theMdlFileData.theBones(boneIndex)
+
+		oPosition.x = iPosition.x
+		oPosition.y = iPosition.y
+		oPosition.z = iPosition.z
+		oPosition.debug_text = iPosition.debug_text
+		oRotation.x = iRotation.x
+		oRotation.y = iRotation.y
+		oRotation.z = iRotation.z
+		oRotation.debug_text = iRotation.debug_text
+
+		If aBone.parentBoneIndex = -1 Then
+			If movements IsNot Nothing AndAlso frameIndex > 0 Then
+				Dim previousFrameIndex As Integer
+				Dim vecPos As SourceVector
+				Dim vecAngle As SourceVector
+
+				previousFrameIndex = 0
+				vecPos = New SourceVector()
+				vecAngle = New SourceVector()
+
+				For Each aMovement As SourceMdlMovement In movements
+					If frameIndex <= aMovement.endframeIndex Then
+						Dim f As Double
+						Dim d As Double
+						f = (frameIndex - previousFrameIndex) / (aMovement.endframeIndex - previousFrameIndex)
+						d = aMovement.v0 * f + 0.5 * (aMovement.v1 - aMovement.v0) * f * f
+						vecPos.x = vecPos.x + d * aMovement.vector.x
+						vecPos.y = vecPos.y + d * aMovement.vector.y
+						vecPos.z = vecPos.z + d * aMovement.vector.z
+						vecAngle.y = vecAngle.y * (1 - f) + MathModule.DegreesToRadians(aMovement.angle) * f
+
+						Exit For
+					Else
+						previousFrameIndex = aMovement.endframeIndex
+						vecPos.x = aMovement.position.x
+						vecPos.y = aMovement.position.y
+						vecPos.z = aMovement.position.z
+						vecAngle.y = MathModule.DegreesToRadians(aMovement.angle)
+					End If
+				Next
+
+				Dim tmp As New SourceVector()
+				tmp.x = iPosition.x + vecPos.x
+				tmp.y = iPosition.y + vecPos.y
+				tmp.z = iPosition.z + vecPos.z
+				'oRotation.z = iRotation.z + vecAngle.y
+				'oPosition = MathModule.VectorYawRotate(tmp, -vecAngle.y)
+			End If
+		End If
+	End Sub
+
+	Private Sub AdjustPositionAndRotation(ByVal boneIndex As Integer, ByVal iPosition As SourceVector, ByVal iRotation As SourceVector, ByRef oPosition As SourceVector, ByRef oRotation As SourceVector)
+		Dim aBone As SourceMdlBone31
+		aBone = Me.theMdlFileData.theBones(boneIndex)
+
+		If aBone.parentBoneIndex = -1 Then
+			oPosition.x = iPosition.y
+			oPosition.y = -iPosition.x
+			oPosition.z = iPosition.z
+		Else
+			oPosition.x = iPosition.x
+			oPosition.y = iPosition.y
+			oPosition.z = iPosition.z
+		End If
+
+		If aBone.parentBoneIndex = -1 Then
+			oRotation.x = iRotation.x
+			oRotation.y = iRotation.y
+			oRotation.z = iRotation.z + MathModule.DegreesToRadians(-90)
+		Else
+			oRotation.x = iRotation.x
+			oRotation.y = iRotation.y
+			oRotation.z = iRotation.z
+		End If
+	End Sub
 
 	Private Function WriteVertexLine(ByVal aStripGroup As SourceVtxStripGroup06, ByVal aVtxIndexIndex As Integer, ByVal lodIndex As Integer, ByVal meshVertexIndexStart As Integer, ByVal bodyPartVertexIndexStart As Integer) As String
 		Dim aVtxVertexIndex As UShort
@@ -550,70 +615,32 @@ Public Class SourceSmdFile31
 		Dim rot As New SourceQuaternion()
 		Dim angleVector As New SourceVector()
 
-		''If (anAnimation.flags And SourceMdlAnimation37.STUDIO_ROT_ANIMATED) > 0 Then
-		''	If anAnimation.animationValueOffsets(3) <= 0 Then
-		''		angleVector.x = aBone.rotation.x
-		''	Else
-		''		angleVector.x = Me.ExtractAnimValue(frameIndex, anAnimation.theAnimationValues(3), aBone.rotationScale.x, aBone.rotation.x)
-		''		angleVector.x = aBone.rotation.x + angleVector.x * aBone.rotationScale.x
-		''	End If
-		''	If anAnimation.animationValueOffsets(4) <= 0 Then
-		''		angleVector.y = aBone.rotation.y
-		''	Else
-		''		angleVector.y = Me.ExtractAnimValue(frameIndex, anAnimation.theAnimationValues(4), aBone.rotationScale.y, aBone.rotation.y)
-		''		angleVector.y = aBone.rotation.y + angleVector.y * aBone.rotationScale.y
-		''	End If
-		''	If anAnimation.animationValueOffsets(5) <= 0 Then
-		''		angleVector.z = aBone.rotation.z
-		''	Else
-		''		angleVector.z = Me.ExtractAnimValue(frameIndex, anAnimation.theAnimationValues(5), aBone.rotationScale.z, aBone.rotation.z)
-		''		angleVector.z = aBone.rotation.z + angleVector.z * aBone.rotationScale.z
-		''	End If
-
-		''	rotationQuat = MathModule.EulerAnglesToQuaternion(angleVector)
-
-		''	angleVector.debug_text = "anim"
-		''Else
-		'rotationQuat = anAnimation.rotationQuat
-		'angleVector = MathModule.ToEulerAngles(rotationQuat)
-
-		'angleVector.debug_text = "rot"
-		''End If
-		'======
 		If (aBone.flags And SourceMdlBone2531.STUDIO_PROC_AXISINTERP) > 0 Then
 			angleVector.x = 0
 			angleVector.y = 0
 			angleVector.z = 0
 
-			angleVector.debug_text = "anim"
+			angleVector.debug_text = "AXISINTERP"
 		Else
 			If anAnimation.theOffsets(3) <= 0 OrElse (aBone.flags And SourceMdlBone2531.STUDIO_PROC_QUATINTERP) > 0 Then
 				rot.x = aBone.rotation.x
 			Else
-				'rot.x = Me.ExtractAnimValue(frameIndex, anAnimation.theRotationAnimationXValues, aBone.rotationScale.x, aBone.rotation.x)
 				rot.x = Me.ExtractAnimValue(frameIndex, anAnimation.theRotationAnimationXValues, aBone.rotationScale.x, 0)
 			End If
 			If anAnimation.theOffsets(4) <= 0 OrElse (aBone.flags And SourceMdlBone2531.STUDIO_PROC_QUATINTERP) > 0 Then
 				rot.y = aBone.rotation.y
 			Else
-				'rot.y = Me.ExtractAnimValue(frameIndex, anAnimation.theRotationAnimationYValues, aBone.rotationScale.y, aBone.rotation.y)
 				rot.y = Me.ExtractAnimValue(frameIndex, anAnimation.theRotationAnimationYValues, aBone.rotationScale.y, 0)
 			End If
 			If anAnimation.theOffsets(5) <= 0 OrElse (aBone.flags And SourceMdlBone2531.STUDIO_PROC_QUATINTERP) > 0 Then
 				rot.z = aBone.rotation.z
 			Else
-				'rot.z = Me.ExtractAnimValue(frameIndex, anAnimation.theRotationAnimationZValues, aBone.rotationScale.z, aBone.rotation.z)
 				rot.z = Me.ExtractAnimValue(frameIndex, anAnimation.theRotationAnimationZValues, aBone.rotationScale.z, 0)
 			End If
-			'If anAnimation.theOffsets(6) <= 0 OrElse (aBone.flags And SourceMdlBone2531.STUDIO_PROC_QUATINTERP) > 0 Then
-			'	rot.w = aBone.rotation.w
-			'Else
-			'	'rot.w = Me.ExtractAnimValue(frameIndex, anAnimation.theRotationAnimationWValues, aBone.rotationScale.w, aBone.rotation.w)
-			'	rot.w = Me.ExtractAnimValue(frameIndex, anAnimation.theRotationAnimationWValues, aBone.rotationScale.w, 0)
-			'End If
-			rot.w = 1
 
-			angleVector = MathModule.ToEulerAngles2531(rot)
+			angleVector.x = rot.x
+			angleVector.y = rot.y
+			angleVector.z = rot.z
 			angleVector.debug_text = "anim"
 		End If
 
@@ -625,61 +652,25 @@ Public Class SourceSmdFile31
 	Private Function CalcBonePosition(ByVal frameIndex As Integer, ByVal s As Double, ByVal aBone As SourceMdlBone31, ByVal anAnimation As SourceMdlAnimation31) As SourceVector
 		Dim pos As New SourceVector()
 
-		''If (anAnimation.flags And SourceMdlAnimation37.STUDIO_POS_ANIMATED) > 0 Then
-		''	If anAnimation.animationValueOffsets(0) <= 0 Then
-		''		'pos.x = 0
-		''		pos.x = aBone.position.x
-		''	Else
-		''		pos.x = Me.ExtractAnimValue(frameIndex, anAnimation.theAnimationValues(0), aBone.positionScale.x, aBone.position.x)
-		''		pos.x = aBone.position.x + pos.x * aBone.positionScale.x
-		''	End If
-
-		''	If anAnimation.animationValueOffsets(1) <= 0 Then
-		''		'pos.y = 0
-		''		pos.y = aBone.position.y
-		''	Else
-		''		pos.y = Me.ExtractAnimValue(frameIndex, anAnimation.theAnimationValues(1), aBone.positionScale.y, aBone.position.y)
-		''		pos.y = aBone.position.y + pos.y * aBone.positionScale.y
-		''	End If
-
-		''	If anAnimation.animationValueOffsets(2) <= 0 Then
-		''		'pos.z = 0
-		''		pos.z = aBone.position.z
-		''	Else
-		''		pos.z = Me.ExtractAnimValue(frameIndex, anAnimation.theAnimationValues(2), aBone.positionScale.z, aBone.position.z)
-		''		pos.z = aBone.position.z + pos.z * aBone.positionScale.z
-		''	End If
-
-		''	pos.debug_text = "anim"
-		''Else
-		'pos = anAnimation.position
-
-		'pos.debug_text = "pos"
-		''End If
-		'======
 		If anAnimation.theOffsets(0) <= 0 Then
-			'pos.x = 0
 			pos.x = aBone.position.x
 		Else
 			pos.x = Me.ExtractAnimValue(frameIndex, anAnimation.thePositionAnimationXValues, aBone.positionScale.x, aBone.position.x)
 		End If
 
 		If anAnimation.theOffsets(1) <= 0 Then
-			'pos.y = 0
 			pos.y = aBone.position.y
 		Else
 			pos.y = Me.ExtractAnimValue(frameIndex, anAnimation.thePositionAnimationYValues, aBone.positionScale.y, aBone.position.y)
 		End If
 
 		If anAnimation.theOffsets(2) <= 0 Then
-			'pos.z = 0
 			pos.z = aBone.position.z
 		Else
 			pos.z = Me.ExtractAnimValue(frameIndex, anAnimation.thePositionAnimationZValues, aBone.positionScale.z, aBone.position.z)
 		End If
 
 		pos.debug_text = "anim"
-
 
 		Return pos
 	End Function
@@ -736,7 +727,6 @@ Public Class SourceSmdFile31
 	'Private theVvdFileData As SourceVvdFileData37
 	'Private theModelName As String
 
-	Private theWeaponBoneIndex As Integer
 	Private theAnimationFrameLines As SortedList(Of Integer, AnimationFrameLine)
 
 #End Region

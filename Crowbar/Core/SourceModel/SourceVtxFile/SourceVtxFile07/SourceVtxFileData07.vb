@@ -1,4 +1,4 @@
-﻿Public Class SourceVtxFileData49
+﻿Public Class SourceVtxFileData07
 	Inherits SourceFileData
 
 
@@ -61,5 +61,6 @@
 
 
 	Public theVtxBodyParts As List(Of SourceVtxBodyPart)
+	Public theVtxMaterialReplacementLists As List(Of SourceVtxMaterialReplacementList07)
 
 End Class

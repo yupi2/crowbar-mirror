@@ -139,6 +139,7 @@ Public Class SourceMdlAnimationDesc48
 
 	Public theAnimIsLinkedToSequence As Boolean
 	Public theLinkedSequences As List(Of SourceMdlSequenceDesc)
+	Public theOffsetStart As Long
 
 
 

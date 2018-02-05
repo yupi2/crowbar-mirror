@@ -1539,8 +1539,12 @@ Public Class SourceMdlFile37
 		End If
 	End Sub
 
-	Public Sub ReadFinalBytesAlignment()
-		Me.theMdlFileData.theFileSeekLog.LogAndAlignFromFileSeekLogEnd(Me.theInputFileReader, 4, "Final bytes alignment")
+	'Public Sub ReadFinalBytesAlignment()
+	'	Me.theMdlFileData.theFileSeekLog.LogAndAlignFromFileSeekLogEnd(Me.theInputFileReader, 4, "Final bytes alignment")
+	'End Sub
+
+	Public Sub ReadUnreadBytes()
+		Me.theMdlFileData.theFileSeekLog.LogUnreadBytes(Me.theInputFileReader)
 	End Sub
 
 #End Region

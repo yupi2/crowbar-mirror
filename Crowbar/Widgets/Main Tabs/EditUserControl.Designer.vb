@@ -22,7 +22,6 @@ Partial Class EditUserControl
 	'Do not modify it using the code editor.
 	<System.Diagnostics.DebuggerStepThrough()> _
 	Private Sub InitializeComponent()
-		Me.ApplyRightHandFixCheckBox = New System.Windows.Forms.CheckBox()
 		Me.Panel1 = New System.Windows.Forms.Panel()
 		Me.GotoQcButton = New System.Windows.Forms.Button()
 		Me.Label6 = New System.Windows.Forms.Label()
@@ -32,16 +31,6 @@ Partial Class EditUserControl
 		Me.Panel1.SuspendLayout()
 		Me.SuspendLayout()
 		'
-		'ApplyRightHandFixCheckBox
-		'
-		Me.ApplyRightHandFixCheckBox.AutoSize = True
-		Me.ApplyRightHandFixCheckBox.Location = New System.Drawing.Point(3, 31)
-		Me.ApplyRightHandFixCheckBox.Name = "ApplyRightHandFixCheckBox"
-		Me.ApplyRightHandFixCheckBox.Size = New System.Drawing.Size(281, 17)
-		Me.ApplyRightHandFixCheckBox.TabIndex = 15
-		Me.ApplyRightHandFixCheckBox.Text = "Apply ""Right-Hand Fix"" (only for survivors in L4D2)"
-		Me.ApplyRightHandFixCheckBox.UseVisualStyleBackColor = True
-		'
 		'Panel1
 		'
 		Me.Panel1.Controls.Add(Me.GotoQcButton)
@@ -49,7 +38,6 @@ Partial Class EditUserControl
 		Me.Panel1.Controls.Add(Me.QcPathFileNameTextBox)
 		Me.Panel1.Controls.Add(Me.BrowseForQcPathFolderOrFileNameButton)
 		Me.Panel1.Controls.Add(Me.UseInCompileButton)
-		Me.Panel1.Controls.Add(Me.ApplyRightHandFixCheckBox)
 		Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
 		Me.Panel1.Location = New System.Drawing.Point(0, 0)
 		Me.Panel1.Name = "Panel1"
@@ -71,7 +59,7 @@ Partial Class EditUserControl
 		Me.Label6.AutoSize = True
 		Me.Label6.Location = New System.Drawing.Point(3, 8)
 		Me.Label6.Name = "Label6"
-		Me.Label6.Size = New System.Drawing.Size(93, 13)
+		Me.Label6.Size = New System.Drawing.Size(87, 13)
 		Me.Label6.TabIndex = 26
 		Me.Label6.Text = "QC file or folder:"
 		'
@@ -81,7 +69,7 @@ Partial Class EditUserControl
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.QcPathFileNameTextBox.Location = New System.Drawing.Point(91, 5)
 		Me.QcPathFileNameTextBox.Name = "QcPathFileNameTextBox"
-		Me.QcPathFileNameTextBox.Size = New System.Drawing.Size(555, 22)
+		Me.QcPathFileNameTextBox.Size = New System.Drawing.Size(555, 21)
 		Me.QcPathFileNameTextBox.TabIndex = 27
 		'
 		'BrowseForQcPathFolderOrFileNameButton
@@ -116,7 +104,6 @@ Partial Class EditUserControl
 		Me.ResumeLayout(False)
 
 	End Sub
-	Friend WithEvents ApplyRightHandFixCheckBox As System.Windows.Forms.CheckBox
 	Friend WithEvents Panel1 As System.Windows.Forms.Panel
 	Friend WithEvents UseInCompileButton As System.Windows.Forms.Button
 	Friend WithEvents GotoQcButton As System.Windows.Forms.Button

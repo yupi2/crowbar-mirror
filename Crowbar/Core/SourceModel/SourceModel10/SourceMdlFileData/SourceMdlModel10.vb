@@ -47,8 +47,10 @@
 	Public theName As String
 	Public theMeshes As List(Of SourceMdlMesh10)
 	Public theNormals As List(Of SourceVector)
+	'Public theNormals As List(Of SourceVectorSingle)
 	Public theNormalBoneInfos As List(Of Integer)
 	Public theVertexes As List(Of SourceVector)
+	'Public theVertexes As List(Of SourceVectorSingle)
 	Public theVertexBoneInfos As List(Of Integer)
 
 End Class

@@ -58,7 +58,6 @@ Public Class DecompileUserControl
 
 		Me.ReferenceMeshSmdFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileReferenceMeshSmdFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.RemovePathFromMaterialFileNamesCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileRemovePathFromSmdMaterialFileNamesIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
-		Me.ApplyRightHandFixCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileApplyRightHandFixIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 
 		Me.BoneAnimationSmdFilesCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileBoneAnimationSmdFilesIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.PlaceInAnimsSubfolderCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileBoneAnimationPlaceInSubfolderIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
@@ -104,7 +103,6 @@ Public Class DecompileUserControl
 		Me.IncludeDefineBoneLinesCheckBox.DataBindings.Clear()
 		Me.ReferenceMeshSmdFileCheckBox.DataBindings.Clear()
 		Me.RemovePathFromMaterialFileNamesCheckBox.DataBindings.Clear()
-		Me.ApplyRightHandFixCheckBox.DataBindings.Clear()
 		Me.BoneAnimationSmdFilesCheckBox.DataBindings.Clear()
 		Me.PlaceInAnimsSubfolderCheckBox.DataBindings.Clear()
 
@@ -456,7 +454,6 @@ Public Class DecompileUserControl
 		Me.GroupIntoQciFilesCheckBox.Enabled = TheApp.Settings.DecompileQcFileIsChecked
 		Me.SkinFamilyOnSingleLineCheckBox.Enabled = TheApp.Settings.DecompileQcFileIsChecked
 		Me.IncludeDefineBoneLinesCheckBox.Enabled = TheApp.Settings.DecompileQcFileIsChecked
-		Me.ApplyRightHandFixCheckBox.Enabled = TheApp.Settings.DecompileReferenceMeshSmdFileIsChecked
 		Me.PlaceInAnimsSubfolderCheckBox.Enabled = TheApp.Settings.DecompileBoneAnimationSmdFilesIsChecked
 
 		Me.OptionsGroupBox.Enabled = Not decompilerIsRunning
@@ -499,21 +496,15 @@ Public Class DecompileUserControl
 
 	Private Sub UpdateDecompileMode()
 		Dim anEnumList As IList
-		'Dim mdlPathFileNameExists As Boolean
-		'Dim mdlPathFileNameIsFolder As Boolean
+		Dim previousSelectedInputOption As InputOptions
 
 		anEnumList = EnumHelper.ToList(GetType(InputOptions))
+		previousSelectedInputOption = TheApp.Settings.DecompileMode
 		Me.DecompileComboBox.DataBindings.Clear()
 		Try
-			'mdlPathFileNameExists = File.Exists(TheApp.Settings.DecompileMdlPathFileName)
-			'mdlPathFileNameIsFolder = ((File.GetAttributes(TheApp.Settings.DecompileMdlPathFileName) And FileAttributes.Directory) = FileAttributes.Directory)
-			'If mdlPathFileNameIsFolder Then
-			'	anEnumList.RemoveAt(ActionMode.File)
-			'ElseIf Not mdlPathFileNameExists Then
-			'	Exit Try
-			'End If
 			If File.Exists(TheApp.Settings.DecompileMdlPathFileName) Then
-				' Do nothing; this is okay.
+				' Set file mode when a file is selected.
+				previousSelectedInputOption = InputOptions.File
 			ElseIf Directory.Exists(TheApp.Settings.DecompileMdlPathFileName) Then
 				'NOTE: Remove in reverse index order.
 				If Directory.GetFiles(TheApp.Settings.DecompileMdlPathFileName, "*.mdl").Length = 0 Then
@@ -529,7 +520,11 @@ Public Class DecompileUserControl
 			Me.DecompileComboBox.DataSource = anEnumList
 			Me.DecompileComboBox.DataBindings.Add("SelectedValue", TheApp.Settings, "DecompileMode", False, DataSourceUpdateMode.OnPropertyChanged)
 
-			Me.DecompileComboBox.SelectedIndex = 0
+			If EnumHelper.Contains(previousSelectedInputOption, anEnumList) Then
+				Me.DecompileComboBox.SelectedIndex = EnumHelper.IndexOf(previousSelectedInputOption, anEnumList)
+			Else
+				Me.DecompileComboBox.SelectedIndex = 0
+			End If
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		End Try

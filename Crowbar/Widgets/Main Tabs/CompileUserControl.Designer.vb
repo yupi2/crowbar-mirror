@@ -51,15 +51,16 @@ Partial Class CompileUserControl
 		Me.Label3 = New System.Windows.Forms.Label()
 		Me.CompileButton = New System.Windows.Forms.Button()
 		Me.Panel1 = New System.Windows.Forms.Panel()
+		Me.QcPathFileNameTextBox = New Crowbar.TextBoxEx()
 		Me.GameModelsOutputPathTextBox = New Crowbar.TextBoxEx()
 		Me.OutputPathTextBox = New Crowbar.TextBoxEx()
+		Me.OutputSubfolderTextBox = New Crowbar.TextBoxEx()
 		Me.GotoOutputPathButton = New System.Windows.Forms.Button()
 		Me.BrowseForOutputPathButton = New System.Windows.Forms.Button()
 		Me.OutputPathComboBox = New System.Windows.Forms.ComboBox()
 		Me.CompileComboBox = New System.Windows.Forms.ComboBox()
 		Me.Label1 = New System.Windows.Forms.Label()
 		Me.GotoQcButton = New System.Windows.Forms.Button()
-		Me.QcPathFileNameTextBox = New Crowbar.TextBoxEx()
 		Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
 		Me.UseAllInPackButton = New System.Windows.Forms.Button()
 		Me.OptionsGroupBox = New System.Windows.Forms.GroupBox()
@@ -72,15 +73,14 @@ Partial Class CompileUserControl
 		Me.CompileOptionsSizerLabel = New System.Windows.Forms.Label()
 		Me.CancelCompileButton = New System.Windows.Forms.Button()
 		Me.SkipCurrentModelButton = New System.Windows.Forms.Button()
-		Me.UseInPackButton = New System.Windows.Forms.Button()
 		Me.UseInViewButton = New System.Windows.Forms.Button()
 		Me.CompileLogRichTextBox = New Crowbar.RichTextBoxEx()
 		Me.CompiledFilesComboBox = New System.Windows.Forms.ComboBox()
 		Me.GotoCompiledMdlButton = New System.Windows.Forms.Button()
 		Me.RecompileButton = New System.Windows.Forms.Button()
+		Me.UseInPackButton = New System.Windows.Forms.Button()
 		Me.UseDefaultOutputSubfolderButton = New System.Windows.Forms.Button()
 		Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-		Me.OutputSubfolderTextBox = New Crowbar.TextBoxEx()
 		Me.CompilerOptionsTabControl.SuspendLayout()
 		Me.OrangeBoxOptionsTabPage.SuspendLayout()
 		Me.Panel1.SuspendLayout()
@@ -103,7 +103,7 @@ Partial Class CompileUserControl
 		Me.CompilerOptionsTextBox.Multiline = True
 		Me.CompilerOptionsTextBox.Name = "CompilerOptionsTextBox"
 		Me.CompilerOptionsTextBox.ReadOnly = True
-		Me.CompilerOptionsTextBox.Size = New System.Drawing.Size(758, 46)
+		Me.CompilerOptionsTextBox.Size = New System.Drawing.Size(758, 45)
 		Me.CompilerOptionsTextBox.TabIndex = 15
 		'
 		'GameSetupComboBox
@@ -373,7 +373,7 @@ Partial Class CompileUserControl
 		'CompileButton
 		'
 		Me.CompileButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-		Me.CompileButton.Location = New System.Drawing.Point(0, 250)
+		Me.CompileButton.Location = New System.Drawing.Point(0, 249)
 		Me.CompileButton.Name = "CompileButton"
 		Me.CompileButton.Size = New System.Drawing.Size(120, 23)
 		Me.CompileButton.TabIndex = 1
@@ -382,6 +382,7 @@ Partial Class CompileUserControl
 		'
 		'Panel1
 		'
+		Me.Panel1.Controls.Add(Me.QcPathFileNameTextBox)
 		Me.Panel1.Controls.Add(Me.GameModelsOutputPathTextBox)
 		Me.Panel1.Controls.Add(Me.OutputPathTextBox)
 		Me.Panel1.Controls.Add(Me.OutputSubfolderTextBox)
@@ -392,7 +393,6 @@ Partial Class CompileUserControl
 		Me.Panel1.Controls.Add(Me.Label1)
 		Me.Panel1.Controls.Add(Me.GotoQcButton)
 		Me.Panel1.Controls.Add(Me.Label6)
-		Me.Panel1.Controls.Add(Me.QcPathFileNameTextBox)
 		Me.Panel1.Controls.Add(Me.BrowseForQcPathFolderOrFileNameButton)
 		Me.Panel1.Controls.Add(Me.SplitContainer1)
 		Me.Panel1.Controls.Add(Me.UseDefaultOutputSubfolderButton)
@@ -402,6 +402,15 @@ Partial Class CompileUserControl
 		Me.Panel1.Name = "Panel1"
 		Me.Panel1.Size = New System.Drawing.Size(776, 536)
 		Me.Panel1.TabIndex = 15
+		'
+		'QcPathFileNameTextBox
+		'
+		Me.QcPathFileNameTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.QcPathFileNameTextBox.Location = New System.Drawing.Point(209, 7)
+		Me.QcPathFileNameTextBox.Name = "QcPathFileNameTextBox"
+		Me.QcPathFileNameTextBox.Size = New System.Drawing.Size(445, 21)
+		Me.QcPathFileNameTextBox.TabIndex = 22
 		'
 		'GameModelsOutputPathTextBox
 		'
@@ -421,6 +430,16 @@ Partial Class CompileUserControl
 		Me.OutputPathTextBox.Name = "OutputPathTextBox"
 		Me.OutputPathTextBox.Size = New System.Drawing.Size(445, 21)
 		Me.OutputPathTextBox.TabIndex = 9
+		'
+		'OutputSubfolderTextBox
+		'
+		Me.OutputSubfolderTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.OutputSubfolderTextBox.Location = New System.Drawing.Point(209, 34)
+		Me.OutputSubfolderTextBox.Name = "OutputSubfolderTextBox"
+		Me.OutputSubfolderTextBox.Size = New System.Drawing.Size(445, 21)
+		Me.OutputSubfolderTextBox.TabIndex = 21
+		Me.OutputSubfolderTextBox.Visible = False
 		'
 		'GotoOutputPathButton
 		'
@@ -479,15 +498,6 @@ Partial Class CompileUserControl
 		Me.GotoQcButton.Text = "Goto"
 		Me.GotoQcButton.UseVisualStyleBackColor = True
 		'
-		'QcPathFileNameTextBox
-		'
-		Me.QcPathFileNameTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.QcPathFileNameTextBox.Location = New System.Drawing.Point(209, 5)
-		Me.QcPathFileNameTextBox.Name = "QcPathFileNameTextBox"
-		Me.QcPathFileNameTextBox.Size = New System.Drawing.Size(445, 21)
-		Me.QcPathFileNameTextBox.TabIndex = 2
-		'
 		'SplitContainer1
 		'
 		Me.SplitContainer1.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
@@ -509,12 +519,12 @@ Partial Class CompileUserControl
 		'
 		'SplitContainer1.Panel2
 		'
-		Me.SplitContainer1.Panel2.Controls.Add(Me.UseInPackButton)
 		Me.SplitContainer1.Panel2.Controls.Add(Me.UseInViewButton)
 		Me.SplitContainer1.Panel2.Controls.Add(Me.CompileLogRichTextBox)
 		Me.SplitContainer1.Panel2.Controls.Add(Me.CompiledFilesComboBox)
 		Me.SplitContainer1.Panel2.Controls.Add(Me.GotoCompiledMdlButton)
 		Me.SplitContainer1.Panel2.Controls.Add(Me.RecompileButton)
+		Me.SplitContainer1.Panel2.Controls.Add(Me.UseInPackButton)
 		Me.SplitContainer1.Panel2MinSize = 90
 		Me.SplitContainer1.Size = New System.Drawing.Size(770, 472)
 		Me.SplitContainer1.SplitterDistance = 275
@@ -524,7 +534,7 @@ Partial Class CompileUserControl
 		'
 		Me.UseAllInPackButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
 		Me.UseAllInPackButton.Enabled = False
-		Me.UseAllInPackButton.Location = New System.Drawing.Point(378, 250)
+		Me.UseAllInPackButton.Location = New System.Drawing.Point(378, 249)
 		Me.UseAllInPackButton.Name = "UseAllInPackButton"
 		Me.UseAllInPackButton.Size = New System.Drawing.Size(120, 23)
 		Me.UseAllInPackButton.TabIndex = 4
@@ -540,7 +550,7 @@ Partial Class CompileUserControl
 		Me.OptionsGroupBox.Controls.Add(Me.Panel2)
 		Me.OptionsGroupBox.Location = New System.Drawing.Point(0, 0)
 		Me.OptionsGroupBox.Name = "OptionsGroupBox"
-		Me.OptionsGroupBox.Size = New System.Drawing.Size(770, 244)
+		Me.OptionsGroupBox.Size = New System.Drawing.Size(770, 243)
 		Me.OptionsGroupBox.TabIndex = 0
 		Me.OptionsGroupBox.TabStop = False
 		Me.OptionsGroupBox.Text = "Options"
@@ -560,7 +570,7 @@ Partial Class CompileUserControl
 		Me.Panel2.Dock = System.Windows.Forms.DockStyle.Fill
 		Me.Panel2.Location = New System.Drawing.Point(3, 17)
 		Me.Panel2.Name = "Panel2"
-		Me.Panel2.Size = New System.Drawing.Size(764, 224)
+		Me.Panel2.Size = New System.Drawing.Size(764, 223)
 		Me.Panel2.TabIndex = 0
 		'
 		'CompilerOptionsGoldSourceEnginePanel
@@ -572,7 +582,7 @@ Partial Class CompileUserControl
 		Me.CompilerOptionsGoldSourceEnginePanel.Controls.Add(Me.CompileOptionsGoldSourceEngineUseDefaultsButton)
 		Me.CompilerOptionsGoldSourceEnginePanel.Location = New System.Drawing.Point(0, 22)
 		Me.CompilerOptionsGoldSourceEnginePanel.Name = "CompilerOptionsGoldSourceEnginePanel"
-		Me.CompilerOptionsGoldSourceEnginePanel.Size = New System.Drawing.Size(764, 109)
+		Me.CompilerOptionsGoldSourceEnginePanel.Size = New System.Drawing.Size(764, 108)
 		Me.CompilerOptionsGoldSourceEnginePanel.TabIndex = 13
 		'
 		'GoldSourceEngineLogFileCheckBox
@@ -614,7 +624,7 @@ Partial Class CompileUserControl
 		Me.CompilerOptionsSourceEnginePanel.Controls.Add(Me.CompileOptionsSourceEngineUseDefaultsButton)
 		Me.CompilerOptionsSourceEnginePanel.Location = New System.Drawing.Point(0, 22)
 		Me.CompilerOptionsSourceEnginePanel.Name = "CompilerOptionsSourceEnginePanel"
-		Me.CompilerOptionsSourceEnginePanel.Size = New System.Drawing.Size(764, 109)
+		Me.CompilerOptionsSourceEnginePanel.Size = New System.Drawing.Size(764, 108)
 		Me.CompilerOptionsSourceEnginePanel.TabIndex = 38
 		'
 		'CompileOptionsSourceEngineUseDefaultsButton
@@ -642,7 +652,7 @@ Partial Class CompileUserControl
 		'
 		Me.CancelCompileButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
 		Me.CancelCompileButton.Enabled = False
-		Me.CancelCompileButton.Location = New System.Drawing.Point(252, 250)
+		Me.CancelCompileButton.Location = New System.Drawing.Point(252, 249)
 		Me.CancelCompileButton.Name = "CancelCompileButton"
 		Me.CancelCompileButton.Size = New System.Drawing.Size(120, 23)
 		Me.CancelCompileButton.TabIndex = 3
@@ -653,24 +663,12 @@ Partial Class CompileUserControl
 		'
 		Me.SkipCurrentModelButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
 		Me.SkipCurrentModelButton.Enabled = False
-		Me.SkipCurrentModelButton.Location = New System.Drawing.Point(126, 250)
+		Me.SkipCurrentModelButton.Location = New System.Drawing.Point(126, 249)
 		Me.SkipCurrentModelButton.Name = "SkipCurrentModelButton"
 		Me.SkipCurrentModelButton.Size = New System.Drawing.Size(120, 23)
 		Me.SkipCurrentModelButton.TabIndex = 2
 		Me.SkipCurrentModelButton.Text = "Skip Current Model"
 		Me.SkipCurrentModelButton.UseVisualStyleBackColor = True
-		'
-		'UseInPackButton
-		'
-		Me.UseInPackButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.UseInPackButton.Enabled = False
-		Me.UseInPackButton.Location = New System.Drawing.Point(646, 170)
-		Me.UseInPackButton.Name = "UseInPackButton"
-		Me.UseInPackButton.Size = New System.Drawing.Size(75, 23)
-		Me.UseInPackButton.TabIndex = 3
-		Me.UseInPackButton.Text = "Use in Pack"
-		Me.UseInPackButton.UseVisualStyleBackColor = True
-		Me.UseInPackButton.Visible = False
 		'
 		'UseInViewButton
 		'
@@ -723,12 +721,24 @@ Partial Class CompileUserControl
 		'
 		Me.RecompileButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.RecompileButton.Enabled = False
-		Me.RecompileButton.Location = New System.Drawing.Point(649, 170)
+		Me.RecompileButton.Location = New System.Drawing.Point(646, 170)
 		Me.RecompileButton.Name = "RecompileButton"
 		Me.RecompileButton.Size = New System.Drawing.Size(75, 23)
 		Me.RecompileButton.TabIndex = 5
 		Me.RecompileButton.Text = "Recompile"
 		Me.RecompileButton.UseVisualStyleBackColor = True
+		'
+		'UseInPackButton
+		'
+		Me.UseInPackButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.UseInPackButton.Enabled = False
+		Me.UseInPackButton.Location = New System.Drawing.Point(646, 170)
+		Me.UseInPackButton.Name = "UseInPackButton"
+		Me.UseInPackButton.Size = New System.Drawing.Size(75, 23)
+		Me.UseInPackButton.TabIndex = 3
+		Me.UseInPackButton.Text = "Use in Pack"
+		Me.UseInPackButton.UseVisualStyleBackColor = True
+		Me.UseInPackButton.Visible = False
 		'
 		'UseDefaultOutputSubfolderButton
 		'
@@ -740,20 +750,9 @@ Partial Class CompileUserControl
 		Me.UseDefaultOutputSubfolderButton.Text = "Use Default"
 		Me.UseDefaultOutputSubfolderButton.UseVisualStyleBackColor = True
 		'
-		'OutputSubfolderTextBox
-		'
-		Me.OutputSubfolderTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.OutputSubfolderTextBox.Location = New System.Drawing.Point(209, 34)
-		Me.OutputSubfolderTextBox.Name = "OutputSubfolderTextBox"
-		Me.OutputSubfolderTextBox.Size = New System.Drawing.Size(445, 21)
-		Me.OutputSubfolderTextBox.TabIndex = 21
-		Me.OutputSubfolderTextBox.Visible = False
-		'
 		'CompileUserControl
 		'
 		Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
-		Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
 		Me.Controls.Add(Me.Panel1)
 		Me.Name = "CompileUserControl"
 		Me.Size = New System.Drawing.Size(776, 536)
@@ -787,7 +786,6 @@ Partial Class CompileUserControl
 	Friend WithEvents CheckBox25 As System.Windows.Forms.CheckBox
 	Friend WithEvents BrowseForQcPathFolderOrFileNameButton As System.Windows.Forms.Button
 	Friend WithEvents Label6 As System.Windows.Forms.Label
-	Friend WithEvents QcPathFileNameTextBox As Crowbar.TextBoxEx
 	Friend WithEvents EditGameSetupButton As System.Windows.Forms.Button
 	Friend WithEvents Label3 As System.Windows.Forms.Label
 	Friend WithEvents CompileButton As System.Windows.Forms.Button
@@ -833,5 +831,6 @@ Partial Class CompileUserControl
 	Friend WithEvents GoldSourceEngineLogFileCheckBox As System.Windows.Forms.CheckBox
 	Friend WithEvents CompileOptionsGoldSourceEngineUseDefaultsButton As System.Windows.Forms.Button
 	Friend WithEvents OutputSubfolderTextBox As Crowbar.TextBoxEx
+	Friend WithEvents QcPathFileNameTextBox As Crowbar.TextBoxEx
 
 End Class

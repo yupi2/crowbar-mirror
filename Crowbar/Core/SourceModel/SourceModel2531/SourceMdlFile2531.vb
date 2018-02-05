@@ -1364,6 +1364,10 @@ Public Class SourceMdlFile2531
 		End If
 	End Sub
 
+	Public Sub ReadUnreadBytes()
+		Me.theMdlFileData.theFileSeekLog.LogUnreadBytes(Me.theInputFileReader)
+	End Sub
+
 	Public Sub CreateFlexFrameList()
 		Dim aFlexFrame As FlexFrame2531
 		Dim aBodyPart As SourceMdlBodyPart2531
@@ -1989,16 +1993,24 @@ Public Class SourceMdlFile2531
 				'aVertAnim.nDeltaY = Me.theInputFileReader.ReadByte()
 				'aVertAnim.nDeltaZ = Me.theInputFileReader.ReadByte()
 				'------
-				aVertAnim.deltaX = Me.theInputFileReader.ReadSByte()
-				aVertAnim.deltaY = Me.theInputFileReader.ReadSByte()
-				aVertAnim.deltaZ = Me.theInputFileReader.ReadSByte()
-				aVertAnim.nDeltaX = Me.theInputFileReader.ReadSByte()
-				aVertAnim.nDeltaY = Me.theInputFileReader.ReadSByte()
-				aVertAnim.nDeltaZ = Me.theInputFileReader.ReadSByte()
+				'TEST: almost correct
+				'aVertAnim.deltaX = Me.theInputFileReader.ReadSByte()
+				'aVertAnim.deltaY = Me.theInputFileReader.ReadSByte()
+				'aVertAnim.deltaZ = Me.theInputFileReader.ReadSByte()
+				'aVertAnim.nDeltaX = Me.theInputFileReader.ReadSByte()
+				'aVertAnim.nDeltaY = Me.theInputFileReader.ReadSByte()
+				'aVertAnim.nDeltaZ = Me.theInputFileReader.ReadSByte()
 				'------
-				'aVertAnim.deltaX = Me.theInputFileReader.ReadInt16()
-				'aVertAnim.deltaY = Me.theInputFileReader.ReadInt16()
-				'aVertAnim.deltaZ = Me.theInputFileReader.ReadInt16()
+				'aVertAnim.deltaX = Me.theInputFileReader.ReadSByte()
+				'aVertAnim.nDeltaX = Me.theInputFileReader.ReadSByte()
+				'aVertAnim.deltaY = Me.theInputFileReader.ReadSByte()
+				'aVertAnim.nDeltaY = Me.theInputFileReader.ReadSByte()
+				'aVertAnim.deltaZ = Me.theInputFileReader.ReadSByte()
+				'aVertAnim.nDeltaZ = Me.theInputFileReader.ReadSByte()
+				'------
+				aVertAnim.deltaX = Me.theInputFileReader.ReadInt16()
+				aVertAnim.deltaY = Me.theInputFileReader.ReadInt16()
+				aVertAnim.deltaZ = Me.theInputFileReader.ReadInt16()
 				'------
 				'For x As Integer = 0 To 2
 				'	aVertAnim.deltaByte(x) = Me.theInputFileReader.ReadByte()
