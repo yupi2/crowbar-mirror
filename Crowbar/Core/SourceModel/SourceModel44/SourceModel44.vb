@@ -131,35 +131,35 @@ Public Class SourceModel44
 		If Me.theMdlFileData.animBlockCount > 0 Then
 			Me.theAniPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".ani")
 			If Not File.Exists(Me.theAniPathFileName) Then
-				status = FilesFoundFlags.ErrorRequiredAniFileNotFound
+				status = status Or FilesFoundFlags.ErrorRequiredAniFileNotFound
 			End If
 		End If
 
-		If Not Me.theMdlFileDataGeneric.theMdlFileOnlyHasAnimations Then
-			Me.thePhyPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".phy")
+		'If Not Me.theMdlFileDataGeneric.theMdlFileOnlyHasAnimations Then
+		Me.thePhyPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".phy")
 
-			Me.theVtxPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".dx11.vtx")
+		Me.theVtxPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".dx11.vtx")
+		If Not File.Exists(Me.theVtxPathFileName) Then
+			Me.theVtxPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".dx90.vtx")
 			If Not File.Exists(Me.theVtxPathFileName) Then
-				Me.theVtxPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".dx90.vtx")
+				Me.theVtxPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".dx80.vtx")
 				If Not File.Exists(Me.theVtxPathFileName) Then
-					Me.theVtxPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".dx80.vtx")
+					Me.theVtxPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".sw.vtx")
 					If Not File.Exists(Me.theVtxPathFileName) Then
-						Me.theVtxPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".sw.vtx")
+						Me.theVtxPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".vtx")
 						If Not File.Exists(Me.theVtxPathFileName) Then
-							Me.theVtxPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".vtx")
-							If Not File.Exists(Me.theVtxPathFileName) Then
-								status = FilesFoundFlags.ErrorRequiredVtxFileNotFound
-							End If
+							status = status Or FilesFoundFlags.ErrorRequiredVtxFileNotFound
 						End If
 					End If
 				End If
 			End If
-
-			Me.theVvdPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".vvd")
-			If Not File.Exists(Me.theVvdPathFileName) Then
-				status = FilesFoundFlags.ErrorRequiredVvdFileNotFound
-			End If
 		End If
+
+		Me.theVvdPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".vvd")
+		If Not File.Exists(Me.theVvdPathFileName) Then
+			status = status Or FilesFoundFlags.ErrorRequiredVvdFileNotFound
+		End If
+		'End If
 
 		Return status
 	End Function
@@ -305,6 +305,13 @@ Public Class SourceModel44
 			debugPathFileName = Path.Combine(debugPath, Me.theName + " " + My.Resources.Decompile_DebugVtxFileNameSuffix)
 			Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, debugPathFileName)
 			Me.WriteAccessedBytesDebugFile(debugPathFileName, Me.theVtxFileData.theFileSeekLog)
+			Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, debugPathFileName)
+		End If
+
+		If Me.thePhyFileDataGeneric IsNot Nothing Then
+			debugPathFileName = Path.Combine(debugPath, Me.theName + " " + My.Resources.Decompile_DebugPhyFileNameSuffix)
+			Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, debugPathFileName)
+			Me.WriteAccessedBytesDebugFile(debugPathFileName, Me.thePhyFileDataGeneric.theFileSeekLog)
 			Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, debugPathFileName)
 		End If
 
@@ -491,6 +498,7 @@ Public Class SourceModel44
 			phyFile.ReadSourcePhyEditParamsSection()
 			phyFile.ReadCollisionTextSection()
 		End If
+		phyFile.ReadUnreadBytes()
 	End Sub
 
 	Protected Overrides Sub ReadVtxFile_Internal()

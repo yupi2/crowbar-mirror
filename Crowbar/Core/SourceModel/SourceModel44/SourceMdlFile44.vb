@@ -883,7 +883,7 @@ Public Class SourceMdlFile44
 	End Sub
 
 	Public Sub ReadBoneTableByName()
-		If Me.theMdlFileData.boneTableByNameOffset <> 0 Then
+		If Me.theMdlFileData.boneTableByNameOffset <> 0 AndAlso Me.theMdlFileData.theBones IsNot Nothing Then
 			Dim fileOffsetStart As Long
 			Dim fileOffsetEnd As Long
 
@@ -1180,8 +1180,8 @@ Public Class SourceMdlFile44
 			Next
 			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAnimationDesc.spanOffset (zeroframes/saveframes) [" + anAnimationDesc.theName + "] [spanFrameCount = " + anAnimationDesc.spanFrameCount.ToString() + "] [spanCount = " + anAnimationDesc.spanCount.ToString() + "]")
 
-			'TEST: 
-			Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "anAnimationDesc.spanOffset (zeroframes/saveframes) alignment")
+			''TEST: 
+			'Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "anAnimationDesc.spanOffset (zeroframes/saveframes) alignment")
 		End If
 
 		Return fileOffsetEnd
@@ -1584,8 +1584,8 @@ Public Class SourceMdlFile44
 			Dim inputFileStreamPosition As Long
 			Dim fileOffsetStart As Long
 			Dim fileOffsetEnd As Long
-			'Dim fileOffsetStart2 As Long
-			'Dim fileOffsetEnd2 As Long
+			Dim fileOffsetStart2 As Long
+			Dim fileOffsetEnd2 As Long
 
 			'If anAnimationDesc.animBlock > 0 AndAlso anAnimationDesc.animblockIkRuleOffset = 0 Then
 			'	'Return 0
@@ -1648,19 +1648,19 @@ Public Class SourceMdlFile44
 
 				inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 
-				'If anIkRule.attachmentNameOffset <> 0 Then
-				'	Me.theInputFileReader.BaseStream.Seek(ikRuleInputFileStreamPosition + anIkRule.attachmentNameOffset, SeekOrigin.Begin)
-				'	fileOffsetStart2 = Me.theInputFileReader.BaseStream.Position
+				If anIkRule.attachmentNameOffset <> 0 Then
+					Me.theInputFileReader.BaseStream.Seek(ikRuleInputFileStreamPosition + anIkRule.attachmentNameOffset, SeekOrigin.Begin)
+					fileOffsetStart2 = Me.theInputFileReader.BaseStream.Position
 
-				'	anIkRule.theAttachmentName = FileManager.ReadNullTerminatedString(Me.theInputFileReader)
+					anIkRule.theAttachmentName = FileManager.ReadNullTerminatedString(Me.theInputFileReader)
 
-				'	fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
-				'	'If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-				'	Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "anIkRule.theAttachmentName = " + anIkRule.theAttachmentName)
-				'	'End If
-				'Else
-				'	anIkRule.theAttachmentName = ""
-				'End If
+					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
+					'If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
+					Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "anIkRule.theAttachmentName = " + anIkRule.theAttachmentName)
+					'End If
+				Else
+					anIkRule.theAttachmentName = ""
+				End If
 
 				Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
 			Next
@@ -3161,7 +3161,7 @@ Public Class SourceMdlFile44
 	End Sub
 
 	Public Sub ReadSkinFamilies()
-		If Me.theMdlFileData.skinFamilyCount > 0 Then
+		If Me.theMdlFileData.skinFamilyCount > 0 AndAlso Me.theMdlFileData.skinReferenceCount > 0 Then
 			Dim skinFamilyInputFileStreamPosition As Long
 			'Dim inputFileStreamPosition As Long
 			Dim fileOffsetStart As Long

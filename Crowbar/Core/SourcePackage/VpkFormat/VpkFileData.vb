@@ -1,12 +1,48 @@
 ﻿Public Class VpkFileData
-	Inherits SourceFileData
+	Inherits BasePackageFileData
 
 	Public Sub New()
 		MyBase.New()
 
-		Me.theEntries = New List(Of VpkDirectoryEntry)()
-		Me.theEntryDataOutputTexts = New List(Of String)()
+		'Me.theEntries = New List(Of VpkDirectoryEntry)()
+		'Me.theEntryDataOutputTexts = New List(Of String)()
 	End Sub
+
+	Public Overrides ReadOnly Property IsSourcePackage() As Boolean
+		Get
+			Return ((Me.id = VpkFileData.VPK_ID) OrElse (Me.id = VpkFileData.FPX_ID))
+		End Get
+	End Property
+
+	Public Overrides ReadOnly Property FileExtension() As String
+		Get
+			If Me.id = VpkFileData.FPX_ID Then
+				Return VpkFileData.TheFpxFileExtension
+			Else
+				Return VpkFileData.TheVpkFileExtension
+			End If
+		End Get
+	End Property
+
+	Public Overrides ReadOnly Property DirectoryFileNameSuffix() As String
+		Get
+			If Me.id = VpkFileData.FPX_ID Then
+				Return VpkFileData.TheFpxDirectoryFileNameSuffix
+			Else
+				Return VpkFileData.TheVpkDirectoryFileNameSuffix
+			End If
+		End Get
+	End Property
+
+	Public Overrides ReadOnly Property DirectoryFileNameSuffixWithExtension() As String
+		Get
+			If Me.id = VpkFileData.FPX_ID Then
+				Return VpkFileData.TheFpxDirectoryFileNameSuffix + VpkFileData.TheFpxFileExtension
+			Else
+				Return VpkFileData.TheVpkDirectoryFileNameSuffix + VpkFileData.TheVpkFileExtension
+			End If
+		End Get
+	End Property
 
 	'FROM: Nem's Tools\hllib245\HLLib\VPKFile.h
 	'		struct VPKHeader
@@ -74,11 +110,17 @@
 
 
 	Public theDirectoryOffset As Long
-	Public theEntries As List(Of VpkDirectoryEntry)
-	Public theEntryDataOutputTexts As List(Of String)
+	'Public theEntries As List(Of VpkDirectoryEntry)
+	'Public theEntryDataOutputTexts As List(Of String)
 
 
 	'#define HL_VPK_SIGNATURE 0x55aa1234
-	Public Const VPK_ID As Integer = &H55AA1234
+	Private Const VPK_ID As Integer = &H55AA1234
+	Private Const TheVpkDirectoryFileNameSuffix As String = "_dir"
+	Private Const TheVpkFileExtension As String = ".vpk"
+
+	Private Const FPX_ID As Integer = &H33FF4132
+	Private Const TheFpxDirectoryFileNameSuffix As String = "_fdr"
+	Private Const TheFpxFileExtension As String = ".fpx"
 
 End Class

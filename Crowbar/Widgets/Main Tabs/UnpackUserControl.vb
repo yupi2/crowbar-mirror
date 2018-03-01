@@ -155,8 +155,8 @@ Public Class UnpackUserControl
 	'End Sub
 
 	Private Sub BrowseForVpkPathFolderOrFileNameButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BrowseForVpkPathFolderOrFileNameButton.Click
-		Dim containerTypeText As String
-		containerTypeText = TheApp.Settings.UnpackContainerType.ToString()
+		'Dim containerTypeText As String
+		'containerTypeText = TheApp.Settings.UnpackContainerType.ToString()
 
 		Dim openFileWdw As New OpenFileDialog()
 
@@ -172,7 +172,8 @@ Public Class UnpackUserControl
 			End If
 		End If
 		openFileWdw.FileName = "[Folder Selection]"
-		openFileWdw.Filter = "Source Engine " + containerTypeText + " Files (*." + containerTypeText + ") | *." + containerTypeText + ""
+		openFileWdw.Filter = "Source Engine Package Files (*.vpk;*.fpx;*.gma)|*.vpk;*.fpx;*.gma|Source Engine VPK Files (*.vpk)|*.vpk|Tactical Intervention FPX Files (*.fpx)|*.fpx|Garry's Mod GMA Files (*.gma)|*.gma"
+		'openFileWdw.Filter = "Source Engine Package Files (*.vpk;*.fpx;*.gma;*.hfs)|*.vpk;*.fpx;*.gma;*.hfs|Source Engine VPK Files (*.vpk)|*.vpk|Tactical Intervention FPX Files (*.fpx)|*.fpx|Garry's Mod GMA Files (*.gma)|*.gma|Vindictus HFS Files (*.hfs)|*.hfs"
 		openFileWdw.AddExtension = True
 		openFileWdw.CheckFileExists = False
 		openFileWdw.Multiselect = False
@@ -183,7 +184,7 @@ Public Class UnpackUserControl
 			Application.DoEvents()
 
 			Try
-				If Path.GetFileName(openFileWdw.FileName) = "[Folder Selection]." + containerTypeText Then
+				If Path.GetFileName(openFileWdw.FileName).StartsWith("[Folder Selection]") Then
 					TheApp.Settings.UnpackVpkPathFolderOrFileName = FileManager.GetPath(openFileWdw.FileName)
 				Else
 					TheApp.Settings.UnpackVpkPathFolderOrFileName = openFileWdw.FileName
@@ -543,10 +544,6 @@ Public Class UnpackUserControl
 					If parentTreeNode.Nodes.ContainsKey(name) Then
 						treeNode = parentTreeNode.Nodes.Item(parentTreeNode.Nodes.IndexOfKey(name))
 					Else
-						If (name = "k_lab" OrElse name = "k_lab2") AndAlso parentTreeNode.FullPath = "<root>\sound\vo" Then
-							Dim debug As Integer = 4242
-						End If
-
 						treeNode = parentTreeNode.Nodes.Add(name)
 						treeNode.Name = name
 
@@ -583,24 +580,34 @@ Public Class UnpackUserControl
 			End If
 			If treeNode IsNot Nothing Then
 				Dim fileName As String
-				fileName = Path.GetFileName(pathFileName)
+				Dim fileExtension As String
+				Dim fileExtensionWithDot As String = ""
+				If pathFileName.StartsWith("<") Then
+					fileName = pathFileName
+					fileExtension = ""
+				Else
+					fileName = Path.GetFileName(pathFileName)
+
+					fileExtension = Path.GetExtension(pathFileName)
+					If Not String.IsNullOrEmpty(fileExtension) AndAlso fileExtension(0) = "."c Then
+						fileExtensionWithDot = fileExtension
+						fileExtension = fileExtension.Substring(1)
+					End If
+				End If
 				Dim fileSize As Long
 				fileSize = CLng(fields(fields.Length - 1).Remove(0, 3))
 				Dim fileType As String
 				fileType = "<type>"
-				Dim fileExtensionWithDot As String = ""
-				Dim fileExtension As String
-				fileExtension = Path.GetExtension(pathFileName)
-				If Not String.IsNullOrEmpty(fileExtension) AndAlso fileExtension(0) = "."c Then
-					fileExtensionWithDot = fileExtension
-					fileExtension = fileExtension.Substring(1)
-				End If
 
 				Dim resourceInfo As New VpkResourceFileNameInfo()
 				resourceInfo.PathFileName = pathFileName
 				resourceInfo.Name = fileName
 				resourceInfo.Size = fileSize
-				resourceInfo.Type = Win32Api.GetFileTypeDescription(fileExtensionWithDot)
+				If pathFileName.StartsWith("<") Then
+					resourceInfo.Type = "<internal data>"
+				Else
+					resourceInfo.Type = Win32Api.GetFileTypeDescription(fileExtensionWithDot)
+				End If
 				resourceInfo.Extension = fileExtension
 				resourceInfo.IsFolder = False
 				resourceInfo.ArchivePathFileName = Me.theArchivePathFileName

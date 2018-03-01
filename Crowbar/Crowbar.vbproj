@@ -73,6 +73,8 @@
     <Compile Include="Core\- Application\AppConstants.vb" />
     <Compile Include="Core\- Application\AppEnums.vb" />
     <Compile Include="Core\- Application\AppExceptionHandler.vb" />
+    <Compile Include="Core\- Application\SingleInstanceApplication.vb" />
+    <Compile Include="Core\- Application\SingleInstanceEventArgs.vb" />
     <Compile Include="Core\- General\Bitmap\BitmapFile.vb" />
     <Compile Include="Core\- General\Bitmap\BitmapFileHeader.vb" />
     <Compile Include="Core\- General\Bitmap\BitmapInfoHeader.vb" />
@@ -109,9 +111,27 @@
     <Compile Include="Core\Decompiler\Decompiler.vb">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Core\GmaFormat\GmaFile.vb" />
-    <Compile Include="Core\GmaFormat\GmaDirectoryEntry.vb" />
-    <Compile Include="Core\GmaFormat\GmaFileData.vb" />
+    <Compile Include="Core\SourceModel\SourceModel14\SourceMdlFile14.vb" />
+    <Compile Include="Core\SourceModel\SourceModel14\SourceMdlFileData\SourceMdlBodyPart14.vb" />
+    <Compile Include="Core\SourceModel\SourceModel14\SourceMdlFileData\SourceMdlFileData14.vb" />
+    <Compile Include="Core\SourceModel\SourceModel14\SourceMdlFileData\SourceMdlMesh14.vb" />
+    <Compile Include="Core\SourceModel\SourceModel14\SourceMdlFileData\SourceMdlModel14.vb" />
+    <Compile Include="Core\SourceModel\SourceModel14\SourceMdlFileData\SourceMdlTexture14.vb" />
+    <Compile Include="Core\SourceModel\SourceModel14\SourceMdlFileData\SourceMdlWeightingBoneData14.vb" />
+    <Compile Include="Core\SourceModel\SourceModel14\SourceMdlFileData\SourceMdlWeightingHeader14.vb" />
+    <Compile Include="Core\SourceModel\SourceModel14\SourceMdlFileData\SourceMdlWeighting14.vb" />
+    <Compile Include="Core\SourceModel\SourceModel14\SourceModel14.vb" />
+    <Compile Include="Core\SourceModel\SourceModel14\SourceQcFile14.vb" />
+    <Compile Include="Core\SourceModel\SourceModel14\SourceSmdFile14.vb" />
+    <Compile Include="Core\SourcePackage\- Base\BasePackageFile.vb" />
+    <Compile Include="Core\SourcePackage\- Base\BasePackageDirectoryEntry.vb" />
+    <Compile Include="Core\SourcePackage\- Base\BasePackageFileData.vb" />
+    <Compile Include="Core\SourcePackage\HfsFormat\HfsDirectoryEntry.vb" />
+    <Compile Include="Core\SourcePackage\HfsFormat\HfsFile.vb" />
+    <Compile Include="Core\SourcePackage\HfsFormat\HfsFileData.vb" />
+    <Compile Include="Core\SourcePackage\GmaFormat\GmaFile.vb" />
+    <Compile Include="Core\SourcePackage\GmaFormat\GmaDirectoryEntry.vb" />
+    <Compile Include="Core\SourcePackage\GmaFormat\GmaFileData.vb" />
     <Compile Include="Core\MappingTool\MappingTool.vb">
       <SubType>Component</SubType>
     </Compile>
@@ -305,7 +325,6 @@
     <Compile Include="Core\SourceModel\SourceModel45\SourceMdlFileData\SourceMdlAnimationDesc45.vb" />
     <Compile Include="Core\SourceModel\SourceModel45\SourceMdlFileData\SourceMdlFileData45.vb" />
     <Compile Include="Core\SourceModel\SourceModel45\SourceModel45.vb" />
-    <Compile Include="Core\SourceModel\SourceModel45\SourcePhyFile45.vb" />
     <Compile Include="Core\SourceModel\SourceModel45\SourceQcFile45.vb" />
     <Compile Include="Core\SourceModel\SourceModel45\SourceSmdFile45.vb" />
     <Compile Include="Core\SourceModel\SourceModel45\SourceVrdFile45.vb" />
@@ -320,7 +339,6 @@
     <Compile Include="Core\SourceModel\SourceModel46\SourceMdlFileData\SourceMdlAnimationDesc46.vb" />
     <Compile Include="Core\SourceModel\SourceModel46\SourceMdlFileData\SourceMdlFileData46.vb" />
     <Compile Include="Core\SourceModel\SourceModel46\SourceModel46.vb" />
-    <Compile Include="Core\SourceModel\SourceModel46\SourcePhyFile46.vb" />
     <Compile Include="Core\SourceModel\SourceModel46\SourceQcFile46.vb" />
     <Compile Include="Core\SourceModel\SourceModel46\SourceSmdFile46.vb" />
     <Compile Include="Core\SourceModel\SourceModel46\SourceVrdFile46.vb" />
@@ -460,6 +478,7 @@
     <Compile Include="Core\SourceModel\SourceModel49\SourceVtaFile49.vb" />
     <Compile Include="Core\SourceModel\SourceVtxFile\SourceVtxFile07\SourceVtxFile07.vb" />
     <Compile Include="Core\SourceModel\SourceModel49\SourceVvdFile49.vb" />
+    <Compile Include="Core\SourcePackage\HfsFormat\HfsMainDirectoryEntry.vb" />
     <Compile Include="Core\Unpacker\UnpackerInputInfo.vb" />
     <Compile Include="Core\Unpacker\UnpackerOutputInfo.vb" />
     <Compile Include="Core\Unpacker\Unpacker.vb">
@@ -524,9 +543,9 @@
     <Compile Include="Core\SourceModel\SourceCommon\SourceVtxFileData\SourceVtxVertex.vb" />
     <Compile Include="Core\SourceModel\SourceCommon\SourceVtxFileData\SourceVtxFileData.vb" />
     <Compile Include="Core\SourceModel\SourceCommon\SourceVvdFileData\SourceVvdFixup.vb" />
-    <Compile Include="Core\VpkFormat\VpkDirectoryEntry.vb" />
-    <Compile Include="Core\VpkFormat\VpkFile.vb" />
-    <Compile Include="Core\VpkFormat\VpkFileData.vb" />
+    <Compile Include="Core\SourcePackage\VpkFormat\VpkDirectoryEntry.vb" />
+    <Compile Include="Core\SourcePackage\VpkFormat\VpkFile.vb" />
+    <Compile Include="Core\SourcePackage\VpkFormat\VpkFileData.vb" />
     <Compile Include="Widgets\- Application\BaseForm.Designer.vb">
       <DependentUpon>BaseForm.vb</DependentUpon>
     </Compile>
@@ -600,6 +619,12 @@
       <DependentUpon>OptionsUserControl.vb</DependentUpon>
     </Compile>
     <Compile Include="Widgets\Main Tabs\OptionsUserControl.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Widgets\Main Tabs\PatchUserControl.Designer.vb">
+      <DependentUpon>PatchUserControl.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\Main Tabs\PatchUserControl.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Widgets\Main Tabs\ViewUserControl.Designer.vb">
@@ -719,6 +744,10 @@
       <DependentUpon>OptionsUserControl.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Widgets\Main Tabs\PatchUserControl.resx">
+      <DependentUpon>PatchUserControl.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Widgets\Main Tabs\ViewUserControl.resx">
       <DependentUpon>ViewUserControl.vb</DependentUpon>
       <SubType>Designer</SubType>
@@ -782,7 +811,6 @@
     <None Include="resources\crowbar_icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Core\SourceModel\SourceModel57\" />
     <Folder Include="Documents\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />

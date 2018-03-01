@@ -534,7 +534,7 @@
 	'	int					studiohdr2index;
 	Public studioHeader2Offset As Integer
 	'	int					unused2[1];
-	Public unused2 As Integer
+	Public unknownOffset01 As Integer
 
 	' sutdiohdr2:
 	Public sourceBoneTransformCount As Integer
@@ -547,9 +547,25 @@
 	Public boneFlexDriverCount As Integer
 	Public boneFlexDriverOffset As Integer
 
-	Public reserved(55) As Integer
+	'Public reserved(55) As Integer
 	'======
 	'Public studiohdr2(63) As Integer
+	'======
+	Public unknown01 As Integer
+	Public unknown02 As Integer
+	Public unknown03 As Integer
+	Public unknown04 As Integer
+	Public vtxOffset As Integer
+	Public vvdOffset As Integer
+	Public unknown05 As Integer
+	Public phyOffset As Integer
+
+	Public unknown06 As Integer
+	Public unknown07 As Integer
+	Public unknown08 As Integer
+	Public unknown09 As Integer
+	Public unknownOffset02 As Integer
+	Public unknown(58) As Integer
 
 
 
@@ -557,7 +573,7 @@
 	'Public theName As String
 	Public theNameCopy As String
 
-	Public theAnimationDescs As List(Of SourceMdlAnimationDesc49)
+	Public theAnimationDescs As List(Of SourceMdlAnimationDesc52)
 	Public theAnimBlocks As List(Of SourceMdlAnimBlock)
 	Public theAnimBlockRelativePathFileName As String
 	Public theAttachments As List(Of SourceMdlAttachment)
@@ -588,11 +604,12 @@
 
 	'Public theActualFileSize As Long
 	Public theModelCommandIsUsed As Boolean
+	Public theBodyPartIndexThatShouldUseModelCommand As Integer
 	Public theFlexFrames As List(Of FlexFrame)
 	Public theEyelidFlexFrameIndexes As List(Of Integer)
 	'Public theUpperEyelidFlexFrameIndexes As List(Of Integer)
 
-	Public theFirstAnimationDesc As SourceMdlAnimationDesc49
+	Public theFirstAnimationDesc As SourceMdlAnimationDesc52
 	Public theFirstAnimationDescFrameLines As SortedList(Of Integer, AnimationFrameLine)
 	'Public theMdlFileOnlyHasAnimations As Boolean
 	Public theProceduralBonesCommandIsUsed As Boolean

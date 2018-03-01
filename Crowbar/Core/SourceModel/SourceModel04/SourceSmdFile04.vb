@@ -128,81 +128,81 @@ Public Class SourceSmdFile04
 		Me.theOutputFileStreamWriter.WriteLine(line)
 	End Sub
 
-	'Public Sub WriteSkeletonSectionForAnimation(ByVal aSequenceDesc As SourceMdlSequenceDesc06, ByVal blendIndex As Integer)
-	'	Dim line As String = ""
-	'	Dim aBone As SourceMdlBone06
-	'	Dim anAnimation As SourceMdlAnimation06
-	'	Dim position As New SourceVector()
-	'	Dim rotation As New SourceVector()
+	Public Sub WriteSkeletonSectionForAnimation(ByVal aSequenceDesc As SourceMdlSequenceDesc04)
+		Dim line As String = ""
+		Dim aBone As SourceMdlBone04
+		Dim aSequence As SourceMdlSequence04
+		Dim position As New SourceVector()
+		Dim rotation As New SourceVector()
 
-	'	'skeleton
-	'	line = "skeleton"
-	'	Me.theOutputFileStreamWriter.WriteLine(line)
+		'skeleton
+		line = "skeleton"
+		Me.theOutputFileStreamWriter.WriteLine(line)
 
-	'	For frameIndex As Integer = 0 To aSequenceDesc.frameCount - 1
-	'		If TheApp.Settings.DecompileStricterFormatIsChecked Then
-	'			line = "time "
-	'		Else
-	'			line = "  time "
-	'		End If
-	'		line += CStr(frameIndex)
-	'		Me.theOutputFileStreamWriter.WriteLine(line)
+		For frameIndex As Integer = 0 To aSequenceDesc.frameCount - 1
+			If TheApp.Settings.DecompileStricterFormatIsChecked Then
+				line = "time "
+			Else
+				line = "  time "
+			End If
+			line += CStr(frameIndex)
+			Me.theOutputFileStreamWriter.WriteLine(line)
 
-	'		For boneIndex As Integer = 0 To Me.theMdlFileData.theBones.Count - 1
-	'			aBone = Me.theMdlFileData.theBones(boneIndex)
-	'			anAnimation = aSequenceDesc.theAnimations(boneIndex)
+			aSequence = aSequenceDesc.theSequences(frameIndex)
+			For boneIndex As Integer = 0 To Me.theMdlFileData.theBones.Count - 1
+				aBone = Me.theMdlFileData.theBones(boneIndex)
 
-	'			If aBone.parentBoneIndex = -1 Then
-	'				position.x = anAnimation.theBonePositionsAndRotations(frameIndex).position.y
-	'				position.y = -anAnimation.theBonePositionsAndRotations(frameIndex).position.x
-	'				position.z = anAnimation.theBonePositionsAndRotations(frameIndex).position.z
+				If aBone.parentBoneIndex = -1 Then
+					position.x = aSequence.thePositionsAndRotations(boneIndex).position.y
+					position.y = -aSequence.thePositionsAndRotations(boneIndex).position.x
+					position.z = aSequence.thePositionsAndRotations(boneIndex).position.z
 
-	'				rotation.x = anAnimation.theBonePositionsAndRotations(frameIndex).rotation.x
-	'				rotation.y = anAnimation.theBonePositionsAndRotations(frameIndex).rotation.y
-	'				rotation.z = anAnimation.theBonePositionsAndRotations(frameIndex).rotation.z + MathModule.DegreesToRadians(-90)
-	'			Else
-	'				position.x = anAnimation.theBonePositionsAndRotations(frameIndex).position.x
-	'				position.y = anAnimation.theBonePositionsAndRotations(frameIndex).position.y
-	'				position.z = anAnimation.theBonePositionsAndRotations(frameIndex).position.z
+					rotation.x = aSequence.thePositionsAndRotations(boneIndex).rotation.x
+					rotation.y = aSequence.thePositionsAndRotations(boneIndex).rotation.y
+					rotation.z = aSequence.thePositionsAndRotations(boneIndex).rotation.z + MathModule.DegreesToRadians(-90)
+				Else
+					position.x = aSequence.thePositionsAndRotations(boneIndex).position.x
+					position.y = aSequence.thePositionsAndRotations(boneIndex).position.y
+					position.z = aSequence.thePositionsAndRotations(boneIndex).position.z
 
-	'				rotation.x = anAnimation.theBonePositionsAndRotations(frameIndex).rotation.x
-	'				rotation.y = anAnimation.theBonePositionsAndRotations(frameIndex).rotation.y
-	'				rotation.z = anAnimation.theBonePositionsAndRotations(frameIndex).rotation.z
-	'			End If
+					rotation.x = aSequence.thePositionsAndRotations(boneIndex).rotation.x
+					rotation.y = aSequence.thePositionsAndRotations(boneIndex).rotation.y
+					rotation.z = aSequence.thePositionsAndRotations(boneIndex).rotation.z
+				End If
 
-	'			line = "    "
-	'			line += boneIndex.ToString(TheApp.InternalNumberFormat)
+				line = "    "
+				line += boneIndex.ToString(TheApp.InternalNumberFormat)
 
-	'			line += " "
-	'			line += position.x.ToString("0.000000", TheApp.InternalNumberFormat)
-	'			line += " "
-	'			line += position.y.ToString("0.000000", TheApp.InternalNumberFormat)
-	'			line += " "
-	'			line += position.z.ToString("0.000000", TheApp.InternalNumberFormat)
+				line += " "
+				line += position.x.ToString("0.000000", TheApp.InternalNumberFormat)
+				line += " "
+				line += position.y.ToString("0.000000", TheApp.InternalNumberFormat)
+				line += " "
+				line += position.z.ToString("0.000000", TheApp.InternalNumberFormat)
 
-	'			line += " "
-	'			line += rotation.x.ToString("0.000000", TheApp.InternalNumberFormat)
-	'			line += " "
-	'			line += rotation.y.ToString("0.000000", TheApp.InternalNumberFormat)
-	'			line += " "
-	'			line += rotation.z.ToString("0.000000", TheApp.InternalNumberFormat)
+				line += " "
+				line += rotation.x.ToString("0.000000", TheApp.InternalNumberFormat)
+				line += " "
+				line += rotation.y.ToString("0.000000", TheApp.InternalNumberFormat)
+				line += " "
+				line += rotation.z.ToString("0.000000", TheApp.InternalNumberFormat)
 
-	'			'If TheApp.Settings.DecompileDebugInfoFilesIsChecked Then
-	'			'	line += "   # "
-	'			'	line += "pos: "
-	'			'	line += aFrameLine.position.debug_text
-	'			'	line += "   "
-	'			'	line += "rot: "
-	'			'	line += aFrameLine.rotation.debug_text
-	'			'End If
+				'If TheApp.Settings.DecompileDebugInfoFilesIsChecked Then
+				'	line += "   # "
+				'	line += "pos: "
+				'	line += aFrameLine.position.debug_text
+				'	line += "   "
+				'	line += "rot: "
+				'	line += aFrameLine.rotation.debug_text
+				'End If
 
-	'			Me.theOutputFileStreamWriter.WriteLine(line)
-	'		Next
-	'	Next
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			Next
+		Next
 
-	'	line = "end"
-	'	Me.theOutputFileStreamWriter.WriteLine(line)
-	'End Sub
+		line = "end"
+		Me.theOutputFileStreamWriter.WriteLine(line)
+	End Sub
 
 	Public Sub WriteTrianglesSection(ByVal aBodyModel As SourceMdlModel04)
 		Dim line As String = ""
@@ -227,9 +227,9 @@ Public Class SourceSmdFile04
 						For faceIndex As Integer = 0 To aMesh.theFaces.Count - 1
 							materialLine = materialName
 
-							vertex1Line = Me.GetVertexLine(aBodyModel, aMesh, aMesh.theFaces(faceIndex).vertexInfo(0))
+							vertex1Line = Me.GetVertexLine(aBodyModel, aMesh, aMesh.theFaces(faceIndex).vertexInfo(2))
 							vertex2Line = Me.GetVertexLine(aBodyModel, aMesh, aMesh.theFaces(faceIndex).vertexInfo(1))
-							vertex3Line = Me.GetVertexLine(aBodyModel, aMesh, aMesh.theFaces(faceIndex).vertexInfo(2))
+							vertex3Line = Me.GetVertexLine(aBodyModel, aMesh, aMesh.theFaces(faceIndex).vertexInfo(0))
 
 							If vertex1Line.StartsWith("// ") OrElse vertex2Line.StartsWith("// ") OrElse vertex3Line.StartsWith("// ") Then
 								materialLine = "// " + materialLine
@@ -278,15 +278,21 @@ Public Class SourceSmdFile04
 
 		line = ""
 		Try
-			boneIndex = aBodyModel.theVertexes(aVertexInfo.vertexIndex).index
+			boneIndex = aBodyModel.theVertexes(aVertexInfo.vertexIndex).boneIndex
 			aBone = Me.theMdlFileData.theBones(boneIndex)
 
+			'position.x = aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.x
+			'position.y = aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.y
+			'position.z = aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.z
+			position.x = aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.y
+			position.y = -aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.x
+			position.z = aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.z
 			'position.x = aBone.position.x + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.x
 			'position.y = aBone.position.y + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.y
 			'position.z = aBone.position.z + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.z
-			position.x = aBone.position.y + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.y
-			position.y = -(aBone.position.x + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.x)
-			position.z = aBone.position.z + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.z
+			'position.x = aBone.position.y + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.y
+			'position.y = -(aBone.position.x + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.x)
+			'position.z = aBone.position.z + aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.z
 
 			'position.x = aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.x
 			'position.y = aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.y
@@ -295,12 +301,17 @@ Public Class SourceSmdFile04
 			'position.y = -(aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.x)
 			'position.z = aBodyModel.theVertexes(aVertexInfo.vertexIndex).vector.z
 
-			normal.x = aBodyModel.theNormals(aVertexInfo.vertexIndex).vector.x
-			normal.y = aBodyModel.theNormals(aVertexInfo.vertexIndex).vector.y
-			normal.z = aBodyModel.theNormals(aVertexInfo.vertexIndex).vector.z
+			normal.x = aBodyModel.theNormals(aVertexInfo.normalIndex).vector.x
+			normal.y = aBodyModel.theNormals(aVertexInfo.normalIndex).vector.y
+			normal.z = aBodyModel.theNormals(aVertexInfo.normalIndex).vector.z
+
+			If aBodyModel.theVertexes(aVertexInfo.vertexIndex).boneIndex <> aBodyModel.theNormals(aVertexInfo.normalIndex).index Then
+				Dim debug As Integer = 4242
+			End If
 
 			texCoordX = aVertexInfo.s / aMesh.textureWidth
-			texCoordY = 1 - aVertexInfo.t / aMesh.textureHeight
+			texCoordY = aVertexInfo.t / aMesh.textureHeight
+			'texCoordY = 1 - aVertexInfo.t / aMesh.textureHeight
 
 			line = "  "
 			line += boneIndex.ToString(TheApp.InternalNumberFormat)
@@ -322,8 +333,8 @@ Public Class SourceSmdFile04
 			line += " "
 			line += texCoordX.ToString("0.000000", TheApp.InternalNumberFormat)
 			line += " "
-			'line += aVertex.texCoordY.ToString("0.000000", TheApp.InternalNumberFormat)
-			line += (1 - texCoordY).ToString("0.000000", TheApp.InternalNumberFormat)
+			line += texCoordY.ToString("0.000000", TheApp.InternalNumberFormat)
+			'line += (1 - texCoordY).ToString("0.000000", TheApp.InternalNumberFormat)
 		Catch ex As Exception
 			line = "// " + line
 		End Try

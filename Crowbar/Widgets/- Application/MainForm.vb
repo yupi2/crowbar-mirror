@@ -1,3 +1,4 @@
+Imports System.Collections.ObjectModel
 Imports System.IO
 Imports System.Text
 
@@ -53,17 +54,19 @@ Public Class MainForm
 		''TEST:
 		'JumpList()
 
-		Dim commandLineParams() As String = System.Environment.GetCommandLineArgs()
-		If commandLineParams.Length > 1 AndAlso commandLineParams(1) <> "" Then
-			Me.SetDroppedPathFileName(True, commandLineParams(1))
+		'Dim commandLineParams() As String = System.Environment.GetCommandLineArgs()
+		'If commandLineParams.Length > 1 AndAlso commandLineParams(1) <> "" Then
+		'	Me.SetDroppedPathFileName(True, commandLineParams(1))
 
-			''TEST: Every file selected and dropped onto EXE is a string in the array, starting at index 1. Index 0 is the EXE path file name.
-			'Dim text As New StringBuilder()
-			'For Each arg As String In commandLineParams
-			'	text.AppendLine(arg)
-			'Next
-			'MessageBox.Show(text.ToString())
-		End If
+		'	''TEST: Every file selected and dropped onto EXE is a string in the array, starting at index 1. Index 0 is the EXE path file name.
+		'	'Dim text As New StringBuilder()
+		'	'For Each arg As String In commandLineParams
+		'	'	text.AppendLine(arg)
+		'	'Next
+		'	'MessageBox.Show(text.ToString())
+		'End If
+		Dim commandLineValues As New ReadOnlyCollection(Of String)(System.Environment.GetCommandLineArgs())
+		Me.Startup(commandLineValues)
 
 		Me.UnpackUserControl1.RunUnpackerToGetListOfVpkContents()
 		Me.PreviewViewUserControl.RunDataViewer()
@@ -117,6 +120,23 @@ Public Class MainForm
 #End Region
 
 #Region "Properties"
+
+#End Region
+
+#Region "Methods"
+
+	Public Sub Startup(ByVal commandLineValues As ReadOnlyCollection(Of String))
+		If commandLineValues.Count > 1 AndAlso commandLineValues(1) <> "" Then
+			Me.SetDroppedPathFileName(True, commandLineValues(1))
+
+			''TEST: Every file selected and dropped onto EXE is a string in the array, starting at index 1. Index 0 is the EXE path file name.
+			'Dim text As New StringBuilder()
+			'For Each arg As String In commandLineParams
+			'	text.AppendLine(arg)
+			'Next
+			'MessageBox.Show(text.ToString())
+		End If
+	End Sub
 
 #End Region
 

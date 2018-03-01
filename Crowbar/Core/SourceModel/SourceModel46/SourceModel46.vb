@@ -439,7 +439,7 @@ Public Class SourceModel46
 			Me.thePhyFileDataGeneric = New SourcePhyFileData()
 		End If
 
-		Dim phyFile As New SourcePhyFile46(Me.theInputFileReader, Me.thePhyFileDataGeneric)
+		Dim phyFile As New SourcePhyFile(Me.theInputFileReader, Me.thePhyFileDataGeneric)
 
 		phyFile.ReadSourcePhyHeader()
 		If Me.thePhyFileDataGeneric.solidCount > 0 Then
@@ -451,6 +451,7 @@ Public Class SourceModel46
 			phyFile.ReadSourcePhyEditParamsSection()
 			phyFile.ReadCollisionTextSection()
 		End If
+		phyFile.ReadUnreadBytes()
 	End Sub
 
 	Protected Overrides Sub ReadVtxFile_Internal()

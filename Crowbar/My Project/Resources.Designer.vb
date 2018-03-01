@@ -89,10 +89,10 @@ Namespace My.Resources
         
         '''<summary>
         '''  Looks up a localized string similar to GoldSource and Source Engine Model Toolset:
-        '''	* Decompiler of Valve&apos;s MDL and related files.
-        '''	* Compiler interface to Valve&apos;s StudioMDL.exe tool.
-        '''	* Model viewer interface to Valve&apos;s Half-Life Model Viewer tool.
-        '''	* Unpacker of Valve&apos;s VPK files..
+        '''	* Decompiler of MDL and related files.
+        '''	* Compiler interface to StudioMDL.exe tool.
+        '''	* Model viewer interface to Half-Life Model Viewer tool.
+        '''	* Unpacker of VPK and FPX package files..
         '''</summary>
         Friend ReadOnly Property About_ProductDescription() As String
             Get

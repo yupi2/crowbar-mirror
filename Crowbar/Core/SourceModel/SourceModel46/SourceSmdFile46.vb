@@ -225,7 +225,8 @@ Public Class SourceSmdFile46
 							'NOTE: MDL Decompiler 0.4.1 lists the vertices in reverse order than they are stored, and this seems to match closely with the teenangst source file.
 							'For vertexIndex As Integer = aTriangle.vertexIndex.Length - 1 To 0 Step -1
 							For vertexIndex As Integer = 0 To aTriangle.vertexIndex.Length - 1
-								phyVertex = collisionData.theVertices(aTriangle.vertexIndex(vertexIndex))
+								'phyVertex = collisionData.theVertices(aTriangle.vertexIndex(vertexIndex))
+								phyVertex = faceSection.theVertices(aTriangle.vertexIndex(vertexIndex))
 
 								aVectorTransformed = Me.TransformPhyVertex(aBone, phyVertex.vertex)
 
@@ -241,11 +242,11 @@ Public Class SourceSmdFile46
 								'line += " 0 0 0"
 								'------
 								line += " "
-								line += phyVertex.normal.x.ToString("0.000000", TheApp.InternalNumberFormat)
+								line += phyVertex.Normal.x.ToString("0.000000", TheApp.InternalNumberFormat)
 								line += " "
-								line += phyVertex.normal.y.ToString("0.000000", TheApp.InternalNumberFormat)
+								line += phyVertex.Normal.y.ToString("0.000000", TheApp.InternalNumberFormat)
 								line += " "
-								line += phyVertex.normal.z.ToString("0.000000", TheApp.InternalNumberFormat)
+								line += phyVertex.Normal.z.ToString("0.000000", TheApp.InternalNumberFormat)
 
 								line += " 0 0"
 								'NOTE: The studiomdl.exe doesn't need the integer values at end.

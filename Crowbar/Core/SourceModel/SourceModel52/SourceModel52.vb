@@ -252,6 +252,13 @@ Public Class SourceModel52
 			Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, debugPathFileName)
 		End If
 
+		If Me.thePhyFileDataGeneric IsNot Nothing Then
+			debugPathFileName = Path.Combine(debugPath, Me.theName + " " + My.Resources.Decompile_DebugPhyFileNameSuffix)
+			Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, debugPathFileName)
+			Me.WriteAccessedBytesDebugFile(debugPathFileName, Me.thePhyFileDataGeneric.theFileSeekLog)
+			Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, debugPathFileName)
+		End If
+
 		Return status
 	End Function
 
@@ -336,7 +343,6 @@ Public Class SourceModel52
 			mdlFile.ReadMdlHeader02("MDL File Header 02")
 		End If
 
-		' Read what WriteBoneInfo() writes.
 		mdlFile.ReadBones()
 		mdlFile.ReadBoneControllers()
 		mdlFile.ReadAttachments()
@@ -345,7 +351,6 @@ Public Class SourceModel52
 
 		mdlFile.ReadBoneTableByName()
 
-		' Read what WriteAnimations() writes.
 		If Me.theMdlFileData.localAnimationCount > 0 Then
 			Try
 				mdlFile.ReadLocalAnimationDescs()
@@ -356,13 +361,10 @@ Public Class SourceModel52
 			End Try
 		End If
 
-		' Read what WriteSequenceInfo() writes.
 		mdlFile.ReadSequenceDescs()
 		mdlFile.ReadLocalNodeNames()
 		mdlFile.ReadLocalNodes()
 
-		' Read what WriteModel() writes.
-		'Me.theCurrentFrameIndex = 0
 		'NOTE: Read flex descs before body parts so that flexes (within body parts) can add info to flex descs.
 		mdlFile.ReadFlexDescs()
 		mdlFile.ReadBodyParts()
@@ -377,24 +379,19 @@ Public Class SourceModel52
 		'TODO: Me.ReadAnimBlocks()
 		'TODO: Me.ReadAnimBlockName()
 
-		' Read what WriteTextures() writes.
 		mdlFile.ReadTexturePaths()
 		'NOTE: ReadTextures must be after ReadTexturePaths(), so it can compare with the texture paths.
 		mdlFile.ReadTextures()
 		mdlFile.ReadSkinFamilies()
 
-		' Read what WriteKeyValues() writes.
 		mdlFile.ReadKeyValues()
 
-		' Read what WriteBoneTransforms() writes.
 		mdlFile.ReadBoneTransforms()
 		mdlFile.ReadLinearBoneTable()
 
 		'TODO: ReadLocalIkAutoPlayLocks()
 		mdlFile.ReadFlexControllerUis()
 
-		'mdlFile.ReadFinalBytesAlignment()
-		'mdlFile.ReadUnknownValues(Me.theMdlFileData.theFileSeekLog)
 		mdlFile.ReadUnreadBytes()
 
 		' Post-processing.

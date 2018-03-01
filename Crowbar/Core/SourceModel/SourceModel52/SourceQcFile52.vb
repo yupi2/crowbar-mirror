@@ -220,7 +220,6 @@ Public Class SourceQcFile52
 		'Dim referenceSmdFileName As String
 		'Dim aBone As SourceMdlBone
 		Dim eyeballNames As List(Of String)
-		Dim bodyPart As SourceMdlBodyPart = Nothing
 
 		'$model "producer" "producer_model_merged.dmx.smd" {
 		'//-doesn't work     eyeball righteye ValveBiped.Bip01_Head1 -1.260 -0.086 64.594 eyeball_r 1.050  3.000 producer_head 0.530
@@ -2597,6 +2596,9 @@ Public Class SourceQcFile52
 				ElseIf anIkRule.type = SourceMdlIkRule.IK_ATTACHMENT Then
 					line += " "
 					line += "attachment"
+					line += " """
+					line += anIkRule.theAttachmentName
+					line += """"
 				ElseIf anIkRule.type = SourceMdlIkRule.IK_UNLATCH Then
 					line += " "
 					line += "unlatch"
@@ -3409,6 +3411,10 @@ Public Class SourceQcFile52
 		If Me.thePhyFileData.theSourcePhyEditParamsSection.concave = "1" Then
 			line = vbTab
 			line += "$concave"
+			Me.theOutputFileStreamWriter.WriteLine(line)
+			line = vbTab
+			line += "$maxconvexpieces "
+			line += Me.thePhyFileData.theSourcePhyMaxConvexPieces.ToString()
 			Me.theOutputFileStreamWriter.WriteLine(line)
 		End If
 

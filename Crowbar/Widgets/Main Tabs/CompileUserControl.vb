@@ -150,6 +150,7 @@ Public Class CompileUserControl
 			End If
 		End If
 		openFileWdw.FileName = "[Folder Selection]"
+		'openFileWdw.Filter = "Source Engine QC Files (*.qc)|*.qc|All Files (*.*)|*.*"
 		openFileWdw.Filter = "Source Engine QC Files (*.qc)|*.qc"
 		openFileWdw.AddExtension = True
 		openFileWdw.CheckFileExists = False

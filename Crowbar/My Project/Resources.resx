@@ -129,10 +129,10 @@
   </data>
   <data name="About_ProductDescription" xml:space="preserve">
     <value>GoldSource and Source Engine Model Toolset:
-	* Decompiler of Valve's MDL and related files.
-	* Compiler interface to Valve's StudioMDL.exe tool.
-	* Model viewer interface to Valve's Half-Life Model Viewer tool.
-	* Unpacker of Valve's VPK files.</value>
+	* Decompiler of MDL and related files.
+	* Compiler interface to StudioMDL.exe tool.
+	* Model viewer interface to Half-Life Model Viewer tool.
+	* Unpacker of VPK and FPX package files.</value>
   </data>
   <data name="Decompile_DebugAniFileNameSuffix" xml:space="preserve">
     <value>decompile-ANI.txt</value>

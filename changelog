@@ -1,93 +1,29 @@
-Crowbar 0.54 - 2018-01-31_0.54
+Crowbar 0.55 - 2018-02-28_0.55
 
 Changelog:
 
-=== General ===
-
-    FIXED: Change "// Created by Crowbar 0.52.0.0" to "// Created by Crowbar 0.52", i.e. only use first two numbers of Version.
-    FIXED: Clicking any Goto button, when its related textbox is empty, crashes Crowbar.
-    FIXED: If Windows taskbar is at the top of screen, then sometimes Crowbar can open where part of it is obscured by the taskbar.
-    FIXED: For the input drop-down box in Unapck tab, Decompile tab, and Compile tab:
-    If "Folder and subfolders" is selected and then the path is changed, Crowbar will revert to "Folder" instead of leaving it at "Folder and subfolders".
-
-
 === Set Up Games ===
 
-    UPDATED: Changed Set Up Games popup window to a new tab in main window.
-    FIXED: Selecting a path file name via Browse overwrites an existing macro+path with full path even if a macro+path could be used.
+    ADDED: Tactical Intervention game setup.
 
 
 === Unpack ===
 
-    UPDATED: Widened tree window so that when viewing folders within "models" folder of several game VPKs,
-    the horizontal scrollbar does not appear.
-    UPDATED: Columns in the list of files auto-resize whenever the list changes (i.e. when selected folder changes).
-    FIXED: VPK files that use preload bytes are not unpacked correctly.
-    Example: Portal 2 "materials\nature\water_glados_01.vmt".
+    ADDED: Unpacking of Tactical Intervention FPX package files.
+    ADDED: Unpacking of Garry's Mod GMA package files. Includes "unpacking" of an "addon.json" file that does not exist in the GMA package as a file, but as meta-data.
 
 
 === Decompile ===
 
-    ADDED: MDL v27 - Decompile reference and LOD meshes and some of the QC file.
-    ADDED: MDL v28 - Decompile reference and LOD meshes and some of the QC file.
-    ADDED: MDL v29 - Decompile reference and LOD meshes and some of the QC file.
-    ADDED: MDL v30 - Decompile reference and LOD meshes and some of the QC file.
-    REMOVED: 'Apply "Right-Hand Fix (only for survivors in L4D2)" option, because it is no longer needed with the better decompiling of L4D2 models.
-    UPDATED: "Include $definebone lines" defaults as enabled.
-    UPDATED: MDL v10 - Changed the decompiling of texture UV values to work with the better compiler (DoomMusic's StudioMDL).
-    UPDATED: MDL v48 and v49 - Disabled writing of $animation and $sequence subtract option because the related SMD files do not have the corresponding "un-subtracted" data. This should allow a good recompile, but the decompiled animation data will likely be useless in an animation editor.
-    FIXED: MDL v31 - Decompile of animations has incorrect rotation values.
-    FIXED: MDL v32 - QC does not list the $animation names within the $sequences that use them.
-    FIXED: MDL v36 - Decompile failed to get any $sequence names after first one.
-    FIXED: MDL v44 - Decompiled with $LOD replacemodel lines for "blank" bodyparts, but should not be.
-    FIXED: MDL v44, v48, and v49 - Decompiled without all animation info or with rotated bones and meshes. (Many bug reports over the years.)
-    FIXED: MDL v44, v48, and v49 - When a model has several bodygroups and the group with the head is not the first one, then the $model bodygroup might not be in the correct spot in the bodygroup list.
-    FIXED: MDL v44, v48, v49, and v52 - Decompiled without $LOD options: facial, nofacial, replacebone, replacematerial, removemodel, use_shadowlod_materials.
-    FIXED: MDL v46 - QC eyeball line has material path plus file name instead of only the file name.
-    FIXED: MDL v48 - When a model has several bodygroups and the group with the head is not the first one, then the eyeball, flex, and mouth QC lines are not written, or are written for the wrong mesh SMD.
-    FIXED: MDL v48 - When a model is compiled with $upaxis Y, eyes do not recompile correctly and sometimes a texture error appears.
-    Fixed errors mentioned in these bug reports:
-    http://steamcommunity.com/groups/CrowbarTool/discussions/1/618453594750957055/
-    http://steamcommunity.com/groups/CrowbarTool/discussions/1/490123197939346178/
-    FIXED: MDL v48 - Decompile fails to parse some models that seem to be expecting hitbox nameOffset as an absolute offset. The fix ignores decompiling of hitbox name for any model, because the name does not seem to be used in-game.
-    FIXED: MDL v48 - An "__illumPosition" attachment is written instead of $illumposition.
-    FIXED: MDL v48 and v49 - Decompiled without QC commands: $casttextureshadows, $donotcastshadows.
-    FIXED: MDL v48 and v49 - Decompiled without correct animation SMD file when the $sequence uses "noanimation" option.
-    FIXED: MDL v48 and v49 - Some models are decompiled with rotated physics mesh.
-    FIXED: MDL v48 and v49 - Decompiled with only one $jointcollide option in QC $collisionjoints command, even if there is more than one.
-    FIXED: MDL v48 and v49 - QC $sequence has addlayer option instead of blendlayer option if the blendlayer does not use any values after the endframe parameter.
-    FIXED: MDL v48 and v49 - Decompiled QC has incorrect truncated value for $ModelName command.
-    Bug report: http://steamcommunity.com/groups/CrowbarTool/discussions/1/1693785669871829897/
-    FIXED: MDL v48, v49, and v52 - Decompiled with $maxeyedeflection 90 when it should not be written.
-    FIXED: MDL v49 - Animation SMD files are incomplete for L4D2 "left4dead2/pak01_dir.vpk/models/c2m5_helicopter_extraction/c2m5_helicopter.mdl".
-    Bug report: http://steamcommunity.com/groups/CrowbarTool/discussions/1/1473095331506783453/
-    FIXED: MDL v49 - Decompiled without all of the animation data from an animation-only MDL file that decompiled with Crowbar 0.44.
-    FIXED: MDL v49 - Decompiled without all of the animation data for CSGO weapon viewmodels.
-    FIXED: MDL v49 - A mesh+animation MDL file by itself (i.e. no ANI or related files) gives an error about a missing file instead of decompiling what is available.
-    FIXED: All MDL versions - Decompiled with $hboxset, $hbox, and $skipboneinbbox lines commented-out, even when they were not auto-generated by compiler.
-    FIXED: All MDL versions - Decompiled with $illumposition line commented-out.
-    FIXED: All MDL versions - $model flexcontroller option does not have double-quotes around name.
-    FIXED: All MDL versions - $jigglebone "allow_length_flex" option is written when it should not be and not written when it should be.
+    ADDED: MDL v10 - Checkbox for using UV values specifically for DoomMusic's model compiler, which handles the UVs slightly differently than the Valve compiler.
+    ADDED: MDL v52 - Titanfall animation SMD files.
+    ADDED: MDL v53 - Titanfall 2 reference and LoD meshes, animation SMD files, and (probably incomplete) QC file.
+    FIXED: MDL v44 - Missing translational root-bone movement (walkframe LX LY LZ). (Rotational root-bone movement has not been fixed.)
+    FIXED: MDL v44, v45, v46, v48, v49, v52 - Missing name value for $sequence ikrule attachment option.
+    FIXED: MDL v44, v45, v46, v48, v49, v52 - Incorrect custom normals (smoothing groups) of concave physics mesh that has shared vertexes between convex sections.
+    FIXED: All MDL versions - The rotate x value for $attachment sometimes is NaN instead of a number.
 
 
-=== Compile ===
+=== Options ===
 
-    FIXED: Dragging a QC file onto Compile does not update the compile command textbox.
-
-
-=== Preview and View ===
-
-    FIXED: Using "View" or "View as Replacement" of a model with a materials folder can sometimes
-    prevent opening of viewer.
-    FIXED: Using "Open Viewer" button disables the "View" and "View as Replacement" buttons, but should not affect them.
-    FIXED: Closing Crowbar with more than one HLMV opened via "Open Viewer" button does not close all HLMV windows.
-    FIXED: Using "View" button changes files, but it should simply open HLMV with the MDL file.
-    FIXED: Using "View" or "View as Replacement" button copies entire materials folder if the MDL file is within a models folder and the materials folder is beside the models folder.
-    However, Crowbar should only copy files actually used by the model instead.
-    For now, Crowbar will not copy any material or texture files, but the feature will be added in later.
-
-
-=== About ===
-
-    UPDATED: More names have been added to the "Special thanks" list.
-    UPDATED: "Special thanks" area redesigned to show all names without scrolling.
+    ADDED: Option to restrict to single instance (only one Crowbar open at a time).

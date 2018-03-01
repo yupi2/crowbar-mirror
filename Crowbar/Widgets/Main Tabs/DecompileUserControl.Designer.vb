@@ -30,6 +30,7 @@ Partial Class DecompileUserControl
 		Me.FormatForStricterImportersCheckBox = New System.Windows.Forms.CheckBox()
 		Me.UseMixedCaseForKeywordsCheckBox = New System.Windows.Forms.CheckBox()
 		Me.RemovePathFromMaterialFileNamesCheckBox = New System.Windows.Forms.CheckBox()
+		Me.UseUvsForDoomMusicCompilerCheckBox = New System.Windows.Forms.CheckBox()
 		Me.Panel2 = New System.Windows.Forms.Panel()
 		Me.MdlPathFileNameTextBox = New Crowbar.TextBoxEx()
 		Me.GotoOutputPathButton = New System.Windows.Forms.Button()
@@ -69,11 +70,11 @@ Partial Class DecompileUserControl
 		Me.PhysicsMeshSmdFileCheckBox = New System.Windows.Forms.CheckBox()
 		Me.ReferenceMeshSmdFileCheckBox = New System.Windows.Forms.CheckBox()
 		Me.QcFileCheckBox = New System.Windows.Forms.CheckBox()
-		Me.UseInCompileButton = New System.Windows.Forms.Button()
-		Me.UseInEditButton = New System.Windows.Forms.Button()
 		Me.DecompilerLogTextBox = New Crowbar.RichTextBoxEx()
 		Me.DecompiledFilesComboBox = New System.Windows.Forms.ComboBox()
+		Me.UseInCompileButton = New System.Windows.Forms.Button()
 		Me.GotoDecompiledFileButton = New System.Windows.Forms.Button()
+		Me.UseInEditButton = New System.Windows.Forms.Button()
 		Me.Panel2.SuspendLayout()
 		CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
 		Me.SplitContainer1.Panel1.SuspendLayout()
@@ -153,6 +154,18 @@ Partial Class DecompileUserControl
 		Me.ToolTip1.SetToolTip(Me.RemovePathFromMaterialFileNamesCheckBox, "Write only the file name in the SMD, even if a path was stored. This might cause " & _
 		"problem with $CDMaterials in QC file.")
 		Me.RemovePathFromMaterialFileNamesCheckBox.UseVisualStyleBackColor = True
+		'
+		'UseUvsForDoomMusicCompilerCheckBox
+		'
+		Me.UseUvsForDoomMusicCompilerCheckBox.AutoSize = True
+		Me.UseUvsForDoomMusicCompilerCheckBox.Location = New System.Drawing.Point(20, 164)
+		Me.UseUvsForDoomMusicCompilerCheckBox.Name = "UseUvsForDoomMusicCompilerCheckBox"
+		Me.UseUvsForDoomMusicCompilerCheckBox.Size = New System.Drawing.Size(283, 17)
+		Me.UseUvsForDoomMusicCompilerCheckBox.TabIndex = 44
+		Me.UseUvsForDoomMusicCompilerCheckBox.Text = "Use UVs for DoomMusic's model compiler (GoldSource)"
+		Me.ToolTip1.SetToolTip(Me.UseUvsForDoomMusicCompilerCheckBox, "Write only the file name in the SMD, even if a path was stored. This might cause " & _
+		"problem with $CDMaterials in QC file.")
+		Me.UseUvsForDoomMusicCompilerCheckBox.UseVisualStyleBackColor = True
 		'
 		'Panel2
 		'
@@ -416,6 +429,7 @@ Partial Class DecompileUserControl
 		'Panel1
 		'
 		Me.Panel1.AutoScroll = True
+		Me.Panel1.Controls.Add(Me.UseUvsForDoomMusicCompilerCheckBox)
 		Me.Panel1.Controls.Add(Me.OnlyChangedMaterialsInTextureGroupLinesCheckBox)
 		Me.Panel1.Controls.Add(Me.UseMixedCaseForKeywordsCheckBox)
 		Me.Panel1.Controls.Add(Me.RemovePathFromMaterialFileNamesCheckBox)
@@ -482,7 +496,7 @@ Partial Class DecompileUserControl
 		'ComboBox2
 		'
 		Me.ComboBox2.FormattingEnabled = True
-		Me.ComboBox2.Location = New System.Drawing.Point(392, 139)
+		Me.ComboBox2.Location = New System.Drawing.Point(411, 170)
 		Me.ComboBox2.Name = "ComboBox2"
 		Me.ComboBox2.Size = New System.Drawing.Size(125, 21)
 		Me.ComboBox2.TabIndex = 15
@@ -491,7 +505,7 @@ Partial Class DecompileUserControl
 		'Label2
 		'
 		Me.Label2.AutoSize = True
-		Me.Label2.Location = New System.Drawing.Point(315, 142)
+		Me.Label2.Location = New System.Drawing.Point(334, 173)
 		Me.Label2.Name = "Label2"
 		Me.Label2.Size = New System.Drawing.Size(74, 13)
 		Me.Label2.TabIndex = 23
@@ -521,7 +535,7 @@ Partial Class DecompileUserControl
 		'PlaceInAnimsSubfolderCheckBox
 		'
 		Me.PlaceInAnimsSubfolderCheckBox.AutoSize = True
-		Me.PlaceInAnimsSubfolderCheckBox.Location = New System.Drawing.Point(20, 187)
+		Me.PlaceInAnimsSubfolderCheckBox.Location = New System.Drawing.Point(335, 141)
 		Me.PlaceInAnimsSubfolderCheckBox.Name = "PlaceInAnimsSubfolderCheckBox"
 		Me.PlaceInAnimsSubfolderCheckBox.Size = New System.Drawing.Size(148, 17)
 		Me.PlaceInAnimsSubfolderCheckBox.TabIndex = 9
@@ -551,7 +565,7 @@ Partial Class DecompileUserControl
 		'BoneAnimationSmdFilesCheckBox
 		'
 		Me.BoneAnimationSmdFilesCheckBox.AutoSize = True
-		Me.BoneAnimationSmdFilesCheckBox.Location = New System.Drawing.Point(3, 164)
+		Me.BoneAnimationSmdFilesCheckBox.Location = New System.Drawing.Point(318, 118)
 		Me.BoneAnimationSmdFilesCheckBox.Name = "BoneAnimationSmdFilesCheckBox"
 		Me.BoneAnimationSmdFilesCheckBox.Size = New System.Drawing.Size(145, 17)
 		Me.BoneAnimationSmdFilesCheckBox.TabIndex = 8
@@ -598,29 +612,6 @@ Partial Class DecompileUserControl
 		Me.QcFileCheckBox.Text = "QC file"
 		Me.QcFileCheckBox.UseVisualStyleBackColor = True
 		'
-		'UseInCompileButton
-		'
-		Me.UseInCompileButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.UseInCompileButton.Enabled = False
-		Me.UseInCompileButton.Location = New System.Drawing.Point(627, 170)
-		Me.UseInCompileButton.Name = "UseInCompileButton"
-		Me.UseInCompileButton.Size = New System.Drawing.Size(94, 23)
-		Me.UseInCompileButton.TabIndex = 3
-		Me.UseInCompileButton.Text = "Use in Compile"
-		Me.UseInCompileButton.UseVisualStyleBackColor = True
-		'
-		'UseInEditButton
-		'
-		Me.UseInEditButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.UseInEditButton.Enabled = False
-		Me.UseInEditButton.Location = New System.Drawing.Point(553, 171)
-		Me.UseInEditButton.Name = "UseInEditButton"
-		Me.UseInEditButton.Size = New System.Drawing.Size(72, 23)
-		Me.UseInEditButton.TabIndex = 2
-		Me.UseInEditButton.Text = "Use in Edit"
-		Me.UseInEditButton.UseVisualStyleBackColor = True
-		Me.UseInEditButton.Visible = False
-		'
 		'DecompilerLogTextBox
 		'
 		Me.DecompilerLogTextBox.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
@@ -647,6 +638,17 @@ Partial Class DecompileUserControl
 		Me.DecompiledFilesComboBox.Size = New System.Drawing.Size(621, 21)
 		Me.DecompiledFilesComboBox.TabIndex = 1
 		'
+		'UseInCompileButton
+		'
+		Me.UseInCompileButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.UseInCompileButton.Enabled = False
+		Me.UseInCompileButton.Location = New System.Drawing.Point(627, 170)
+		Me.UseInCompileButton.Name = "UseInCompileButton"
+		Me.UseInCompileButton.Size = New System.Drawing.Size(94, 23)
+		Me.UseInCompileButton.TabIndex = 3
+		Me.UseInCompileButton.Text = "Use in Compile"
+		Me.UseInCompileButton.UseVisualStyleBackColor = True
+		'
 		'GotoDecompiledFileButton
 		'
 		Me.GotoDecompiledFileButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
@@ -656,6 +658,18 @@ Partial Class DecompileUserControl
 		Me.GotoDecompiledFileButton.TabIndex = 4
 		Me.GotoDecompiledFileButton.Text = "Goto"
 		Me.GotoDecompiledFileButton.UseVisualStyleBackColor = True
+		'
+		'UseInEditButton
+		'
+		Me.UseInEditButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.UseInEditButton.Enabled = False
+		Me.UseInEditButton.Location = New System.Drawing.Point(553, 171)
+		Me.UseInEditButton.Name = "UseInEditButton"
+		Me.UseInEditButton.Size = New System.Drawing.Size(72, 23)
+		Me.UseInEditButton.TabIndex = 2
+		Me.UseInEditButton.Text = "Use in Edit"
+		Me.UseInEditButton.UseVisualStyleBackColor = True
+		Me.UseInEditButton.Visible = False
 		'
 		'DecompileUserControl
 		'
@@ -730,5 +744,6 @@ Partial Class DecompileUserControl
 	Friend WithEvents Panel3 As System.Windows.Forms.Panel
 	Friend WithEvents OnlyChangedMaterialsInTextureGroupLinesCheckBox As System.Windows.Forms.CheckBox
 	Friend WithEvents OutputSubfolderTextBox As Crowbar.TextBoxEx
+	Friend WithEvents UseUvsForDoomMusicCompilerCheckBox As System.Windows.Forms.CheckBox
 
 End Class

@@ -76,6 +76,7 @@ Partial Class OptionsUserControl
 		Me.ApplyLabel = New System.Windows.Forms.Label()
 		Me.ApplyButton = New System.Windows.Forms.Button()
 		Me.ApplyPanel = New System.Windows.Forms.Panel()
+		Me.SingleInstanceCheckBox = New System.Windows.Forms.CheckBox()
 		Me.GroupBox1.SuspendLayout()
 		Me.Panel7.SuspendLayout()
 		Me.GroupBox2.SuspendLayout()
@@ -92,7 +93,7 @@ Partial Class OptionsUserControl
 		Me.IntegrateContextMenuItemsCheckBox.AutoSize = True
 		Me.IntegrateContextMenuItemsCheckBox.Location = New System.Drawing.Point(6, 19)
 		Me.IntegrateContextMenuItemsCheckBox.Name = "IntegrateContextMenuItemsCheckBox"
-		Me.IntegrateContextMenuItemsCheckBox.Size = New System.Drawing.Size(223, 17)
+		Me.IntegrateContextMenuItemsCheckBox.Size = New System.Drawing.Size(213, 17)
 		Me.IntegrateContextMenuItemsCheckBox.TabIndex = 0
 		Me.IntegrateContextMenuItemsCheckBox.Text = "Integrate Crowbar context menu items"
 		Me.IntegrateContextMenuItemsCheckBox.UseVisualStyleBackColor = True
@@ -102,7 +103,7 @@ Partial Class OptionsUserControl
 		Me.Label1.AutoSize = True
 		Me.Label1.Location = New System.Drawing.Point(24, 68)
 		Me.Label1.Name = "Label1"
-		Me.Label1.Size = New System.Drawing.Size(112, 13)
+		Me.Label1.Size = New System.Drawing.Size(107, 13)
 		Me.Label1.TabIndex = 2
 		Me.Label1.Text = "Context menu items:"
 		'
@@ -111,7 +112,7 @@ Partial Class OptionsUserControl
 		Me.IntegrateAsSubmenuCheckBox.AutoSize = True
 		Me.IntegrateAsSubmenuCheckBox.Location = New System.Drawing.Point(24, 42)
 		Me.IntegrateAsSubmenuCheckBox.Name = "IntegrateAsSubmenuCheckBox"
-		Me.IntegrateAsSubmenuCheckBox.Size = New System.Drawing.Size(202, 17)
+		Me.IntegrateAsSubmenuCheckBox.Size = New System.Drawing.Size(193, 17)
 		Me.IntegrateAsSubmenuCheckBox.TabIndex = 4
 		Me.IntegrateAsSubmenuCheckBox.Text = "Integrate as a ""Crowbar"" submenu"
 		Me.IntegrateAsSubmenuCheckBox.UseVisualStyleBackColor = True
@@ -123,7 +124,7 @@ Partial Class OptionsUserControl
 		Me.GroupBox1.Controls.Add(Me.IntegrateContextMenuItemsCheckBox)
 		Me.GroupBox1.Controls.Add(Me.Label1)
 		Me.GroupBox1.Controls.Add(Me.IntegrateAsSubmenuCheckBox)
-		Me.GroupBox1.Location = New System.Drawing.Point(415, 3)
+		Me.GroupBox1.Location = New System.Drawing.Point(415, 26)
 		Me.GroupBox1.Name = "GroupBox1"
 		Me.GroupBox1.Size = New System.Drawing.Size(309, 445)
 		Me.GroupBox1.TabIndex = 2
@@ -153,7 +154,7 @@ Partial Class OptionsUserControl
 		Me.OptionsContextMenuCompileFolderAndSubfoldersCheckBox.AutoSize = True
 		Me.OptionsContextMenuCompileFolderAndSubfoldersCheckBox.Location = New System.Drawing.Point(3, 106)
 		Me.OptionsContextMenuCompileFolderAndSubfoldersCheckBox.Name = "OptionsContextMenuCompileFolderAndSubfoldersCheckBox"
-		Me.OptionsContextMenuCompileFolderAndSubfoldersCheckBox.Size = New System.Drawing.Size(247, 17)
+		Me.OptionsContextMenuCompileFolderAndSubfoldersCheckBox.Size = New System.Drawing.Size(228, 17)
 		Me.OptionsContextMenuCompileFolderAndSubfoldersCheckBox.TabIndex = 7
 		Me.OptionsContextMenuCompileFolderAndSubfoldersCheckBox.Text = "Compile folder and subfolders to <folder>"
 		Me.OptionsContextMenuCompileFolderAndSubfoldersCheckBox.UseVisualStyleBackColor = True
@@ -163,7 +164,7 @@ Partial Class OptionsUserControl
 		Me.OptionsContextMenuCompileFolderCheckBox.AutoSize = True
 		Me.OptionsContextMenuCompileFolderCheckBox.Location = New System.Drawing.Point(3, 91)
 		Me.OptionsContextMenuCompileFolderCheckBox.Name = "OptionsContextMenuCompileFolderCheckBox"
-		Me.OptionsContextMenuCompileFolderCheckBox.Size = New System.Drawing.Size(166, 17)
+		Me.OptionsContextMenuCompileFolderCheckBox.Size = New System.Drawing.Size(154, 17)
 		Me.OptionsContextMenuCompileFolderCheckBox.TabIndex = 6
 		Me.OptionsContextMenuCompileFolderCheckBox.Text = "Compile folder to <folder>"
 		Me.OptionsContextMenuCompileFolderCheckBox.UseVisualStyleBackColor = True
@@ -173,7 +174,7 @@ Partial Class OptionsUserControl
 		Me.OptionsContextMenuCompileQcFileCheckBox.AutoSize = True
 		Me.OptionsContextMenuCompileQcFileCheckBox.Location = New System.Drawing.Point(3, 76)
 		Me.OptionsContextMenuCompileQcFileCheckBox.Name = "OptionsContextMenuCompileQcFileCheckBox"
-		Me.OptionsContextMenuCompileQcFileCheckBox.Size = New System.Drawing.Size(106, 17)
+		Me.OptionsContextMenuCompileQcFileCheckBox.Size = New System.Drawing.Size(98, 17)
 		Me.OptionsContextMenuCompileQcFileCheckBox.TabIndex = 5
 		Me.OptionsContextMenuCompileQcFileCheckBox.Text = "Compile QC file"
 		Me.OptionsContextMenuCompileQcFileCheckBox.UseVisualStyleBackColor = True
@@ -183,7 +184,7 @@ Partial Class OptionsUserControl
 		Me.OptionsContextMenuDecompileFolderAndSubfoldersCheckBox.AutoSize = True
 		Me.OptionsContextMenuDecompileFolderAndSubfoldersCheckBox.Location = New System.Drawing.Point(3, 61)
 		Me.OptionsContextMenuDecompileFolderAndSubfoldersCheckBox.Name = "OptionsContextMenuDecompileFolderAndSubfoldersCheckBox"
-		Me.OptionsContextMenuDecompileFolderAndSubfoldersCheckBox.Size = New System.Drawing.Size(259, 17)
+		Me.OptionsContextMenuDecompileFolderAndSubfoldersCheckBox.Size = New System.Drawing.Size(239, 17)
 		Me.OptionsContextMenuDecompileFolderAndSubfoldersCheckBox.TabIndex = 4
 		Me.OptionsContextMenuDecompileFolderAndSubfoldersCheckBox.Text = "Decompile folder and subfolders to <folder>"
 		Me.OptionsContextMenuDecompileFolderAndSubfoldersCheckBox.UseVisualStyleBackColor = True
@@ -193,7 +194,7 @@ Partial Class OptionsUserControl
 		Me.OptionsContextMenuDecompileFolderCheckBox.AutoSize = True
 		Me.OptionsContextMenuDecompileFolderCheckBox.Location = New System.Drawing.Point(3, 46)
 		Me.OptionsContextMenuDecompileFolderCheckBox.Name = "OptionsContextMenuDecompileFolderCheckBox"
-		Me.OptionsContextMenuDecompileFolderCheckBox.Size = New System.Drawing.Size(178, 17)
+		Me.OptionsContextMenuDecompileFolderCheckBox.Size = New System.Drawing.Size(165, 17)
 		Me.OptionsContextMenuDecompileFolderCheckBox.TabIndex = 3
 		Me.OptionsContextMenuDecompileFolderCheckBox.Text = "Decompile folder to <folder>"
 		Me.OptionsContextMenuDecompileFolderCheckBox.UseVisualStyleBackColor = True
@@ -203,7 +204,7 @@ Partial Class OptionsUserControl
 		Me.OptionsContextMenuDecompileMdlFileCheckBox.AutoSize = True
 		Me.OptionsContextMenuDecompileMdlFileCheckBox.Location = New System.Drawing.Point(3, 31)
 		Me.OptionsContextMenuDecompileMdlFileCheckBox.Name = "OptionsContextMenuDecompileMdlFileCheckBox"
-		Me.OptionsContextMenuDecompileMdlFileCheckBox.Size = New System.Drawing.Size(189, 17)
+		Me.OptionsContextMenuDecompileMdlFileCheckBox.Size = New System.Drawing.Size(174, 17)
 		Me.OptionsContextMenuDecompileMdlFileCheckBox.TabIndex = 2
 		Me.OptionsContextMenuDecompileMdlFileCheckBox.Text = "Decompile MDL file to <folder>"
 		Me.OptionsContextMenuDecompileMdlFileCheckBox.UseVisualStyleBackColor = True
@@ -213,7 +214,7 @@ Partial Class OptionsUserControl
 		Me.OptionsContextMenuViewMdlFileCheckBox.AutoSize = True
 		Me.OptionsContextMenuViewMdlFileCheckBox.Location = New System.Drawing.Point(3, 16)
 		Me.OptionsContextMenuViewMdlFileCheckBox.Name = "OptionsContextMenuViewMdlFileCheckBox"
-		Me.OptionsContextMenuViewMdlFileCheckBox.Size = New System.Drawing.Size(96, 17)
+		Me.OptionsContextMenuViewMdlFileCheckBox.Size = New System.Drawing.Size(88, 17)
 		Me.OptionsContextMenuViewMdlFileCheckBox.TabIndex = 1
 		Me.OptionsContextMenuViewMdlFileCheckBox.Text = "View MDL file"
 		Me.OptionsContextMenuViewMdlFileCheckBox.UseVisualStyleBackColor = True
@@ -223,7 +224,7 @@ Partial Class OptionsUserControl
 		Me.OptionsContextMenuOpenWithCrowbarCheckBox.AutoSize = True
 		Me.OptionsContextMenuOpenWithCrowbarCheckBox.Location = New System.Drawing.Point(3, 1)
 		Me.OptionsContextMenuOpenWithCrowbarCheckBox.Name = "OptionsContextMenuOpenWithCrowbarCheckBox"
-		Me.OptionsContextMenuOpenWithCrowbarCheckBox.Size = New System.Drawing.Size(128, 17)
+		Me.OptionsContextMenuOpenWithCrowbarCheckBox.Size = New System.Drawing.Size(119, 17)
 		Me.OptionsContextMenuOpenWithCrowbarCheckBox.TabIndex = 0
 		Me.OptionsContextMenuOpenWithCrowbarCheckBox.Text = "Open with Crowbar"
 		Me.OptionsContextMenuOpenWithCrowbarCheckBox.UseVisualStyleBackColor = True
@@ -243,7 +244,7 @@ Partial Class OptionsUserControl
 		Me.AutoOpenMdlFileCheckBox.AutoSize = True
 		Me.AutoOpenMdlFileCheckBox.Location = New System.Drawing.Point(6, 152)
 		Me.AutoOpenMdlFileCheckBox.Name = "AutoOpenMdlFileCheckBox"
-		Me.AutoOpenMdlFileCheckBox.Size = New System.Drawing.Size(71, 17)
+		Me.AutoOpenMdlFileCheckBox.Size = New System.Drawing.Size(67, 17)
 		Me.AutoOpenMdlFileCheckBox.TabIndex = 2
 		Me.AutoOpenMdlFileCheckBox.Text = "MDL file:"
 		Me.AutoOpenMdlFileCheckBox.UseVisualStyleBackColor = True
@@ -253,7 +254,7 @@ Partial Class OptionsUserControl
 		Me.AutoOpenQcFileCheckBox.AutoSize = True
 		Me.AutoOpenQcFileCheckBox.Location = New System.Drawing.Point(6, 251)
 		Me.AutoOpenQcFileCheckBox.Name = "AutoOpenQcFileCheckBox"
-		Me.AutoOpenQcFileCheckBox.Size = New System.Drawing.Size(64, 17)
+		Me.AutoOpenQcFileCheckBox.Size = New System.Drawing.Size(62, 17)
 		Me.AutoOpenQcFileCheckBox.TabIndex = 4
 		Me.AutoOpenQcFileCheckBox.Text = "QC file:"
 		Me.AutoOpenQcFileCheckBox.UseVisualStyleBackColor = True
@@ -270,7 +271,7 @@ Partial Class OptionsUserControl
 		Me.GroupBox2.Controls.Add(Me.AutoOpenMdlFileCheckBox)
 		Me.GroupBox2.Controls.Add(Me.AutoOpenQcFileCheckBox)
 		Me.GroupBox2.Controls.Add(Me.AutoOpenVpkFileCheckBox)
-		Me.GroupBox2.Location = New System.Drawing.Point(3, 3)
+		Me.GroupBox2.Location = New System.Drawing.Point(3, 26)
 		Me.GroupBox2.Name = "GroupBox2"
 		Me.GroupBox2.Size = New System.Drawing.Size(200, 445)
 		Me.GroupBox2.TabIndex = 0
@@ -283,7 +284,7 @@ Partial Class OptionsUserControl
 		Me.Label5.Location = New System.Drawing.Point(6, 295)
 		Me.Label5.Margin = New System.Windows.Forms.Padding(3)
 		Me.Label5.Name = "Label5"
-		Me.Label5.Size = New System.Drawing.Size(43, 13)
+		Me.Label5.Size = New System.Drawing.Size(41, 13)
 		Me.Label5.TabIndex = 6
 		Me.Label5.Text = "Folder:"
 		'
@@ -304,7 +305,7 @@ Partial Class OptionsUserControl
 		Me.AutoOpenFolderForCompileRadioButton.AutoSize = True
 		Me.AutoOpenFolderForCompileRadioButton.Location = New System.Drawing.Point(3, 33)
 		Me.AutoOpenFolderForCompileRadioButton.Name = "AutoOpenFolderForCompileRadioButton"
-		Me.AutoOpenFolderForCompileRadioButton.Size = New System.Drawing.Size(67, 17)
+		Me.AutoOpenFolderForCompileRadioButton.Size = New System.Drawing.Size(62, 17)
 		Me.AutoOpenFolderForCompileRadioButton.TabIndex = 14
 		Me.AutoOpenFolderForCompileRadioButton.TabStop = True
 		Me.AutoOpenFolderForCompileRadioButton.Text = "Compile"
@@ -315,7 +316,7 @@ Partial Class OptionsUserControl
 		Me.AutoOpenFolderForDecompileRadioButton.AutoSize = True
 		Me.AutoOpenFolderForDecompileRadioButton.Location = New System.Drawing.Point(3, 18)
 		Me.AutoOpenFolderForDecompileRadioButton.Name = "AutoOpenFolderForDecompileRadioButton"
-		Me.AutoOpenFolderForDecompileRadioButton.Size = New System.Drawing.Size(79, 17)
+		Me.AutoOpenFolderForDecompileRadioButton.Size = New System.Drawing.Size(73, 17)
 		Me.AutoOpenFolderForDecompileRadioButton.TabIndex = 13
 		Me.AutoOpenFolderForDecompileRadioButton.TabStop = True
 		Me.AutoOpenFolderForDecompileRadioButton.Text = "Decompile"
@@ -326,7 +327,7 @@ Partial Class OptionsUserControl
 		Me.AutoOpenFolderForUnpackRadioButton.AutoSize = True
 		Me.AutoOpenFolderForUnpackRadioButton.Location = New System.Drawing.Point(3, 3)
 		Me.AutoOpenFolderForUnpackRadioButton.Name = "AutoOpenFolderForUnpackRadioButton"
-		Me.AutoOpenFolderForUnpackRadioButton.Size = New System.Drawing.Size(64, 17)
+		Me.AutoOpenFolderForUnpackRadioButton.Size = New System.Drawing.Size(60, 17)
 		Me.AutoOpenFolderForUnpackRadioButton.TabIndex = 12
 		Me.AutoOpenFolderForUnpackRadioButton.TabStop = True
 		Me.AutoOpenFolderForUnpackRadioButton.Text = "Unpack"
@@ -398,7 +399,7 @@ Partial Class OptionsUserControl
 		Me.Label9.AutoSize = True
 		Me.Label9.Location = New System.Drawing.Point(2, 2)
 		Me.Label9.Name = "Label9"
-		Me.Label9.Size = New System.Drawing.Size(44, 13)
+		Me.Label9.Size = New System.Drawing.Size(43, 13)
 		Me.Label9.TabIndex = 20
 		Me.Label9.Text = "Set Up:"
 		'
@@ -407,7 +408,7 @@ Partial Class OptionsUserControl
 		Me.Label8.AutoSize = True
 		Me.Label8.Location = New System.Drawing.Point(94, 2)
 		Me.Label8.Name = "Label8"
-		Me.Label8.Size = New System.Drawing.Size(39, 13)
+		Me.Label8.Size = New System.Drawing.Size(37, 13)
 		Me.Label8.TabIndex = 19
 		Me.Label8.Text = "Open:"
 		'
@@ -416,7 +417,7 @@ Partial Class OptionsUserControl
 		Me.AutoOpenMdlFileForDecompileCheckBox.AutoSize = True
 		Me.AutoOpenMdlFileForDecompileCheckBox.Location = New System.Drawing.Point(3, 33)
 		Me.AutoOpenMdlFileForDecompileCheckBox.Name = "AutoOpenMdlFileForDecompileCheckBox"
-		Me.AutoOpenMdlFileForDecompileCheckBox.Size = New System.Drawing.Size(80, 17)
+		Me.AutoOpenMdlFileForDecompileCheckBox.Size = New System.Drawing.Size(74, 17)
 		Me.AutoOpenMdlFileForDecompileCheckBox.TabIndex = 1
 		Me.AutoOpenMdlFileForDecompileCheckBox.Text = "Decompile"
 		Me.AutoOpenMdlFileForDecompileCheckBox.UseVisualStyleBackColor = True
@@ -426,7 +427,7 @@ Partial Class OptionsUserControl
 		Me.AutoOpenMdlFileForViewCheckBox.AutoSize = True
 		Me.AutoOpenMdlFileForViewCheckBox.Location = New System.Drawing.Point(3, 48)
 		Me.AutoOpenMdlFileForViewCheckBox.Name = "AutoOpenMdlFileForViewCheckBox"
-		Me.AutoOpenMdlFileForViewCheckBox.Size = New System.Drawing.Size(51, 17)
+		Me.AutoOpenMdlFileForViewCheckBox.Size = New System.Drawing.Size(48, 17)
 		Me.AutoOpenMdlFileForViewCheckBox.TabIndex = 2
 		Me.AutoOpenMdlFileForViewCheckBox.Text = "View"
 		Me.AutoOpenMdlFileForViewCheckBox.UseVisualStyleBackColor = True
@@ -436,7 +437,7 @@ Partial Class OptionsUserControl
 		Me.AutoOpenMdlFileForPreviewCheckBox.AutoSize = True
 		Me.AutoOpenMdlFileForPreviewCheckBox.Location = New System.Drawing.Point(3, 18)
 		Me.AutoOpenMdlFileForPreviewCheckBox.Name = "AutoOpenMdlFileForPreviewCheckBox"
-		Me.AutoOpenMdlFileForPreviewCheckBox.Size = New System.Drawing.Size(65, 17)
+		Me.AutoOpenMdlFileForPreviewCheckBox.Size = New System.Drawing.Size(64, 17)
 		Me.AutoOpenMdlFileForPreviewCheckBox.TabIndex = 0
 		Me.AutoOpenMdlFileForPreviewCheckBox.Text = "Preview"
 		Me.AutoOpenMdlFileForPreviewCheckBox.UseVisualStyleBackColor = True
@@ -473,7 +474,7 @@ Partial Class OptionsUserControl
 		Me.AutoOpenVpkFileCheckBox.AutoSize = True
 		Me.AutoOpenVpkFileCheckBox.Location = New System.Drawing.Point(6, 108)
 		Me.AutoOpenVpkFileCheckBox.Name = "AutoOpenVpkFileCheckBox"
-		Me.AutoOpenVpkFileCheckBox.Size = New System.Drawing.Size(67, 17)
+		Me.AutoOpenVpkFileCheckBox.Size = New System.Drawing.Size(65, 17)
 		Me.AutoOpenVpkFileCheckBox.TabIndex = 0
 		Me.AutoOpenVpkFileCheckBox.Text = "VPK file:"
 		Me.AutoOpenVpkFileCheckBox.UseVisualStyleBackColor = True
@@ -486,7 +487,7 @@ Partial Class OptionsUserControl
 		Me.GroupBox3.Controls.Add(Me.Label3)
 		Me.GroupBox3.Controls.Add(Me.DragAndDropUseDefaultsButton)
 		Me.GroupBox3.Controls.Add(Me.Panel4)
-		Me.GroupBox3.Location = New System.Drawing.Point(209, 3)
+		Me.GroupBox3.Location = New System.Drawing.Point(209, 26)
 		Me.GroupBox3.Name = "GroupBox3"
 		Me.GroupBox3.Size = New System.Drawing.Size(200, 445)
 		Me.GroupBox3.TabIndex = 1
@@ -499,7 +500,7 @@ Partial Class OptionsUserControl
 		Me.Label13.Location = New System.Drawing.Point(6, 204)
 		Me.Label13.Margin = New System.Windows.Forms.Padding(3)
 		Me.Label13.Name = "Label13"
-		Me.Label13.Size = New System.Drawing.Size(43, 13)
+		Me.Label13.Size = New System.Drawing.Size(41, 13)
 		Me.Label13.TabIndex = 2
 		Me.Label13.Text = "Folder:"
 		'
@@ -509,7 +510,7 @@ Partial Class OptionsUserControl
 		Me.Label12.Location = New System.Drawing.Point(6, 109)
 		Me.Label12.Margin = New System.Windows.Forms.Padding(3)
 		Me.Label12.Name = "Label12"
-		Me.Label12.Size = New System.Drawing.Size(52, 13)
+		Me.Label12.Size = New System.Drawing.Size(48, 13)
 		Me.Label12.TabIndex = 0
 		Me.Label12.Text = "MDL file:"
 		'
@@ -535,7 +536,7 @@ Partial Class OptionsUserControl
 		Me.Label10.AutoSize = True
 		Me.Label10.Location = New System.Drawing.Point(2, 2)
 		Me.Label10.Name = "Label10"
-		Me.Label10.Size = New System.Drawing.Size(44, 13)
+		Me.Label10.Size = New System.Drawing.Size(43, 13)
 		Me.Label10.TabIndex = 20
 		Me.Label10.Text = "Set Up:"
 		'
@@ -544,7 +545,7 @@ Partial Class OptionsUserControl
 		Me.Label11.AutoSize = True
 		Me.Label11.Location = New System.Drawing.Point(94, 2)
 		Me.Label11.Name = "Label11"
-		Me.Label11.Size = New System.Drawing.Size(39, 13)
+		Me.Label11.Size = New System.Drawing.Size(37, 13)
 		Me.Label11.TabIndex = 19
 		Me.Label11.Text = "Open:"
 		'
@@ -553,7 +554,7 @@ Partial Class OptionsUserControl
 		Me.DragAndDropMdlFileForDecompileCheckBox.AutoSize = True
 		Me.DragAndDropMdlFileForDecompileCheckBox.Location = New System.Drawing.Point(3, 33)
 		Me.DragAndDropMdlFileForDecompileCheckBox.Name = "DragAndDropMdlFileForDecompileCheckBox"
-		Me.DragAndDropMdlFileForDecompileCheckBox.Size = New System.Drawing.Size(80, 17)
+		Me.DragAndDropMdlFileForDecompileCheckBox.Size = New System.Drawing.Size(74, 17)
 		Me.DragAndDropMdlFileForDecompileCheckBox.TabIndex = 1
 		Me.DragAndDropMdlFileForDecompileCheckBox.Text = "Decompile"
 		Me.DragAndDropMdlFileForDecompileCheckBox.UseVisualStyleBackColor = True
@@ -563,7 +564,7 @@ Partial Class OptionsUserControl
 		Me.DragAndDropMdlFileForViewCheckBox.AutoSize = True
 		Me.DragAndDropMdlFileForViewCheckBox.Location = New System.Drawing.Point(3, 48)
 		Me.DragAndDropMdlFileForViewCheckBox.Name = "DragAndDropMdlFileForViewCheckBox"
-		Me.DragAndDropMdlFileForViewCheckBox.Size = New System.Drawing.Size(51, 17)
+		Me.DragAndDropMdlFileForViewCheckBox.Size = New System.Drawing.Size(48, 17)
 		Me.DragAndDropMdlFileForViewCheckBox.TabIndex = 2
 		Me.DragAndDropMdlFileForViewCheckBox.Text = "View"
 		Me.DragAndDropMdlFileForViewCheckBox.UseVisualStyleBackColor = True
@@ -573,7 +574,7 @@ Partial Class OptionsUserControl
 		Me.DragAndDropMdlFileForPreviewCheckBox.AutoSize = True
 		Me.DragAndDropMdlFileForPreviewCheckBox.Location = New System.Drawing.Point(3, 18)
 		Me.DragAndDropMdlFileForPreviewCheckBox.Name = "DragAndDropMdlFileForPreviewCheckBox"
-		Me.DragAndDropMdlFileForPreviewCheckBox.Size = New System.Drawing.Size(65, 17)
+		Me.DragAndDropMdlFileForPreviewCheckBox.Size = New System.Drawing.Size(64, 17)
 		Me.DragAndDropMdlFileForPreviewCheckBox.TabIndex = 0
 		Me.DragAndDropMdlFileForPreviewCheckBox.Text = "Preview"
 		Me.DragAndDropMdlFileForPreviewCheckBox.UseVisualStyleBackColor = True
@@ -644,7 +645,7 @@ Partial Class OptionsUserControl
 		Me.DragAndDropFolderForCompileRadioButton.AutoSize = True
 		Me.DragAndDropFolderForCompileRadioButton.Location = New System.Drawing.Point(3, 33)
 		Me.DragAndDropFolderForCompileRadioButton.Name = "DragAndDropFolderForCompileRadioButton"
-		Me.DragAndDropFolderForCompileRadioButton.Size = New System.Drawing.Size(67, 17)
+		Me.DragAndDropFolderForCompileRadioButton.Size = New System.Drawing.Size(62, 17)
 		Me.DragAndDropFolderForCompileRadioButton.TabIndex = 2
 		Me.DragAndDropFolderForCompileRadioButton.TabStop = True
 		Me.DragAndDropFolderForCompileRadioButton.Text = "Compile"
@@ -655,7 +656,7 @@ Partial Class OptionsUserControl
 		Me.DragAndDropFolderForDecompileRadioButton.AutoSize = True
 		Me.DragAndDropFolderForDecompileRadioButton.Location = New System.Drawing.Point(3, 18)
 		Me.DragAndDropFolderForDecompileRadioButton.Name = "DragAndDropFolderForDecompileRadioButton"
-		Me.DragAndDropFolderForDecompileRadioButton.Size = New System.Drawing.Size(79, 17)
+		Me.DragAndDropFolderForDecompileRadioButton.Size = New System.Drawing.Size(73, 17)
 		Me.DragAndDropFolderForDecompileRadioButton.TabIndex = 1
 		Me.DragAndDropFolderForDecompileRadioButton.TabStop = True
 		Me.DragAndDropFolderForDecompileRadioButton.Text = "Decompile"
@@ -666,7 +667,7 @@ Partial Class OptionsUserControl
 		Me.DragAndDropFolderForUnpackRadioButton.AutoSize = True
 		Me.DragAndDropFolderForUnpackRadioButton.Location = New System.Drawing.Point(3, 3)
 		Me.DragAndDropFolderForUnpackRadioButton.Name = "DragAndDropFolderForUnpackRadioButton"
-		Me.DragAndDropFolderForUnpackRadioButton.Size = New System.Drawing.Size(64, 17)
+		Me.DragAndDropFolderForUnpackRadioButton.Size = New System.Drawing.Size(60, 17)
 		Me.DragAndDropFolderForUnpackRadioButton.TabIndex = 0
 		Me.DragAndDropFolderForUnpackRadioButton.TabStop = True
 		Me.DragAndDropFolderForUnpackRadioButton.Text = "Unpack"
@@ -677,7 +678,7 @@ Partial Class OptionsUserControl
 		Me.ApplyLabel.AutoSize = True
 		Me.ApplyLabel.Location = New System.Drawing.Point(6, 8)
 		Me.ApplyLabel.Name = "ApplyLabel"
-		Me.ApplyLabel.Size = New System.Drawing.Size(509, 13)
+		Me.ApplyLabel.Size = New System.Drawing.Size(470, 13)
 		Me.ApplyLabel.TabIndex = 18
 		Me.ApplyLabel.Text = "Windows is not using what is specified above. Click the Apply button to apply the" & _
 	" options above."
@@ -696,16 +697,27 @@ Partial Class OptionsUserControl
 		Me.ApplyPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
 		Me.ApplyPanel.Controls.Add(Me.ApplyLabel)
 		Me.ApplyPanel.Controls.Add(Me.ApplyButton)
-		Me.ApplyPanel.Location = New System.Drawing.Point(3, 454)
+		Me.ApplyPanel.Location = New System.Drawing.Point(3, 477)
 		Me.ApplyPanel.Name = "ApplyPanel"
 		Me.ApplyPanel.Size = New System.Drawing.Size(585, 34)
 		Me.ApplyPanel.TabIndex = 3
 		Me.ApplyPanel.Visible = False
 		'
+		'SingleInstanceCheckBox
+		'
+		Me.SingleInstanceCheckBox.AutoSize = True
+		Me.SingleInstanceCheckBox.Location = New System.Drawing.Point(3, 3)
+		Me.SingleInstanceCheckBox.Name = "SingleInstanceCheckBox"
+		Me.SingleInstanceCheckBox.Size = New System.Drawing.Size(317, 17)
+		Me.SingleInstanceCheckBox.TabIndex = 4
+		Me.SingleInstanceCheckBox.Text = "Restrict to single instance (only one Crowbar open at a time)"
+		Me.SingleInstanceCheckBox.UseVisualStyleBackColor = True
+		'
 		'OptionsUserControl
 		'
 		Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
 		Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+		Me.Controls.Add(Me.SingleInstanceCheckBox)
 		Me.Controls.Add(Me.ApplyPanel)
 		Me.Controls.Add(Me.GroupBox3)
 		Me.Controls.Add(Me.GroupBox2)
@@ -731,6 +743,7 @@ Partial Class OptionsUserControl
 		Me.ApplyPanel.ResumeLayout(False)
 		Me.ApplyPanel.PerformLayout()
 		Me.ResumeLayout(False)
+		Me.PerformLayout()
 
 	End Sub
 	Friend WithEvents IntegrateContextMenuItemsCheckBox As System.Windows.Forms.CheckBox
@@ -790,5 +803,6 @@ Partial Class OptionsUserControl
 	Friend WithEvents AutoOpenFolderForCompileRadioButton As System.Windows.Forms.RadioButton
 	Friend WithEvents AutoOpenFolderForDecompileRadioButton As System.Windows.Forms.RadioButton
 	Friend WithEvents AutoOpenFolderForUnpackRadioButton As System.Windows.Forms.RadioButton
+	Friend WithEvents SingleInstanceCheckBox As System.Windows.Forms.CheckBox
 
 End Class

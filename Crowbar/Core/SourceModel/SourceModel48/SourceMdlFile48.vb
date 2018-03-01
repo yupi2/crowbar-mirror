@@ -919,7 +919,7 @@ Public Class SourceMdlFile48
 	End Sub
 
 	Public Sub ReadBoneTableByName()
-		If Me.theMdlFileData.boneTableByNameOffset <> 0 Then
+		If Me.theMdlFileData.boneTableByNameOffset <> 0 AndAlso Me.theMdlFileData.theBones IsNot Nothing Then
 			Dim fileOffsetStart As Long
 			Dim fileOffsetEnd As Long
 
@@ -1236,8 +1236,8 @@ Public Class SourceMdlFile48
 
 			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAnimationDesc.spanOffset (zeroframes/saveframes) [" + anAnimationDesc.theName + "] [spanFrameCount = " + anAnimationDesc.spanFrameCount.ToString() + "] [spanCount = " + anAnimationDesc.spanCount.ToString() + "]")
 
-			'TEST: 
-			Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "anAnimationDesc.spanOffset (zeroframes/saveframes) alignment")
+			''TEST: 
+			'Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "anAnimationDesc.spanOffset (zeroframes/saveframes) alignment")
 		End If
 
 		Return fileOffsetEnd
@@ -1658,7 +1658,7 @@ Public Class SourceMdlFile48
 			fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
 			anAnimationDesc.theIkRules = New List(Of SourceMdlIkRule)(anAnimationDesc.ikRuleCount)
-			For j As Integer = 0 To anAnimationDesc.ikRuleCount - 1
+			For ikRuleIndex As Integer = 0 To anAnimationDesc.ikRuleCount - 1
 				ikRuleInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 				Dim anIkRule As New SourceMdlIkRule()
 
@@ -1725,6 +1725,20 @@ Public Class SourceMdlFile48
 					anIkRule.theAttachmentName = ""
 				End If
 
+				'If anIkRule.compressedIkErrorOffset <> 0 Then
+				'	Dim compressedIkErrorsEndOffset As Long
+
+				'	compressedIkErrorsEndOffset = Me.ReadCompressedIkErrors(ikRuleInputFileStreamPosition, ikRuleIndex, anAnimationDesc)
+
+				'	'If fileOffsetEndOfIkRuleExtraData < compressedIkErrorsEndOffset Then
+				'	'	fileOffsetEndOfIkRuleExtraData = compressedIkErrorsEndOffset
+				'	'End If
+				'End If
+
+				If anIkRule.ikErrorOffset <> 0 Then
+					Dim debug As Integer = 4242
+				End If
+
 				Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
 			Next
 
@@ -1735,6 +1749,67 @@ Public Class SourceMdlFile48
 
 			Return Me.theInputFileReader.BaseStream.Position - 1
 		End If
+	End Function
+
+	Private Function ReadCompressedIkErrors(ByVal ikRuleInputFileStreamPosition As Long, ByVal ikRuleIndex As Integer, ByVal anAnimationDesc As SourceMdlAnimationDesc48) As Long
+		Dim anIkRule As SourceMdlIkRule
+		anIkRule = anAnimationDesc.theIkRules(ikRuleIndex)
+
+		Dim compressedIkErrorInputFileStreamPosition As Long
+		Dim kInputFileStreamPosition As Long
+		'Dim inputFileStreamPosition As Long
+		Dim fileOffsetStart As Long
+		Dim fileOffsetEnd As Long
+
+		Me.theInputFileReader.BaseStream.Seek(ikRuleInputFileStreamPosition + anIkRule.compressedIkErrorOffset, SeekOrigin.Begin)
+		fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+		compressedIkErrorInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+
+		anIkRule.theCompressedIkError = New SourceMdlCompressedIkError()
+
+		' First, read the scale data.
+		For k As Integer = 0 To anIkRule.theCompressedIkError.scale.Length - 1
+			kInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+			anIkRule.theCompressedIkError.scale(k) = Me.theInputFileReader.ReadSingle()
+
+			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+			Me.theMdlFileData.theFileSeekLog.Add(kInputFileStreamPosition, fileOffsetEnd, "anIkRule.theCompressedIkError [ikRuleIndex = " + ikRuleIndex.ToString() + "] [scale = " + anIkRule.theCompressedIkError.scale(k).ToString() + "]")
+		Next
+
+		' Second, read the offset data.
+		For k As Integer = 0 To anIkRule.theCompressedIkError.offset.Length - 1
+			kInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+			anIkRule.theCompressedIkError.offset(k) = Me.theInputFileReader.ReadInt16()
+
+			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+			Me.theMdlFileData.theFileSeekLog.Add(kInputFileStreamPosition, fileOffsetEnd, "anIkRule.theCompressedIkError [ikRuleIndex = " + ikRuleIndex.ToString() + "] [offset = " + anIkRule.theCompressedIkError.offset(k).ToString() + "]")
+		Next
+
+		'fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+		'Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anIkRule.theCompressedIkError (scale and offset data)")
+
+		'inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+
+		' Third, read the anim values.
+		For k As Integer = 0 To anIkRule.theCompressedIkError.scale.Length - 1
+			'compressedIkErrorInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+			' Read the mstudioanimvalue_t.
+			'int size = srcanim->ikrule[j].errorData.numanim[k] * sizeof( mstudioanimvalue_t );
+			'memmove( pData, srcanim->ikrule[j].errorData.anim[k], size );
+			'TODO: Figure out what frameCount should be.
+			If anIkRule.theCompressedIkError.offset(k) > 0 Then
+				'Dim frameCount As Integer = 1
+				anIkRule.theCompressedIkError.theAnimValues(k) = New List(Of SourceMdlAnimationValue)()
+				Me.ReadMdlAnimValues(compressedIkErrorInputFileStreamPosition + anIkRule.theCompressedIkError.offset(k), anAnimationDesc.frameCount, True, anIkRule.theCompressedIkError.theAnimValues(k), "anIkRule.theCompressedIkError.theAnimValues(" + k.ToString() + ")")
+			End If
+		Next
+
+		'Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
+
+		'fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+		'Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anIkRule.theCompressedIkError ")
+
+		Return Me.theInputFileReader.BaseStream.Position - 1
 	End Function
 
 	Protected Sub ReadMdlAnimationSection(ByVal animInputFileStreamPosition As Long, ByVal anAnimationDesc As SourceMdlAnimationDesc48, ByVal aFileSeekLog As FileSeekLog)
@@ -2117,6 +2192,20 @@ Public Class SourceMdlFile48
 			anAutoLayer.influenceTail = Me.theInputFileReader.ReadSingle()
 			anAutoLayer.influenceEnd = Me.theInputFileReader.ReadSingle()
 			aSeqDesc.theAutoLayers.Add(anAutoLayer)
+
+			'NOTE: Change NaN to 0. This is needed for HL2DM\HL2\hl2_misc_dir.vpk\models\combine_soldier_anims.mdl for its "Man_Gun" $sequence.
+			If Double.IsNaN(anAutoLayer.influenceStart) Then
+				anAutoLayer.influenceStart = 0
+			End If
+			If Double.IsNaN(anAutoLayer.influencePeak) Then
+				anAutoLayer.influencePeak = 0
+			End If
+			If Double.IsNaN(anAutoLayer.influenceTail) Then
+				anAutoLayer.influenceTail = 0
+			End If
+			If Double.IsNaN(anAutoLayer.influenceEnd) Then
+				anAutoLayer.influenceEnd = 0
+			End If
 
 			'inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 
@@ -3288,7 +3377,7 @@ Public Class SourceMdlFile48
 	End Sub
 
 	Public Sub ReadSkinFamilies()
-		If Me.theMdlFileData.skinFamilyCount > 0 Then
+		If Me.theMdlFileData.skinFamilyCount > 0 AndAlso Me.theMdlFileData.skinReferenceCount > 0 Then
 			Dim skinFamilyInputFileStreamPosition As Long
 			'Dim inputFileStreamPosition As Long
 			Dim fileOffsetStart As Long

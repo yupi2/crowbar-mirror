@@ -25,6 +25,17 @@ Public Class SourceModel04
 		End Get
 	End Property
 
+	Public Overrides ReadOnly Property HasBoneAnimationData As Boolean
+		Get
+			If Me.theMdlFileData.theSequenceDescs IsNot Nothing _
+			 AndAlso Me.theMdlFileData.theSequenceDescs.Count > 0 Then
+				Return True
+			Else
+				Return False
+			End If
+		End Get
+	End Property
+
 	Public Overrides ReadOnly Property HasTextureFileData As Boolean
 		Get
 			Return True
@@ -76,6 +87,44 @@ Public Class SourceModel04
 				End If
 			Next
 		End If
+
+		Return status
+	End Function
+
+	Public Overrides Function WriteBoneAnimationSmdFiles(ByVal modelOutputPath As String) As AppEnums.StatusMessage
+		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+
+		Dim aSequenceDesc As SourceMdlSequenceDesc04
+		Dim smdPath As String
+		Dim smdPathFileName As String
+
+		Try
+			For aSequenceIndex As Integer = 0 To Me.theMdlFileData.theSequenceDescs.Count - 1
+				aSequenceDesc = Me.theMdlFileData.theSequenceDescs(aSequenceIndex)
+
+				aSequenceDesc.theSmdRelativePathFileName = SourceFileNamesModule.CreateAnimationSmdRelativePathFileName(aSequenceDesc.theSmdRelativePathFileName, Me.theName, aSequenceDesc.theName, -1)
+
+				smdPathFileName = Path.Combine(modelOutputPath, aSequenceDesc.theSmdRelativePathFileName)
+				smdPath = FileManager.GetPath(smdPathFileName)
+				If FileManager.OutputPathIsUsable(smdPath) Then
+					Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
+					'NOTE: Check here in case writing is canceled in the above event.
+					If Me.theWritingIsCanceled Then
+						status = StatusMessage.Canceled
+						Return status
+					ElseIf Me.theWritingSingleFileIsCanceled Then
+						Me.theWritingSingleFileIsCanceled = False
+						Continue For
+					End If
+
+					Me.WriteBoneAnimationSmdFile(smdPathFileName, aSequenceDesc)
+
+					Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, smdPathFileName)
+				End If
+			Next
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		End Try
 
 		Return status
 	End Function
@@ -224,6 +273,31 @@ Public Class SourceModel04
 			Dim debug As Integer = 4242
 		End Try
 	End Sub
+
+	Public Overloads Function WriteBoneAnimationSmdFile(ByVal smdPathFileName As String, ByVal aSequence As SourceMdlSequenceDesc04) As AppEnums.StatusMessage
+		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+
+		Try
+			Me.theOutputFileTextWriter = File.CreateText(smdPathFileName)
+
+			Dim smdFile As New SourceSmdFile04(Me.theOutputFileTextWriter, Me.theMdlFileData)
+
+			smdFile.WriteHeaderComment()
+
+			smdFile.WriteHeaderSection()
+			smdFile.WriteNodesSection()
+			smdFile.WriteSkeletonSectionForAnimation(aSequence)
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		Finally
+			If Me.theOutputFileTextWriter IsNot Nothing Then
+				Me.theOutputFileTextWriter.Flush()
+				Me.theOutputFileTextWriter.Close()
+			End If
+		End Try
+
+		Return status
+	End Function
 
 #End Region
 

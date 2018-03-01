@@ -71,6 +71,11 @@ Public Class SourceMdlFile04
 					'	aBone.position.y += Me.theMdlFileData.theBones(aBone.parentBoneIndex).position.y
 					'	aBone.position.z += Me.theMdlFileData.theBones(aBone.parentBoneIndex).position.z
 					'End If
+					'If aBone.parentBoneIndex > -1 Then
+					'	aBone.position.x -= Me.theMdlFileData.theBones(aBone.parentBoneIndex).position.x
+					'	aBone.position.y -= Me.theMdlFileData.theBones(aBone.parentBoneIndex).position.y
+					'	aBone.position.z -= Me.theMdlFileData.theBones(aBone.parentBoneIndex).position.z
+					'End If
 					'aBone.rotationX.the16BitValue = Me.theInputFileReader.ReadUInt16()
 					'aBone.rotationY.the16BitValue = Me.theInputFileReader.ReadUInt16()
 					'aBone.rotationZ.the16BitValue = Me.theInputFileReader.ReadUInt16()
@@ -228,11 +233,7 @@ Public Class SourceMdlFile04
 
 					Dim aSequence As New SourceMdlSequence04()
 
-					'For x As Integer = 0 To aSequence.unknownHeaderInfo.Length - 1
-					'	aSequence.unknownHeaderInfo(x) = Me.theInputFileReader.ReadByte()
-					'Next
-					'aSequence.unknownInt01 = Me.theInputFileReader.ReadInt32()
-					aSequence.frameIndexAsSingle = Me.theInputFileReader.ReadSingle()
+					aSequence.sequenceFrameIndexAsSingle = Me.theInputFileReader.ReadSingle()
 					For x As Integer = 0 To aSequence.unknown.Length - 1
 						aSequence.unknown(x) = Me.theInputFileReader.ReadInt32()
 					Next
@@ -277,15 +278,18 @@ Public Class SourceMdlFile04
 				For sequenceIndex As Integer = 0 To Me.theMdlFileData.theBones.Count - 1
 					Dim aSequenceValue As New SourceMdlSequenceValue04()
 
-					'For x As Integer = 0 To aSequenceValue.unknown.Length - 1
-					'	aSequenceValue.unknown(x) = Me.theInputFileReader.ReadByte()
-					'Next
-					aSequenceValue.positionX = Me.theInputFileReader.ReadByte()
-					aSequenceValue.positionY = Me.theInputFileReader.ReadByte()
-					aSequenceValue.positionZ = Me.theInputFileReader.ReadByte()
-					aSequenceValue.rotationX = Me.theInputFileReader.ReadByte()
-					aSequenceValue.rotationY = Me.theInputFileReader.ReadByte()
-					aSequenceValue.rotationZ = Me.theInputFileReader.ReadByte()
+					aSequenceValue.position = New SourceVector()
+					aSequenceValue.rotation = New SourceVector()
+					aSequenceValue.position.x = Me.theInputFileReader.ReadByte()
+					aSequenceValue.position.y = Me.theInputFileReader.ReadByte()
+					aSequenceValue.position.z = Me.theInputFileReader.ReadByte()
+					aSequenceValue.rotation.X = Me.theInputFileReader.ReadByte()
+					aSequenceValue.rotation.Y = Me.theInputFileReader.ReadByte()
+					aSequenceValue.rotation.Z = Me.theInputFileReader.ReadByte()
+					'aSequenceValue.position = New SourceVector()
+					'aSequenceValue.position.x = Me.theInputFileReader.ReadSingle()
+					'aSequenceValue.position.y = Me.theInputFileReader.ReadSingle()
+					'aSequenceValue.position.z = Me.theInputFileReader.ReadSingle()
 
 					aSequence.thePositionsAndRotations.Add(aSequenceValue)
 				Next
@@ -324,8 +328,8 @@ Public Class SourceMdlFile04
 					fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
 					Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aModel")
 
-					Me.ReadNormals(aModel)
 					Me.ReadVertexes(aModel)
+					Me.ReadNormals(aModel)
 					Me.ReadMeshes(aModel)
 				Next
 
@@ -381,7 +385,7 @@ Public Class SourceMdlFile04
 				For vertexIndex As Integer = 0 To aModel.vertexCount - 1
 					Dim aVertex As New SourceMdlVertex04()
 
-					aVertex.index = Me.theInputFileReader.ReadInt32()
+					aVertex.boneIndex = Me.theInputFileReader.ReadInt32()
 					aVertex.vector.x = Me.theInputFileReader.ReadSingle()
 					aVertex.vector.y = Me.theInputFileReader.ReadSingle()
 					aVertex.vector.z = Me.theInputFileReader.ReadSingle()
@@ -458,8 +462,8 @@ Public Class SourceMdlFile04
 					For x As Integer = 0 To aFace.vertexInfo.Length - 1
 						aFace.vertexInfo(x).vertexIndex = Me.theInputFileReader.ReadInt32()
 						aFace.vertexInfo(x).normalIndex = Me.theInputFileReader.ReadInt32()
-						aFace.vertexInfo(x).s = Me.theInputFileReader.ReadSingle()
-						aFace.vertexInfo(x).t = Me.theInputFileReader.ReadSingle()
+						aFace.vertexInfo(x).s = Me.theInputFileReader.ReadInt32()
+						aFace.vertexInfo(x).t = Me.theInputFileReader.ReadInt32()
 					Next
 
 					aMesh.theFaces.Add(aFace)

@@ -33,7 +33,11 @@ Module Main
 		TheApp = New App()
 		'Try
 		TheApp.Init()
-		Windows.Forms.Application.Run(MainForm)
+		If TheApp.Settings.AppIsSingleInstance Then
+			SingleInstanceApplication.Run(New MainForm(), AddressOf StartupNextInstanceEventHandler)
+		Else
+			Windows.Forms.Application.Run(MainForm)
+		End If
 		'Catch e As Exception
 		'	MsgBox(e.Message)
 		'Finally
@@ -43,6 +47,14 @@ Module Main
 
 		Return 0
 	End Function
+
+	Private Sub StartupNextInstanceEventHandler(ByVal sender As Object, ByVal e As SingleInstanceEventArgs)
+		If e.MainForm.WindowState = FormWindowState.Minimized Then
+			e.MainForm.WindowState = FormWindowState.Normal
+		End If
+		e.MainForm.Activate()
+		CType(e.MainForm, MainForm).Startup(e.CommandLine)
+	End Sub
 
 	'Public TheJob As WindowsJob
 	Public TheApp As App

@@ -35,5 +35,6 @@ Public Class SourcePhyFileData
 	Public theSourcePhyPhysCollisionModelMostUsedValues As SourcePhyPhysCollisionModel
 	Public theSourcePhyCollisionText As String
 	Public theSourcePhyIsCollisionModel As Boolean = False
+	Public theSourcePhyMaxConvexPieces As Integer
 
 End Class

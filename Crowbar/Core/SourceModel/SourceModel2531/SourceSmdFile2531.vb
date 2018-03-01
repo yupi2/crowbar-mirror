@@ -307,11 +307,11 @@ Public Class SourceSmdFile2531
 								line += aVectorTransformed.z.ToString("0.000000", TheApp.InternalNumberFormat)
 
 								line += " "
-								line += phyVertex.normal.x.ToString("0.000000", TheApp.InternalNumberFormat)
+								line += phyVertex.Normal.x.ToString("0.000000", TheApp.InternalNumberFormat)
 								line += " "
-								line += phyVertex.normal.y.ToString("0.000000", TheApp.InternalNumberFormat)
+								line += phyVertex.Normal.y.ToString("0.000000", TheApp.InternalNumberFormat)
 								line += " "
-								line += phyVertex.normal.z.ToString("0.000000", TheApp.InternalNumberFormat)
+								line += phyVertex.Normal.z.ToString("0.000000", TheApp.InternalNumberFormat)
 
 								line += " 0 0"
 								Me.theOutputFileStreamWriter.WriteLine(line)

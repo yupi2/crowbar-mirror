@@ -2503,6 +2503,170 @@ Public Class SourceQcFile44
 	Private Sub WriteCmdListOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc, ByVal anAnimationDesc As SourceMdlAnimationDesc44, ByVal impliedAnimDesc As SourceMdlAnimationDesc44)
 		Dim line As String = ""
 
+		If anAnimationDesc.theIkRules IsNot Nothing Then
+			For Each anIkRule As SourceMdlIkRule In anAnimationDesc.theIkRules
+				line = vbTab
+				line += "ikrule"
+				line += " """
+				line += Me.theMdlFileData.theIkChains(anIkRule.chain).theName
+				line += """"
+				If anIkRule.type = SourceMdlIkRule.IK_SELF Then
+					line += " "
+					line += "touch"
+					line += " """
+					If anIkRule.bone >= 0 Then
+						line += Me.theMdlFileData.theBones(anIkRule.bone).theName
+					End If
+					line += """"
+					'ElseIf anIkRule.type = SourceMdlIkRule.IK_WORLD Then
+					'line += " "
+					'line += "world"
+				ElseIf anIkRule.type = SourceMdlIkRule.IK_GROUND Then
+					line += " "
+					line += "footstep"
+				ElseIf anIkRule.type = SourceMdlIkRule.IK_RELEASE Then
+					line += " "
+					line += "release"
+				ElseIf anIkRule.type = SourceMdlIkRule.IK_ATTACHMENT Then
+					line += " "
+					line += "attachment"
+					line += " """
+					line += anIkRule.theAttachmentName
+					line += """"
+				ElseIf anIkRule.type = SourceMdlIkRule.IK_UNLATCH Then
+					line += " "
+					line += "unlatch"
+				End If
+
+				'	while (TokenAvailable())
+				'	{
+				'		GetToken( false );
+				'		if (stricmp( token, "height" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->height = verify_atof( token );
+				'		}
+				'		else if (stricmp( token, "target" ) == 0)
+				'		{
+				'			// slot
+				'			GetToken( false );
+				'			pRule->slot = verify_atoi( token );
+				'		}
+				'		else if (stricmp( token, "range" ) == 0)
+				'		{
+				'			// ramp
+				'			GetToken( false );
+				'			if (token[0] == '.')
+				'				pRule->start = -1;
+				'			else
+				'				pRule->start = verify_atoi( token );
+				'
+				'			GetToken( false );
+				'			if (token[0] == '.')
+				'				pRule->peak = -1;
+				'			else
+				'				pRule->peak = verify_atoi( token );
+				'	
+				'			GetToken( false );
+				'			if (token[0] == '.')
+				'				pRule->tail = -1;
+				'			else
+				'				pRule->tail = verify_atoi( token );
+				'
+				'			GetToken( false );
+				'			if (token[0] == '.')
+				'				pRule->end = -1;
+				'			else
+				'				pRule->end = verify_atoi( token );
+				'		}
+				'		else if (stricmp( token, "floor" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->floor = verify_atof( token );
+				'		}
+				'		else if (stricmp( token, "pad" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->radius = verify_atof( token ) / 2.0f;
+				'		}
+				'		else if (stricmp( token, "radius" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->radius = verify_atof( token );
+				'		}
+				'		else if (stricmp( token, "contact" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->contact = verify_atoi( token );
+				'		}
+				'		else if (stricmp( token, "usesequence" ) == 0)
+				'		{
+				'			pRule->usesequence = true;
+				'			pRule->usesource = false;
+				'		}
+				'		else if (stricmp( token, "usesource" ) == 0)
+				'		{
+				'			pRule->usesequence = false;
+				'			pRule->usesource = true;
+				'		}
+				'		else if (stricmp( token, "fakeorigin" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->pos.x = verify_atof( token );
+				'			GetToken( false );
+				'			pRule->pos.y = verify_atof( token );
+				'			GetToken( false );
+				'			pRule->pos.z = verify_atof( token );
+				'
+				'			pRule->bone = -1;
+				'		}
+				'		else if (stricmp( token, "fakerotate" ) == 0)
+				'		{
+				'			QAngle ang;
+				'
+				'			GetToken( false );
+				'			ang.x = verify_atof( token );
+				'			GetToken( false );
+				'			ang.y = verify_atof( token );
+				'			GetToken( false );
+				'			ang.z = verify_atof( token );
+				'
+				'			AngleQuaternion( ang, pRule->q );
+				'
+				'			pRule->bone = -1;
+				'		}
+				'		else if (stricmp( token, "bone" ) == 0)
+				'		{
+				'			strcpy( pRule->bonename, token );
+				'		}
+				'		else
+				'		{
+				'			UnGetToken();
+				'			return;
+				'		}
+				'	}
+				'TODO: Other sub-options for ikrule option.
+				'	height
+				'	target
+				'	range
+				'	floor
+				'	pad
+				'	radius
+				'	contact
+				'	usesequence   [converted into mstudiocompressedikerror_t?][Test to see if this is baked-in by doing test decompile+recompiles.]
+				'	usesource     [converted into mstudiocompressedikerror_t?][Test to see if this is baked-in by doing test decompile+recompiles.]
+				'	fakeorigin
+				'	fakerotate
+				'	bone
+				'If anIkRule.type = SourceMdlIkRule.IK_UNLATCH Then
+				'	line += " "
+				'	line += "usesource"
+				'End If
+
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			Next
+		End If
+
 		'$sequence taunt01 "taunt01.dmx" fps 30 localhierarchy "weapon_bone" "bip_hand_L" range 0 5 80 90 {
 		'if (srcanim->numframes > 1.0)
 		'{
@@ -2525,11 +2689,11 @@ Public Class SourceQcFile44
 			Me.WriteCmdListLocalHierarchyOption(impliedAnimDesc)
 		End If
 
-		If (anAnimationDesc.flags And SourceMdlAnimationDesc.STUDIO_ALLZEROS) > 0 Then
-			line = vbTab
-			line += "noanimation"
-			Me.theOutputFileStreamWriter.WriteLine(line)
-		End If
+		'If (anAnimationDesc.flags And SourceMdlAnimationDesc.STUDIO_ALLZEROS) > 0 Then
+		'	line = vbTab
+		'	line += "noanimation"
+		'	Me.theOutputFileStreamWriter.WriteLine(line)
+		'End If
 
 		''TODO: This seems valid according to source code, but it checks same flag (STUDIO_DELTA) as "delta" option.
 		''      Unsure how to determine which option is intended or if both are intended.
@@ -2556,6 +2720,40 @@ Public Class SourceQcFile44
 		'	line += "0"
 		'	Me.theOutputFileStreamWriter.WriteLine(line)
 		'End If
+
+		If anAnimationDesc.theMovements IsNot Nothing AndAlso anAnimationDesc.theMovements.Count > 0 Then
+			For Each aMovement As SourceMdlMovement In anAnimationDesc.theMovements
+				line = vbTab
+				line += "walkframe"
+				line += " "
+				line += aMovement.endframeIndex.ToString()
+				If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LX) > 0 Then
+					line += " "
+					line += "LX"
+				End If
+				If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LY) > 0 Then
+					line += " "
+					line += "LY"
+				End If
+				If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LZ) > 0 Then
+					line += " "
+					line += "LZ"
+				End If
+				If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LXR) > 0 Then
+					line += " "
+					line += "LXR"
+				End If
+				If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LYR) > 0 Then
+					line += " "
+					line += "LYR"
+				End If
+				If (aMovement.motionFlags And SourceMdlMovement.STUDIO_LZR) > 0 Then
+					line += " "
+					line += "LZR"
+				End If
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			Next
+		End If
 
 		'TODO: Can probably reduce the info written in v0.24.
 		' weightlist "top_bottom"
@@ -3114,6 +3312,10 @@ Public Class SourceQcFile44
 		If Me.thePhyFileData.theSourcePhyEditParamsSection.concave = "1" Then
 			line = vbTab
 			line += "$concave"
+			Me.theOutputFileStreamWriter.WriteLine(line)
+			line = vbTab
+			line += "$maxconvexpieces "
+			line += Me.thePhyFileData.theSourcePhyMaxConvexPieces.ToString()
 			Me.theOutputFileStreamWriter.WriteLine(line)
 		End If
 

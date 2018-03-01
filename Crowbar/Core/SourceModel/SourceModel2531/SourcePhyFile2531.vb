@@ -732,7 +732,11 @@ Public Class SourcePhyFile2531
 		'Finally
 		'End Try
 
-		Me.thePhyFileData.theSourcePhyCollisionText = Common.ReadPhyCollisionTextSection(Me.theInputFileReader)
+		Me.thePhyFileData.theSourcePhyCollisionText = Common.ReadPhyCollisionTextSection(Me.theInputFileReader, Me.theInputFileReader.BaseStream.Length() - 1)
+	End Sub
+
+	Public Sub ReadUnreadBytes()
+		Me.thePhyFileData.theFileSeekLog.LogUnreadBytes(Me.theInputFileReader)
 	End Sub
 
 #End Region
@@ -788,9 +792,9 @@ Public Class SourcePhyFile2531
 		normalVector = normalVector.Normalize()
 
 		For vertexIndex As Integer = 0 To 2
-			collisionData.theVertices(aTriangle.vertexIndex(vertexIndex)).normal.x = normalVector.x
-			collisionData.theVertices(aTriangle.vertexIndex(vertexIndex)).normal.y = normalVector.y
-			collisionData.theVertices(aTriangle.vertexIndex(vertexIndex)).normal.z = normalVector.z
+			collisionData.theVertices(aTriangle.vertexIndex(vertexIndex)).Normal.x = normalVector.x
+			collisionData.theVertices(aTriangle.vertexIndex(vertexIndex)).Normal.y = normalVector.y
+			collisionData.theVertices(aTriangle.vertexIndex(vertexIndex)).Normal.z = normalVector.z
 		Next
 	End Sub
 

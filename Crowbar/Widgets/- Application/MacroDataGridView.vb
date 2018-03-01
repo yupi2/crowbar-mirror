@@ -54,17 +54,17 @@ Public Class MacroDataGridView
 		Me.SetMacroInSelectedGameSetupToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
 		Me.SetMacroInSelectedGameSetupToolStripMenuItem.Name = "SetMacroInSelectedGameSetupToolStripMenuItem"
 		Me.SetMacroInSelectedGameSetupToolStripMenuItem.Size = New System.Drawing.Size(176, 22)
-		Me.SetMacroInSelectedGameSetupToolStripMenuItem.Text = "Set macro in selected game setup"
+		Me.SetMacroInSelectedGameSetupToolStripMenuItem.Text = "Set macro in selected game setup(s)"
 
 		Me.ClearMacroInSelectedGameSetupToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
 		Me.ClearMacroInSelectedGameSetupToolStripMenuItem.Name = "ClearMacroInSelectedGameSetupToolStripMenuItem"
 		Me.ClearMacroInSelectedGameSetupToolStripMenuItem.Size = New System.Drawing.Size(176, 22)
-		Me.ClearMacroInSelectedGameSetupToolStripMenuItem.Text = "Clear macro in selected game setup"
+		Me.ClearMacroInSelectedGameSetupToolStripMenuItem.Text = "Clear macro in selected game setup(s)"
 
 		Me.ChangeToThisMacroInSelectedGameSetupToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
 		Me.ChangeToThisMacroInSelectedGameSetupToolStripMenuItem.Name = "ChangeToThisMacroInSelectedGameSetupToolStripMenuItem"
 		Me.ChangeToThisMacroInSelectedGameSetupToolStripMenuItem.Size = New System.Drawing.Size(176, 22)
-		Me.ChangeToThisMacroInSelectedGameSetupToolStripMenuItem.Text = "Change to this macro in selected game setup"
+		Me.ChangeToThisMacroInSelectedGameSetupToolStripMenuItem.Text = "Change to this macro in selected game setup(s)"
 
 		Me.MacroMenuToolStripSeparator0 = New System.Windows.Forms.ToolStripSeparator
 		Me.MacroMenuToolStripSeparator0.Name = "MacroMenuToolStripSeparator0"

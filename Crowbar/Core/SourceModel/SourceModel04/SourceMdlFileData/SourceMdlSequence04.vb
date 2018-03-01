@@ -1,6 +1,6 @@
 ﻿Public Class SourceMdlSequence04
 
-	Public frameIndexAsSingle As Double
+	Public sequenceFrameIndexAsSingle As Double
 	Public unknown(10) As Integer
 	Public unknownSingle01 As Double
 	Public unknownSingle02 As Double
@@ -11,6 +11,8 @@
 	'Public rotationScaleX As Short
 	'Public rotationScaleY As Short
 	'Public rotationScaleZ As Short
+	'Public position As SourceVector
+	'Public rotation As SourceVector
 
 	Public thePositionsAndRotations As List(Of SourceMdlSequenceValue04)
 

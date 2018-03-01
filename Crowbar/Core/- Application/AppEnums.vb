@@ -11,7 +11,7 @@ Public Module AppEnums
 	Public Enum UnpackOutputPathOptions
 		<Description("Game's addons folder")> GameAddonsFolder
 		<Description("Work folder")> WorkFolder
-		<Description("Subfolder (of VPK input)")> Subfolder
+		<Description("Subfolder (of Package)")> Subfolder
 	End Enum
 
 	Public Enum DecompileOutputPathOptions

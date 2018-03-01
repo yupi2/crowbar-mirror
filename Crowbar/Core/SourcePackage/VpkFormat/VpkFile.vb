@@ -2,6 +2,7 @@
 Imports System.Text
 
 Public Class VpkFile
+	Inherits BasePackageFile
 
 #Region "Creation and Destruction"
 
@@ -25,7 +26,7 @@ Public Class VpkFile
 
 #Region "Methods"
 
-	Public Sub ReadHeader()
+	Public Overrides Sub ReadHeader()
 		'Dim inputFileStreamPosition As Long
 		Dim fileOffsetStart As Long
 		Dim fileOffsetEnd As Long
@@ -43,6 +44,8 @@ Public Class VpkFile
 			Me.theVpkFileData.archiveHashLength = Me.theInputFileReader.ReadUInt32()
 			Me.theVpkFileData.extraLength = Me.theInputFileReader.ReadUInt32()
 			Me.theVpkFileData.unused01 = Me.theInputFileReader.ReadUInt32()
+		ElseIf Me.theVpkFileData.version = 196610 Then
+			Me.theVpkFileData.unused01 = Me.theInputFileReader.ReadUInt32()
 		End If
 
 		Me.theVpkFileData.theDirectoryOffset = Me.theInputFileReader.BaseStream.Position
@@ -58,7 +61,7 @@ Public Class VpkFile
 	'materials/models/weapons/melee/crowbar.vmt crc=0x4aaf5f0 metadatasz=0 fnumber=32767 ofs=0x515a sz=566
 	'materials/models/weapons/melee/crowbar.vtf crc=0xded2e058 metadatasz=0 fnumber=32767 ofs=0x5390 sz=174920
 	'materials/models/weapons/melee/crowbar_normal.vtf crc=0x7ac0e054 metadatasz=0 fnumber=32767 ofs=0x2fed8 sz=1398196
-	Public Sub ReadEntries()
+	Public Overrides Sub ReadEntries()
 		'Dim inputFileStreamPosition As Long
 		'Dim fileOffsetStart As Long
 		'Dim fileOffsetEnd As Long
@@ -67,7 +70,10 @@ Public Class VpkFile
 
 		'fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
-		If Me.theVpkFileData.id <> VpkFileData.VPK_ID Then
+		'If Me.theVpkFileData.id <> VpkFileData.VPK_ID OrElse Me.theVpkFileData.id <> VpkFileData.FPX_ID Then
+		'	Exit Sub
+		'End If
+		If Not Me.theVpkFileData.IsSourcePackage Then
 			Exit Sub
 		End If
 
@@ -115,13 +121,30 @@ Public Class VpkFile
 					entry.crc = Me.theInputFileReader.ReadUInt32()
 					entry.preloadByteCount = Me.theInputFileReader.ReadUInt16()
 					entry.archiveIndex = Me.theInputFileReader.ReadUInt16()
-					entry.dataOffset = Me.theInputFileReader.ReadUInt32()
-					entry.dataLength = Me.theInputFileReader.ReadUInt32()
-					entry.endBytes = Me.theInputFileReader.ReadUInt16()
+					If Me.theVpkFileData.version = 196610 Then
+						'TODO: Exit for now so Crowbar does not freeze.
+						Exit Sub
+						'' 01 01
+						'entry.unknown01 = Me.theInputFileReader.ReadUInt16()
+						'' 00 00 00 80 
+						'entry.unknown02 = Me.theInputFileReader.ReadUInt32()
+						'entry.dataOffset = Me.theInputFileReader.ReadUInt32()
+						'entry.unknown03 = Me.theInputFileReader.ReadUInt32()
+						'entry.dataLength = Me.theInputFileReader.ReadUInt32()
+						'entry.unknown04 = Me.theInputFileReader.ReadUInt32()
+						'entry.fileSize = Me.theInputFileReader.ReadUInt32()
+						'entry.unknown05 = Me.theInputFileReader.ReadUInt32()
+						'' FF FF
+						'entry.endOfEntryBytes = Me.theInputFileReader.ReadUInt16()
+					Else
+						entry.dataOffset = Me.theInputFileReader.ReadUInt32()
+						entry.dataLength = Me.theInputFileReader.ReadUInt32()
+						entry.endBytes = Me.theInputFileReader.ReadUInt16()
 
-					If entry.preloadByteCount > 0 Then
-						entry.preloadBytesOffset = Me.theInputFileReader.BaseStream.Position
-						Me.theInputFileReader.ReadBytes(entry.preloadByteCount)
+						If entry.preloadByteCount > 0 Then
+							entry.preloadBytesOffset = Me.theInputFileReader.BaseStream.Position
+							Me.theInputFileReader.ReadBytes(entry.preloadByteCount)
+						End If
 					End If
 
 					If entryPath = " " Then
@@ -154,7 +177,10 @@ Public Class VpkFile
 		'Me.theVpkFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "VPK File Header")
 	End Sub
 
-	Public Sub UnpackEntryDataToFile(ByVal entry As VpkDirectoryEntry, ByVal outputPathFileName As String)
+	Public Overrides Sub UnpackEntryDataToFile(ByVal iEntry As BasePackageDirectoryEntry, ByVal outputPathFileName As String)
+		Dim entry As VpkDirectoryEntry
+		entry = CType(iEntry, VpkDirectoryEntry)
+
 		Dim outputFileStream As FileStream = Nothing
 		Try
 			outputFileStream = New FileStream(outputPathFileName, FileMode.Create)

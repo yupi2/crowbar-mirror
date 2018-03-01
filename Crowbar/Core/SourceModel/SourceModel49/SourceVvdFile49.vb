@@ -5,9 +5,12 @@ Public Class SourceVvdFile49
 
 #Region "Creation and Destruction"
 
-	Public Sub New(ByVal vvdFileReader As BinaryReader, ByVal vvdFileData As SourceVvdFileData49)
+	Public Sub New(ByVal vvdFileReader As BinaryReader, ByVal vvdFileData As SourceVvdFileData49, Optional ByVal vvdFileOffsetStart As Long = 0)
 		Me.theInputFileReader = vvdFileReader
+		Me.theVvdFileOffsetStart = vvdFileOffsetStart
 		Me.theVvdFileData = vvdFileData
+
+		Me.theVvdFileData.theFileSeekLog.FileSize = Me.theInputFileReader.BaseStream.Length
 	End Sub
 
 #End Region
@@ -33,7 +36,7 @@ Public Class SourceVvdFile49
 			Exit Sub
 		End If
 
-		Me.theInputFileReader.BaseStream.Seek(Me.theVvdFileData.vertexDataOffset, SeekOrigin.Begin)
+		Me.theInputFileReader.BaseStream.Seek(Me.theVvdFileOffsetStart + Me.theVvdFileData.vertexDataOffset, SeekOrigin.Begin)
 
 		'Dim boneWeightingIsIncorrect As Boolean
 		Dim weight As Single
@@ -85,7 +88,7 @@ Public Class SourceVvdFile49
 
 	Public Sub ReadFixups()
 		If Me.theVvdFileData.fixupCount > 0 Then
-			Me.theInputFileReader.BaseStream.Seek(Me.theVvdFileData.fixupTableOffset, SeekOrigin.Begin)
+			Me.theInputFileReader.BaseStream.Seek(Me.theVvdFileOffsetStart + Me.theVvdFileData.fixupTableOffset, SeekOrigin.Begin)
 
 			Me.theVvdFileData.theFixups = New List(Of SourceVvdFixup)(Me.theVvdFileData.fixupCount)
 			For fixupIndex As Integer = 0 To Me.theVvdFileData.fixupCount - 1
@@ -97,12 +100,11 @@ Public Class SourceVvdFile49
 				Me.theVvdFileData.theFixups.Add(aFixup)
 			Next
 			If Me.theVvdFileData.lodCount > 0 Then
-				Me.theInputFileReader.BaseStream.Seek(Me.theVvdFileData.vertexDataOffset, SeekOrigin.Begin)
+				Me.theInputFileReader.BaseStream.Seek(Me.theVvdFileOffsetStart + Me.theVvdFileData.vertexDataOffset, SeekOrigin.Begin)
 
 				For lodIndex As Integer = 0 To Me.theVvdFileData.lodCount - 1
 					Me.SetupFixedVertexes(lodIndex)
 				Next
-				Dim i As Integer = 0
 			End If
 		End If
 	End Sub
@@ -119,17 +121,21 @@ Public Class SourceVvdFile49
 		Dim aFixup As SourceVvdFixup
 		Dim aStudioVertex As SourceVertex
 
-		Me.theVvdFileData.theFixedVertexesByLod(lodIndex) = New List(Of SourceVertex)
-		For fixupIndex As Integer = 0 To Me.theVvdFileData.theFixups.Count - 1
-			aFixup = Me.theVvdFileData.theFixups(fixupIndex)
+		Try
+			Me.theVvdFileData.theFixedVertexesByLod(lodIndex) = New List(Of SourceVertex)
+			For fixupIndex As Integer = 0 To Me.theVvdFileData.theFixups.Count - 1
+				aFixup = Me.theVvdFileData.theFixups(fixupIndex)
 
-			If aFixup.lodIndex >= lodIndex Then
-				For j As Integer = 0 To aFixup.vertexCount - 1
-					aStudioVertex = Me.theVvdFileData.theVertexes(aFixup.vertexIndex + j)
-					Me.theVvdFileData.theFixedVertexesByLod(lodIndex).Add(aStudioVertex)
-				Next
-			End If
-		Next
+				If aFixup.lodIndex >= lodIndex Then
+					For j As Integer = 0 To aFixup.vertexCount - 1
+						aStudioVertex = Me.theVvdFileData.theVertexes(aFixup.vertexIndex + j)
+						Me.theVvdFileData.theFixedVertexesByLod(lodIndex).Add(aStudioVertex)
+					Next
+				End If
+			Next
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		End Try
 	End Sub
 
 #End Region
@@ -137,6 +143,7 @@ Public Class SourceVvdFile49
 #Region "Data"
 
 	Private theInputFileReader As BinaryReader
+	Private theVvdFileOffsetStart As Long
 	Private theVvdFileData As SourceVvdFileData49
 
 #End Region

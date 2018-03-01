@@ -1,4 +1,5 @@
 ﻿Public Class VpkDirectoryEntry
+	Inherits BasePackageDirectoryEntry
 
 	'FROM: Nem's Tools\hllib245\HLLib\VPKFile.h
 	'		struct VPKDirectoryEntry
@@ -32,14 +33,23 @@
 	'    unsigned short Terminator;
 	'};
 
-	Public crc As UInt32
+	'Public crc As UInt32
 	Public preloadByteCount As UInt16
-	Public archiveIndex As UInt16
+	'Public archiveIndex As UInt16
 	Public dataOffset As UInt32
 	Public dataLength As UInt32
 	Public endBytes As UInt16
 
-	Public thePathFileName As String
+	'TODO: Titanfall VPK
+	Public unknown01 As UInt16
+	Public unknown02 As UInt32
+	Public unknown03 As UInt32
+	Public unknown04 As UInt32
+	Public fileSize As UInt32
+	Public unknown05 As UInt32
+	Public endOfEntryBytes As UInt16
+
+	'Public thePathFileName As String
 	Public preloadBytesOffset As Long
 
 End Class

@@ -2,16 +2,21 @@
 
 Module Common
 
-	Public Function ReadPhyCollisionTextSection(ByVal theInputFileReader As BinaryReader) As String
+	Public Function ReadPhyCollisionTextSection(ByVal theInputFileReader As BinaryReader, ByVal endOffset As Long) As String
 		Dim result As String = ""
 		Dim streamLastPosition As Long
 
 		Try
-			streamLastPosition = theInputFileReader.BaseStream.Length() - 1
+			'streamLastPosition = theInputFileReader.BaseStream.Length() - 1
+			streamLastPosition = endOffset
 
 			If streamLastPosition > theInputFileReader.BaseStream.Position Then
-				'NOTE: Use -1 to drop the null terminator character.
+				'NOTE: Use -1 to avoid including the null terminator character.
 				result = theInputFileReader.ReadChars(CInt(streamLastPosition - theInputFileReader.BaseStream.Position - 1))
+				' Read the NULL byte to help with debug logging.
+				theInputFileReader.ReadChar()
+				' Only grab text to the first NULL byte. (Needed for PHY data stored within Titanfall 2 MDL file.)
+				result = result.Substring(0, result.IndexOf(Chr(0)))
 			End If
 		Catch ex As Exception
 			Dim debug As Integer = 4242

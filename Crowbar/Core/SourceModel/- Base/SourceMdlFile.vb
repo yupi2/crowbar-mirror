@@ -36,7 +36,7 @@ Public Class SourceMdlFile
 		Dim inputFileStream As FileStream = Nothing
 		Me.theInputFileReader = Nothing
 		Try
-			inputFileStream = New FileStream(inputPathFileName, FileMode.Open, FileAccess.Read, FileShare.Read)
+			inputFileStream = New FileStream(inputPathFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
 			If inputFileStream IsNot Nothing Then
 				Try
 					Me.theInputFileReader = New BinaryReader(inputFileStream, System.Text.Encoding.ASCII)

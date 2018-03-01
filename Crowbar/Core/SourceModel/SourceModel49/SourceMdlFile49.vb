@@ -1230,8 +1230,8 @@ Public Class SourceMdlFile49
 
 			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAnimationDesc.spanOffset (zeroframes/saveframes) [" + anAnimationDesc.theName + "] [spanFrameCount = " + anAnimationDesc.spanFrameCount.ToString() + "] [spanCount = " + anAnimationDesc.spanCount.ToString() + "]")
 
-			'TEST: 
-			Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "anAnimationDesc.spanOffset (zeroframes/saveframes) alignment")
+			''TEST: 
+			'Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "anAnimationDesc.spanOffset (zeroframes/saveframes) alignment")
 			''TEST: 
 			'Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 8, "anAnimationDesc.spanOffset (zeroframes/saveframes) alignment")
 			''TEST: 
@@ -1819,8 +1819,8 @@ Public Class SourceMdlFile49
 			Dim fileOffsetEnd As Long
 			Dim fileOffsetStart2 As Long
 			Dim fileOffsetEnd2 As Long
-			Dim fileOffsetEndOfIkRuleExtraData As Long
-			Dim fileOffsetOfLastEndOfIkRuleExtraData As Long
+			'Dim fileOffsetEndOfIkRuleExtraData As Long
+			'Dim fileOffsetOfLastEndOfIkRuleExtraData As Long
 
 			If anAnimationDesc.animBlock > 0 AndAlso anAnimationDesc.animblockIkRuleOffset = 0 Then
 				'Return 0
@@ -1829,7 +1829,7 @@ Public Class SourceMdlFile49
 			End If
 			fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
-			fileOffsetOfLastEndOfIkRuleExtraData = 0
+			'fileOffsetOfLastEndOfIkRuleExtraData = 0
 
 			anAnimationDesc.theIkRules = New List(Of SourceMdlIkRule)(anAnimationDesc.ikRuleCount)
 			For ikRuleIndex As Integer = 0 To anAnimationDesc.ikRuleCount - 1
@@ -1885,7 +1885,7 @@ Public Class SourceMdlFile49
 
 				inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 
-				fileOffsetEndOfIkRuleExtraData = 0
+				'fileOffsetEndOfIkRuleExtraData = 0
 
 				If anIkRule.attachmentNameOffset <> 0 Then
 					Me.theInputFileReader.BaseStream.Seek(ikRuleInputFileStreamPosition + anIkRule.attachmentNameOffset, SeekOrigin.Begin)
@@ -1894,14 +1894,14 @@ Public Class SourceMdlFile49
 					anIkRule.theAttachmentName = FileManager.ReadNullTerminatedString(Me.theInputFileReader)
 
 					fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
-					If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-						Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "anIkRule.theAttachmentName = " + anIkRule.theAttachmentName)
-					End If
+					'If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
+					Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "anIkRule.theAttachmentName = " + anIkRule.theAttachmentName)
+					'End If
 
-					'TODO: Probably should change this from (fileOffsetStart2 + 127) to (Me.theInputFileReader.BaseStream.Position - 1).
-					If fileOffsetEndOfIkRuleExtraData < (fileOffsetStart2 + 127) Then
-						fileOffsetEndOfIkRuleExtraData = (fileOffsetStart2 + 127)
-					End If
+					''TODO: Probably should change this from (fileOffsetStart2 + 127) to (Me.theInputFileReader.BaseStream.Position - 1).
+					'If fileOffsetEndOfIkRuleExtraData < (fileOffsetStart2 + 127) Then
+					'	fileOffsetEndOfIkRuleExtraData = (fileOffsetStart2 + 127)
+					'End If
 				Else
 					anIkRule.theAttachmentName = ""
 				End If
@@ -1911,19 +1911,19 @@ Public Class SourceMdlFile49
 
 					compressedIkErrorsEndOffset = Me.ReadCompressedIkErrors(ikRuleInputFileStreamPosition, ikRuleIndex, anAnimationDesc)
 
-					If fileOffsetEndOfIkRuleExtraData < compressedIkErrorsEndOffset Then
-						fileOffsetEndOfIkRuleExtraData = compressedIkErrorsEndOffset
-					End If
+					'If fileOffsetEndOfIkRuleExtraData < compressedIkErrorsEndOffset Then
+					'	fileOffsetEndOfIkRuleExtraData = compressedIkErrorsEndOffset
+					'End If
 				End If
 
 				If anIkRule.ikErrorOffset <> 0 Then
 					Dim debug As Integer = 4242
 				End If
 
-				If fileOffsetEndOfIkRuleExtraData > 0 Then
-					Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEndOfIkRuleExtraData, 4, "anIkRule extra-data alignment")
-					fileOffsetOfLastEndOfIkRuleExtraData = Me.theInputFileReader.BaseStream.Position - 1
-				End If
+				'If fileOffsetEndOfIkRuleExtraData > 0 Then
+				'	Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEndOfIkRuleExtraData, 4, "anIkRule extra-data alignment")
+				'	fileOffsetOfLastEndOfIkRuleExtraData = Me.theInputFileReader.BaseStream.Position - 1
+				'End If
 
 				Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
 			Next
@@ -1938,12 +1938,14 @@ Public Class SourceMdlFile49
 
 			Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "anAnimationDesc.theIkRules alignment")
 
-			If fileOffsetOfLastEndOfIkRuleExtraData > 0 Then
-				Return fileOffsetOfLastEndOfIkRuleExtraData
-			Else
-				Return Me.theInputFileReader.BaseStream.Position - 1
-			End If
+			'If fileOffsetOfLastEndOfIkRuleExtraData > 0 Then
+			'	Return fileOffsetOfLastEndOfIkRuleExtraData
+			'Else
+			'	Return Me.theInputFileReader.BaseStream.Position - 1
+			'End If
 		End If
+
+		Return 0
 	End Function
 
 	Private Function ReadCompressedIkErrors(ByVal ikRuleInputFileStreamPosition As Long, ByVal ikRuleIndex As Integer, ByVal anAnimationDesc As SourceMdlAnimationDesc49) As Long
@@ -4188,26 +4190,29 @@ Public Class SourceMdlFile49
 	End Sub
 
 	Public Sub PostProcess()
-		For Each aBodyPart As SourceMdlBodyPart In Me.theMdlFileData.theBodyParts
-			For Each aBodyModel As SourceMdlModel In aBodyPart.theModels
-				If aBodyModel.theEyeballs IsNot Nothing AndAlso aBodyModel.theEyeballs.Count > 0 Then
-					aBodyPart.theModelCommandIsUsed = True
-					Exit For
-				End If
-
-				If aBodyModel.theMeshes IsNot Nothing Then
-					For Each aMesh As SourceMdlMesh In aBodyModel.theMeshes
-						If aMesh.theFlexes IsNot Nothing AndAlso aMesh.theFlexes.Count > 0 Then
-							aBodyPart.theModelCommandIsUsed = True
-							Exit For
-						End If
-					Next
-					If aBodyPart.theModelCommandIsUsed Then
+		If Me.theMdlFileData.theBodyParts IsNot Nothing Then
+			For Each aBodyPart As SourceMdlBodyPart In Me.theMdlFileData.theBodyParts
+				For Each aBodyModel As SourceMdlModel In aBodyPart.theModels
+					If aBodyModel.theEyeballs IsNot Nothing AndAlso aBodyModel.theEyeballs.Count > 0 Then
+						aBodyPart.theModelCommandIsUsed = True
+						aBodyPart.theEyeballOptionIsUsed = True
 						Exit For
 					End If
-				End If
+
+					If aBodyModel.theMeshes IsNot Nothing Then
+						For Each aMesh As SourceMdlMesh In aBodyModel.theMeshes
+							If aMesh.theFlexes IsNot Nothing AndAlso aMesh.theFlexes.Count > 0 Then
+								aBodyPart.theModelCommandIsUsed = True
+								Exit For
+							End If
+						Next
+						If aBodyPart.theModelCommandIsUsed Then
+							Exit For
+						End If
+					End If
+				Next
 			Next
-		Next
+		End If
 	End Sub
 
 	Public Sub CreateFlexFrameList()

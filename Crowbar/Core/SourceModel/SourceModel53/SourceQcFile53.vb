@@ -221,22 +221,22 @@ Public Class SourceQcFile53
 		'Dim aBone As SourceMdlBone
 		Dim eyeballNames As List(Of String)
 
-		eyeballNames = New List(Of String)()
-
 		'$model "producer" "producer_model_merged.dmx.smd" {
 		'//-doesn't work     eyeball righteye ValveBiped.Bip01_Head1 -1.260 -0.086 64.594 eyeball_r 1.050  3.000 producer_head 0.530
 		'//-doesn't work     eyeball lefteye ValveBiped.Bip01_Head1 1.260 -0.086 64.594 eyeball_l 1.050  -3.000 producer_head 0.530
 		'     mouth 0 "mouth"  ValveBiped.Bip01_Head1 0.000 1.000 0.000
 		'}
-		If Me.theMdlFileData.theBodyParts IsNot Nothing AndAlso Me.theMdlFileData.theBodyParts.Count > 0 Then
+		If Me.theMdlFileData.theModelCommandIsUsed AndAlso Me.theMdlFileData.theBodyParts IsNot Nothing AndAlso Me.theMdlFileData.theBodyParts.Count > 0 Then
+			eyeballNames = New List(Of String)()
+
 			line = ""
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
-			aBodyPart = Me.theMdlFileData.theBodyParts(0)
+			aBodyPart = Me.theMdlFileData.theBodyParts(Me.theMdlFileData.theBodyPartIndexThatShouldUseModelCommand)
 			aBodyModel = aBodyPart.theModels(0)
 			'referenceSmdFileName = Me.GetModelPathFileName(Me.theSourceEngineModel.theMdlFileHeader.theBodyParts(0).theModels(0))
 			'referenceSmdFileName = theSourceEngineModel.GetLodSmdFileName(0)
-			aBodyModel.theSmdFileNames(0) = SourceFileNamesModule.CreateBodyGroupSmdFileName(aBodyModel.theSmdFileNames(0), 0, 0, 0, Me.theModelName, Me.theMdlFileData.theBodyParts(0).theModels(0).name)
+			aBodyModel.theSmdFileNames(0) = SourceFileNamesModule.CreateBodyGroupSmdFileName(aBodyModel.theSmdFileNames(0), Me.theMdlFileData.theBodyPartIndexThatShouldUseModelCommand, 0, 0, Me.theModelName, aBodyPart.theModels(0).name)
 
 			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
 				line = "$Model "
@@ -244,7 +244,7 @@ Public Class SourceQcFile53
 				line = "$model "
 			End If
 			line += """"
-			line += Me.theMdlFileData.theBodyParts(0).theName
+			line += aBodyPart.theName
 			line += """ """
 			line += aBodyModel.theSmdFileNames(0)
 			line += """"
@@ -253,8 +253,8 @@ Public Class SourceQcFile53
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
 			'NOTE: Must call WriteEyeballLines() before WriteEyelidLines(), because eyeballNames are created in first and sent to other.
-			Me.WriteEyeballLines(eyeballNames)
-			Me.WriteEyelidLines(eyeballNames)
+			Me.WriteEyeballLines(aBodyPart, eyeballNames)
+			Me.WriteEyelidLines(aBodyPart, eyeballNames)
 
 			Me.WriteMouthLines()
 
@@ -265,9 +265,8 @@ Public Class SourceQcFile53
 		End If
 	End Sub
 
-	Private Sub WriteEyeballLines(ByRef eyeballNames As List(Of String))
+	Private Sub WriteEyeballLines(ByVal aBodyPart As SourceMdlBodyPart, ByRef eyeballNames As List(Of String))
 		Dim line As String = ""
-		Dim aBodyPart As SourceMdlBodyPart
 		Dim aModel As SourceMdlModel
 		Dim anEyeball As SourceMdlEyeball
 		Dim eyeballTextureName As String
@@ -289,7 +288,7 @@ Public Class SourceQcFile53
 		Try
 			'eyeball righteye ValveBiped.Bip01_Head1 -1.160 -3.350 62.600 teenangst_eyeball_r 1.000  3.000 zoey_color 0.630
 			'eyeball lefteye ValveBiped.Bip01_Head1 1.160 -3.350 62.600 teenangst_eyeball_l 1.000  -3.000 zoey_color 0.630
-			aBodyPart = Me.theMdlFileData.theBodyParts(0)
+			'aBodyPart = Me.theMdlFileData.theBodyParts(0)
 			If aBodyPart.theModels IsNot Nothing AndAlso aBodyPart.theModels.Count > 0 Then
 				aModel = aBodyPart.theModels(0)
 				If aModel.theEyeballs IsNot Nothing AndAlso aModel.theEyeballs.Count > 0 Then
@@ -401,9 +400,8 @@ Public Class SourceQcFile53
 		Next
 	End Sub
 
-	Private Sub WriteEyelidLines(ByVal eyeballNames As List(Of String))
+	Private Sub WriteEyelidLines(ByVal aBodyPart As SourceMdlBodyPart, ByVal eyeballNames As List(Of String))
 		Dim line As String = ""
-		Dim aBodyPart As SourceMdlBodyPart
 		Dim aModel As SourceMdlModel
 		Dim anEyeball As SourceMdlEyeball
 		Dim frameIndex As Integer
@@ -416,8 +414,9 @@ Public Class SourceQcFile53
 			'eyelid  lower_right $expressions$ lowerer 3 -0.32 neutral 0 -0.19 raiser 4 -0.02 split 0.1 eyeball righteye
 			'eyelid  upper_left $expressions$ lowerer 1 -0.19 neutral 0 0.13 raiser 2 0.27 split -0.1 eyeball lefteye
 			'eyelid  lower_left $expressions$ lowerer 3 -0.32 neutral 0 -0.19 raiser 4 -0.02 split -0.1 eyeball lefteye
-			aBodyPart = Me.theMdlFileData.theBodyParts(0)
-			If aBodyPart.theModels IsNot Nothing AndAlso aBodyPart.theModels.Count > 0 AndAlso Me.theMdlFileData.theEyelidFlexFrameIndexes.Count > 0 Then
+			'aBodyPart = Me.theMdlFileData.theBodyParts(0)
+			'If aBodyPart.theModels IsNot Nothing AndAlso aBodyPart.theModels.Count > 0 AndAlso Me.theMdlFileData.theEyelidFlexFrameIndexes.Count > 0 Then
+			If aBodyPart.theModels IsNot Nothing AndAlso aBodyPart.theModels.Count > 0 Then
 				aModel = aBodyPart.theModels(0)
 				If aModel.theEyeballs IsNot Nothing AndAlso aModel.theEyeballs.Count > 0 Then
 					line = ""
@@ -1839,28 +1838,25 @@ Public Class SourceQcFile53
 	End Sub
 
 	Public Sub WriteMaxEyeDeflectionCommand()
-		Dim line As String = ""
-		Dim deflection As Double
+		If Me.theMdlFileData.maxEyeDeflection < -0.0000001 OrElse Me.theMdlFileData.maxEyeDeflection > 0.0000001 Then
+			Dim line As String = ""
+			Dim deflection As Double
 
-		'FROM: SourceEngine2007_source\src_main\utils\studiomdl\studiomdl.cpp
-		'	g_flMaxEyeDeflection = cosf( verify_atof( token ) * M_PI / 180.0f );
-		deflection = Math.Acos(Me.theMdlFileData.maxEyeDeflection)
-		deflection = MathModule.RadiansToDegrees(deflection)
-		deflection = Math.Round(deflection, 3)
+			deflection = Math.Acos(Me.theMdlFileData.maxEyeDeflection)
+			deflection = MathModule.RadiansToDegrees(deflection)
+			deflection = Math.Round(deflection, 3)
 
-		line = ""
-		Me.theOutputFileStreamWriter.WriteLine(line)
+			line = ""
+			Me.theOutputFileStreamWriter.WriteLine(line)
 
-		' Found in L4D2 file: "survivors\Biker\biker.qc".
-		'// Eyes can look this many degrees up/down/to the sides
-		'$maxeyedeflection 30
-		If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
-			line = "$MaxEyeDeflection "
-		Else
-			line = "$maxeyedeflection "
+			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+				line = "$MaxEyeDeflection "
+			Else
+				line = "$maxeyedeflection "
+			End If
+			line += deflection.ToString("0.######", TheApp.InternalNumberFormat)
+			Me.theOutputFileStreamWriter.WriteLine(line)
 		End If
-		line += deflection.ToString("0.######", TheApp.InternalNumberFormat)
-		Me.theOutputFileStreamWriter.WriteLine(line)
 	End Sub
 
 	Public Sub WriteIllumPositionCommand()
@@ -2079,7 +2075,7 @@ Public Class SourceQcFile53
 	Private Sub WriteAnimationOrDeclareAnimationCommand()
 		If Me.theMdlFileData.theAnimationDescs IsNot Nothing Then
 			For i As Integer = 0 To Me.theMdlFileData.theAnimationDescs.Count - 1
-				Dim anAnimationDesc As SourceMdlAnimationDesc49
+				Dim anAnimationDesc As SourceMdlAnimationDesc52
 				anAnimationDesc = Me.theMdlFileData.theAnimationDescs(i)
 
 				If anAnimationDesc.theName(0) <> "@" Then
@@ -2089,7 +2085,7 @@ Public Class SourceQcFile53
 		End If
 	End Sub
 
-	Private Sub WriteAnimationLine(ByVal anAnimationDesc As SourceMdlAnimationDesc49)
+	Private Sub WriteAnimationLine(ByVal anAnimationDesc As SourceMdlAnimationDesc52)
 		Dim line As String = ""
 
 		Me.theOutputFileStreamWriter.WriteLine()
@@ -2217,9 +2213,9 @@ Public Class SourceQcFile53
 	Private Sub WriteSequenceOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc)
 		Dim line As String = ""
 		Dim valueString As String
-		Dim impliedAnimDesc As SourceMdlAnimationDesc49 = Nothing
+		Dim impliedAnimDesc As SourceMdlAnimationDesc52 = Nothing
 
-		Dim anAnimationDesc As SourceMdlAnimationDesc49
+		Dim anAnimationDesc As SourceMdlAnimationDesc52
 		Dim name As String
 		For j As Integer = 0 To aSequenceDesc.theAnimDescIndexes.Count - 1
 			anAnimationDesc = Me.theMdlFileData.theAnimationDescs(aSequenceDesc.theAnimDescIndexes(j))
@@ -2380,7 +2376,7 @@ Public Class SourceQcFile53
 		'	Me.theOutputFileStreamWriter.WriteLine(line)
 		'End If
 
-		Dim firstAnimDesc As SourceMdlAnimationDesc49
+		Dim firstAnimDesc As SourceMdlAnimationDesc52
 		firstAnimDesc = Me.theMdlFileData.theAnimationDescs(aSequenceDesc.theAnimDescIndexes(0))
 		Me.WriteAnimationOptions(aSequenceDesc, firstAnimDesc, impliedAnimDesc)
 	End Sub
@@ -2407,7 +2403,7 @@ Public Class SourceQcFile53
 	'ParseCmdlistToken( panim->numcmds, panim->cmds )
 	'TODO: All these options (LX, LY, etc.) seem to be baked-in, but might need to be calculated for anims that have movement.
 	'lookupControl( token )       
-	Private Sub WriteAnimationOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc, ByVal anAnimationDesc As SourceMdlAnimationDesc49, ByVal impliedAnimDesc As SourceMdlAnimationDesc49)
+	Private Sub WriteAnimationOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc, ByVal anAnimationDesc As SourceMdlAnimationDesc52, ByVal impliedAnimDesc As SourceMdlAnimationDesc52)
 		Dim line As String = ""
 
 		line = vbTab
@@ -2459,8 +2455,47 @@ Public Class SourceQcFile53
 	'weightlist         // done
 	'worldspaceblend       //
 	'worldspaceblendloop   // 
-	Private Sub WriteCmdListOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc, ByVal anAnimationDesc As SourceMdlAnimationDesc49, ByVal impliedAnimDesc As SourceMdlAnimationDesc49)
+	Private Sub WriteCmdListOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc, ByVal anAnimationDesc As SourceMdlAnimationDesc52, ByVal impliedAnimDesc As SourceMdlAnimationDesc52)
 		Dim line As String = ""
+
+		If anAnimationDesc.theIkRules IsNot Nothing Then
+			For Each anIkRule As SourceMdlIkRule In anAnimationDesc.theIkRules
+				line = vbTab
+				line += "ikrule"
+				line += " """
+				line += Me.theMdlFileData.theIkChains(anIkRule.chain).theName
+				line += """"
+				If anIkRule.type = SourceMdlIkRule.IK_SELF Then
+					line += " "
+					line += "touch"
+					line += " """
+					If anIkRule.bone >= 0 Then
+						line += Me.theMdlFileData.theBones(anIkRule.bone).theName
+					End If
+					line += """"
+					'ElseIf anIkRule.type = SourceMdlIkRule.IK_WORLD Then
+					'line += " "
+					'line += "world"
+				ElseIf anIkRule.type = SourceMdlIkRule.IK_GROUND Then
+					line += " "
+					line += "footstep"
+				ElseIf anIkRule.type = SourceMdlIkRule.IK_RELEASE Then
+					line += " "
+					line += "release"
+				ElseIf anIkRule.type = SourceMdlIkRule.IK_ATTACHMENT Then
+					line += " "
+					line += "attachment"
+					line += " """
+					line += anIkRule.theAttachmentName
+					line += """"
+				ElseIf anIkRule.type = SourceMdlIkRule.IK_UNLATCH Then
+					line += " "
+					line += "unlatch"
+				End If
+
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			Next
+		End If
 
 		'$sequence taunt01 "taunt01.dmx" fps 30 localhierarchy "weapon_bone" "bip_hand_L" range 0 5 80 90 {
 		'if (srcanim->numframes > 1.0)
@@ -2696,7 +2731,7 @@ Public Class SourceQcFile53
 		End If
 	End Sub
 
-	Private Sub WriteCmdListLocalHierarchyOption(ByVal anAnimationDesc As SourceMdlAnimationDesc49)
+	Private Sub WriteCmdListLocalHierarchyOption(ByVal anAnimationDesc As SourceMdlAnimationDesc52)
 		Dim line As String = ""
 
 		If anAnimationDesc.theLocalHierarchies IsNot Nothing Then
@@ -3083,6 +3118,10 @@ Public Class SourceQcFile53
 			line = vbTab
 			line += "$concave"
 			Me.theOutputFileStreamWriter.WriteLine(line)
+			line = vbTab
+			line += "$maxconvexpieces "
+			line += Me.thePhyFileData.theSourcePhyMaxConvexPieces.ToString()
+			Me.theOutputFileStreamWriter.WriteLine(line)
 		End If
 
 		For i As Integer = 0 To Me.thePhyFileData.theSourcePhyPhysCollisionModels.Count - 1
@@ -3212,7 +3251,7 @@ Public Class SourceQcFile53
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			End If
 		Catch ex As Exception
-
+			Dim debug As Integer = 4242
 		End Try
 	End Sub
 
@@ -3885,7 +3924,8 @@ Public Class SourceQcFile53
 		Next
 	End Sub
 
-	Public Sub WriteBodyGroupCommand(ByVal startIndex As Integer)
+	'Public Sub WriteBodyGroupCommand(ByVal startIndex As Integer)
+	Public Sub WriteBodyGroupCommand()
 		Dim line As String = ""
 		Dim aBodyPart As SourceMdlBodyPart
 		Dim aVtxBodyPart As SourceVtxBodyPart
@@ -3909,11 +3949,15 @@ Public Class SourceQcFile53
 		'	studio "laser_dot.smd"
 		'	blank
 		'}
-		If Me.theMdlFileData.theBodyParts IsNot Nothing AndAlso Me.theMdlFileData.theBodyParts.Count > startIndex Then
+		If Me.theMdlFileData.theBodyParts IsNot Nothing AndAlso Me.theMdlFileData.theBodyParts.Count > 0 Then
 			line = ""
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
-			For bodyPartIndex As Integer = startIndex To Me.theMdlFileData.theBodyParts.Count - 1
+			For bodyPartIndex As Integer = 0 To Me.theMdlFileData.theBodyParts.Count - 1
+				If Me.theMdlFileData.theModelCommandIsUsed AndAlso bodyPartIndex = Me.theMdlFileData.theBodyPartIndexThatShouldUseModelCommand Then
+					Me.WriteModelCommand()
+					Continue For
+				End If
 				aBodyPart = Me.theMdlFileData.theBodyParts(bodyPartIndex)
 				aVtxBodyPart = Me.theVtxFileData.theVtxBodyParts(bodyPartIndex)
 

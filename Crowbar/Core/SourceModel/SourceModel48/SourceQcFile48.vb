@@ -2688,6 +2688,170 @@ Public Class SourceQcFile48
 	Private Sub WriteCmdListOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc, ByVal anAnimationDesc As SourceMdlAnimationDesc48, ByVal impliedAnimDesc As SourceMdlAnimationDesc48)
 		Dim line As String = ""
 
+		If anAnimationDesc.theIkRules IsNot Nothing Then
+			For Each anIkRule As SourceMdlIkRule In anAnimationDesc.theIkRules
+				line = vbTab
+				line += "ikrule"
+				line += " """
+				line += Me.theMdlFileData.theIkChains(anIkRule.chain).theName
+				line += """"
+				If anIkRule.type = SourceMdlIkRule.IK_SELF Then
+					line += " "
+					line += "touch"
+					line += " """
+					If anIkRule.bone >= 0 Then
+						line += Me.theMdlFileData.theBones(anIkRule.bone).theName
+					End If
+					line += """"
+					'ElseIf anIkRule.type = SourceMdlIkRule.IK_WORLD Then
+					'line += " "
+					'line += "world"
+				ElseIf anIkRule.type = SourceMdlIkRule.IK_GROUND Then
+					line += " "
+					line += "footstep"
+				ElseIf anIkRule.type = SourceMdlIkRule.IK_RELEASE Then
+					line += " "
+					line += "release"
+				ElseIf anIkRule.type = SourceMdlIkRule.IK_ATTACHMENT Then
+					line += " "
+					line += "attachment"
+					line += " """
+					line += anIkRule.theAttachmentName
+					line += """"
+				ElseIf anIkRule.type = SourceMdlIkRule.IK_UNLATCH Then
+					line += " "
+					line += "unlatch"
+				End If
+
+				'	while (TokenAvailable())
+				'	{
+				'		GetToken( false );
+				'		if (stricmp( token, "height" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->height = verify_atof( token );
+				'		}
+				'		else if (stricmp( token, "target" ) == 0)
+				'		{
+				'			// slot
+				'			GetToken( false );
+				'			pRule->slot = verify_atoi( token );
+				'		}
+				'		else if (stricmp( token, "range" ) == 0)
+				'		{
+				'			// ramp
+				'			GetToken( false );
+				'			if (token[0] == '.')
+				'				pRule->start = -1;
+				'			else
+				'				pRule->start = verify_atoi( token );
+				'
+				'			GetToken( false );
+				'			if (token[0] == '.')
+				'				pRule->peak = -1;
+				'			else
+				'				pRule->peak = verify_atoi( token );
+				'	
+				'			GetToken( false );
+				'			if (token[0] == '.')
+				'				pRule->tail = -1;
+				'			else
+				'				pRule->tail = verify_atoi( token );
+				'
+				'			GetToken( false );
+				'			if (token[0] == '.')
+				'				pRule->end = -1;
+				'			else
+				'				pRule->end = verify_atoi( token );
+				'		}
+				'		else if (stricmp( token, "floor" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->floor = verify_atof( token );
+				'		}
+				'		else if (stricmp( token, "pad" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->radius = verify_atof( token ) / 2.0f;
+				'		}
+				'		else if (stricmp( token, "radius" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->radius = verify_atof( token );
+				'		}
+				'		else if (stricmp( token, "contact" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->contact = verify_atoi( token );
+				'		}
+				'		else if (stricmp( token, "usesequence" ) == 0)
+				'		{
+				'			pRule->usesequence = true;
+				'			pRule->usesource = false;
+				'		}
+				'		else if (stricmp( token, "usesource" ) == 0)
+				'		{
+				'			pRule->usesequence = false;
+				'			pRule->usesource = true;
+				'		}
+				'		else if (stricmp( token, "fakeorigin" ) == 0)
+				'		{
+				'			GetToken( false );
+				'			pRule->pos.x = verify_atof( token );
+				'			GetToken( false );
+				'			pRule->pos.y = verify_atof( token );
+				'			GetToken( false );
+				'			pRule->pos.z = verify_atof( token );
+				'
+				'			pRule->bone = -1;
+				'		}
+				'		else if (stricmp( token, "fakerotate" ) == 0)
+				'		{
+				'			QAngle ang;
+				'
+				'			GetToken( false );
+				'			ang.x = verify_atof( token );
+				'			GetToken( false );
+				'			ang.y = verify_atof( token );
+				'			GetToken( false );
+				'			ang.z = verify_atof( token );
+				'
+				'			AngleQuaternion( ang, pRule->q );
+				'
+				'			pRule->bone = -1;
+				'		}
+				'		else if (stricmp( token, "bone" ) == 0)
+				'		{
+				'			strcpy( pRule->bonename, token );
+				'		}
+				'		else
+				'		{
+				'			UnGetToken();
+				'			return;
+				'		}
+				'	}
+				'TODO: Other sub-options for ikrule option.
+				'	height
+				'	target
+				'	range
+				'	floor
+				'	pad
+				'	radius
+				'	contact
+				'	usesequence   [converted into mstudiocompressedikerror_t?][Test to see if this is baked-in by doing test decompile+recompiles.]
+				'	usesource     [converted into mstudiocompressedikerror_t?][Test to see if this is baked-in by doing test decompile+recompiles.]
+				'	fakeorigin
+				'	fakerotate
+				'	bone
+				'If anIkRule.type = SourceMdlIkRule.IK_UNLATCH Then
+				'	line += " "
+				'	line += "usesource"
+				'End If
+
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			Next
+		End If
+
 		'$sequence taunt01 "taunt01.dmx" fps 30 localhierarchy "weapon_bone" "bip_hand_L" range 0 5 80 90 {
 		'if (srcanim->numframes > 1.0)
 		'{
@@ -3352,6 +3516,10 @@ Public Class SourceQcFile48
 		If Me.thePhyFileData.theSourcePhyEditParamsSection.concave = "1" Then
 			line = vbTab
 			line += "$concave"
+			Me.theOutputFileStreamWriter.WriteLine(line)
+			line = vbTab
+			line += "$maxconvexpieces "
+			line += Me.thePhyFileData.theSourcePhyMaxConvexPieces.ToString()
 			Me.theOutputFileStreamWriter.WriteLine(line)
 		End If
 

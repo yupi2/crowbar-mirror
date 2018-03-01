@@ -655,7 +655,8 @@ Public Class SourceQcFile49
 
 		' Write flexfile (contains flexDescs).
 		'If Me.theMdlFileData.theFlexFrames IsNot Nothing AndAlso Me.theMdlFileData.theFlexFrames.Count > 0 Then
-		If Me.theBodyPartForFlexWriting.theFlexFrames IsNot Nothing AndAlso Me.theBodyPartForFlexWriting.theFlexFrames.Count > 0 Then
+		'NOTE: Count > 1 to avoid writing just a defaultflex frame.
+		If Me.theBodyPartForFlexWriting.theFlexFrames IsNot Nothing AndAlso Me.theBodyPartForFlexWriting.theFlexFrames.Count > 1 Then
 			Dim bodyPartIndex As Integer
 			bodyPartIndex = Me.theMdlFileData.theBodyParts.IndexOf(Me.theBodyPartForFlexWriting)
 
@@ -804,6 +805,12 @@ Public Class SourceQcFile49
 
 			For i As Integer = 0 To Me.theMdlFileData.theFlexControllers.Count - 1
 				aFlexController = Me.theMdlFileData.theFlexControllers(i)
+
+				If aFlexController.theType = "eyes" AndAlso (aFlexController.theName = "eyes_updown" OrElse aFlexController.theName = "eyes_rightleft") Then
+					If Not Me.theBodyPartForFlexWriting.theEyeballOptionIsUsed Then
+						Continue For
+					End If
+				End If
 
 				line = vbTab
 				line += "flexcontroller "
@@ -2614,6 +2621,9 @@ Public Class SourceQcFile49
 				ElseIf anIkRule.type = SourceMdlIkRule.IK_ATTACHMENT Then
 					line += " "
 					line += "attachment"
+					line += " """
+					line += anIkRule.theAttachmentName
+					line += """"
 				ElseIf anIkRule.type = SourceMdlIkRule.IK_UNLATCH Then
 					line += " "
 					line += "unlatch"
@@ -3443,6 +3453,10 @@ Public Class SourceQcFile49
 		If Me.thePhyFileData.theSourcePhyEditParamsSection.concave = "1" Then
 			line = vbTab
 			line += "$concave"
+			Me.theOutputFileStreamWriter.WriteLine(line)
+			line = vbTab
+			line += "$maxconvexpieces "
+			line += Me.thePhyFileData.theSourcePhyMaxConvexPieces.ToString()
 			Me.theOutputFileStreamWriter.WriteLine(line)
 		End If
 

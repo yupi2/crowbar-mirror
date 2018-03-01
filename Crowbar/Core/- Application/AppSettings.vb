@@ -10,6 +10,7 @@ Public Class AppSettings
 	Public Sub New()
 		'MyBase.New()
 
+		Me.theAppIsSingleInstance = False
 		Me.theWindowLocation = New Point(0, 0)
 		Me.theWindowSize = New Size(800, 600)
 		Me.theWindowState = FormWindowState.Normal
@@ -59,6 +60,9 @@ Public Class AppSettings
 		Me.SetDefaultCompileOptions()
 		Me.theCompileMode = InputOptions.File
 
+		Me.thePatchMdlPathFileName = ""
+		Me.thePatchMode = InputOptions.File
+
 		Me.theViewMdlPathFileName = ""
 		Me.theViewGameSetupSelectedIndex = 0
 
@@ -82,6 +86,16 @@ Public Class AppSettings
 #End Region
 
 #Region "Properties"
+
+	Public Property AppIsSingleInstance() As Boolean
+		Get
+			Return theAppIsSingleInstance
+		End Get
+		Set(ByVal value As Boolean)
+			theAppIsSingleInstance = value
+			NotifyPropertyChanged("AppIsSingleInstance")
+		End Set
+	End Property
 
 	Public Property WindowLocation() As Point
 		Get
@@ -567,6 +581,16 @@ Public Class AppSettings
 		End Set
 	End Property
 
+	Public Property DecompileUseUvsForDoomMusicCompilerIsChecked() As Boolean
+		Get
+			Return Me.theDecompileUseUvsForDoomMusicCompilerIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			Me.theDecompileUseUvsForDoomMusicCompilerIsChecked = value
+			NotifyPropertyChanged("DecompileUseUvsForDoomMusicCompilerIsChecked")
+		End Set
+	End Property
+
 	Public Property DecompileMode() As InputOptions
 		Get
 			Return Me.theDecompileMode
@@ -777,6 +801,26 @@ Public Class AppSettings
 		Set(ByVal value As Boolean)
 			Me.theCompilerIsRunning = value
 			NotifyPropertyChanged("CompilerIsRunning")
+		End Set
+	End Property
+
+	Public Property PatchMdlPathFileName() As String
+		Get
+			Return Me.thePatchMdlPathFileName
+		End Get
+		Set(ByVal value As String)
+			Me.thePatchMdlPathFileName = value
+			NotifyPropertyChanged("PatchMdlPathFileName")
+		End Set
+	End Property
+
+	Public Property PatchMode() As InputOptions
+		Get
+			Return Me.thePatchMode
+		End Get
+		Set(ByVal value As InputOptions)
+			Me.thePatchMode = value
+			NotifyPropertyChanged("PatchMode")
 		End Set
 	End Property
 
@@ -1103,6 +1147,7 @@ Public Class AppSettings
 
 		Me.DecompileReferenceMeshSmdFileIsChecked = True
 		Me.DecompileRemovePathFromSmdMaterialFileNamesIsChecked = True
+		Me.DecompileUseUvsForDoomMusicCompilerIsChecked = False
 
 		Me.DecompileBoneAnimationSmdFilesIsChecked = True
 		Me.DecompileBoneAnimationPlaceInSubfolderIsChecked = True
@@ -1203,6 +1248,7 @@ Public Class AppSettings
 #Region "Data"
 
 	' General
+	Private theAppIsSingleInstance As Boolean
 	Private theWindowLocation As Point
 	Private theWindowSize As Size
 	Private theWindowState As FormWindowState
@@ -1257,6 +1303,8 @@ Public Class AppSettings
 	Private theDecompileQcUseMixedCaseForKeywordsIsChecked As Boolean
 
 	Private theDecompileReferenceMeshSmdFileIsChecked As Boolean
+	Private theDecompileRemovePathFromSmdMaterialFileNamesIsChecked As Boolean
+	Private theDecompileUseUvsForDoomMusicCompilerIsChecked As Boolean
 
 	Private theDecompileBoneAnimationSmdFilesIsChecked As Boolean
 	Private theDecompileBoneAnimationPlaceInSubfolderIsChecked As Boolean
@@ -1273,7 +1321,6 @@ Public Class AppSettings
 	Private theDecompileLogFileIsChecked As Boolean
 	Private theDecompileDebugInfoFilesIsChecked As Boolean
 	Private theDecompileStricterFormatIsChecked As Boolean
-	Private theDecompileRemovePathFromSmdMaterialFileNamesIsChecked As Boolean
 
 	Private theDecompileMode As InputOptions
 	Private theDecompilerIsRunning As Boolean
@@ -1291,7 +1338,7 @@ Public Class AppSettings
 
 	Private theCompileGameSetupSelectedIndex As Integer
 
-	' Source engine
+	' GoldSource engine
 	Private theCompileGoldSourceLogFileIsChecked As Boolean
 
 	' Source engine
@@ -1306,6 +1353,11 @@ Public Class AppSettings
 	Private theCompileOptionsText As String
 
 	Private theCompilerIsRunning As Boolean
+
+	' Patch tab
+
+	Private thePatchMode As InputOptions
+	Private thePatchMdlPathFileName As String
 
 	' View tab
 

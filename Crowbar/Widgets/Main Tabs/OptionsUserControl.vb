@@ -18,6 +18,8 @@ Public Class OptionsUserControl
 #Region "Init and Free"
 
 	Private Sub Init()
+		Me.SingleInstanceCheckBox.DataBindings.Add("Checked", TheApp.Settings, "AppIsSingleInstance", False, DataSourceUpdateMode.OnPropertyChanged)
+
 		' Auto-Open
 
 		Me.AutoOpenVpkFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsAutoOpenVpkFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
@@ -84,6 +86,8 @@ Public Class OptionsUserControl
 
 	Private Sub Free()
 		RemoveHandler TheApp.Settings.PropertyChanged, AddressOf AppSettings_PropertyChanged
+
+		Me.SingleInstanceCheckBox.DataBindings.Clear()
 
 		' Auto-Open
 
@@ -195,7 +199,9 @@ Public Class OptionsUserControl
 #Region "Core Event Handlers"
 
 	Private Sub AppSettings_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-		If e.PropertyName = "OptionsAutoOpenVpkFileIsChecked" Then
+		If e.PropertyName = "AppIsSingleInstance" Then
+			TheApp.SaveAppSettings()
+		ElseIf e.PropertyName = "OptionsAutoOpenVpkFileIsChecked" Then
 			Me.ApplyAutoOpenVpkFileOptions()
 		ElseIf e.PropertyName = "OptionsAutoOpenMdlFileIsChecked" Then
 			Me.ApplyAutoOpenMdlFileOptions()

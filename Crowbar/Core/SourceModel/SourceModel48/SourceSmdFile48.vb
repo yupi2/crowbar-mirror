@@ -237,10 +237,9 @@ Public Class SourceSmdFile48
 							'  19 -0.000009 0.000001 0.999953 0.0 0.0 0.0 1 0
 							'  19 -0.000005 1.000002 -0.000043 0.0 0.0 0.0 1 0
 							'  19 -0.008333 0.997005 1.003710 0.0 0.0 0.0 1 0
-							'NOTE: MDL Decompiler 0.4.1 lists the vertices in reverse order than they are stored, and this seems to match closely with the teenangst source file.
-							'For vertexIndex As Integer = aTriangle.vertexIndex.Length - 1 To 0 Step -1
 							For vertexIndex As Integer = 0 To aTriangle.vertexIndex.Length - 1
-								phyVertex = collisionData.theVertices(aTriangle.vertexIndex(vertexIndex))
+								'phyVertex = collisionData.theVertices(aTriangle.vertexIndex(vertexIndex))
+								phyVertex = faceSection.theVertices(aTriangle.vertexIndex(vertexIndex))
 
 								aVectorTransformed = Me.TransformPhyVertex(aBone, phyVertex.vertex, aSourcePhysCollisionModel)
 
@@ -256,11 +255,11 @@ Public Class SourceSmdFile48
 								'line += " 0 0 0"
 								'------
 								line += " "
-								line += phyVertex.normal.x.ToString("0.000000", TheApp.InternalNumberFormat)
+								line += phyVertex.Normal.x.ToString("0.000000", TheApp.InternalNumberFormat)
 								line += " "
-								line += phyVertex.normal.y.ToString("0.000000", TheApp.InternalNumberFormat)
+								line += phyVertex.Normal.y.ToString("0.000000", TheApp.InternalNumberFormat)
 								line += " "
-								line += phyVertex.normal.z.ToString("0.000000", TheApp.InternalNumberFormat)
+								line += phyVertex.Normal.z.ToString("0.000000", TheApp.InternalNumberFormat)
 
 								line += " 0 0"
 								'NOTE: The studiomdl.exe doesn't need the integer values at end.
@@ -521,6 +520,9 @@ Public Class SourceSmdFile48
 				'------
 				Dim adjustedPosition As New SourceVector()
 				Dim adjustedRotation As New SourceVector()
+				If anAnimationDesc.theName = "@scrapyard_hopdown" Then
+					Dim debug As Integer = 4242
+				End If
 				Me.AdjustPositionAndRotationByPiecewiseMovement(frameIndex, boneIndex, anAnimationDesc.theMovements, aFrameLine.position, aFrameLine.rotation, adjustedPosition, adjustedRotation)
 				Me.AdjustPositionAndRotation(boneIndex, adjustedPosition, adjustedRotation, thisIsForFirstSequence, position, rotation)
 

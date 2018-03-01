@@ -60,7 +60,7 @@ Public MustInherit Class SourceModel
 			ElseIf version = 46 Then
 				model = New SourceModel46(mdlPathFileName, version)
 			ElseIf version = 47 Then
-				'TODO: For now, decompile v47 as v46.
+				'TODO: Finish.
 				model = New SourceModel46(mdlPathFileName, version)
 				'model = New SourceModel47(mdlPathFileName, version)
 			ElseIf version = 48 Then
@@ -68,13 +68,11 @@ Public MustInherit Class SourceModel
 			ElseIf version = 49 Then
 				model = New SourceModel49(mdlPathFileName, version)
 			ElseIf version = 52 Then
+				'TODO: Finish.
 				model = New SourceModel52(mdlPathFileName, version)
 			ElseIf version = 53 Then
-				'TODO: Properly decompile v53.
-				'model = New SourceModel53(mdlPathFileName, version)
-			ElseIf version = 57 Then
-				'TODO: Properly decompile v57.
-				'model = New SourceModel57(mdlPathFileName, version)
+				'TODO: Finish.
+				model = New SourceModel53(mdlPathFileName, version)
 			Else
 				' Version not implemented.
 				model = Nothing
@@ -95,7 +93,7 @@ Public MustInherit Class SourceModel
 		inputFileStream = Nothing
 		inputFileReader = Nothing
 		Try
-			inputFileStream = New FileStream(mdlPathFileName, FileMode.Open, FileAccess.Read, FileShare.Read)
+			inputFileStream = New FileStream(mdlPathFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
 			If inputFileStream IsNot Nothing Then
 				Try
 					'NOTE: Important to set System.Text.Encoding.ASCII so that ReadChars() only reads in one byte per Char.
@@ -103,10 +101,13 @@ Public MustInherit Class SourceModel
 
 					Dim id As String
 					id = inputFileReader.ReadChars(4)
-					If id = "IDST" Then
-						version = inputFileReader.ReadInt32()
-					Else
-						Throw New FormatException("File does not have expected MDL header ID (first 4 bytes of file) of 'IDST' (without quotes). MDL file is not a GoldSource- or Source-engine MDL file.")
+					version = inputFileReader.ReadInt32()
+					If id = "MDLZ" Then
+						If version <> 14 Then
+							Throw New FormatException("File with header ID (first 4 bytes of file) of 'MDLZ' (without quotes) does not have expected MDL version of 14. MDL file is not a GoldSource- or Source-engine MDL file.")
+						End If
+					ElseIf id <> "IDST" Then
+						Throw New FormatException("File does not have expected MDL header ID (first 4 bytes of file) of 'IDST' or 'MDLZ' (without quotes). MDL file is not a GoldSource- or Source-engine MDL file.")
 					End If
 				Catch ex As FormatException
 					Throw
@@ -626,7 +627,7 @@ Public MustInherit Class SourceModel
 		Dim inputFileStream As FileStream = Nothing
 		Me.theInputFileReader = Nothing
 		Try
-			inputFileStream = New FileStream(pathFileName, FileMode.Open, FileAccess.Read, FileShare.Read)
+			inputFileStream = New FileStream(pathFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
 			If inputFileStream IsNot Nothing Then
 				Try
 					Me.theInputFileReader = New BinaryReader(inputFileStream, System.Text.Encoding.ASCII)
@@ -719,7 +720,7 @@ Public MustInherit Class SourceModel
 		Dim inputFileStream As FileStream = Nothing
 		Me.theInputFileReader = Nothing
 		Try
-			inputFileStream = New FileStream(pathFileName, FileMode.Open, FileAccess.Read, FileShare.Read)
+			inputFileStream = New FileStream(pathFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
 			If inputFileStream IsNot Nothing Then
 				Try
 					Me.theInputFileReader = New BinaryReader(inputFileStream, System.Text.Encoding.ASCII)

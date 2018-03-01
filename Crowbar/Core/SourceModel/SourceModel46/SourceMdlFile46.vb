@@ -1616,9 +1616,9 @@ Public Class SourceMdlFile46
 				anIkRule.theAttachmentName = FileManager.ReadNullTerminatedString(Me.theInputFileReader)
 
 				fileOffsetEnd2 = Me.theInputFileReader.BaseStream.Position - 1
-				If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
-					Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "anIkRule.theAttachmentName")
-				End If
+				'If Not Me.theMdlFileData.theFileSeekLog.ContainsKey(fileOffsetStart2) Then
+				Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart2, fileOffsetEnd2, "anIkRule.theAttachmentName = " + anIkRule.theAttachmentName)
+				'End If
 			Else
 				anIkRule.theAttachmentName = ""
 			End If

@@ -2507,6 +2507,45 @@ Public Class SourceQcFile45
 	Private Sub WriteCmdListOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc, ByVal anAnimationDesc As SourceMdlAnimationDesc45, ByVal impliedAnimDesc As SourceMdlAnimationDesc45)
 		Dim line As String = ""
 
+		If anAnimationDesc.theIkRules IsNot Nothing Then
+			For Each anIkRule As SourceMdlIkRule In anAnimationDesc.theIkRules
+				line = vbTab
+				line += "ikrule"
+				line += " """
+				line += Me.theMdlFileData.theIkChains(anIkRule.chain).theName
+				line += """"
+				If anIkRule.type = SourceMdlIkRule.IK_SELF Then
+					line += " "
+					line += "touch"
+					line += " """
+					If anIkRule.bone >= 0 Then
+						line += Me.theMdlFileData.theBones(anIkRule.bone).theName
+					End If
+					line += """"
+					'ElseIf anIkRule.type = SourceMdlIkRule.IK_WORLD Then
+					'line += " "
+					'line += "world"
+				ElseIf anIkRule.type = SourceMdlIkRule.IK_GROUND Then
+					line += " "
+					line += "footstep"
+				ElseIf anIkRule.type = SourceMdlIkRule.IK_RELEASE Then
+					line += " "
+					line += "release"
+				ElseIf anIkRule.type = SourceMdlIkRule.IK_ATTACHMENT Then
+					line += " "
+					line += "attachment"
+					line += " """
+					line += anIkRule.theAttachmentName
+					line += """"
+				ElseIf anIkRule.type = SourceMdlIkRule.IK_UNLATCH Then
+					line += " "
+					line += "unlatch"
+				End If
+
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			Next
+		End If
+
 		'$sequence taunt01 "taunt01.dmx" fps 30 localhierarchy "weapon_bone" "bip_hand_L" range 0 5 80 90 {
 		'if (srcanim->numframes > 1.0)
 		'{
@@ -3125,6 +3164,10 @@ Public Class SourceQcFile45
 		If Me.thePhyFileData.theSourcePhyEditParamsSection.concave = "1" Then
 			line = vbTab
 			line += "$concave"
+			Me.theOutputFileStreamWriter.WriteLine(line)
+			line = vbTab
+			line += "$maxconvexpieces "
+			line += Me.thePhyFileData.theSourcePhyMaxConvexPieces.ToString()
 			Me.theOutputFileStreamWriter.WriteLine(line)
 		End If
 

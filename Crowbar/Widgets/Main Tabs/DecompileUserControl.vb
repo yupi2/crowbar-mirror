@@ -58,6 +58,7 @@ Public Class DecompileUserControl
 
 		Me.ReferenceMeshSmdFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileReferenceMeshSmdFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.RemovePathFromMaterialFileNamesCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileRemovePathFromSmdMaterialFileNamesIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
+		Me.UseUvsForDoomMusicCompilerCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileUseUvsForDoomMusicCompilerIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 
 		Me.BoneAnimationSmdFilesCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileBoneAnimationSmdFilesIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.PlaceInAnimsSubfolderCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileBoneAnimationPlaceInSubfolderIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
@@ -103,6 +104,7 @@ Public Class DecompileUserControl
 		Me.IncludeDefineBoneLinesCheckBox.DataBindings.Clear()
 		Me.ReferenceMeshSmdFileCheckBox.DataBindings.Clear()
 		Me.RemovePathFromMaterialFileNamesCheckBox.DataBindings.Clear()
+		Me.UseUvsForDoomMusicCompilerCheckBox.DataBindings.Clear()
 		Me.BoneAnimationSmdFilesCheckBox.DataBindings.Clear()
 		Me.PlaceInAnimsSubfolderCheckBox.DataBindings.Clear()
 

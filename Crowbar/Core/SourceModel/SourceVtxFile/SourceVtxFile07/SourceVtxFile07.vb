@@ -5,8 +5,9 @@ Public Class SourceVtxFile07
 
 #Region "Creation and Destruction"
 
-	Public Sub New(ByVal vtxFileReader As BinaryReader, ByVal vtxFileData As SourceVtxFileData07, ByVal vtfStripGroupUsesTopologyFields As Boolean)
+	Public Sub New(ByVal vtxFileReader As BinaryReader, ByVal vtxFileData As SourceVtxFileData07, ByVal vtfStripGroupUsesTopologyFields As Boolean, Optional ByVal vtxFileOffsetStart As Long = 0)
 		Me.theInputFileReader = vtxFileReader
+		Me.theVtxFileOffsetStart = vtxFileOffsetStart
 		Me.theVtxFileData = vtxFileData
 		Me.theStripGroupAndStripUseExtraFields = vtfStripGroupUsesTopologyFields
 
@@ -69,7 +70,7 @@ Public Class SourceVtxFile07
 			'Dim fileOffsetEnd2 As Long
 
 			Try
-				Me.theInputFileReader.BaseStream.Seek(Me.theVtxFileData.bodyPartOffset, SeekOrigin.Begin)
+				Me.theInputFileReader.BaseStream.Seek(Me.theVtxFileOffsetStart + Me.theVtxFileData.bodyPartOffset, SeekOrigin.Begin)
 				fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
 				Me.theVtxFileData.theVtxBodyParts = New List(Of SourceVtxBodyPart)(Me.theVtxFileData.bodyPartCount)
@@ -107,7 +108,7 @@ Public Class SourceVtxFile07
 			'Dim fileOffsetEnd2 As Long
 
 			Try
-				Me.theInputFileReader.BaseStream.Seek(Me.theVtxFileData.materialReplacementListOffset, SeekOrigin.Begin)
+				Me.theInputFileReader.BaseStream.Seek(Me.theVtxFileOffsetStart + Me.theVtxFileData.materialReplacementListOffset, SeekOrigin.Begin)
 				fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
 				Me.theVtxFileData.theVtxMaterialReplacementLists = New List(Of SourceVtxMaterialReplacementList07)(Me.theVtxFileData.lodCount)
@@ -732,6 +733,7 @@ Public Class SourceVtxFile07
 #Region "Data"
 
 	Private theInputFileReader As BinaryReader
+	Private theVtxFileOffsetStart As Long
 	Private theVtxFileData As SourceVtxFileData07
 
 	'Private theFirstMeshWithStripGroups As SourceVtxMesh

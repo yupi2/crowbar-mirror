@@ -240,11 +240,11 @@ Public Class SourceSmdFile35
 								'line += " 0 0 0"
 								'------
 								line += " "
-								line += phyVertex.normal.x.ToString("0.000000", TheApp.InternalNumberFormat)
+								line += phyVertex.Normal.x.ToString("0.000000", TheApp.InternalNumberFormat)
 								line += " "
-								line += phyVertex.normal.y.ToString("0.000000", TheApp.InternalNumberFormat)
+								line += phyVertex.Normal.y.ToString("0.000000", TheApp.InternalNumberFormat)
 								line += " "
-								line += phyVertex.normal.z.ToString("0.000000", TheApp.InternalNumberFormat)
+								line += phyVertex.Normal.z.ToString("0.000000", TheApp.InternalNumberFormat)
 
 								line += " 0 0"
 								'NOTE: The studiomdl.exe doesn't need the integer values at end.

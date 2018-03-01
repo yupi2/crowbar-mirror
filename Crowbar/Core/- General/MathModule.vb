@@ -48,7 +48,15 @@ Module MathModule
 		Dim translateX As Double
 		Dim translateY As Double
 
+		'NOTE: For Math.Asin, return value is NaN if d < -1 or d > 1 or d equals NaN.
+		'      Therefore, change value outside of domain to edge of domain.
+		If m2 < -1 Then
+			m2 = -1
+		ElseIf m2 > 1 Then
+			m2 = 1
+		End If
 		angleY = -Math.Asin(Math.Round(m2, 6))
+
 		c = Math.Cos(angleY)
 		angleY = RadiansToDegrees(angleY)
 		If Math.Abs(c) > 0.005 Then
