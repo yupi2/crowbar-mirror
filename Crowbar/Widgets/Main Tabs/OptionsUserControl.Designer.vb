@@ -77,6 +77,10 @@ Partial Class OptionsUserControl
 		Me.ApplyButton = New System.Windows.Forms.Button()
 		Me.ApplyPanel = New System.Windows.Forms.Panel()
 		Me.SingleInstanceCheckBox = New System.Windows.Forms.CheckBox()
+		Me.Label7 = New System.Windows.Forms.Label()
+		Me.AutoOpenGmaFileCheckBox = New System.Windows.Forms.CheckBox()
+		Me.Label14 = New System.Windows.Forms.Label()
+		Me.AutoOpenFpxFileCheckBox = New System.Windows.Forms.CheckBox()
 		Me.GroupBox1.SuspendLayout()
 		Me.Panel7.SuspendLayout()
 		Me.GroupBox2.SuspendLayout()
@@ -242,7 +246,7 @@ Partial Class OptionsUserControl
 		'AutoOpenMdlFileCheckBox
 		'
 		Me.AutoOpenMdlFileCheckBox.AutoSize = True
-		Me.AutoOpenMdlFileCheckBox.Location = New System.Drawing.Point(6, 152)
+		Me.AutoOpenMdlFileCheckBox.Location = New System.Drawing.Point(6, 177)
 		Me.AutoOpenMdlFileCheckBox.Name = "AutoOpenMdlFileCheckBox"
 		Me.AutoOpenMdlFileCheckBox.Size = New System.Drawing.Size(67, 17)
 		Me.AutoOpenMdlFileCheckBox.TabIndex = 2
@@ -252,7 +256,7 @@ Partial Class OptionsUserControl
 		'AutoOpenQcFileCheckBox
 		'
 		Me.AutoOpenQcFileCheckBox.AutoSize = True
-		Me.AutoOpenQcFileCheckBox.Location = New System.Drawing.Point(6, 251)
+		Me.AutoOpenQcFileCheckBox.Location = New System.Drawing.Point(6, 276)
 		Me.AutoOpenQcFileCheckBox.Name = "AutoOpenQcFileCheckBox"
 		Me.AutoOpenQcFileCheckBox.Size = New System.Drawing.Size(62, 17)
 		Me.AutoOpenQcFileCheckBox.TabIndex = 4
@@ -261,6 +265,10 @@ Partial Class OptionsUserControl
 		'
 		'GroupBox2
 		'
+		Me.GroupBox2.Controls.Add(Me.Label14)
+		Me.GroupBox2.Controls.Add(Me.AutoOpenFpxFileCheckBox)
+		Me.GroupBox2.Controls.Add(Me.Label7)
+		Me.GroupBox2.Controls.Add(Me.AutoOpenGmaFileCheckBox)
 		Me.GroupBox2.Controls.Add(Me.Label5)
 		Me.GroupBox2.Controls.Add(Me.Panel2)
 		Me.GroupBox2.Controls.Add(Me.Label6)
@@ -281,7 +289,7 @@ Partial Class OptionsUserControl
 		'Label5
 		'
 		Me.Label5.AutoSize = True
-		Me.Label5.Location = New System.Drawing.Point(6, 295)
+		Me.Label5.Location = New System.Drawing.Point(6, 299)
 		Me.Label5.Margin = New System.Windows.Forms.Padding(3)
 		Me.Label5.Name = "Label5"
 		Me.Label5.Size = New System.Drawing.Size(41, 13)
@@ -295,7 +303,7 @@ Partial Class OptionsUserControl
 		Me.Panel2.Controls.Add(Me.AutoOpenFolderForCompileRadioButton)
 		Me.Panel2.Controls.Add(Me.AutoOpenFolderForDecompileRadioButton)
 		Me.Panel2.Controls.Add(Me.AutoOpenFolderForUnpackRadioButton)
-		Me.Panel2.Location = New System.Drawing.Point(25, 314)
+		Me.Panel2.Location = New System.Drawing.Point(25, 318)
 		Me.Panel2.Name = "Panel2"
 		Me.Panel2.Size = New System.Drawing.Size(141, 56)
 		Me.Panel2.TabIndex = 7
@@ -337,10 +345,10 @@ Partial Class OptionsUserControl
 		'
 		Me.Label6.BackColor = System.Drawing.SystemColors.ControlLight
 		Me.Label6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-		Me.Label6.Location = New System.Drawing.Point(25, 131)
+		Me.Label6.Location = New System.Drawing.Point(77, 109)
 		Me.Label6.Margin = New System.Windows.Forms.Padding(3)
 		Me.Label6.Name = "Label6"
-		Me.Label6.Size = New System.Drawing.Size(141, 15)
+		Me.Label6.Size = New System.Drawing.Size(89, 17)
 		Me.Label6.TabIndex = 1
 		Me.Label6.Text = "Unpack"
 		'
@@ -348,10 +356,10 @@ Partial Class OptionsUserControl
 		'
 		Me.Label4.BackColor = System.Drawing.SystemColors.ControlLight
 		Me.Label4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-		Me.Label4.Location = New System.Drawing.Point(25, 274)
+		Me.Label4.Location = New System.Drawing.Point(77, 276)
 		Me.Label4.Margin = New System.Windows.Forms.Padding(3)
 		Me.Label4.Name = "Label4"
-		Me.Label4.Size = New System.Drawing.Size(141, 15)
+		Me.Label4.Size = New System.Drawing.Size(89, 17)
 		Me.Label4.TabIndex = 5
 		Me.Label4.Text = "Compile"
 		'
@@ -389,7 +397,7 @@ Partial Class OptionsUserControl
 		Me.Panel1.Controls.Add(Me.AutoOpenMdlFileForViewingRadioButton)
 		Me.Panel1.Controls.Add(Me.AutoOpenMdlFileForPreviewingRadioButton)
 		Me.Panel1.Controls.Add(Me.AutoOpenMdlFileForDecompilingRadioButton)
-		Me.Panel1.Location = New System.Drawing.Point(25, 175)
+		Me.Panel1.Location = New System.Drawing.Point(25, 200)
 		Me.Panel1.Name = "Panel1"
 		Me.Panel1.Size = New System.Drawing.Size(141, 70)
 		Me.Panel1.TabIndex = 3
@@ -713,6 +721,48 @@ Partial Class OptionsUserControl
 		Me.SingleInstanceCheckBox.Text = "Restrict to single instance (only one Crowbar open at a time)"
 		Me.SingleInstanceCheckBox.UseVisualStyleBackColor = True
 		'
+		'Label7
+		'
+		Me.Label7.BackColor = System.Drawing.SystemColors.ControlLight
+		Me.Label7.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+		Me.Label7.Location = New System.Drawing.Point(77, 132)
+		Me.Label7.Margin = New System.Windows.Forms.Padding(3)
+		Me.Label7.Name = "Label7"
+		Me.Label7.Size = New System.Drawing.Size(89, 17)
+		Me.Label7.TabIndex = 16
+		Me.Label7.Text = "Unpack"
+		'
+		'AutoOpenGmaFileCheckBox
+		'
+		Me.AutoOpenGmaFileCheckBox.AutoSize = True
+		Me.AutoOpenGmaFileCheckBox.Location = New System.Drawing.Point(6, 131)
+		Me.AutoOpenGmaFileCheckBox.Name = "AutoOpenGmaFileCheckBox"
+		Me.AutoOpenGmaFileCheckBox.Size = New System.Drawing.Size(69, 17)
+		Me.AutoOpenGmaFileCheckBox.TabIndex = 15
+		Me.AutoOpenGmaFileCheckBox.Text = "GMA file:"
+		Me.AutoOpenGmaFileCheckBox.UseVisualStyleBackColor = True
+		'
+		'Label14
+		'
+		Me.Label14.BackColor = System.Drawing.SystemColors.ControlLight
+		Me.Label14.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+		Me.Label14.Location = New System.Drawing.Point(77, 155)
+		Me.Label14.Margin = New System.Windows.Forms.Padding(3)
+		Me.Label14.Name = "Label14"
+		Me.Label14.Size = New System.Drawing.Size(89, 17)
+		Me.Label14.TabIndex = 18
+		Me.Label14.Text = "Unpack"
+		'
+		'AutoOpenFpxFileCheckBox
+		'
+		Me.AutoOpenFpxFileCheckBox.AutoSize = True
+		Me.AutoOpenFpxFileCheckBox.Location = New System.Drawing.Point(6, 154)
+		Me.AutoOpenFpxFileCheckBox.Name = "AutoOpenFpxFileCheckBox"
+		Me.AutoOpenFpxFileCheckBox.Size = New System.Drawing.Size(65, 17)
+		Me.AutoOpenFpxFileCheckBox.TabIndex = 17
+		Me.AutoOpenFpxFileCheckBox.Text = "FPX file:"
+		Me.AutoOpenFpxFileCheckBox.UseVisualStyleBackColor = True
+		'
 		'OptionsUserControl
 		'
 		Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -804,5 +854,9 @@ Partial Class OptionsUserControl
 	Friend WithEvents AutoOpenFolderForDecompileRadioButton As System.Windows.Forms.RadioButton
 	Friend WithEvents AutoOpenFolderForUnpackRadioButton As System.Windows.Forms.RadioButton
 	Friend WithEvents SingleInstanceCheckBox As System.Windows.Forms.CheckBox
+	Friend WithEvents Label14 As System.Windows.Forms.Label
+	Friend WithEvents AutoOpenFpxFileCheckBox As System.Windows.Forms.CheckBox
+	Friend WithEvents Label7 As System.Windows.Forms.Label
+	Friend WithEvents AutoOpenGmaFileCheckBox As System.Windows.Forms.CheckBox
 
 End Class

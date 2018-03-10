@@ -1,6 +1,6 @@
 ﻿Imports System.ComponentModel
 
-Public Class VpkResourceFileNameInfo
+Public Class PackageResourceFileNameInfo
 	Implements INotifyPropertyChanged
 
 #Region "Properties"

@@ -29,18 +29,9 @@ Public Class UnpackUserControl
 #Region "Init and Free"
 
 	Private Sub Init()
-		Me.theVpkFileNames = New BindingListEx(Of VpkPathFileNameInfo)()
-		'Me.theFileNameListsForPathsWithinSelectedVpk = New SortedList(Of String, BindingListEx(Of String))
-		'Me.theEmptyList = New BindingListEx(Of VpkResourceFileNameInfo)()
+		Me.thePackageFileNames = New BindingListEx(Of PackagePathFileNameInfo)()
 
-		Dim anEnumList As IList
-		anEnumList = EnumHelper.ToList(GetType(ContainerType))
-		Me.ContainerTypeComboBox.DisplayMember = "Value"
-		Me.ContainerTypeComboBox.ValueMember = "Key"
-		Me.ContainerTypeComboBox.DataSource = anEnumList
-		Me.ContainerTypeComboBox.DataBindings.Add("SelectedValue", TheApp.Settings, "UnpackContainerType", False, DataSourceUpdateMode.OnPropertyChanged)
-
-		Me.VpkPathFileNameTextBox.DataBindings.Add("Text", TheApp.Settings, "UnpackVpkPathFolderOrFileName", False, DataSourceUpdateMode.OnValidation)
+		Me.PackagePathFileNameTextBox.DataBindings.Add("Text", TheApp.Settings, "UnpackPackagePathFolderOrFileName", False, DataSourceUpdateMode.OnValidation)
 
 		Me.OutputPathTextBox.DataBindings.Add("Text", TheApp.Settings, "UnpackOutputFullPath", False, DataSourceUpdateMode.OnValidation)
 		Me.OutputSubfolderTextBox.DataBindings.Add("Text", TheApp.Settings, "UnpackOutputSubfolderName", False, DataSourceUpdateMode.OnValidation)
@@ -52,17 +43,17 @@ Public Class UnpackUserControl
 		anIcon = Win32Api.GetShellIcon("folder", Win32Api.FILE_ATTRIBUTE_DIRECTORY)
 		Me.ImageList1.Images.Add("<Folder>", anIcon)
 		'NOTE: The TreeView.Sorted property does not show in Intellisense or Properties window.
-		Me.VpkTreeView.Sorted = True
-		Me.VpkTreeView.TreeViewNodeSorter = New NodeSorter()
-		Me.VpkTreeView.Nodes.Add("<root>", "<root>")
+		Me.PackageTreeView.Sorted = True
+		Me.PackageTreeView.TreeViewNodeSorter = New NodeSorter()
+		Me.PackageTreeView.Nodes.Add("<root>", "<root>")
 
-		Me.VpkListView.Columns.Add("Name", 100)
-		Me.VpkListView.Columns.Add("Size (bytes)", 100)
-		Me.VpkListView.Columns.Add("Type", 100)
-		Me.VpkListView.Columns.Add("Extension", 100)
-		Me.VpkListView.Columns.Add("Archive", 100)
+		Me.PackageListView.Columns.Add("Name", 100)
+		Me.PackageListView.Columns.Add("Size (bytes)", 100)
+		Me.PackageListView.Columns.Add("Type", 100)
+		Me.PackageListView.Columns.Add("Extension", 100)
+		Me.PackageListView.Columns.Add("Archive", 100)
 		Me.theSortColumnIndex = 0
-		Me.VpkListView.ListViewItemSorter = New FolderAndFileListViewItemComparer(0, Me.VpkListView.Sorting)
+		Me.PackageListView.ListViewItemSorter = New FolderAndFileListViewItemComparer(0, Me.PackageListView.Sorting)
 
 		'NOTE: The DataSource, DisplayMember, and ValueMember need to be set before DataBindings, or else an exception is raised.
 		Me.GameSetupComboBox.DisplayMember = "GameName"
@@ -76,16 +67,12 @@ Public Class UnpackUserControl
 		Me.theUnpackedRelativePathFileNames = New List(Of String)
 		Me.UnpackedFilesComboBox.DataSource = Me.theUnpackedRelativePathFileNames
 
-		Me.UpdateContainerTypeWidgets()
 		Me.UpdateUnpackMode()
-		''NOTE: UpdateVpkSelection() must be after UpdateUnpackMode().
-		'Me.UpdateVpkSelection()
-		'Me.RunUnpackerToGetListOfVpkContents()
 		Me.UpdateWidgets(False)
 
 		AddHandler TheApp.Settings.PropertyChanged, AddressOf AppSettings_PropertyChanged
 
-		AddHandler Me.VpkPathFileNameTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
+		AddHandler Me.PackagePathFileNameTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
 		AddHandler Me.OutputPathTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
 	End Sub
 
@@ -94,7 +81,7 @@ Public Class UnpackUserControl
 	End Sub
 
 	Private Sub Free()
-		RemoveHandler Me.VpkPathFileNameTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
+		RemoveHandler Me.PackagePathFileNameTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
 		RemoveHandler Me.OutputPathTextBox.DataBindings("Text").Parse, AddressOf FileManager.ParsePathFileName
 		RemoveHandler TheApp.Settings.PropertyChanged, AddressOf AppSettings_PropertyChanged
 		RemoveHandler TheApp.Unpacker.ProgressChanged, AddressOf Me.ListerBackgroundWorker_ProgressChanged
@@ -102,7 +89,7 @@ Public Class UnpackUserControl
 		RemoveHandler TheApp.Unpacker.ProgressChanged, AddressOf Me.UnpackerBackgroundWorker_ProgressChanged
 		RemoveHandler TheApp.Unpacker.RunWorkerCompleted, AddressOf Me.UnpackerBackgroundWorker_RunWorkerCompleted
 
-		Me.VpkPathFileNameTextBox.DataBindings.Clear()
+		Me.PackagePathFileNameTextBox.DataBindings.Clear()
 
 		Me.OutputPathTextBox.DataBindings.Clear()
 		Me.OutputSubfolderTextBox.DataBindings.Clear()
@@ -120,7 +107,7 @@ Public Class UnpackUserControl
 
 #Region "Methods"
 
-	Public Sub RunUnpackerToGetListOfVpkContents()
+	Public Sub RunUnpackerToGetListOfPackageContents()
 		'NOTE: This is needed to handle when Crowbar is opened by double-clicking a vpk file.
 		'      Every test on my dev computer without this code raised this exception: "This BackgroundWorker is currently busy and cannot run multiple tasks concurrently."
 		If TheApp.Unpacker.IsBusy Then
@@ -154,19 +141,16 @@ Public Class UnpackUserControl
 	'	Me.VpkPathFileNameTextBox.Text = FileManager.GetCleanPathFileName(Me.VpkPathFileNameTextBox.Text)
 	'End Sub
 
-	Private Sub BrowseForVpkPathFolderOrFileNameButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BrowseForVpkPathFolderOrFileNameButton.Click
-		'Dim containerTypeText As String
-		'containerTypeText = TheApp.Settings.UnpackContainerType.ToString()
-
+	Private Sub BrowseForPackagePathFolderOrFileNameButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles BrowseForPackagePathFolderOrFileNameButton.Click
 		Dim openFileWdw As New OpenFileDialog()
 
 		openFileWdw.Title = "Open the file or folder you want to unpack"
-		If File.Exists(TheApp.Settings.UnpackVpkPathFolderOrFileName) Then
-			openFileWdw.InitialDirectory = FileManager.GetPath(TheApp.Settings.UnpackVpkPathFolderOrFileName)
-			'ElseIf Directory.Exists(TheApp.Settings.UnpackVpkPathFolderOrFileName) Then
-			'	openFileWdw.InitialDirectory = TheApp.Settings.UnpackVpkPathFolderOrFileName
+		If File.Exists(TheApp.Settings.UnpackPackagePathFolderOrFileName) Then
+			openFileWdw.InitialDirectory = FileManager.GetPath(TheApp.Settings.UnpackPackagePathFolderOrFileName)
+			'ElseIf Directory.Exists(TheApp.Settings.UnpackPackagePathFolderOrFileName) Then
+			'	openFileWdw.InitialDirectory = TheApp.Settings.UnpackPackagePathFolderOrFileName
 		Else
-			openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(TheApp.Settings.UnpackVpkPathFolderOrFileName)
+			openFileWdw.InitialDirectory = FileManager.GetLongestExtantPath(TheApp.Settings.UnpackPackagePathFolderOrFileName)
 			If openFileWdw.InitialDirectory = "" Then
 				openFileWdw.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
 			End If
@@ -185,9 +169,9 @@ Public Class UnpackUserControl
 
 			Try
 				If Path.GetFileName(openFileWdw.FileName).StartsWith("[Folder Selection]") Then
-					TheApp.Settings.UnpackVpkPathFolderOrFileName = FileManager.GetPath(openFileWdw.FileName)
+					TheApp.Settings.UnpackPackagePathFolderOrFileName = FileManager.GetPath(openFileWdw.FileName)
 				Else
-					TheApp.Settings.UnpackVpkPathFolderOrFileName = openFileWdw.FileName
+					TheApp.Settings.UnpackPackagePathFolderOrFileName = openFileWdw.FileName
 				End If
 			Catch ex As IO.PathTooLongException
 				MessageBox.Show("The file or folder you tried to select has too many characters in it. Try shortening it by moving the model files somewhere else or by renaming folders or files." + vbCrLf + vbCrLf + "Error message generated by Windows: " + vbCrLf + ex.Message, "The File or Folder You Tried to Select Is Too Long", MessageBoxButtons.OK)
@@ -197,66 +181,9 @@ Public Class UnpackUserControl
 		End If
 	End Sub
 
-	Private Sub GotoVpkButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles GotoVpkButton.Click
-		FileManager.OpenWindowsExplorer(TheApp.Settings.UnpackVpkPathFolderOrFileName)
+	Private Sub GotoPackageButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles GotoPackageButton.Click
+		FileManager.OpenWindowsExplorer(TheApp.Settings.UnpackPackagePathFolderOrFileName)
 	End Sub
-
-	'Private Sub OutputSubfolderNameRadioButton_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs)
-	'	If Me.OutputSubfolderNameRadioButton.Checked Then
-	'		TheApp.Settings.UnpackOutputFolderOption = OutputFolderOptions.SubfolderName
-	'	Else
-	'		TheApp.Settings.UnpackOutputFolderOption = OutputFolderOptions.PathName
-	'	End If
-
-	'	Me.UpdateOutputFolderWidgets()
-	'End Sub
-
-	'Private Sub OutputPathNameRadioButton_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs)
-	'	Me.UpdateOutputFolderWidgets()
-	'End Sub
-
-	'Private Sub UseDefaultOutputSubfolderNameButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
-	'	TheApp.Settings.SetDefaultUnpackOutputSubfolderName()
-	'	'Me.OutputSubfolderNameTextBox.DataBindings("Text").ReadValue()
-	'End Sub
-
-	'Private Sub OutputPathNameTextBox_Validated(ByVal sender As System.Object, ByVal e As System.EventArgs)
-	'	'Me.OutputFullPathTextBox.Text = FileManager.GetCleanPathFileName(Me.OutputFullPathTextBox.Text)
-	'	Me.UpdateOutputFullPathTextBox()
-	'End Sub
-
-	'Private Sub BrowseForOutputPathNameButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
-	'	'NOTE: Using "open file dialog" instead of "open folder dialog" because the "open folder dialog" 
-	'	'      does not show the path name bar nor does it scroll to the selected folder in the folder tree view.
-	'	Dim outputPathWdw As New OpenFileDialog()
-
-	'	outputPathWdw.Title = "Open the folder you want as Output Folder"
-	'	If Directory.Exists(TheApp.Settings.UnpackOutputFullPath) Then
-	'		outputPathWdw.InitialDirectory = TheApp.Settings.UnpackOutputFullPath
-	'	ElseIf File.Exists(TheApp.Settings.UnpackVpkPathFolderOrFileName) Then
-	'		outputPathWdw.InitialDirectory = FileManager.GetPath(TheApp.Settings.UnpackVpkPathFolderOrFileName)
-	'	ElseIf Directory.Exists(TheApp.Settings.UnpackVpkPathFolderOrFileName) Then
-	'		outputPathWdw.InitialDirectory = TheApp.Settings.UnpackVpkPathFolderOrFileName
-	'	Else
-	'		outputPathWdw.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
-	'	End If
-	'	outputPathWdw.FileName = "[Folder Selection]"
-	'	outputPathWdw.AddExtension = False
-	'	outputPathWdw.CheckFileExists = False
-	'	outputPathWdw.Multiselect = False
-	'	outputPathWdw.ValidateNames = False
-
-	'	If outputPathWdw.ShowDialog() = Windows.Forms.DialogResult.OK Then
-	'		' Allow dialog window to completely disappear.
-	'		Application.DoEvents()
-
-	'		TheApp.Settings.UnpackOutputFullPath = FileManager.GetPath(outputPathWdw.FileName)
-	'	End If
-	'End Sub
-
-	'Private Sub GotoOutputButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
-	'	FileManager.OpenWindowsExplorer(Me.OutputFullPathTextBox.Text)
-	'End Sub
 
 	Private Sub OutputPathTextBox_Validated(sender As Object, e As EventArgs) Handles OutputPathTextBox.Validated
 		Me.UpdateOutputPathTextBox()
@@ -276,21 +203,21 @@ Public Class UnpackUserControl
 
 	'TODO: Change this to detect pressing of Enter key.
 	'Private Sub FindToolStripTextBox_Validated(sender As Object, e As EventArgs) Handles FindToolStripTextBox.Validated
-	'	Me.FindTextInVpkFiles(FindDirection.Next)
+	'	Me.FindTextInPackageFiles(FindDirection.Next)
 	'End Sub
 
-	Private Sub VpkTreeView_AfterSelect(sender As Object, e As TreeViewEventArgs) Handles VpkTreeView.AfterSelect
+	Private Sub PackageTreeView_AfterSelect(sender As Object, e As TreeViewEventArgs) Handles PackageTreeView.AfterSelect
 		Me.SetSelectionPathText()
 		Me.ShowFilesInSelectedFolder()
 	End Sub
 
-	Private Sub VpkTreeView_ItemDrag(sender As Object, e As ItemDragEventArgs) Handles VpkTreeView.ItemDrag
-		If Me.VpkTreeView.SelectedNode IsNot Nothing Then
+	Private Sub PackageTreeView_ItemDrag(sender As Object, e As ItemDragEventArgs) Handles PackageTreeView.ItemDrag
+		If Me.PackageTreeView.SelectedNode IsNot Nothing Then
 			Me.RunUnpackerToExtractFilesInternal(ArchiveAction.ExtractToTemp, Nothing)
 		End If
 	End Sub
 
-	Private Sub VpkTreeView_MouseDown(sender As Object, e As MouseEventArgs) Handles VpkTreeView.MouseDown
+	Private Sub PackageTreeView_MouseDown(sender As Object, e As MouseEventArgs) Handles PackageTreeView.MouseDown
 		Dim treeView As TreeView
 		Dim clickedNode As TreeNode
 
@@ -308,12 +235,12 @@ Public Class UnpackUserControl
 	End Sub
 
 	'NOTE: This is only needed because TreeView BackColor does not automatically change when Windows Theme is switched.
-	Private Sub VpkTreeView_SystemColorsChanged(sender As Object, e As EventArgs) Handles VpkTreeView.SystemColorsChanged
-		Me.VpkTreeView.BackColor = SystemColors.Control
+	Private Sub PackageTreeView_SystemColorsChanged(sender As Object, e As EventArgs) Handles PackageTreeView.SystemColorsChanged
+		Me.PackageTreeView.BackColor = SystemColors.Control
 	End Sub
 
 	Private Sub CustomMenu_Opening(ByVal sender As System.Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles CustomMenu.Opening
-		Me.DeleteSearchToolStripMenuItem.Enabled = Me.VpkTreeView.SelectedNode IsNot Nothing AndAlso Me.VpkTreeView.SelectedNode.Text.StartsWith("<Found>")
+		Me.DeleteSearchToolStripMenuItem.Enabled = Me.PackageTreeView.SelectedNode IsNot Nothing AndAlso Me.PackageTreeView.SelectedNode.Text.StartsWith("<Found>")
 		Me.DeleteAllSearchesToolStripMenuItem.Enabled = Me.theSearchCount > 0
 	End Sub
 
@@ -335,103 +262,49 @@ Public Class UnpackUserControl
 		Me.FindSubstringInFileNames()
 	End Sub
 
-	Private Sub VpkListView_ColumnClick(sender As Object, e As ColumnClickEventArgs) Handles VpkListView.ColumnClick
+	Private Sub PackageListView_ColumnClick(sender As Object, e As ColumnClickEventArgs) Handles PackageListView.ColumnClick
 		If e.Column <> Me.theSortColumnIndex Then
 			Me.theSortColumnIndex = e.Column
-			Me.VpkListView.Sorting = SortOrder.Ascending
+			Me.PackageListView.Sorting = SortOrder.Ascending
 		Else
-			If Me.VpkListView.Sorting = SortOrder.Ascending Then
-				Me.VpkListView.Sorting = SortOrder.Descending
+			If Me.PackageListView.Sorting = SortOrder.Ascending Then
+				Me.PackageListView.Sorting = SortOrder.Descending
 			Else
-				Me.VpkListView.Sorting = SortOrder.Ascending
+				Me.PackageListView.Sorting = SortOrder.Ascending
 			End If
 		End If
 
-		Me.VpkListView.ListViewItemSorter = New FolderAndFileListViewItemComparer(e.Column, Me.VpkListView.Sorting)
+		Me.PackageListView.ListViewItemSorter = New FolderAndFileListViewItemComparer(e.Column, Me.PackageListView.Sorting)
 	End Sub
 
-	Private Sub VpkListView_DoubleClick(sender As Object, e As EventArgs) Handles VpkListView.DoubleClick
+	Private Sub PackageListView_DoubleClick(sender As Object, e As EventArgs) Handles PackageListView.DoubleClick
 		Me.OpenSelectedFolderOrFile()
 	End Sub
 
-	Private Sub VpkListView_ItemDrag(sender As Object, e As ItemDragEventArgs) Handles VpkListView.ItemDrag
-		If Me.VpkListView.SelectedItems.Count > 0 Then
-			Me.RunUnpackerToExtractFiles(ArchiveAction.ExtractToTemp, Me.VpkListView.SelectedItems)
-			'ElseIf Me.VpkTreeView.SelectedNode IsNot Nothing AndAlso Me.VpkTreeView.SelectedNode IsNot Me.VpkTreeView.Nodes(0) Then
-			'	Me.RunUnpackerToExtractFolder(VpkAppAction.ExtractToTemp)
+	Private Sub PackageListView_ItemDrag(sender As Object, e As ItemDragEventArgs) Handles PackageListView.ItemDrag
+		If Me.PackageListView.SelectedItems.Count > 0 Then
+			Me.RunUnpackerToExtractFiles(ArchiveAction.ExtractToTemp, Me.PackageListView.SelectedItems)
 		End If
-		'======
-		'TEST: Does this collection need to have the real file names? Can it be filled with any strings, as long as the count matches what will be dropped?
-		'      Does *not* need real file names. Just match the count.
-		'Dim pathFileNameCollection As New StringCollection()
-		'For i As Integer = 0 To Me.VpkListView.SelectedItems.Count - 1
-		'	pathFileNameCollection.Add("~~~Crowbar.tmp")
-		'Next
-		'dataObj = New FileDragDropHelper(AddressOf ExtractToTemp, AddressOf CleanupExtractToTemp)
-		'dataObj.SetFileDropList(pathFileNameCollection)
-		'Me.VpkListView.DoDragDrop(dataObj, DragDropEffects.Move)
-
-		'While TheApp.Unpacker.IsBusy
-		'	Application.DoEvents()
-		'End While
-		'TheApp.Unpacker.DeleteTempUnpackFolder()
-		'Dim debug As Integer = 4242
 	End Sub
 
-	'Private Sub VpkListView_QueryContinueDrag(sender As Object, e As QueryContinueDragEventArgs) Handles VpkListView.QueryContinueDrag
-	'	If e.Action = DragAction.Drop Then
-	'		'TheApp.Unpacker.RunSynchronous(ArchiveAction.ExtractToTemp, Me.thePackInternalEntryIndexes)
-	'		'TODO: Delete the temp vpk folder. Possibly only way is to check that the temp vpk folder is empty.
-	'		TheApp.Unpacker.DeleteTempUnpackFolder()
-	'		Dim debug As Integer = 4242
-	'	End If
-	'End Sub
-
-	Private Sub VpkListView_SelectedIndexChanged(sender As Object, e As EventArgs) Handles VpkListView.SelectedIndexChanged
+	Private Sub PackageListView_SelectedIndexChanged(sender As Object, e As EventArgs) Handles PackageListView.SelectedIndexChanged
 		Me.UpdateSelectionCounts()
 	End Sub
-
-	'Private Sub GameSetupComboBox_SelectedValueChanged(ByVal sender As System.Object, ByVal e As System.EventArgs)
-	'	Me.SetCompilerOptionsText()
-	'End Sub
-
-	'Private Sub SetUpGamesButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles EditGameSetupButton.Click
-	'	Dim gameSetupWdw As New GameSetupForm()
-	'	Dim gameSetupFormInfo As New GameSetupFormInfo()
-
-	'	gameSetupFormInfo.GameSetupIndex = TheApp.Settings.UnpackGameSetupSelectedIndex
-	'	gameSetupFormInfo.GameSetups = TheApp.Settings.GameSetups
-	'	gameSetupWdw.DataSource = gameSetupFormInfo
-
-	'	gameSetupWdw.ShowDialog()
-
-	'	TheApp.Settings.UnpackGameSetupSelectedIndex = CType(gameSetupWdw.DataSource, GameSetupFormInfo).GameSetupIndex
-
-	'	'If Not String.IsNullOrEmpty(TheApp.Settings.UnpackVpkPathFolderOrFileName) Then
-	'	'	'Me.UnpackerLogTextBox.Text = ""
-	'	'	Me.RunUnpackerToGetListOfVpkContents()
-	'	'End If
-	'End Sub
 
 	Private Sub UnpackOptionsUseDefaultsButton_Click(sender As Object, e As EventArgs) Handles UnpackOptionsUseDefaultsButton.Click
 		TheApp.Settings.SetDefaultUnpackOptions()
 	End Sub
 
 	Private Sub UnpackButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles UnpackButton.Click
-		If Me.VpkListView.SelectedItems.Count > 0 Then
-			'Me.RunUnpackerToExtractFiles(ArchiveAction.Extract, Me.VpkListView.SelectedItems)
-			Me.RunUnpackerToExtractFiles(ArchiveAction.Unpack, Me.VpkListView.SelectedItems)
-			'ElseIf Me.VpkTreeView.SelectedNode IsNot Nothing AndAlso Me.VpkTreeView.SelectedNode IsNot Me.VpkTreeView.Nodes(0) Then
-			'	'Me.RunUnpackerToExtractFilesInternal(ArchiveAction.Extract, Nothing)
-			'	Me.RunUnpackerToExtractFilesInternal(ArchiveAction.Unpack, Nothing)
+		If Me.PackageListView.SelectedItems.Count > 0 Then
+			Me.RunUnpackerToExtractFiles(ArchiveAction.Unpack, Me.PackageListView.SelectedItems)
 		Else
-			'Me.RunUnpacker()
 			Me.RunUnpackerToExtractFilesInternal(ArchiveAction.Unpack, Nothing)
 		End If
 	End Sub
 
-	Private Sub SkipCurrentVpkButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SkipCurrentVpkButton.Click
-		TheApp.Unpacker.SkipCurrentVpk()
+	Private Sub SkipCurrentPackageButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SkipCurrentPackageButton.Click
+		TheApp.Unpacker.SkipCurrentPackage()
 	End Sub
 
 	Private Sub CancelUnpackButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CancelUnpackButton.Click
@@ -462,18 +335,11 @@ Public Class UnpackUserControl
 #Region "Core Event Handlers"
 
 	Private Sub AppSettings_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-		If e.PropertyName = "UnpackContainerType" Then
-			Me.UpdateContainerTypeWidgets()
-		ElseIf e.PropertyName = "UnpackVpkPathFolderOrFileName" Then
+		If e.PropertyName = "UnpackPackagePathFolderOrFileName" Then
 			Me.UpdateUnpackMode()
-			''NOTE: UpdateVpkSelection() must be after UpdateUnpackMode().
-			'Me.UpdateVpkSelection()
-			Me.RunUnpackerToGetListOfVpkContents()
-			'ElseIf e.PropertyName = "UnpackVpkPathFileName" Then
-			'	Me.RunUnpackerToGetListOfVpkContents()
+			Me.RunUnpackerToGetListOfPackageContents()
 		ElseIf e.PropertyName = "UnpackMode" Then
-			'Me.UpdateVpkSelection()
-			Me.RunUnpackerToGetListOfVpkContents()
+			Me.RunUnpackerToGetListOfPackageContents()
 		ElseIf e.PropertyName = "UnpackOutputFolderOption" Then
 			Me.UpdateOutputPathWidgets()
 		ElseIf e.PropertyName = "UnpackGameSetupSelectedIndex" Then
@@ -489,10 +355,10 @@ Public Class UnpackUserControl
 
 		If e.ProgressPercentage = 0 Then
 			Me.UpdateWidgets(True)
-			Me.SkipCurrentVpkButton.Enabled = False
+			Me.SkipCurrentPackageButton.Enabled = False
 			Me.CancelUnpackButton.Text = "Cancel Listing"
-			Me.VpkTreeView.Nodes(0).Nodes.Clear()
-			Me.VpkTreeView.Nodes(0).Tag = Nothing
+			Me.PackageTreeView.Nodes(0).Nodes.Clear()
+			Me.PackageTreeView.Nodes(0).Tag = Nothing
 			Me.UnpackerLogTextBox.Text = ""
 			'Me.theEntryIndex = -1
 		ElseIf e.ProgressPercentage = 1 Then
@@ -518,18 +384,16 @@ Public Class UnpackUserControl
 			For fieldIndex As Integer = 1 To fields.Length - 6
 				pathFileName = pathFileName + " " + fields(fieldIndex)
 			Next
-			'Dim aPath As String
-			'aPath = FileManager.GetPath(pathFileName)
 
 			Dim foldersAndFileName() As String
 			foldersAndFileName = pathFileName.Split("/"c)
 			Dim parentTreeNode As TreeNode = Nothing
 			Dim treeNode As TreeNode = Nothing
-			Dim list As List(Of VpkResourceFileNameInfo)
+			Dim list As List(Of PackageResourceFileNameInfo)
 			If foldersAndFileName.Length = 1 Then
-				treeNode = Me.VpkTreeView.Nodes(0)
+				treeNode = Me.PackageTreeView.Nodes(0)
 			Else
-				parentTreeNode = Me.VpkTreeView.Nodes(0)
+				parentTreeNode = Me.PackageTreeView.Nodes(0)
 				Dim resourcePathFileName As String = ""
 				For nameIndex As Integer = 0 To foldersAndFileName.Length - 2
 					Dim name As String
@@ -547,7 +411,7 @@ Public Class UnpackUserControl
 						treeNode = parentTreeNode.Nodes.Add(name)
 						treeNode.Name = name
 
-						Dim resourceInfo As New VpkResourceFileNameInfo()
+						Dim resourceInfo As New PackageResourceFileNameInfo()
 						'resourceInfo.PathFileName = name
 						resourceInfo.PathFileName = resourcePathFileName
 						resourceInfo.Name = name
@@ -560,20 +424,13 @@ Public Class UnpackUserControl
 						resourceInfo.ArchivePathFileName = ""
 
 						If parentTreeNode.Tag Is Nothing Then
-							list = New List(Of VpkResourceFileNameInfo)()
+							list = New List(Of PackageResourceFileNameInfo)()
 							list.Add(resourceInfo)
 							parentTreeNode.Tag = list
 						Else
-							list = CType(parentTreeNode.Tag, List(Of VpkResourceFileNameInfo))
+							list = CType(parentTreeNode.Tag, List(Of PackageResourceFileNameInfo))
 							list.Add(resourceInfo)
 						End If
-
-						'Dim fileCount As Integer = 0
-						'If treeNode.Tag IsNot Nothing Then
-						'	list = CType(treeNode.Tag, BindingListEx(Of VpkResourceFileNameInfo))
-						'	fileCount = list.Count
-						'End If
-						'Me.SetNodeText(parentTreeNode, fileCount)
 					End If
 					parentTreeNode = treeNode
 				Next
@@ -599,7 +456,7 @@ Public Class UnpackUserControl
 				Dim fileType As String
 				fileType = "<type>"
 
-				Dim resourceInfo As New VpkResourceFileNameInfo()
+				Dim resourceInfo As New PackageResourceFileNameInfo()
 				resourceInfo.PathFileName = pathFileName
 				resourceInfo.Name = fileName
 				resourceInfo.Size = fileSize
@@ -614,11 +471,11 @@ Public Class UnpackUserControl
 				resourceInfo.EntryIndex = Me.theEntryIndex
 
 				If treeNode.Tag Is Nothing Then
-					list = New List(Of VpkResourceFileNameInfo)()
+					list = New List(Of PackageResourceFileNameInfo)()
 					list.Add(resourceInfo)
 					treeNode.Tag = list
 				Else
-					list = CType(treeNode.Tag, List(Of VpkResourceFileNameInfo))
+					list = CType(treeNode.Tag, List(Of PackageResourceFileNameInfo))
 					list.Add(resourceInfo)
 				End If
 
@@ -646,9 +503,9 @@ Public Class UnpackUserControl
 		RemoveHandler TheApp.Unpacker.ProgressChanged, AddressOf Me.ListerBackgroundWorker_ProgressChanged
 		RemoveHandler TheApp.Unpacker.RunWorkerCompleted, AddressOf Me.ListerBackgroundWorker_RunWorkerCompleted
 
-		If Me.VpkTreeView.Nodes.Count > 0 Then
-			Me.VpkTreeView.Nodes(0).Expand()
-			Me.VpkTreeView.SelectedNode = Me.VpkTreeView.Nodes(0)
+		If Me.PackageTreeView.Nodes.Count > 0 Then
+			Me.PackageTreeView.Nodes(0).Expand()
+			Me.PackageTreeView.SelectedNode = Me.PackageTreeView.Nodes(0)
 			Me.ShowFilesInSelectedFolder()
 		End If
 		Me.SetSelectionPathText()
@@ -682,14 +539,6 @@ Public Class UnpackUserControl
 			Dim unpackResultInfo As UnpackerOutputInfo
 			unpackResultInfo = CType(e.Result, UnpackerOutputInfo)
 
-			''If unpackResultInfo.unpackerAction = VpkAppAction.ExtractToTemp Then
-			''	'Me.DoDragAndDrop(unpackResultInfo.theUnpackedRelativePathFileNames)
-			''Else
-			''	Me.UpdateUnpackedRelativePathFileNames(unpackResultInfo.theUnpackedRelativePathFileNames)
-			''End If
-			'If unpackResultInfo.unpackerAction <> VpkAppAction.ExtractToTemp Then
-			'	Me.UpdateUnpackedRelativePathFileNames(unpackResultInfo.theUnpackedRelativePathFileNames)
-			'End If
 			Me.UpdateUnpackedRelativePathFileNames(unpackResultInfo.theUnpackedRelativePathFileNames)
 			Me.theOutputPathOrOutputFileName = TheApp.Unpacker.GetOutputPathOrOutputFileName()
 		End If
@@ -703,21 +552,6 @@ Public Class UnpackUserControl
 #End Region
 
 #Region "Private Methods"
-
-	'Private Sub UpdateOutputFolderWidgets()
-	'	Me.OutputSubfolderNameTextBox.ReadOnly = Not Me.OutputSubfolderNameRadioButton.Checked
-	'	Me.OutputFullPathTextBox.ReadOnly = Me.OutputSubfolderNameRadioButton.Checked
-	'	Me.BrowseForOutputPathNameButton.Enabled = Not Me.OutputSubfolderNameRadioButton.Checked
-	'End Sub
-
-	'Private Sub UpdateOutputFullPathTextBox()
-	'	If String.IsNullOrEmpty(Me.OutputFullPathTextBox.Text) Then
-	'		Try
-	'			TheApp.Settings.UnpackOutputFullPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
-	'		Catch
-	'		End Try
-	'	End If
-	'End Sub
 
 	Private Sub UpdateOutputPathComboBox()
 		Dim anEnumList As IList
@@ -788,20 +622,16 @@ Public Class UnpackUserControl
 			Dim outputPathWdw As New OpenFileDialog()
 
 			outputPathWdw.Title = "Open the folder you want as Output Folder"
-			'If Directory.Exists(TheApp.Settings.UnpackOutputFullPath) Then
-			'	outputPathWdw.InitialDirectory = TheApp.Settings.UnpackOutputFullPath
-			'Else
 			outputPathWdw.InitialDirectory = FileManager.GetLongestExtantPath(TheApp.Settings.UnpackOutputFullPath)
 			If outputPathWdw.InitialDirectory = "" Then
-				If File.Exists(TheApp.Settings.UnpackVpkPathFolderOrFileName) Then
-					outputPathWdw.InitialDirectory = FileManager.GetPath(TheApp.Settings.UnpackVpkPathFolderOrFileName)
-				ElseIf Directory.Exists(TheApp.Settings.UnpackVpkPathFolderOrFileName) Then
-					outputPathWdw.InitialDirectory = TheApp.Settings.UnpackVpkPathFolderOrFileName
+				If File.Exists(TheApp.Settings.UnpackPackagePathFolderOrFileName) Then
+					outputPathWdw.InitialDirectory = FileManager.GetPath(TheApp.Settings.UnpackPackagePathFolderOrFileName)
+				ElseIf Directory.Exists(TheApp.Settings.UnpackPackagePathFolderOrFileName) Then
+					outputPathWdw.InitialDirectory = TheApp.Settings.UnpackPackagePathFolderOrFileName
 				Else
 					outputPathWdw.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
 				End If
 			End If
-			'End If
 			outputPathWdw.FileName = "[Folder Selection]"
 			outputPathWdw.AddExtension = False
 			outputPathWdw.CheckFileExists = False
@@ -831,73 +661,17 @@ Public Class UnpackUserControl
 				FileManager.OpenWindowsExplorer(gameModelsPath)
 			End If
 		ElseIf TheApp.Settings.UnpackOutputFolderOption = UnpackOutputPathOptions.WorkFolder Then
-			'FileManager.OpenWindowsExplorer(Me.OutputPathTextBox.Text)
 			FileManager.OpenWindowsExplorer(TheApp.Settings.UnpackOutputFullPath)
 		End If
 	End Sub
-
-	'Private Sub UpdateVpkSelection()
-	'	Dim vpkPathFileName As String
-	'	Dim vpkPath As String = ""
-	'	vpkPathFileName = TheApp.Settings.UnpackVpkPathFolderOrFileName
-	'	If File.Exists(vpkPathFileName) Then
-	'		vpkPath = FileManager.GetPath(vpkPathFileName)
-	'	ElseIf Directory.Exists(vpkPathFileName) Then
-	'		vpkPath = vpkPathFileName
-	'	End If
-
-	'	Me.theVpkFileNames.Clear()
-	'	If Not String.IsNullOrEmpty(vpkPath) Then
-	'		If TheApp.Settings.UnpackMode = ActionMode.FolderRecursion Then
-	'			Me.UpdateVpkPathFileNamesInFolderRecursively(vpkPath)
-	'		ElseIf TheApp.Settings.UnpackMode = ActionMode.Folder Then
-	'			Me.UpdateVpkPathFileNamesInFolder(vpkPath)
-	'		Else
-	'			Dim info As New VpkPathFileNameInfo()
-	'			info.RelativePathFileName = vpkPathFileName
-	'			info.PathFileName = vpkPathFileName
-	'			Me.theVpkFileNames.Add(info)
-	'		End If
-	'		Me.theVpkFileNames.Sort()
-	'	End If
-
-	'	'If Me.theVpkFileNames.Count = 0 Then
-	'	'	TheApp.Settings.UnpackVpkPathFileName = ""
-	'	'Else
-	'	'	TheApp.Settings.UnpackVpkPathFileName = Me.theVpkFileNames(0).RelativePathFileName
-	'	'End If
-	'End Sub
-
-	'Private Sub UpdateVpkPathFileNamesInFolderRecursively(ByVal aPath As String)
-	'	Me.UpdateVpkPathFileNamesInFolder(aPath)
-
-	'	For Each aPathSubFolder As String In Directory.GetDirectories(aPath)
-	'		Me.UpdateVpkPathFileNamesInFolderRecursively(aPathSubFolder)
-	'	Next
-	'End Sub
-
-	'Private Sub UpdateVpkPathFileNamesInFolder(ByVal aPath As String)
-	'	For Each aPathFileName As String In Directory.GetFiles(aPath, "*.vpk")
-	'		Dim info As New VpkPathFileNameInfo()
-	'		info.RelativePathFileName = aPathFileName
-	'		info.PathFileName = aPathFileName
-	'		Me.theVpkFileNames.Add(info)
-	'	Next
-	'End Sub
 
 	Private Sub UpdateWidgets(ByVal unpackerIsRunning As Boolean)
 		TheApp.Settings.UnpackerIsRunning = unpackerIsRunning
 
 		Me.UnpackComboBox.Enabled = Not unpackerIsRunning
-		Me.VpkPathFileNameTextBox.Enabled = Not unpackerIsRunning
-		Me.BrowseForVpkPathFolderOrFileNameButton.Enabled = Not unpackerIsRunning
+		Me.PackagePathFileNameTextBox.Enabled = Not unpackerIsRunning
+		Me.BrowseForPackagePathFolderOrFileNameButton.Enabled = Not unpackerIsRunning
 
-		'Me.OutputSubfolderNameRadioButton.Enabled = Not unpackerIsRunning
-		'Me.OutputSubfolderNameTextBox.Enabled = Not unpackerIsRunning
-		'Me.UseDefaultOutputSubfolderNameButton.Enabled = Not unpackerIsRunning
-		'Me.OutputFullPathRadioButton.Enabled = Not unpackerIsRunning
-		'Me.OutputFullPathTextBox.Enabled = Not unpackerIsRunning
-		'Me.BrowseForOutputPathNameButton.Enabled = Not unpackerIsRunning
 		Me.OutputPathComboBox.Enabled = Not unpackerIsRunning
 		Me.OutputPathTextBox.Enabled = Not unpackerIsRunning
 		Me.OutputSubfolderTextBox.Enabled = Not unpackerIsRunning
@@ -908,10 +682,9 @@ Public Class UnpackUserControl
 		Me.SelectionGroupBox.Enabled = Not unpackerIsRunning
 
 		Me.OptionsGroupBox.Enabled = Not unpackerIsRunning
-		'Me.GroupIntoQciFilesCheckBox.Enabled = TheApp.Settings.DecompileQcFileIsChecked
 
 		Me.UnpackButton.Enabled = Not unpackerIsRunning
-		Me.SkipCurrentVpkButton.Enabled = unpackerIsRunning
+		Me.SkipCurrentPackageButton.Enabled = unpackerIsRunning
 		Me.CancelUnpackButton.Enabled = unpackerIsRunning
 		Me.UseAllInDecompileButton.Enabled = Not unpackerIsRunning AndAlso Me.theOutputPathOrOutputFileName <> "" AndAlso Me.theUnpackedRelativePathFileNames.Count > 0
 
@@ -921,41 +694,8 @@ Public Class UnpackUserControl
 		Me.GotoUnpackedFileButton.Enabled = Not unpackerIsRunning AndAlso Me.theUnpackedRelativePathFileNames.Count > 0
 	End Sub
 
-	Private Sub UpdateContainerTypeWidgets()
-		Dim containerTypeText As String
-		containerTypeText = TheApp.Settings.UnpackContainerType.ToString()
-
-		'Me.OutputSubfolderNameRadioButton.Text = "Subfolder (of " + containerTypeText + " file or folder):"
-		Me.SelectionGroupBox.Text = "Selection in " + containerTypeText + " files"
-		Me.SkipCurrentVpkButton.Text = "Skip Current " + containerTypeText
-	End Sub
-
-	'Private Sub DoDragAndDrop(ByVal iUnpackedRelativePathFileNames As BindingListEx(Of String))
-	'	If iUnpackedRelativePathFileNames.Count > 0 Then
-	'		Dim pathFileNameCollection As New StringCollection()
-	'		For Each pathFileName As String In iUnpackedRelativePathFileNames
-	'			'pathFileNameCollection.Clear()
-	'			pathFileNameCollection.Add(pathFileName)
-	'			'Dim dataObj As DataObject
-	'			'dataObj = New DataObject
-	'			'dataObj.SetFileDropList(pathFileNameCollection)
-	'			'Me.VpkListView.DoDragDrop(dataObj, DragDropEffects.Move)
-	'		Next
-
-	'		Dim dataObj As DataObject
-	'		dataObj = New DataObject
-	'		dataObj.SetFileDropList(pathFileNameCollection)
-	'		Me.VpkListView.DoDragDrop(dataObj, DragDropEffects.Move)
-	'		TheApp.Unpacker.DeleteTempUnpackFolder()
-	'	End If
-	'End Sub
-
 	Private Sub UpdateUnpackedRelativePathFileNames(ByVal iUnpackedRelativePathFileNames As List(Of String))
-		'Me.theUnpackedRelativePathFileNames.Clear()
 		If iUnpackedRelativePathFileNames IsNot Nothing Then
-			'For Each pathFileName As String In iUnpackedRelativePathFileNames
-			'	Me.theUnpackedRelativePathFileNames.Add(pathFileName)
-			'Next
 			Me.theUnpackedRelativePathFileNames = iUnpackedRelativePathFileNames
 			Me.theUnpackedRelativePathFileNames.Sort()
 			'NOTE: Need to set to nothing first to force it to update.
@@ -972,12 +712,12 @@ Public Class UnpackUserControl
 		previousSelectedInputOption = TheApp.Settings.DecompileMode
 		Me.UnpackComboBox.DataBindings.Clear()
 		Try
-			If File.Exists(TheApp.Settings.UnpackVpkPathFolderOrFileName) Then
+			If File.Exists(TheApp.Settings.UnpackPackagePathFolderOrFileName) Then
 				' Set file mode when a file is selected.
 				previousSelectedInputOption = InputOptions.File
-			ElseIf Directory.Exists(TheApp.Settings.UnpackVpkPathFolderOrFileName) Then
+			ElseIf Directory.Exists(TheApp.Settings.UnpackPackagePathFolderOrFileName) Then
 				'NOTE: Remove in reverse index order.
-				If Directory.GetFiles(TheApp.Settings.UnpackVpkPathFolderOrFileName, "*.vpk").Length = 0 Then
+				If Directory.GetFiles(TheApp.Settings.UnpackPackagePathFolderOrFileName, "*.vpk").Length = 0 Then
 					anEnumList.RemoveAt(InputOptions.Folder)
 				End If
 				anEnumList.RemoveAt(InputOptions.File)
@@ -1003,7 +743,7 @@ Public Class UnpackUserControl
 	Private Sub SetSelectionPathText()
 		Dim selectionPathText As String = ""
 		Dim aTreeNode As TreeNode
-		aTreeNode = Me.VpkTreeView.SelectedNode
+		aTreeNode = Me.PackageTreeView.SelectedNode
 		While aTreeNode IsNot Nothing
 			selectionPathText = aTreeNode.Name + "/" + selectionPathText
 			aTreeNode = aTreeNode.Parent
@@ -1028,25 +768,25 @@ Public Class UnpackUserControl
 	'End Sub
 
 	Private Sub ShowFilesInSelectedFolder()
-		Me.VpkListView.Items.Clear()
+		Me.PackageListView.Items.Clear()
 
 		Dim selectedTreeNode As TreeNode
-		selectedTreeNode = Me.VpkTreeView.SelectedNode
+		selectedTreeNode = Me.PackageTreeView.SelectedNode
 		If selectedTreeNode IsNot Nothing AndAlso selectedTreeNode.Tag IsNot Nothing Then
-			Dim list As List(Of VpkResourceFileNameInfo)
-			list = CType(selectedTreeNode.Tag, List(Of VpkResourceFileNameInfo))
+			Dim list As List(Of PackageResourceFileNameInfo)
+			list = CType(selectedTreeNode.Tag, List(Of PackageResourceFileNameInfo))
 
 			Dim item As ListViewItem
 			Dim anIcon As Bitmap
-			For Each info As VpkResourceFileNameInfo In list
+			For Each info As PackageResourceFileNameInfo In list
 				item = New ListViewItem(info.Name)
 				item.Tag = info
 				If info.IsFolder Then
 					Dim treeNodeForFolder As TreeNode
-					Dim listForFolder As List(Of VpkResourceFileNameInfo)
+					Dim listForFolder As List(Of PackageResourceFileNameInfo)
 					Dim itemCountText As String
 					treeNodeForFolder = selectedTreeNode.Nodes.Find(info.Name, False)(0)
-					listForFolder = CType(treeNodeForFolder.Tag, List(Of VpkResourceFileNameInfo))
+					listForFolder = CType(treeNodeForFolder.Tag, List(Of PackageResourceFileNameInfo))
 					itemCountText = listForFolder.Count.ToString()
 					If listForFolder.Count = 1 Then
 						itemCountText += " item"
@@ -1071,10 +811,10 @@ Public Class UnpackUserControl
 				End If
 				item.ImageKey = info.Extension
 
-				Me.VpkListView.Items.Add(item)
+				Me.PackageListView.Items.Add(item)
 			Next
 
-			Me.VpkListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent)
+			Me.PackageListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent)
 
 			Me.UpdateSelectionCounts()
 		End If
@@ -1087,9 +827,9 @@ Public Class UnpackUserControl
 		textToFind = Me.FindToolStripTextBox.Text
 		If Not String.IsNullOrWhiteSpace(textToFind) Then
 			Dim selectedTreeNode As TreeNode
-			selectedTreeNode = Me.VpkTreeView.SelectedNode
+			selectedTreeNode = Me.PackageTreeView.SelectedNode
 			If selectedTreeNode Is Nothing Then
-				selectedTreeNode = Me.VpkTreeView.Nodes(0)
+				selectedTreeNode = Me.PackageTreeView.Nodes(0)
 			End If
 
 			Dim resultsCount As Integer = 0
@@ -1101,7 +841,7 @@ Public Class UnpackUserControl
 
 			Me.CreateTreeNodesThatMatchTextToFind(selectedTreeNode, textToFind, resultsRootTreeNode, resultsRootTreeNode, resultsCount)
 
-			Me.VpkTreeView.SelectedNode = resultsRootTreeNode
+			Me.PackageTreeView.SelectedNode = resultsRootTreeNode
 
 			Me.theSearchCount += 1
 		End If
@@ -1109,20 +849,20 @@ Public Class UnpackUserControl
 
 	'TODO: Probably better to have textToFind, resultsRootTreeNode, and resultsCount be private class variables because they are independent of the recursion.
 	Private Sub CreateTreeNodesThatMatchTextToFind(ByVal treeNodeToSearch As TreeNode, ByVal textToFind As String, ByVal resultsRootTreeNode As TreeNode, ByVal currentResultsTreeNode As TreeNode, ByRef resultsCount As Integer)
-		Dim list As List(Of VpkResourceFileNameInfo)
-		list = CType(treeNodeToSearch.Tag, List(Of VpkResourceFileNameInfo))
+		Dim list As List(Of PackageResourceFileNameInfo)
+		list = CType(treeNodeToSearch.Tag, List(Of PackageResourceFileNameInfo))
 
 		If list IsNot Nothing Then
 			Dim infoName As String
-			Dim currentResultsTreeNodeList As List(Of VpkResourceFileNameInfo)
-			currentResultsTreeNodeList = CType(currentResultsTreeNode.Tag, List(Of VpkResourceFileNameInfo))
+			Dim currentResultsTreeNodeList As List(Of PackageResourceFileNameInfo)
+			currentResultsTreeNodeList = CType(currentResultsTreeNode.Tag, List(Of PackageResourceFileNameInfo))
 
-			For Each info As VpkResourceFileNameInfo In list
+			For Each info As PackageResourceFileNameInfo In list
 				If Not info.IsFolder Then
 					infoName = info.Name.ToLower()
 					If infoName.Contains(textToFind.ToLower()) Then
 						If currentResultsTreeNodeList Is Nothing Then
-							currentResultsTreeNodeList = New List(Of VpkResourceFileNameInfo)()
+							currentResultsTreeNodeList = New List(Of PackageResourceFileNameInfo)()
 							currentResultsTreeNode.Tag = currentResultsTreeNodeList
 						End If
 						currentResultsTreeNodeList.Add(info)
@@ -1151,16 +891,16 @@ Public Class UnpackUserControl
 							currentResultsTreeNode.Nodes.Remove(nodeClone)
 						Else
 							If currentResultsTreeNodeList Is Nothing Then
-								currentResultsTreeNodeList = New List(Of VpkResourceFileNameInfo)()
+								currentResultsTreeNodeList = New List(Of PackageResourceFileNameInfo)()
 								currentResultsTreeNode.Tag = currentResultsTreeNodeList
 							End If
-							For Each info As VpkResourceFileNameInfo In list
+							For Each info As PackageResourceFileNameInfo In list
 								If info.IsFolder Then
 									infoName = info.Name.ToLower()
 
 									If infoName = nodeClone.Name.ToLower() Then
 										If currentResultsTreeNodeList Is Nothing Then
-											currentResultsTreeNodeList = New List(Of VpkResourceFileNameInfo)()
+											currentResultsTreeNodeList = New List(Of PackageResourceFileNameInfo)()
 											currentResultsTreeNode.Tag = currentResultsTreeNodeList
 										End If
 										currentResultsTreeNodeList.Add(info)
@@ -1174,81 +914,39 @@ Public Class UnpackUserControl
 		End If
 	End Sub
 
-	'Private Sub CreateTreeNodesThatMatchTextToFind(ByVal iTreeNode As TreeNode, ByVal textToFind As String)
-	'	For Each aTreeNode As TreeNode In iTreeNode.Nodes
-	'		Dim list As List(Of VpkResourceFileNameInfo)
-	'		list = CType(iTreeNode.Tag, List(Of VpkResourceFileNameInfo))
-
-	'		For Each item As VpkResourceFileNameInfo In list
-	'			If Not item.IsFolder Then
-	'				If item.Name.ToLower() = textToFind.ToLower() Then
-	'					'TODO: Insert new node.
-	'					'TODO: Make sure path of nodes exists.
-	'					Dim foldersAndFileName() As String
-	'					foldersAndFileName = item.PathFileName.Split("/"c)
-	'					Dim treeNode As TreeNode = Nothing
-	'					Dim parentTreeNode As TreeNode = Nothing
-	'					parentTreeNode = Me.VpkTreeView.Nodes(0)
-	'					For nameIndex As Integer = 0 To foldersAndFileName.Length - 2
-	'						Dim name As String
-	'						name = foldersAndFileName(nameIndex)
-
-	'						If parentTreeNode.Nodes.ContainsKey(name) Then
-	'							treeNode = parentTreeNode.Nodes.Item(parentTreeNode.Nodes.IndexOfKey(name))
-	'						Else
-	'							treeNode = parentTreeNode.Nodes.Add(name)
-	'							treeNode.Name = name
-	'						End If
-
-	'						'TODO: Add info to the node's Tag.
-
-
-	'						parentTreeNode = treeNode
-	'					Next
-	'				End If
-	'			End If
-	'		Next
-
-	'		Me.CreateTreeNodesThatMatchTextToFind(aTreeNode, textToFind)
-	'	Next
-	'End Sub
-
 	Private Sub UpdateSelectionCounts()
 		Dim fileCount As Integer = 0
 		Dim sizeTotal As Long = 0
 
 		Dim selectedTreeNode As TreeNode
-		selectedTreeNode = Me.VpkTreeView.SelectedNode
+		selectedTreeNode = Me.PackageTreeView.SelectedNode
 		If selectedTreeNode IsNot Nothing AndAlso selectedTreeNode.Tag IsNot Nothing Then
-			Dim list As List(Of VpkResourceFileNameInfo)
-			list = CType(selectedTreeNode.Tag, List(Of VpkResourceFileNameInfo))
+			Dim list As List(Of PackageResourceFileNameInfo)
+			list = CType(selectedTreeNode.Tag, List(Of PackageResourceFileNameInfo))
 
 			fileCount = list.Count
 
-			For Each item As ListViewItem In Me.VpkListView.SelectedItems
-				sizeTotal += CType(item.Tag, VpkResourceFileNameInfo).Size
+			For Each item As ListViewItem In Me.PackageListView.SelectedItems
+				sizeTotal += CType(item.Tag, PackageResourceFileNameInfo).Size
 			Next
 		End If
 
-		Me.FilesSelectedCountToolStripLabel.Text = Me.VpkListView.SelectedItems.Count.ToString() + "/" + fileCount.ToString()
+		Me.FilesSelectedCountToolStripLabel.Text = Me.PackageListView.SelectedItems.Count.ToString() + "/" + fileCount.ToString()
 		Me.SizeSelectedTotalToolStripLabel.Text = sizeTotal.ToString()
 
 		'IMPORTANT: Update the toolstrip so the items are resized properly. Needed because of the 'springing' textbox.
 		Me.ToolStrip1.PerformLayout()
 	End Sub
 
-	Private Function GetEntriesFromFolderEntry(ByVal resourceInfos As List(Of VpkResourceFileNameInfo), ByVal treeNode As TreeNode, ByVal archivePathFileNameToEntryIndexMap As SortedList(Of String, List(Of Integer))) As SortedList(Of String, List(Of Integer))
+	Private Function GetEntriesFromFolderEntry(ByVal resourceInfos As List(Of PackageResourceFileNameInfo), ByVal treeNode As TreeNode, ByVal archivePathFileNameToEntryIndexMap As SortedList(Of String, List(Of Integer))) As SortedList(Of String, List(Of Integer))
 		Dim folderNode As TreeNode
-		Dim folderResourceInfos As List(Of VpkResourceFileNameInfo)
-		For Each resourceInfo As VpkResourceFileNameInfo In resourceInfos
+		Dim folderResourceInfos As List(Of PackageResourceFileNameInfo)
+		For Each resourceInfo As PackageResourceFileNameInfo In resourceInfos
 			If resourceInfo.IsFolder Then
-				folderNode = GetNodeFromPath(Me.VpkTreeView.Nodes(0), treeNode.FullPath + "\" + resourceInfo.Name)
-				folderResourceInfos = CType(folderNode.Tag, List(Of VpkResourceFileNameInfo))
-				'vpkInternalPathFileNames = Me.GetFilesFromFolder(folderResourceInfos, folderNode, vpkInternalPathFileNames, vpkInternalEntryIndexes)
-				'vpkInternalEntryIndexes = Me.GetEntriesFromFolderEntry(folderResourceInfos, folderNode, vpkInternalEntryIndexes)
+				folderNode = GetNodeFromPath(Me.PackageTreeView.Nodes(0), treeNode.FullPath + "\" + resourceInfo.Name)
+				folderResourceInfos = CType(folderNode.Tag, List(Of PackageResourceFileNameInfo))
 				archivePathFileNameToEntryIndexMap = Me.GetEntriesFromFolderEntry(folderResourceInfos, folderNode, archivePathFileNameToEntryIndexMap)
 			Else
-				'vpkInternalEntryIndexes.Add(resourceInfo.EntryIndex)
 				Dim archivePathFileName As String
 				Dim archiveEntryIndex As Integer
 				archivePathFileName = resourceInfo.ArchivePathFileName
@@ -1287,22 +985,17 @@ Public Class UnpackUserControl
 
 	Private Sub OpenSelectedFolderOrFile()
 		Dim selectedItem As ListViewItem
-		selectedItem = Me.VpkListView.SelectedItems(0)
+		selectedItem = Me.PackageListView.SelectedItems(0)
 
-		Dim resourceInfo As VpkResourceFileNameInfo
-		resourceInfo = CType(selectedItem.Tag, VpkResourceFileNameInfo)
+		Dim resourceInfo As PackageResourceFileNameInfo
+		resourceInfo = CType(selectedItem.Tag, PackageResourceFileNameInfo)
 
 		If resourceInfo.IsFolder Then
 			Dim selectedTreeNode As TreeNode
-			selectedTreeNode = Me.VpkTreeView.SelectedNode
-			Me.VpkTreeView.SelectedNode = selectedTreeNode.Nodes(resourceInfo.Name)
+			selectedTreeNode = Me.PackageTreeView.SelectedNode
+			Me.PackageTreeView.SelectedNode = selectedTreeNode.Nodes(resourceInfo.Name)
 		Else
 			' Extract the file to the user's temp folder and open it as if it were opened in File Explorer.
-			'Dim vpkInternalPathFileNames As New List(Of String)()
-			'vpkInternalPathFileNames.Add(resourceInfo.PathFileName)
-			'Dim vpkInternalEntryIndexes As New List(Of Integer)()
-			'vpkInternalEntryIndexes.Add(resourceInfo.EntryIndex)
-			'TheApp.Unpacker.Run(ArchiveAction.ExtractAndOpen, vpkInternalEntryIndexes)
 			Dim archivePathFileNameToEntryIndexMap As New SortedList(Of String, List(Of Integer))()
 			Dim archiveEntryIndexes As New List(Of Integer)()
 			archiveEntryIndexes.Add(resourceInfo.EntryIndex)
@@ -1311,133 +1004,29 @@ Public Class UnpackUserControl
 		End If
 	End Sub
 
-	'Private Sub ExtractToTemp()
-	'	'If Me.VpkListView.SelectedItems.Count > 0 Then
-	'	'	Me.RunUnpackerToExtractFiles(VpkAppAction.ExtractToTemp)
-	'	'ElseIf Me.VpkTreeView.SelectedNode IsNot Nothing AndAlso Me.VpkTreeView.SelectedNode IsNot Me.VpkTreeView.Nodes(0) Then
-	'	'	Me.RunUnpackerToExtractFolder(VpkAppAction.ExtractToTemp)
-	'	'End If
-
-	'	''NOTE: Wait for the Unpacker to finish, so that when listview.DoDragDrop is done, the Unpacker temp folder can be deleted.
-	'	'While TheApp.Unpacker.IsBusy
-	'	'	Application.DoEvents()
-	'	'End While
-
-	'	TheApp.Unpacker.RunSynchronous(Me.thePackInternalPathFileNames, Me.thePackInternalEntryIndexes, Me.theGivenHardLinkFileName, VpkAppAction.ExtractToTemp)
-	'End Sub
-
-	'Private Sub DoDragAndDrop(ByVal iUnpackedRelativePathFileNames As BindingListEx(Of String))
-	'	If iUnpackedRelativePathFileNames.Count > 0 Then
-	'		Dim pathFileNameCollection As New StringCollection()
-	'		For Each pathFileName As String In iUnpackedRelativePathFileNames
-	'			pathFileNameCollection.Add(pathFileName)
-	'		Next
-
-	'		'Dim dataObj As DataObject
-	'		'dataObj = New DataObject
-	'		'dataObj.SetFileDropList(pathFileNameCollection)
-	'		'Me.VpkListView.DoDragDrop(dataObj, DragDropEffects.Move)
-	'		'TheApp.Unpacker.DeleteTempUnpackFolder()
-	'		'======
-	'		'dataObj.SetFileDropList(pathFileNameCollection)
-	'		'======
-	'		theDataObject = New FileDragDropHelper(AddressOf ExtractToTemp, AddressOf CleanupExtractToTemp)
-	'		theDataObject.SetFileDropList(pathFileNameCollection)
-	'		Me.VpkListView.DoDragDrop(theDataObject, DragDropEffects.Move)
-	'	End If
-	'End Sub
-
-	'Private Sub CleanupExtractToTemp()
-	'	TheApp.Unpacker.DeleteTempUnpackFolder()
-	'End Sub
-
-	'Private Sub RunUnpackerToExtractFolder(ByVal unpackerAction As ArchiveAction)
-	'	Dim resourceInfos As BindingListEx(Of VpkResourceFileNameInfo)
-	'	Dim selectedVpkInternalPathFileNames As List(Of String)
-
-	'	selectedVpkInternalPathFileNames = New List(Of String)()
-	'	resourceInfos = CType(Me.VpkTreeView.SelectedNode.Tag, BindingListEx(Of VpkResourceFileNameInfo))
-	'	Me.thePackInternalEntryIndexes = New List(Of Integer)()
-	'	Me.thePackInternalEntryIndexes = Me.GetFilesFromFolder(resourceInfos, Me.VpkTreeView.SelectedNode, Me.thePackInternalEntryIndexes)
-
-	'	AddHandler TheApp.Unpacker.ProgressChanged, AddressOf Me.UnpackerBackgroundWorker_ProgressChanged
-	'	AddHandler TheApp.Unpacker.RunWorkerCompleted, AddressOf Me.UnpackerBackgroundWorker_RunWorkerCompleted
-
-	'	If unpackerAction = ArchiveAction.ExtractToTemp Then
-	'		TheApp.Unpacker.RunSynchronous(unpackerAction, Me.thePackInternalEntryIndexes)
-
-	'		Dim tempPathFileNames As List(Of String) = Nothing
-	'		selectedVpkInternalPathFileNames.Add(Me.VpkTreeView.SelectedNode.FullPath.Substring(7))
-	'		TheApp.Unpacker.GetTempPathFileNames(selectedVpkInternalPathFileNames, tempPathFileNames)
-
-	'		Me.DoDragAndDrop(tempPathFileNames)
-	'	Else
-	'		TheApp.Unpacker.Run(unpackerAction, Me.thePackInternalEntryIndexes)
-	'	End If
-	'End Sub
-
 	Private Sub RunUnpackerToExtractFiles(ByVal unpackerAction As ArchiveAction, ByVal selectedItems As ListView.SelectedListViewItemCollection)
-		Dim selectedResourceInfo As VpkResourceFileNameInfo
-		Dim selectedResourceInfos As New List(Of VpkResourceFileNameInfo)
+		Dim selectedResourceInfo As PackageResourceFileNameInfo
+		Dim selectedResourceInfos As New List(Of PackageResourceFileNameInfo)
 		For Each selectedItem As ListViewItem In selectedItems
-			selectedResourceInfo = CType(selectedItem.Tag, VpkResourceFileNameInfo)
+			selectedResourceInfo = CType(selectedItem.Tag, PackageResourceFileNameInfo)
 			selectedResourceInfos.Add(selectedResourceInfo)
 		Next
 
 		Me.RunUnpackerToExtractFilesInternal(unpackerAction, selectedResourceInfos)
 	End Sub
 
-	Private Sub RunUnpackerToExtractFilesInternal(ByVal unpackerAction As ArchiveAction, ByVal selectedResourceInfos As List(Of VpkResourceFileNameInfo))
-		Dim selectedVpkInternalPathFileNames As New List(Of String)()
+	Private Sub RunUnpackerToExtractFilesInternal(ByVal unpackerAction As ArchiveAction, ByVal selectedResourceInfos As List(Of PackageResourceFileNameInfo))
+		Dim selectedPackageInternalPathFileNames As New List(Of String)()
 		Dim archivePathFileNameToEntryIndexMap As New SortedList(Of String, List(Of Integer))()
 		Dim selectedNode As TreeNode
 
-		selectedNode = Me.VpkTreeView.SelectedNode
+		selectedNode = Me.PackageTreeView.SelectedNode
 		If selectedNode Is Nothing Then
-			selectedNode = Me.VpkTreeView.Nodes(0)
+			selectedNode = Me.PackageTreeView.Nodes(0)
 		End If
 
 		If selectedResourceInfos Is Nothing Then
-			''If Me.VpkTreeView.SelectedNode Is Me.VpkTreeView.Nodes(0) Then
-			'If Me.VpkTreeView.SelectedNode.Text.StartsWith("<") Then
-			'	' User selected a <Found> folder in treeview, so fill-in selectedResourceInfos as if all items in listview were selected.
-			'	Dim rootResourceInfo As VpkResourceFileNameInfo
-			'	selectedResourceInfos = New List(Of VpkResourceFileNameInfo)
-			'	For Each item As ListViewItem In Me.VpkListView.Items
-			'		rootResourceInfo = CType(item.Tag, VpkResourceFileNameInfo)
-			'		selectedResourceInfos.Add(rootResourceInfo)
-			'	Next
-			'Else
-			'	'' User selected a folder in treeview, so set the selectedNode and fill-in selectedResourceInfos as if the folder in listview were selected.
-
-			'	'' Select the node above the selected one, as it would be if user selected the folder from the listview.
-			'	'Dim nodePath As String
-			'	'Dim treeNodePath As String
-			'	'nodePath = selectedNode.FullPath.Substring(Me.VpkTreeView.Nodes(0).Text.Length + 1)
-			'	'treeNodePath = FileManager.GetPath(nodePath)
-			'	'If treeNodePath = nodePath Then
-			'	'	selectedNode = Me.VpkTreeView.Nodes(0)
-			'	'Else
-			'	'	selectedNode = GetNodeFromPath(Me.VpkTreeView.Nodes(0), Me.VpkTreeView.Nodes(0).Text + "\" + treeNodePath)
-			'	'End If
-
-			'	'' Set the resourceInfo to match the folder as if user selected the folder from the listview.
-			'	'selectedResourceInfos = New List(Of VpkResourceFileNameInfo)
-			'	'Dim list As List(Of VpkResourceFileNameInfo)
-			'	'list = CType(selectedNode.Tag, List(Of VpkResourceFileNameInfo))
-			'	'For Each resourceInfo As VpkResourceFileNameInfo In list
-			'	'	If Me.VpkTreeView.SelectedNode.Text = resourceInfo.Name Then
-			'	'		selectedResourceInfos.Add(resourceInfo)
-			'	'		Exit For
-			'	'	End If
-			'	'Next
-
-			'	'======
-
-			'	selectedResourceInfos = CType(selectedNode.Tag, List(Of VpkResourceFileNameInfo))
-			'End If
-			'======
-			selectedResourceInfos = CType(selectedNode.Tag, List(Of VpkResourceFileNameInfo))
+			selectedResourceInfos = CType(selectedNode.Tag, List(Of PackageResourceFileNameInfo))
 		End If
 
 		archivePathFileNameToEntryIndexMap = Me.GetEntriesFromFolderEntry(selectedResourceInfos, selectedNode, archivePathFileNameToEntryIndexMap)
@@ -1446,54 +1035,20 @@ Public Class UnpackUserControl
 		AddHandler TheApp.Unpacker.RunWorkerCompleted, AddressOf Me.UnpackerBackgroundWorker_RunWorkerCompleted
 
 		If unpackerAction = ArchiveAction.ExtractToTemp Then
-			For Each resourceInfo As VpkResourceFileNameInfo In selectedResourceInfos
-				selectedVpkInternalPathFileNames.Add(resourceInfo.PathFileName)
+			For Each resourceInfo As PackageResourceFileNameInfo In selectedResourceInfos
+				selectedPackageInternalPathFileNames.Add(resourceInfo.PathFileName)
 			Next
 
 			TheApp.Unpacker.RunSynchronous(unpackerAction, archivePathFileNameToEntryIndexMap)
 
 			Dim tempPathFileNames As List(Of String) = Nothing
-			tempPathFileNames = TheApp.Unpacker.GetTempPathsAndPathFileNames(selectedVpkInternalPathFileNames)
+			tempPathFileNames = TheApp.Unpacker.GetTempPathsAndPathFileNames(selectedPackageInternalPathFileNames)
 
 			Me.DoDragAndDrop(tempPathFileNames)
 		Else
 			TheApp.Unpacker.Run(unpackerAction, archivePathFileNameToEntryIndexMap)
 		End If
 	End Sub
-
-	'Private Sub RunUnpacker()
-	'	AddHandler TheApp.Unpacker.ProgressChanged, AddressOf Me.UnpackerBackgroundWorker_ProgressChanged
-	'	AddHandler TheApp.Unpacker.RunWorkerCompleted, AddressOf Me.UnpackerBackgroundWorker_RunWorkerCompleted
-
-	'	TheApp.Unpacker.Run(ArchiveAction.Unpack, Nothing)
-	'End Sub
-
-	'Private Sub DoDragAndDrop(ByVal iUnpackedRelativePathFileNames As List(Of String))
-	'	If iUnpackedRelativePathFileNames.Count > 0 Then
-	'		Dim pathFileNameCollection As New StringCollection()
-	'		For Each pathFileName As String In iUnpackedRelativePathFileNames
-	'			pathFileNameCollection.Add(pathFileName)
-	'		Next
-
-	'		'Dim dragDropDataObject As FileDragDropHelper
-	'		'dragDropDataObject = New FileDragDropHelper(AddressOf ExtractToTemp, AddressOf CleanupExtractToTemp)
-	'		Dim dragDropDataObject As DataObject
-	'		dragDropDataObject = New DataObject()
-
-	'		'TODO: Use CFSTR_FILECONTENTS and CFSTR_FILEDESCRIPTOR instead, so that FD_PROGRESSUI (progress dialog) and maybe streaming of file data can be used.
-	'		dragDropDataObject.SetFileDropList(pathFileNameCollection)
-	'		'theDataObject.SetData(Win32Api.CFSTR_PERFORMEDDROPEFFECT, Nothing)
-
-	'		Dim result As DragDropEffects
-	'		result = Me.VpkListView.DoDragDrop(dragDropDataObject, DragDropEffects.Move)
-	'		'TheApp.Unpacker.DeleteTempUnpackFolder()
-
-	'		RemoveHandler TheApp.Unpacker.ProgressChanged, AddressOf Me.UnpackerBackgroundWorker_ProgressChanged
-	'		RemoveHandler TheApp.Unpacker.RunWorkerCompleted, AddressOf Me.UnpackerBackgroundWorker_RunWorkerCompleted
-
-	'		Me.UpdateWidgets(False)
-	'	End If
-	'End Sub
 
 	Private Sub DoDragAndDrop(ByVal iUnpackedRelativePathFileNames As List(Of String))
 		If iUnpackedRelativePathFileNames.Count > 0 Then
@@ -1506,10 +1061,9 @@ Public Class UnpackUserControl
 			dragDropDataObject = New DataObject()
 
 			dragDropDataObject.SetFileDropList(pathFileNameCollection)
-			'theDataObject.SetData(Win32Api.CFSTR_PERFORMEDDROPEFFECT, Nothing)
 
 			Dim result As DragDropEffects
-			result = Me.VpkListView.DoDragDrop(dragDropDataObject, DragDropEffects.Move)
+			result = Me.PackageListView.DoDragDrop(dragDropDataObject, DragDropEffects.Move)
 			TheApp.Unpacker.DeleteTempUnpackFolder()
 
 			RemoveHandler TheApp.Unpacker.ProgressChanged, AddressOf Me.UnpackerBackgroundWorker_ProgressChanged
@@ -1519,34 +1073,13 @@ Public Class UnpackUserControl
 		End If
 	End Sub
 
-	'Private Sub DoDragAndDrop(ByVal SelectedItems As List(Of DataObjectEx.SelectedItem))
-	'	If SelectedItems.Count > 0 Then
-	'		Dim dragDropDataObject As DataObjectEx
-
-	'		'TODO: Use CFSTR_FILECONTENTS and CFSTR_FILEDESCRIPTOR instead, so that FD_PROGRESSUI (progress dialog) and maybe streaming of file data can be used.
-	'		dragDropDataObject = New DataObjectEx(SelectedItems)
-	'		dragDropDataObject.SetData(Win32Api.CFSTR_FILEDESCRIPTORW, Nothing)
-	'		dragDropDataObject.SetData(Win32Api.CFSTR_FILECONTENTS, Nothing)
-	'		dragDropDataObject.SetData(Win32Api.CFSTR_PERFORMEDDROPEFFECT, Nothing)
-
-	'		Dim result As DragDropEffects
-	'		result = Me.VpkListView.DoDragDrop(dragDropDataObject, DragDropEffects.Move)
-	'		'TheApp.Unpacker.DeleteTempUnpackFolder()
-
-	'		RemoveHandler TheApp.Unpacker.ProgressChanged, AddressOf Me.UnpackerBackgroundWorker_ProgressChanged
-	'		RemoveHandler TheApp.Unpacker.RunWorkerCompleted, AddressOf Me.UnpackerBackgroundWorker_RunWorkerCompleted
-
-	'		Me.UpdateWidgets(False)
-	'	End If
-	'End Sub
-
 	Private Sub DeleteSearch()
-		Me.VpkTreeView.SelectedNode.Parent.Nodes.Remove(Me.VpkTreeView.SelectedNode)
+		Me.PackageTreeView.SelectedNode.Parent.Nodes.Remove(Me.PackageTreeView.SelectedNode)
 		Me.theSearchCount -= 1
 	End Sub
 
 	Private Sub DeleteAllSearches()
-		Me.RecursivelyDeleteSearchNodes(Me.VpkTreeView.Nodes)
+		Me.RecursivelyDeleteSearchNodes(Me.PackageTreeView.Nodes)
 		Me.theSearchCount = 0
 	End Sub
 
@@ -1571,20 +1104,15 @@ Public Class UnpackUserControl
 	Private WithEvents DeleteSearchToolStripMenuItem As New ToolStripMenuItem("Delete search")
 	Private WithEvents DeleteAllSearchesToolStripMenuItem As New ToolStripMenuItem("Delete all searches")
 
-	Private theVpkFileNames As BindingListEx(Of VpkPathFileNameInfo)
-	'Private thePathsWithinSelectedVpk As List(Of String)
-	'Private theFileNameListsForPathsWithinSelectedVpk As SortedList(Of String, BindingListEx(Of String))
-	'Private theEmptyList As BindingListEx(Of VpkResourceFileNameInfo)
+	Private thePackageFileNames As BindingListEx(Of PackagePathFileNameInfo)
 
 	Private theUnpackedRelativePathFileNames As List(Of String)
 	Private theOutputPathOrOutputFileName As String
 
 	Private theSortColumnIndex As Integer
 
-	'Private thePackInternalEntryIndexes As List(Of Integer)
 	Private thePackEntries As List(Of Integer)
 	Private theGivenHardLinkFileName As String
-	'Private theDataObject As FileDragDropHelper
 
 	Private theArchivePathFileName As String
 	Private theEntryIndex As Integer

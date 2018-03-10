@@ -34,9 +34,9 @@ Partial Class UnpackUserControl
 		Me.Label2 = New System.Windows.Forms.Label()
 		Me.UseDefaultOutputSubfolderButton = New System.Windows.Forms.Button()
 		Me.Label1 = New System.Windows.Forms.Label()
-		Me.VpkPathFileNameTextBox = New Crowbar.TextBoxEx()
-		Me.BrowseForVpkPathFolderOrFileNameButton = New System.Windows.Forms.Button()
-		Me.GotoVpkButton = New System.Windows.Forms.Button()
+		Me.PackagePathFileNameTextBox = New Crowbar.TextBoxEx()
+		Me.BrowseForPackagePathFolderOrFileNameButton = New System.Windows.Forms.Button()
+		Me.GotoPackageButton = New System.Windows.Forms.Button()
 		Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
 		Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
 		Me.SelectionGroupBox = New System.Windows.Forms.GroupBox()
@@ -48,10 +48,10 @@ Partial Class UnpackUserControl
 		Me.SizeSelectedTotalToolStripLabel = New System.Windows.Forms.ToolStripLabel()
 		Me.SelectionPathTextBox = New System.Windows.Forms.TextBox()
 		Me.SplitContainer3 = New System.Windows.Forms.SplitContainer()
-		Me.VpkTreeView = New System.Windows.Forms.TreeView()
+		Me.PackageTreeView = New System.Windows.Forms.TreeView()
 		Me.ImageList1 = New System.Windows.Forms.ImageList(Me.components)
-		Me.VpkListView = New System.Windows.Forms.ListView()
-		Me.VpkDataGridView = New System.Windows.Forms.DataGridView()
+		Me.PackageListView = New System.Windows.Forms.ListView()
+		Me.PackageDataGridView = New System.Windows.Forms.DataGridView()
 		Me.OptionsGroupBox = New System.Windows.Forms.GroupBox()
 		Me.Panel1 = New System.Windows.Forms.Panel()
 		Me.Label3 = New System.Windows.Forms.Label()
@@ -61,7 +61,7 @@ Partial Class UnpackUserControl
 		Me.LogFileCheckBox = New System.Windows.Forms.CheckBox()
 		Me.UnpackOptionsUseDefaultsButton = New System.Windows.Forms.Button()
 		Me.UnpackButton = New System.Windows.Forms.Button()
-		Me.SkipCurrentVpkButton = New System.Windows.Forms.Button()
+		Me.SkipCurrentPackageButton = New System.Windows.Forms.Button()
 		Me.CancelUnpackButton = New System.Windows.Forms.Button()
 		Me.UseAllInDecompileButton = New System.Windows.Forms.Button()
 		Me.UnpackerLogTextBox = New Crowbar.RichTextBoxEx()
@@ -69,7 +69,6 @@ Partial Class UnpackUserControl
 		Me.UseInPreviewButton = New System.Windows.Forms.Button()
 		Me.UseInDecompileButton = New System.Windows.Forms.Button()
 		Me.GotoUnpackedFileButton = New System.Windows.Forms.Button()
-		Me.ContainerTypeComboBox = New System.Windows.Forms.ComboBox()
 		Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
 		Me.Panel2.SuspendLayout()
 		CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -86,7 +85,7 @@ Partial Class UnpackUserControl
 		Me.SplitContainer3.Panel1.SuspendLayout()
 		Me.SplitContainer3.Panel2.SuspendLayout()
 		Me.SplitContainer3.SuspendLayout()
-		CType(Me.VpkDataGridView, System.ComponentModel.ISupportInitialize).BeginInit()
+		CType(Me.PackageDataGridView, System.ComponentModel.ISupportInitialize).BeginInit()
 		Me.OptionsGroupBox.SuspendLayout()
 		Me.Panel1.SuspendLayout()
 		Me.SuspendLayout()
@@ -103,11 +102,10 @@ Partial Class UnpackUserControl
 		Me.Panel2.Controls.Add(Me.Label2)
 		Me.Panel2.Controls.Add(Me.UseDefaultOutputSubfolderButton)
 		Me.Panel2.Controls.Add(Me.Label1)
-		Me.Panel2.Controls.Add(Me.VpkPathFileNameTextBox)
-		Me.Panel2.Controls.Add(Me.BrowseForVpkPathFolderOrFileNameButton)
-		Me.Panel2.Controls.Add(Me.GotoVpkButton)
+		Me.Panel2.Controls.Add(Me.PackagePathFileNameTextBox)
+		Me.Panel2.Controls.Add(Me.BrowseForPackagePathFolderOrFileNameButton)
+		Me.Panel2.Controls.Add(Me.GotoPackageButton)
 		Me.Panel2.Controls.Add(Me.SplitContainer1)
-		Me.Panel2.Controls.Add(Me.ContainerTypeComboBox)
 		Me.Panel2.Dock = System.Windows.Forms.DockStyle.Fill
 		Me.Panel2.Location = New System.Drawing.Point(0, 0)
 		Me.Panel2.Margin = New System.Windows.Forms.Padding(2)
@@ -211,34 +209,34 @@ Partial Class UnpackUserControl
 		Me.Label1.TabIndex = 1
 		Me.Label1.Text = "Package:"
 		'
-		'VpkPathFileNameTextBox
+		'PackagePathFileNameTextBox
 		'
-		Me.VpkPathFileNameTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+		Me.PackagePathFileNameTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.VpkPathFileNameTextBox.Location = New System.Drawing.Point(209, 5)
-		Me.VpkPathFileNameTextBox.Name = "VpkPathFileNameTextBox"
-		Me.VpkPathFileNameTextBox.Size = New System.Drawing.Size(445, 21)
-		Me.VpkPathFileNameTextBox.TabIndex = 2
+		Me.PackagePathFileNameTextBox.Location = New System.Drawing.Point(209, 5)
+		Me.PackagePathFileNameTextBox.Name = "PackagePathFileNameTextBox"
+		Me.PackagePathFileNameTextBox.Size = New System.Drawing.Size(445, 21)
+		Me.PackagePathFileNameTextBox.TabIndex = 2
 		'
-		'BrowseForVpkPathFolderOrFileNameButton
+		'BrowseForPackagePathFolderOrFileNameButton
 		'
-		Me.BrowseForVpkPathFolderOrFileNameButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.BrowseForVpkPathFolderOrFileNameButton.Location = New System.Drawing.Point(660, 3)
-		Me.BrowseForVpkPathFolderOrFileNameButton.Name = "BrowseForVpkPathFolderOrFileNameButton"
-		Me.BrowseForVpkPathFolderOrFileNameButton.Size = New System.Drawing.Size(64, 23)
-		Me.BrowseForVpkPathFolderOrFileNameButton.TabIndex = 3
-		Me.BrowseForVpkPathFolderOrFileNameButton.Text = "Browse..."
-		Me.BrowseForVpkPathFolderOrFileNameButton.UseVisualStyleBackColor = True
+		Me.BrowseForPackagePathFolderOrFileNameButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.BrowseForPackagePathFolderOrFileNameButton.Location = New System.Drawing.Point(660, 3)
+		Me.BrowseForPackagePathFolderOrFileNameButton.Name = "BrowseForPackagePathFolderOrFileNameButton"
+		Me.BrowseForPackagePathFolderOrFileNameButton.Size = New System.Drawing.Size(64, 23)
+		Me.BrowseForPackagePathFolderOrFileNameButton.TabIndex = 3
+		Me.BrowseForPackagePathFolderOrFileNameButton.Text = "Browse..."
+		Me.BrowseForPackagePathFolderOrFileNameButton.UseVisualStyleBackColor = True
 		'
-		'GotoVpkButton
+		'GotoPackageButton
 		'
-		Me.GotoVpkButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.GotoVpkButton.Location = New System.Drawing.Point(730, 3)
-		Me.GotoVpkButton.Name = "GotoVpkButton"
-		Me.GotoVpkButton.Size = New System.Drawing.Size(43, 23)
-		Me.GotoVpkButton.TabIndex = 4
-		Me.GotoVpkButton.Text = "Goto"
-		Me.GotoVpkButton.UseVisualStyleBackColor = True
+		Me.GotoPackageButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+		Me.GotoPackageButton.Location = New System.Drawing.Point(730, 3)
+		Me.GotoPackageButton.Name = "GotoPackageButton"
+		Me.GotoPackageButton.Size = New System.Drawing.Size(43, 23)
+		Me.GotoPackageButton.TabIndex = 4
+		Me.GotoPackageButton.Text = "Goto"
+		Me.GotoPackageButton.UseVisualStyleBackColor = True
 		'
 		'SplitContainer1
 		'
@@ -253,7 +251,7 @@ Partial Class UnpackUserControl
 		'
 		Me.SplitContainer1.Panel1.Controls.Add(Me.SplitContainer2)
 		Me.SplitContainer1.Panel1.Controls.Add(Me.UnpackButton)
-		Me.SplitContainer1.Panel1.Controls.Add(Me.SkipCurrentVpkButton)
+		Me.SplitContainer1.Panel1.Controls.Add(Me.SkipCurrentPackageButton)
 		Me.SplitContainer1.Panel1.Controls.Add(Me.CancelUnpackButton)
 		Me.SplitContainer1.Panel1.Controls.Add(Me.UseAllInDecompileButton)
 		Me.SplitContainer1.Panel1MinSize = 90
@@ -287,7 +285,7 @@ Partial Class UnpackUserControl
 		'
 		Me.SplitContainer2.Panel2.Controls.Add(Me.OptionsGroupBox)
 		Me.SplitContainer2.Size = New System.Drawing.Size(770, 335)
-		Me.SplitContainer2.SplitterDistance = 608
+		Me.SplitContainer2.SplitterDistance = 604
 		Me.SplitContainer2.SplitterWidth = 6
 		Me.SplitContainer2.TabIndex = 0
 		'
@@ -299,10 +297,10 @@ Partial Class UnpackUserControl
 		Me.SelectionGroupBox.Dock = System.Windows.Forms.DockStyle.Fill
 		Me.SelectionGroupBox.Location = New System.Drawing.Point(0, 0)
 		Me.SelectionGroupBox.Name = "SelectionGroupBox"
-		Me.SelectionGroupBox.Size = New System.Drawing.Size(608, 335)
+		Me.SelectionGroupBox.Size = New System.Drawing.Size(604, 335)
 		Me.SelectionGroupBox.TabIndex = 0
 		Me.SelectionGroupBox.TabStop = False
-		Me.SelectionGroupBox.Text = "Selection in VPK files"
+		Me.SelectionGroupBox.Text = "Selection in package files"
 		'
 		'ToolStrip1
 		'
@@ -312,7 +310,7 @@ Partial Class UnpackUserControl
 		Me.ToolStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FindToolStripTextBox, Me.FindToolStripButton, Me.ToolStripSeparator1, Me.FilesSelectedCountToolStripLabel, Me.SizeSelectedTotalToolStripLabel})
 		Me.ToolStrip1.Location = New System.Drawing.Point(3, 307)
 		Me.ToolStrip1.Name = "ToolStrip1"
-		Me.ToolStrip1.Size = New System.Drawing.Size(602, 25)
+		Me.ToolStrip1.Size = New System.Drawing.Size(598, 25)
 		Me.ToolStrip1.Stretch = True
 		Me.ToolStrip1.TabIndex = 10
 		Me.ToolStrip1.Text = "ToolStrip1"
@@ -321,7 +319,7 @@ Partial Class UnpackUserControl
 		'
 		Me.FindToolStripTextBox.Font = New System.Drawing.Font("Segoe UI", 9.0!)
 		Me.FindToolStripTextBox.Name = "FindToolStripTextBox"
-		Me.FindToolStripTextBox.Size = New System.Drawing.Size(503, 25)
+		Me.FindToolStripTextBox.Size = New System.Drawing.Size(499, 25)
 		Me.FindToolStripTextBox.ToolTipText = "Text to find"
 		'
 		'FindToolStripButton
@@ -361,7 +359,7 @@ Partial Class UnpackUserControl
 		Me.SelectionPathTextBox.Location = New System.Drawing.Point(6, 19)
 		Me.SelectionPathTextBox.Name = "SelectionPathTextBox"
 		Me.SelectionPathTextBox.ReadOnly = True
-		Me.SelectionPathTextBox.Size = New System.Drawing.Size(596, 21)
+		Me.SelectionPathTextBox.Size = New System.Drawing.Size(592, 21)
 		Me.SelectionPathTextBox.TabIndex = 1
 		'
 		'SplitContainer3
@@ -375,28 +373,28 @@ Partial Class UnpackUserControl
 		'
 		'SplitContainer3.Panel1
 		'
-		Me.SplitContainer3.Panel1.Controls.Add(Me.VpkTreeView)
+		Me.SplitContainer3.Panel1.Controls.Add(Me.PackageTreeView)
 		'
 		'SplitContainer3.Panel2
 		'
-		Me.SplitContainer3.Panel2.Controls.Add(Me.VpkListView)
-		Me.SplitContainer3.Panel2.Controls.Add(Me.VpkDataGridView)
-		Me.SplitContainer3.Size = New System.Drawing.Size(596, 258)
+		Me.SplitContainer3.Panel2.Controls.Add(Me.PackageListView)
+		Me.SplitContainer3.Panel2.Controls.Add(Me.PackageDataGridView)
+		Me.SplitContainer3.Size = New System.Drawing.Size(592, 258)
 		Me.SplitContainer3.SplitterDistance = 250
 		Me.SplitContainer3.TabIndex = 6
 		'
-		'VpkTreeView
+		'PackageTreeView
 		'
-		Me.VpkTreeView.BackColor = System.Drawing.SystemColors.Control
-		Me.VpkTreeView.Dock = System.Windows.Forms.DockStyle.Fill
-		Me.VpkTreeView.HideSelection = False
-		Me.VpkTreeView.ImageIndex = 0
-		Me.VpkTreeView.ImageList = Me.ImageList1
-		Me.VpkTreeView.Location = New System.Drawing.Point(0, 0)
-		Me.VpkTreeView.Name = "VpkTreeView"
-		Me.VpkTreeView.SelectedImageIndex = 0
-		Me.VpkTreeView.Size = New System.Drawing.Size(250, 258)
-		Me.VpkTreeView.TabIndex = 0
+		Me.PackageTreeView.BackColor = System.Drawing.SystemColors.Control
+		Me.PackageTreeView.Dock = System.Windows.Forms.DockStyle.Fill
+		Me.PackageTreeView.HideSelection = False
+		Me.PackageTreeView.ImageIndex = 0
+		Me.PackageTreeView.ImageList = Me.ImageList1
+		Me.PackageTreeView.Location = New System.Drawing.Point(0, 0)
+		Me.PackageTreeView.Name = "PackageTreeView"
+		Me.PackageTreeView.SelectedImageIndex = 0
+		Me.PackageTreeView.Size = New System.Drawing.Size(250, 258)
+		Me.PackageTreeView.TabIndex = 0
 		'
 		'ImageList1
 		'
@@ -404,45 +402,45 @@ Partial Class UnpackUserControl
 		Me.ImageList1.ImageSize = New System.Drawing.Size(16, 16)
 		Me.ImageList1.TransparentColor = System.Drawing.Color.Transparent
 		'
-		'VpkListView
+		'PackageListView
 		'
-		Me.VpkListView.AllowColumnReorder = True
-		Me.VpkListView.BackColor = System.Drawing.SystemColors.Control
-		Me.VpkListView.Dock = System.Windows.Forms.DockStyle.Fill
-		Me.VpkListView.HideSelection = False
-		Me.VpkListView.Location = New System.Drawing.Point(0, 0)
-		Me.VpkListView.Name = "VpkListView"
-		Me.VpkListView.ShowGroups = False
-		Me.VpkListView.Size = New System.Drawing.Size(342, 258)
-		Me.VpkListView.SmallImageList = Me.ImageList1
-		Me.VpkListView.Sorting = System.Windows.Forms.SortOrder.Ascending
-		Me.VpkListView.TabIndex = 1
-		Me.VpkListView.UseCompatibleStateImageBehavior = False
-		Me.VpkListView.View = System.Windows.Forms.View.Details
+		Me.PackageListView.AllowColumnReorder = True
+		Me.PackageListView.BackColor = System.Drawing.SystemColors.Control
+		Me.PackageListView.Dock = System.Windows.Forms.DockStyle.Fill
+		Me.PackageListView.HideSelection = False
+		Me.PackageListView.Location = New System.Drawing.Point(0, 0)
+		Me.PackageListView.Name = "PackageListView"
+		Me.PackageListView.ShowGroups = False
+		Me.PackageListView.Size = New System.Drawing.Size(338, 258)
+		Me.PackageListView.SmallImageList = Me.ImageList1
+		Me.PackageListView.Sorting = System.Windows.Forms.SortOrder.Ascending
+		Me.PackageListView.TabIndex = 1
+		Me.PackageListView.UseCompatibleStateImageBehavior = False
+		Me.PackageListView.View = System.Windows.Forms.View.Details
 		'
-		'VpkDataGridView
+		'PackageDataGridView
 		'
-		Me.VpkDataGridView.AllowUserToAddRows = False
-		Me.VpkDataGridView.AllowUserToDeleteRows = False
-		Me.VpkDataGridView.AllowUserToOrderColumns = True
-		Me.VpkDataGridView.AllowUserToResizeRows = False
-		Me.VpkDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells
-		Me.VpkDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
-		Me.VpkDataGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None
-		Me.VpkDataGridView.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText
-		Me.VpkDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-		Me.VpkDataGridView.Location = New System.Drawing.Point(267, 32)
-		Me.VpkDataGridView.Name = "VpkDataGridView"
-		Me.VpkDataGridView.ReadOnly = True
-		Me.VpkDataGridView.RowHeadersVisible = False
-		Me.VpkDataGridView.RowTemplate.DefaultCellStyle.BackColor = System.Drawing.SystemColors.AppWorkspace
-		Me.VpkDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
-		Me.VpkDataGridView.ShowCellErrors = False
-		Me.VpkDataGridView.ShowEditingIcon = False
-		Me.VpkDataGridView.ShowRowErrors = False
-		Me.VpkDataGridView.Size = New System.Drawing.Size(322, 196)
-		Me.VpkDataGridView.TabIndex = 0
-		Me.VpkDataGridView.Visible = False
+		Me.PackageDataGridView.AllowUserToAddRows = False
+		Me.PackageDataGridView.AllowUserToDeleteRows = False
+		Me.PackageDataGridView.AllowUserToOrderColumns = True
+		Me.PackageDataGridView.AllowUserToResizeRows = False
+		Me.PackageDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells
+		Me.PackageDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+		Me.PackageDataGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None
+		Me.PackageDataGridView.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText
+		Me.PackageDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+		Me.PackageDataGridView.Location = New System.Drawing.Point(267, 32)
+		Me.PackageDataGridView.Name = "PackageDataGridView"
+		Me.PackageDataGridView.ReadOnly = True
+		Me.PackageDataGridView.RowHeadersVisible = False
+		Me.PackageDataGridView.RowTemplate.DefaultCellStyle.BackColor = System.Drawing.SystemColors.AppWorkspace
+		Me.PackageDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
+		Me.PackageDataGridView.ShowCellErrors = False
+		Me.PackageDataGridView.ShowEditingIcon = False
+		Me.PackageDataGridView.ShowRowErrors = False
+		Me.PackageDataGridView.Size = New System.Drawing.Size(322, 196)
+		Me.PackageDataGridView.TabIndex = 0
+		Me.PackageDataGridView.Visible = False
 		'
 		'OptionsGroupBox
 		'
@@ -450,7 +448,7 @@ Partial Class UnpackUserControl
 		Me.OptionsGroupBox.Dock = System.Windows.Forms.DockStyle.Fill
 		Me.OptionsGroupBox.Location = New System.Drawing.Point(0, 0)
 		Me.OptionsGroupBox.Name = "OptionsGroupBox"
-		Me.OptionsGroupBox.Size = New System.Drawing.Size(156, 335)
+		Me.OptionsGroupBox.Size = New System.Drawing.Size(160, 335)
 		Me.OptionsGroupBox.TabIndex = 0
 		Me.OptionsGroupBox.TabStop = False
 		Me.OptionsGroupBox.Text = "Options"
@@ -467,7 +465,7 @@ Partial Class UnpackUserControl
 		Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
 		Me.Panel1.Location = New System.Drawing.Point(3, 17)
 		Me.Panel1.Name = "Panel1"
-		Me.Panel1.Size = New System.Drawing.Size(150, 315)
+		Me.Panel1.Size = New System.Drawing.Size(154, 315)
 		Me.Panel1.TabIndex = 0
 		'
 		'Label3
@@ -483,7 +481,7 @@ Partial Class UnpackUserControl
 		'EditGameSetupButton
 		'
 		Me.EditGameSetupButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-		Me.EditGameSetupButton.Location = New System.Drawing.Point(3318, 229)
+		Me.EditGameSetupButton.Location = New System.Drawing.Point(3528, 229)
 		Me.EditGameSetupButton.Name = "EditGameSetupButton"
 		Me.EditGameSetupButton.Size = New System.Drawing.Size(90, 23)
 		Me.EditGameSetupButton.TabIndex = 1
@@ -499,7 +497,7 @@ Partial Class UnpackUserControl
 		Me.GameSetupComboBox.FormattingEnabled = True
 		Me.GameSetupComboBox.Location = New System.Drawing.Point(3, 255)
 		Me.GameSetupComboBox.Name = "GameSetupComboBox"
-		Me.GameSetupComboBox.Size = New System.Drawing.Size(3405, 21)
+		Me.GameSetupComboBox.Size = New System.Drawing.Size(3615, 21)
 		Me.GameSetupComboBox.TabIndex = 2
 		Me.GameSetupComboBox.Visible = False
 		'
@@ -545,16 +543,16 @@ Partial Class UnpackUserControl
 		Me.UnpackButton.Text = "Unpack"
 		Me.UnpackButton.UseVisualStyleBackColor = True
 		'
-		'SkipCurrentVpkButton
+		'SkipCurrentPackageButton
 		'
-		Me.SkipCurrentVpkButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-		Me.SkipCurrentVpkButton.Enabled = False
-		Me.SkipCurrentVpkButton.Location = New System.Drawing.Point(126, 341)
-		Me.SkipCurrentVpkButton.Name = "SkipCurrentVpkButton"
-		Me.SkipCurrentVpkButton.Size = New System.Drawing.Size(120, 23)
-		Me.SkipCurrentVpkButton.TabIndex = 3
-		Me.SkipCurrentVpkButton.Text = "Skip Current VPK"
-		Me.SkipCurrentVpkButton.UseVisualStyleBackColor = True
+		Me.SkipCurrentPackageButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+		Me.SkipCurrentPackageButton.Enabled = False
+		Me.SkipCurrentPackageButton.Location = New System.Drawing.Point(126, 341)
+		Me.SkipCurrentPackageButton.Name = "SkipCurrentPackageButton"
+		Me.SkipCurrentPackageButton.Size = New System.Drawing.Size(120, 23)
+		Me.SkipCurrentPackageButton.TabIndex = 3
+		Me.SkipCurrentPackageButton.Text = "Skip Current Package"
+		Me.SkipCurrentPackageButton.UseVisualStyleBackColor = True
 		'
 		'CancelUnpackButton
 		'
@@ -636,16 +634,6 @@ Partial Class UnpackUserControl
 		Me.GotoUnpackedFileButton.Text = "Goto"
 		Me.GotoUnpackedFileButton.UseVisualStyleBackColor = True
 		'
-		'ContainerTypeComboBox
-		'
-		Me.ContainerTypeComboBox.FormattingEnabled = True
-		Me.ContainerTypeComboBox.Items.AddRange(New Object() {"GMA", "VPK"})
-		Me.ContainerTypeComboBox.Location = New System.Drawing.Point(3, 5)
-		Me.ContainerTypeComboBox.Name = "ContainerTypeComboBox"
-		Me.ContainerTypeComboBox.Size = New System.Drawing.Size(52, 21)
-		Me.ContainerTypeComboBox.TabIndex = 0
-		Me.ContainerTypeComboBox.Visible = False
-		'
 		'UnpackUserControl
 		'
 		Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -671,7 +659,7 @@ Partial Class UnpackUserControl
 		Me.SplitContainer3.Panel2.ResumeLayout(False)
 		CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).EndInit()
 		Me.SplitContainer3.ResumeLayout(False)
-		CType(Me.VpkDataGridView, System.ComponentModel.ISupportInitialize).EndInit()
+		CType(Me.PackageDataGridView, System.ComponentModel.ISupportInitialize).EndInit()
 		Me.OptionsGroupBox.ResumeLayout(False)
 		Me.Panel1.ResumeLayout(False)
 		Me.Panel1.PerformLayout()
@@ -679,15 +667,15 @@ Partial Class UnpackUserControl
 
 	End Sub
 	Friend WithEvents Panel2 As System.Windows.Forms.Panel
-	Friend WithEvents GotoVpkButton As System.Windows.Forms.Button
+	Friend WithEvents GotoPackageButton As System.Windows.Forms.Button
 	Friend WithEvents Label1 As System.Windows.Forms.Label
-	Friend WithEvents BrowseForVpkPathFolderOrFileNameButton As System.Windows.Forms.Button
-	Friend WithEvents VpkPathFileNameTextBox As Crowbar.TextBoxEx
+	Friend WithEvents BrowseForPackagePathFolderOrFileNameButton As System.Windows.Forms.Button
+	Friend WithEvents PackagePathFileNameTextBox As Crowbar.TextBoxEx
 	Friend WithEvents SplitContainer1 As System.Windows.Forms.SplitContainer
 	Friend WithEvents UseAllInDecompileButton As System.Windows.Forms.Button
 	Friend WithEvents UnpackComboBox As System.Windows.Forms.ComboBox
 	Friend WithEvents CancelUnpackButton As System.Windows.Forms.Button
-	Friend WithEvents SkipCurrentVpkButton As System.Windows.Forms.Button
+	Friend WithEvents SkipCurrentPackageButton As System.Windows.Forms.Button
 	Friend WithEvents UnpackButton As System.Windows.Forms.Button
 	Friend WithEvents OptionsGroupBox As System.Windows.Forms.GroupBox
 	Friend WithEvents UseInDecompileButton As System.Windows.Forms.Button
@@ -696,7 +684,7 @@ Partial Class UnpackUserControl
 	Friend WithEvents UnpackedFilesComboBox As System.Windows.Forms.ComboBox
 	Friend WithEvents GotoUnpackedFileButton As System.Windows.Forms.Button
 	Friend WithEvents SelectionGroupBox As System.Windows.Forms.GroupBox
-	Friend WithEvents VpkTreeView As System.Windows.Forms.TreeView
+	Friend WithEvents PackageTreeView As System.Windows.Forms.TreeView
 	Friend WithEvents SplitContainer2 As System.Windows.Forms.SplitContainer
 	Friend WithEvents SplitContainer3 As System.Windows.Forms.SplitContainer
 	Friend WithEvents UnpackOptionsUseDefaultsButton As System.Windows.Forms.Button
@@ -707,7 +695,7 @@ Partial Class UnpackUserControl
 	Friend WithEvents GameSetupComboBox As System.Windows.Forms.ComboBox
 	Friend WithEvents EditGameSetupButton As System.Windows.Forms.Button
 	Friend WithEvents LogFileCheckBox As System.Windows.Forms.CheckBox
-	Friend WithEvents VpkDataGridView As System.Windows.Forms.DataGridView
+	Friend WithEvents PackageDataGridView As System.Windows.Forms.DataGridView
 	Friend WithEvents ToolStrip1 As System.Windows.Forms.ToolStrip
 	Friend WithEvents FilesSelectedCountToolStripLabel As System.Windows.Forms.ToolStripLabel
 	Friend WithEvents FindToolStripTextBox As ToolStripSpringTextBox
@@ -715,8 +703,7 @@ Partial Class UnpackUserControl
 	Friend WithEvents SizeSelectedTotalToolStripLabel As System.Windows.Forms.ToolStripLabel
 	Friend WithEvents ToolStripSeparator1 As System.Windows.Forms.ToolStripSeparator
 	Friend WithEvents Panel1 As System.Windows.Forms.Panel
-	Friend WithEvents ContainerTypeComboBox As System.Windows.Forms.ComboBox
-	Friend WithEvents VpkListView As System.Windows.Forms.ListView
+	Friend WithEvents PackageListView As System.Windows.Forms.ListView
 	Friend WithEvents ImageList1 As System.Windows.Forms.ImageList
 	Friend WithEvents GameModelsOutputPathTextBox As Crowbar.TextBoxEx
 	Friend WithEvents GotoOutputPathButton As System.Windows.Forms.Button

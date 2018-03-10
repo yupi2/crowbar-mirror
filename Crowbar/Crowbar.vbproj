@@ -484,8 +484,8 @@
     <Compile Include="Core\Unpacker\Unpacker.vb">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Core\Unpacker\VpkResourceFileNameInfo.vb" />
-    <Compile Include="Core\Unpacker\VpkPathFileNameInfo.vb" />
+    <Compile Include="Core\Unpacker\PackageResourceFileNameInfo.vb" />
+    <Compile Include="Core\Unpacker\PackagePathFileNameInfo.vb" />
     <Compile Include="Core\Viewer\Viewer.vb">
       <SubType>Component</SubType>
     </Compile>

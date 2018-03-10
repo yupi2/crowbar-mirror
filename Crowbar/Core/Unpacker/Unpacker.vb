@@ -81,7 +81,7 @@ Public Class Unpacker
 		Return tempPathFileNames
 	End Function
 
-	Public Sub SkipCurrentVpk()
+	Public Sub SkipCurrentPackage()
 		'NOTE: This might have thread race condition, but it probably doesn't matter.
 		Me.theSkipCurrentPackIsActive = True
 	End Sub
@@ -162,10 +162,10 @@ Public Class Unpacker
 		Dim outputPath As String
 
 		If TheApp.Settings.UnpackOutputFolderOption = UnpackOutputPathOptions.Subfolder Then
-			If File.Exists(TheApp.Settings.UnpackVpkPathFolderOrFileName) Then
-				outputPath = Path.Combine(FileManager.GetPath(TheApp.Settings.UnpackVpkPathFolderOrFileName), TheApp.Settings.UnpackOutputSubfolderName)
-			ElseIf Directory.Exists(TheApp.Settings.UnpackVpkPathFolderOrFileName) Then
-				outputPath = Path.Combine(TheApp.Settings.UnpackVpkPathFolderOrFileName, TheApp.Settings.UnpackOutputSubfolderName)
+			If File.Exists(TheApp.Settings.UnpackPackagePathFolderOrFileName) Then
+				outputPath = Path.Combine(FileManager.GetPath(TheApp.Settings.UnpackPackagePathFolderOrFileName), TheApp.Settings.UnpackOutputSubfolderName)
+			ElseIf Directory.Exists(TheApp.Settings.UnpackPackagePathFolderOrFileName) Then
+				outputPath = Path.Combine(TheApp.Settings.UnpackPackagePathFolderOrFileName, TheApp.Settings.UnpackOutputSubfolderName)
 			Else
 				outputPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
 			End If
@@ -181,12 +181,12 @@ Public Class Unpacker
 	Private Function UnpackerInputsAreValid() As Boolean
 		Dim inputsAreValid As Boolean = True
 
-		If String.IsNullOrEmpty(TheApp.Settings.UnpackVpkPathFolderOrFileName) Then
+		If String.IsNullOrEmpty(TheApp.Settings.UnpackPackagePathFolderOrFileName) Then
 			inputsAreValid = False
 			Me.WriteErrorMessage(1, "Package file or folder has not been selected.")
-		ElseIf TheApp.Settings.UnpackMode = InputOptions.File AndAlso Not File.Exists(TheApp.Settings.UnpackVpkPathFolderOrFileName) Then
+		ElseIf TheApp.Settings.UnpackMode = InputOptions.File AndAlso Not File.Exists(TheApp.Settings.UnpackPackagePathFolderOrFileName) Then
 			inputsAreValid = False
-			Me.WriteErrorMessage(1, "The package file, """ + TheApp.Settings.UnpackVpkPathFolderOrFileName + """, does not exist.")
+			Me.WriteErrorMessage(1, "The package file, """ + TheApp.Settings.UnpackPackagePathFolderOrFileName + """, does not exist.")
 		End If
 
 		Return inputsAreValid
@@ -295,7 +295,7 @@ Public Class Unpacker
 	'Private Sub ExtractFolderTree()
 	'	Dim archivePathFileName As String
 	'	Dim archivePath As String = ""
-	'	archivePathFileName = TheApp.Settings.UnpackVpkPathFolderOrFileName
+	'	archivePathFileName = TheApp.Settings.UnpackPackagePathFolderOrFileName
 	'	If File.Exists(archivePathFileName) Then
 	'		archivePath = FileManager.GetPath(archivePathFileName)
 	'	ElseIf Directory.Exists(archivePathFileName) Then
@@ -416,7 +416,7 @@ Public Class Unpacker
 	Private Sub List()
 		Dim archivePathFileName As String
 		Dim archivePath As String = ""
-		archivePathFileName = TheApp.Settings.UnpackVpkPathFolderOrFileName
+		archivePathFileName = TheApp.Settings.UnpackPackagePathFolderOrFileName
 		If File.Exists(archivePathFileName) Then
 			archivePath = FileManager.GetPath(archivePathFileName)
 		ElseIf Directory.Exists(archivePathFileName) Then
@@ -563,7 +563,7 @@ Public Class Unpacker
 
 		Me.theOutputPath = Me.GetAdjustedOutputPath()
 		Dim vpkPathFileName As String
-		vpkPathFileName = TheApp.Settings.UnpackVpkPathFolderOrFileName
+		vpkPathFileName = TheApp.Settings.UnpackPackagePathFolderOrFileName
 		If File.Exists(vpkPathFileName) Then
 			Me.theInputVpkPath = FileManager.GetPath(vpkPathFileName)
 		ElseIf Directory.Exists(vpkPathFileName) Then
@@ -624,7 +624,7 @@ Public Class Unpacker
 
 	'	Me.theOutputPath = Me.GetAdjustedOutputPath()
 	'	Dim vpkPathFileName As String
-	'	vpkPathFileName = TheApp.Settings.UnpackVpkPathFolderOrFileName
+	'	vpkPathFileName = TheApp.Settings.UnpackPackagePathFolderOrFileName
 	'	If File.Exists(vpkPathFileName) Then
 	'		Me.theInputVpkPath = FileManager.GetPath(vpkPathFileName)
 	'	ElseIf Directory.Exists(vpkPathFileName) Then
@@ -671,7 +671,7 @@ Public Class Unpacker
 		End If
 
 		'Dim vpkPathFileName As String
-		'vpkPathFileName = TheApp.Settings.UnpackVpkPathFolderOrFileName
+		'vpkPathFileName = TheApp.Settings.UnpackPackagePathFolderOrFileName
 
 		Try
 			Dim archivePathFileName As String

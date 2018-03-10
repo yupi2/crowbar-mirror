@@ -844,9 +844,15 @@ Public Class SourceMdlFile53
 				aHitbox.boundingBoxPitchYawRoll.z = Me.theInputFileReader.ReadSingle()
 				aHitbox.boundingBoxPitchYawRoll.x = Me.theInputFileReader.ReadSingle()
 				aHitbox.boundingBoxPitchYawRoll.y = Me.theInputFileReader.ReadSingle()
-				For x As Integer = 0 To aHitbox.unused_VERSION49.Length - 1
-					aHitbox.unused_VERSION49(x) = Me.theInputFileReader.ReadInt32()
-				Next
+				'aHitbox.unknown = Me.theInputFileReader.ReadInt32()
+				'For x As Integer = 0 To aHitbox.unused_VERSION49.Length - 1
+				'	aHitbox.unused_VERSION49(x) = Me.theInputFileReader.ReadInt32()
+				'Next
+				aHitbox.unused(0) = Me.theInputFileReader.ReadInt32()
+				aHitbox.unused(1) = Me.theInputFileReader.ReadInt32()
+				aHitbox.unused(2) = Me.theInputFileReader.ReadInt32()
+				aHitbox.unused(3) = Me.theInputFileReader.ReadInt32()
+				aHitbox.unused(4) = Me.theInputFileReader.ReadInt32()
 
 				aHitboxSet.theHitboxes.Add(aHitbox)
 

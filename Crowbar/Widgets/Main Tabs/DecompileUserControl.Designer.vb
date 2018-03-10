@@ -163,8 +163,8 @@ Partial Class DecompileUserControl
 		Me.UseUvsForDoomMusicCompilerCheckBox.Size = New System.Drawing.Size(283, 17)
 		Me.UseUvsForDoomMusicCompilerCheckBox.TabIndex = 44
 		Me.UseUvsForDoomMusicCompilerCheckBox.Text = "Use UVs for DoomMusic's model compiler (GoldSource)"
-		Me.ToolTip1.SetToolTip(Me.UseUvsForDoomMusicCompilerCheckBox, "Write only the file name in the SMD, even if a path was stored. This might cause " & _
-		"problem with $CDMaterials in QC file.")
+		Me.ToolTip1.SetToolTip(Me.UseUvsForDoomMusicCompilerCheckBox, "For DoomMusic's compiler, UV calculation is slightly different, so tick this for " & _
+		"better results.")
 		Me.UseUvsForDoomMusicCompilerCheckBox.UseVisualStyleBackColor = True
 		'
 		'Panel2

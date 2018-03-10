@@ -25,15 +25,6 @@ Partial Class CompileUserControl
 		Me.components = New System.ComponentModel.Container()
 		Me.CompilerOptionsTextBox = New System.Windows.Forms.TextBox()
 		Me.GameSetupComboBox = New System.Windows.Forms.ComboBox()
-		Me.CompilerOptionsTabControl = New System.Windows.Forms.TabControl()
-		Me.CrowbarOptionsTabPage = New System.Windows.Forms.TabPage()
-		Me.GeneralOptionsTabPage = New System.Windows.Forms.TabPage()
-		Me.OrangeBoxOptionsTabPage = New System.Windows.Forms.TabPage()
-		Me.CheckBox21 = New System.Windows.Forms.CheckBox()
-		Me.CheckBox22 = New System.Windows.Forms.CheckBox()
-		Me.CheckBox23 = New System.Windows.Forms.CheckBox()
-		Me.CheckBox24 = New System.Windows.Forms.CheckBox()
-		Me.CheckBox25 = New System.Windows.Forms.CheckBox()
 		Me.FolderForEachModelCheckBox = New System.Windows.Forms.CheckBox()
 		Me.SourceEngineLogFileCheckBox = New System.Windows.Forms.CheckBox()
 		Me.CompilerOptionDefineBonesCheckBox = New System.Windows.Forms.CheckBox()
@@ -62,7 +53,6 @@ Partial Class CompileUserControl
 		Me.Label1 = New System.Windows.Forms.Label()
 		Me.GotoQcButton = New System.Windows.Forms.Button()
 		Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
-		Me.UseAllInPackButton = New System.Windows.Forms.Button()
 		Me.OptionsGroupBox = New System.Windows.Forms.GroupBox()
 		Me.Panel2 = New System.Windows.Forms.Panel()
 		Me.CompilerOptionsGoldSourceEnginePanel = New System.Windows.Forms.Panel()
@@ -71,8 +61,9 @@ Partial Class CompileUserControl
 		Me.CompilerOptionsSourceEnginePanel = New System.Windows.Forms.Panel()
 		Me.CompileOptionsSourceEngineUseDefaultsButton = New System.Windows.Forms.Button()
 		Me.CompileOptionsSizerLabel = New System.Windows.Forms.Label()
-		Me.CancelCompileButton = New System.Windows.Forms.Button()
 		Me.SkipCurrentModelButton = New System.Windows.Forms.Button()
+		Me.CancelCompileButton = New System.Windows.Forms.Button()
+		Me.UseAllInPackButton = New System.Windows.Forms.Button()
 		Me.UseInViewButton = New System.Windows.Forms.Button()
 		Me.CompileLogRichTextBox = New Crowbar.RichTextBoxEx()
 		Me.CompiledFilesComboBox = New System.Windows.Forms.ComboBox()
@@ -81,8 +72,6 @@ Partial Class CompileUserControl
 		Me.UseInPackButton = New System.Windows.Forms.Button()
 		Me.UseDefaultOutputSubfolderButton = New System.Windows.Forms.Button()
 		Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-		Me.CompilerOptionsTabControl.SuspendLayout()
-		Me.OrangeBoxOptionsTabPage.SuspendLayout()
 		Me.Panel1.SuspendLayout()
 		CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
 		Me.SplitContainer1.Panel1.SuspendLayout()
@@ -116,112 +105,6 @@ Partial Class CompileUserControl
 		Me.GameSetupComboBox.Name = "GameSetupComboBox"
 		Me.GameSetupComboBox.Size = New System.Drawing.Size(470, 21)
 		Me.GameSetupComboBox.TabIndex = 1
-		'
-		'CompilerOptionsTabControl
-		'
-		Me.CompilerOptionsTabControl.Controls.Add(Me.CrowbarOptionsTabPage)
-		Me.CompilerOptionsTabControl.Controls.Add(Me.GeneralOptionsTabPage)
-		Me.CompilerOptionsTabControl.Controls.Add(Me.OrangeBoxOptionsTabPage)
-		Me.CompilerOptionsTabControl.HotTrack = True
-		Me.CompilerOptionsTabControl.Location = New System.Drawing.Point(502, 3)
-		Me.CompilerOptionsTabControl.Multiline = True
-		Me.CompilerOptionsTabControl.Name = "CompilerOptionsTabControl"
-		Me.CompilerOptionsTabControl.SelectedIndex = 0
-		Me.CompilerOptionsTabControl.Size = New System.Drawing.Size(248, 49)
-		Me.CompilerOptionsTabControl.TabIndex = 6
-		Me.CompilerOptionsTabControl.Visible = False
-		'
-		'CrowbarOptionsTabPage
-		'
-		Me.CrowbarOptionsTabPage.AutoScroll = True
-		Me.CrowbarOptionsTabPage.Location = New System.Drawing.Point(4, 40)
-		Me.CrowbarOptionsTabPage.Name = "CrowbarOptionsTabPage"
-		Me.CrowbarOptionsTabPage.Size = New System.Drawing.Size(240, 5)
-		Me.CrowbarOptionsTabPage.TabIndex = 2
-		Me.CrowbarOptionsTabPage.Text = "Options"
-		Me.CrowbarOptionsTabPage.UseVisualStyleBackColor = True
-		'
-		'GeneralOptionsTabPage
-		'
-		Me.GeneralOptionsTabPage.AutoScroll = True
-		Me.GeneralOptionsTabPage.Location = New System.Drawing.Point(4, 40)
-		Me.GeneralOptionsTabPage.Name = "GeneralOptionsTabPage"
-		Me.GeneralOptionsTabPage.Padding = New System.Windows.Forms.Padding(3)
-		Me.GeneralOptionsTabPage.Size = New System.Drawing.Size(240, 5)
-		Me.GeneralOptionsTabPage.TabIndex = 0
-		Me.GeneralOptionsTabPage.Text = "General Command-Line Options"
-		Me.GeneralOptionsTabPage.UseVisualStyleBackColor = True
-		'
-		'OrangeBoxOptionsTabPage
-		'
-		Me.OrangeBoxOptionsTabPage.AutoScroll = True
-		Me.OrangeBoxOptionsTabPage.Controls.Add(Me.CheckBox21)
-		Me.OrangeBoxOptionsTabPage.Controls.Add(Me.CheckBox22)
-		Me.OrangeBoxOptionsTabPage.Controls.Add(Me.CheckBox23)
-		Me.OrangeBoxOptionsTabPage.Controls.Add(Me.CheckBox24)
-		Me.OrangeBoxOptionsTabPage.Controls.Add(Me.CheckBox25)
-		Me.OrangeBoxOptionsTabPage.Location = New System.Drawing.Point(4, 40)
-		Me.OrangeBoxOptionsTabPage.Name = "OrangeBoxOptionsTabPage"
-		Me.OrangeBoxOptionsTabPage.Padding = New System.Windows.Forms.Padding(3)
-		Me.OrangeBoxOptionsTabPage.Size = New System.Drawing.Size(240, 5)
-		Me.OrangeBoxOptionsTabPage.TabIndex = 1
-		Me.OrangeBoxOptionsTabPage.Text = "Orange Box Command-Line Options"
-		Me.OrangeBoxOptionsTabPage.UseVisualStyleBackColor = True
-		'
-		'CheckBox21
-		'
-		Me.CheckBox21.AutoSize = True
-		Me.CheckBox21.Location = New System.Drawing.Point(6, 98)
-		Me.CheckBox21.Name = "CheckBox21"
-		Me.CheckBox21.Size = New System.Drawing.Size(85, 17)
-		Me.CheckBox21.TabIndex = 21
-		Me.CheckBox21.Text = "CheckBox21"
-		Me.CheckBox21.UseVisualStyleBackColor = True
-		Me.CheckBox21.Visible = False
-		'
-		'CheckBox22
-		'
-		Me.CheckBox22.AutoSize = True
-		Me.CheckBox22.Location = New System.Drawing.Point(6, 75)
-		Me.CheckBox22.Name = "CheckBox22"
-		Me.CheckBox22.Size = New System.Drawing.Size(85, 17)
-		Me.CheckBox22.TabIndex = 20
-		Me.CheckBox22.Text = "CheckBox22"
-		Me.CheckBox22.UseVisualStyleBackColor = True
-		Me.CheckBox22.Visible = False
-		'
-		'CheckBox23
-		'
-		Me.CheckBox23.AutoSize = True
-		Me.CheckBox23.Location = New System.Drawing.Point(6, 52)
-		Me.CheckBox23.Name = "CheckBox23"
-		Me.CheckBox23.Size = New System.Drawing.Size(85, 17)
-		Me.CheckBox23.TabIndex = 19
-		Me.CheckBox23.Text = "CheckBox23"
-		Me.CheckBox23.UseVisualStyleBackColor = True
-		Me.CheckBox23.Visible = False
-		'
-		'CheckBox24
-		'
-		Me.CheckBox24.AutoSize = True
-		Me.CheckBox24.Location = New System.Drawing.Point(6, 29)
-		Me.CheckBox24.Name = "CheckBox24"
-		Me.CheckBox24.Size = New System.Drawing.Size(85, 17)
-		Me.CheckBox24.TabIndex = 18
-		Me.CheckBox24.Text = "CheckBox24"
-		Me.CheckBox24.UseVisualStyleBackColor = True
-		Me.CheckBox24.Visible = False
-		'
-		'CheckBox25
-		'
-		Me.CheckBox25.AutoSize = True
-		Me.CheckBox25.Location = New System.Drawing.Point(6, 6)
-		Me.CheckBox25.Name = "CheckBox25"
-		Me.CheckBox25.Size = New System.Drawing.Size(85, 17)
-		Me.CheckBox25.TabIndex = 17
-		Me.CheckBox25.Text = "CheckBox25"
-		Me.CheckBox25.UseVisualStyleBackColor = True
-		Me.CheckBox25.Visible = False
 		'
 		'FolderForEachModelCheckBox
 		'
@@ -510,11 +393,11 @@ Partial Class CompileUserControl
 		'
 		'SplitContainer1.Panel1
 		'
-		Me.SplitContainer1.Panel1.Controls.Add(Me.UseAllInPackButton)
 		Me.SplitContainer1.Panel1.Controls.Add(Me.OptionsGroupBox)
-		Me.SplitContainer1.Panel1.Controls.Add(Me.CancelCompileButton)
-		Me.SplitContainer1.Panel1.Controls.Add(Me.SkipCurrentModelButton)
 		Me.SplitContainer1.Panel1.Controls.Add(Me.CompileButton)
+		Me.SplitContainer1.Panel1.Controls.Add(Me.SkipCurrentModelButton)
+		Me.SplitContainer1.Panel1.Controls.Add(Me.CancelCompileButton)
+		Me.SplitContainer1.Panel1.Controls.Add(Me.UseAllInPackButton)
 		Me.SplitContainer1.Panel1MinSize = 90
 		'
 		'SplitContainer1.Panel2
@@ -529,18 +412,6 @@ Partial Class CompileUserControl
 		Me.SplitContainer1.Size = New System.Drawing.Size(770, 472)
 		Me.SplitContainer1.SplitterDistance = 275
 		Me.SplitContainer1.TabIndex = 16
-		'
-		'UseAllInPackButton
-		'
-		Me.UseAllInPackButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-		Me.UseAllInPackButton.Enabled = False
-		Me.UseAllInPackButton.Location = New System.Drawing.Point(378, 249)
-		Me.UseAllInPackButton.Name = "UseAllInPackButton"
-		Me.UseAllInPackButton.Size = New System.Drawing.Size(120, 23)
-		Me.UseAllInPackButton.TabIndex = 4
-		Me.UseAllInPackButton.Text = "Use All in Pack"
-		Me.UseAllInPackButton.UseVisualStyleBackColor = True
-		Me.UseAllInPackButton.Visible = False
 		'
 		'OptionsGroupBox
 		'
@@ -575,8 +446,7 @@ Partial Class CompileUserControl
 		'
 		'CompilerOptionsGoldSourceEnginePanel
 		'
-		Me.CompilerOptionsGoldSourceEnginePanel.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-			Or System.Windows.Forms.AnchorStyles.Left) _
+		Me.CompilerOptionsGoldSourceEnginePanel.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.CompilerOptionsGoldSourceEnginePanel.Controls.Add(Me.GoldSourceEngineLogFileCheckBox)
 		Me.CompilerOptionsGoldSourceEnginePanel.Controls.Add(Me.CompileOptionsGoldSourceEngineUseDefaultsButton)
@@ -608,12 +478,10 @@ Partial Class CompileUserControl
 		'
 		'CompilerOptionsSourceEnginePanel
 		'
-		Me.CompilerOptionsSourceEnginePanel.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-			Or System.Windows.Forms.AnchorStyles.Left) _
+		Me.CompilerOptionsSourceEnginePanel.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.CompilerOptionsSourceEnginePanel.Controls.Add(Me.SourceEngineLogFileCheckBox)
 		Me.CompilerOptionsSourceEnginePanel.Controls.Add(Me.CompilerOptionDefineBonesModifyQcFileCheckBox)
-		Me.CompilerOptionsSourceEnginePanel.Controls.Add(Me.CompilerOptionsTabControl)
 		Me.CompilerOptionsSourceEnginePanel.Controls.Add(Me.CompilerOptionDefineBonesCheckBox)
 		Me.CompilerOptionsSourceEnginePanel.Controls.Add(Me.CompilerOptionVerboseCheckBox)
 		Me.CompilerOptionsSourceEnginePanel.Controls.Add(Me.CompilerOptionDefineBonesFileNameTextBox)
@@ -648,6 +516,17 @@ Partial Class CompileUserControl
 		Me.CompileOptionsSizerLabel.Size = New System.Drawing.Size(761, 47)
 		Me.CompileOptionsSizerLabel.TabIndex = 37
 		'
+		'SkipCurrentModelButton
+		'
+		Me.SkipCurrentModelButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+		Me.SkipCurrentModelButton.Enabled = False
+		Me.SkipCurrentModelButton.Location = New System.Drawing.Point(126, 249)
+		Me.SkipCurrentModelButton.Name = "SkipCurrentModelButton"
+		Me.SkipCurrentModelButton.Size = New System.Drawing.Size(120, 23)
+		Me.SkipCurrentModelButton.TabIndex = 2
+		Me.SkipCurrentModelButton.Text = "Skip Current Model"
+		Me.SkipCurrentModelButton.UseVisualStyleBackColor = True
+		'
 		'CancelCompileButton
 		'
 		Me.CancelCompileButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
@@ -659,16 +538,17 @@ Partial Class CompileUserControl
 		Me.CancelCompileButton.Text = "Cancel Compile"
 		Me.CancelCompileButton.UseVisualStyleBackColor = True
 		'
-		'SkipCurrentModelButton
+		'UseAllInPackButton
 		'
-		Me.SkipCurrentModelButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-		Me.SkipCurrentModelButton.Enabled = False
-		Me.SkipCurrentModelButton.Location = New System.Drawing.Point(126, 249)
-		Me.SkipCurrentModelButton.Name = "SkipCurrentModelButton"
-		Me.SkipCurrentModelButton.Size = New System.Drawing.Size(120, 23)
-		Me.SkipCurrentModelButton.TabIndex = 2
-		Me.SkipCurrentModelButton.Text = "Skip Current Model"
-		Me.SkipCurrentModelButton.UseVisualStyleBackColor = True
+		Me.UseAllInPackButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+		Me.UseAllInPackButton.Enabled = False
+		Me.UseAllInPackButton.Location = New System.Drawing.Point(378, 249)
+		Me.UseAllInPackButton.Name = "UseAllInPackButton"
+		Me.UseAllInPackButton.Size = New System.Drawing.Size(120, 23)
+		Me.UseAllInPackButton.TabIndex = 4
+		Me.UseAllInPackButton.Text = "Use All in Pack"
+		Me.UseAllInPackButton.UseVisualStyleBackColor = True
+		Me.UseAllInPackButton.Visible = False
 		'
 		'UseInViewButton
 		'
@@ -756,9 +636,6 @@ Partial Class CompileUserControl
 		Me.Controls.Add(Me.Panel1)
 		Me.Name = "CompileUserControl"
 		Me.Size = New System.Drawing.Size(776, 536)
-		Me.CompilerOptionsTabControl.ResumeLayout(False)
-		Me.OrangeBoxOptionsTabPage.ResumeLayout(False)
-		Me.OrangeBoxOptionsTabPage.PerformLayout()
 		Me.Panel1.ResumeLayout(False)
 		Me.Panel1.PerformLayout()
 		Me.SplitContainer1.Panel1.ResumeLayout(False)
@@ -776,14 +653,6 @@ Partial Class CompileUserControl
 	End Sub
 	Friend WithEvents CompilerOptionsTextBox As System.Windows.Forms.TextBox
 	Friend WithEvents GameSetupComboBox As System.Windows.Forms.ComboBox
-	Friend WithEvents CompilerOptionsTabControl As System.Windows.Forms.TabControl
-	Friend WithEvents GeneralOptionsTabPage As System.Windows.Forms.TabPage
-	Friend WithEvents OrangeBoxOptionsTabPage As System.Windows.Forms.TabPage
-	Friend WithEvents CheckBox21 As System.Windows.Forms.CheckBox
-	Friend WithEvents CheckBox22 As System.Windows.Forms.CheckBox
-	Friend WithEvents CheckBox23 As System.Windows.Forms.CheckBox
-	Friend WithEvents CheckBox24 As System.Windows.Forms.CheckBox
-	Friend WithEvents CheckBox25 As System.Windows.Forms.CheckBox
 	Friend WithEvents BrowseForQcPathFolderOrFileNameButton As System.Windows.Forms.Button
 	Friend WithEvents Label6 As System.Windows.Forms.Label
 	Friend WithEvents EditGameSetupButton As System.Windows.Forms.Button
@@ -803,7 +672,6 @@ Partial Class CompileUserControl
 	Friend WithEvents GotoQcButton As System.Windows.Forms.Button
 	Friend WithEvents GotoCompiledMdlButton As System.Windows.Forms.Button
 	Friend WithEvents Panel1 As System.Windows.Forms.Panel
-	Friend WithEvents CrowbarOptionsTabPage As System.Windows.Forms.TabPage
 	Friend WithEvents SourceEngineLogFileCheckBox As System.Windows.Forms.CheckBox
 	Friend WithEvents OptionsGroupBox As System.Windows.Forms.GroupBox
 	Friend WithEvents Panel2 As System.Windows.Forms.Panel

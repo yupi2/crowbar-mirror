@@ -132,6 +132,7 @@ Public Class SourceModel49
 		'If Not Me.theMdlFileDataGeneric.theMdlFileOnlyHasAnimations Then
 		Me.thePhyPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".phy")
 
+		'TODO: If the checksum of the vtx does not match checksum in MDL, check the next vtx.
 		Me.theVtxPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".dx11.vtx")
 		If Not File.Exists(Me.theVtxPathFileName) Then
 			Me.theVtxPathFileName = Path.ChangeExtension(Me.theMdlPathFileName, ".dx90.vtx")

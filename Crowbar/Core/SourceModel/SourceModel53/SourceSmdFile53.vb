@@ -140,10 +140,10 @@ Public Class SourceSmdFile53
 					meshVertexIndexStart = aModel.theMeshes(meshIndex).vertexIndexStart
 
 					If aVtxMesh.theVtxStripGroups IsNot Nothing Then
-					If TheApp.Settings.DecompileDebugInfoFilesIsChecked AndAlso materialPathFileName <> materialFileName Then
-						materialLine = "// In the MDL file as: " + materialPathFileName
-						Me.theOutputFileStreamWriter.WriteLine(materialLine)
-					End If
+						If TheApp.Settings.DecompileDebugInfoFilesIsChecked AndAlso materialPathFileName <> materialFileName Then
+							materialLine = "// In the MDL file as: " + materialPathFileName
+							Me.theOutputFileStreamWriter.WriteLine(materialLine)
+						End If
 
 						For groupIndex As Integer = 0 To aVtxMesh.theVtxStripGroups.Count - 1
 							aStripGroup = aVtxMesh.theVtxStripGroups(groupIndex)
@@ -228,10 +228,7 @@ Public Class SourceSmdFile53
 							'  19 -0.000009 0.000001 0.999953 0.0 0.0 0.0 1 0
 							'  19 -0.000005 1.000002 -0.000043 0.0 0.0 0.0 1 0
 							'  19 -0.008333 0.997005 1.003710 0.0 0.0 0.0 1 0
-							'NOTE: MDL Decompiler 0.4.1 lists the vertices in reverse order than they are stored, and this seems to match closely with the teenangst source file.
-							'For vertexIndex As Integer = aTriangle.vertexIndex.Length - 1 To 0 Step -1
 							For vertexIndex As Integer = 0 To aTriangle.vertexIndex.Length - 1
-								'phyVertex = collisionData.theVertices(aTriangle.vertexIndex(vertexIndex))
 								phyVertex = faceSection.theVertices(aTriangle.vertexIndex(vertexIndex))
 
 								aVectorTransformed = Me.TransformPhyVertex(aBone, phyVertex.vertex)
@@ -703,424 +700,36 @@ Public Class SourceSmdFile53
 		Return line
 	End Function
 
-	'NOTE: From disassembling of MDL Decompiler with OllyDbg, the following calculations are used in VPHYSICS.DLL for each face:
-	'      convertedZ = 1.0 / 0.0254 * lastVertex.position.z
-	'      convertedY = 1.0 / 0.0254 * -lastVertex.position.y
-	'      convertedX = 1.0 / 0.0254 * lastVertex.position.x
-	'NOTE: From disassembling of MDL Decompiler with OllyDbg, the following calculations are used after above for each vertex:
-	'      newValue1 = unknownZ1 * convertedZ + unknownY1 * convertedY + unknownX1 * convertedX + unknownW1
-	'      newValue2 = unknownZ2 * convertedZ + unknownY2 * convertedY + unknownX2 * convertedX + unknownW2
-	'      newValue3 = unknownZ3 * convertedZ + unknownY3 * convertedY + unknownX3 * convertedX + unknownW3
-	'Seems to be same as this code:
-	'Dim aBone As SourceMdlBone
-	'aBone = Me.theSourceEngineModel.theMdlFileHeader.theBones(anEyeball.boneIndex)
-	'eyeballPosition = MathModule.VectorITransform(anEyeball.org, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
 	Private Function TransformPhyVertex(ByVal aBone As SourceMdlBone, ByVal vertex As SourceVector) As SourceVector
 		Dim aVectorTransformed As New SourceVector
 		Dim aVector As New SourceVector()
 
-		'NOTE: Too small.
-		'aVectorTransformed.x = vertex.x
-		'aVectorTransformed.y = vertex.y
-		'aVectorTransformed.z = vertex.z
-		'------
-		'NOTE: Rotated for:
-		'      simple_shape
-		'      L4D2 w_models\weapons\w_minigun
-		'aVectorTransformed.x = 1 / 0.0254 * vertex.x
-		'aVectorTransformed.y = 1 / 0.0254 * vertex.y
-		'aVectorTransformed.z = 1 / 0.0254 * vertex.z
-		'------
-		'NOTE: Works for:
-		'      simple_shape
-		'      L4D2 w_models\weapons\w_minigun
-		'      L4D2 w_models\weapons\w_smg_uzi
-		'      L4D2 props_vehicles\van
-		'aVectorTransformed.x = 1 / 0.0254 * vertex.z
-		'aVectorTransformed.y = 1 / 0.0254 * -vertex.x
-		'aVectorTransformed.z = 1 / 0.0254 * -vertex.y
-		'------
-		'NOTE: Rotated for:
-		'      L4D2 w_models\weapons\w_minigun
-		'aVectorTransformed.x = 1 / 0.0254 * vertex.x
-		'aVectorTransformed.y = 1 / 0.0254 * -vertex.y
-		'aVectorTransformed.z = 1 / 0.0254 * vertex.z
-		'------
-		'NOTE: Rotated for:
-		'      L4D2 props_vehicles\van
-		'aVectorTransformed.x = 1 / 0.0254 * vertex.z
-		'aVectorTransformed.y = 1 / 0.0254 * -vertex.y
-		'aVectorTransformed.z = 1 / 0.0254 * vertex.x
-		'------
-		'NOTE: Rotated for:
-		'      L4D2 w_models\weapons\w_minigun
-		'aVector.x = 1 / 0.0254 * vertex.x
-		'aVector.y = 1 / 0.0254 * vertex.y
-		'aVector.z = 1 / 0.0254 * vertex.z
-		'aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'------
-		'NOTE: Rotated for:
-		'      L4D2 w_models\weapons\w_minigun
-		'aVector.x = 1 / 0.0254 * vertex.x
-		'aVector.y = 1 / 0.0254 * -vertex.y
-		'aVector.z = 1 / 0.0254 * vertex.z
-		'aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'------
-		'NOTE: Works for:
-		'      L4D2 w_models\weapons\w_minigun
-		'      L4D2 w_models\weapons\w_smg_uzi
-		'NOTE: Rotated for:
-		'      simple_shape
-		'      L4D2 props_vehicles\van
-		'NOTE: Each mesh piece rotated for:
-		'      L4D2 survivors\survivor_producer
-		'aVector.x = 1 / 0.0254 * vertex.z
-		'aVector.y = 1 / 0.0254 * -vertex.y
-		'aVector.z = 1 / 0.0254 * vertex.x
-		'aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'------
-		'NOTE: Works for:
-		'      simple_shape
-		'      L4D2 props_vehicles\van
-		'      L4D2 survivors\survivor_producer
-		'      L4D2 w_models\weapons\w_autoshot_m4super
-		'      L4D2 w_models\weapons\w_desert_eagle
-		'      L4D2 w_models\weapons\w_minigun
-		'      L4D2 w_models\weapons\w_rifle_m16a2
-		'      L4D2 w_models\weapons\w_smg_uzi
-		'NOTE: Rotated for:
-		'      L4D2 w_models\weapons\w_desert_rifle
-		'      L4D2 w_models\weapons\w_shotgun_spas
 		If Me.thePhyFileData.theSourcePhyIsCollisionModel Then
 			aVectorTransformed.x = 1 / 0.0254 * vertex.z
 			aVectorTransformed.y = 1 / 0.0254 * -vertex.x
 			aVectorTransformed.z = 1 / 0.0254 * -vertex.y
 		Else
-			aVector.x = 1 / 0.0254 * vertex.x
-			aVector.y = 1 / 0.0254 * vertex.z
-			aVector.z = 1 / 0.0254 * -vertex.y
-			aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
+			'TEST: Shows blocks, but all seem to be at origin.
+			aVectorTransformed.x = 1 / 0.0254 * vertex.z
+			aVectorTransformed.y = 1 / 0.0254 * -vertex.x
+			aVectorTransformed.z = 1 / 0.0254 * -vertex.y
+			'------
+			'TEST: Strecthed flat planes.
+			'aVector.x = 1 / 0.0254 * vertex.x
+			'aVector.y = 1 / 0.0254 * vertex.z
+			'aVector.z = 1 / 0.0254 * -vertex.y
+			'aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
+			'------
+			'TEST: Strecthed flat planes.
+			'aVector.x = 1 / 0.0254 * vertex.z
+			'aVector.y = 1 / 0.0254 * -vertex.x
+			'aVector.z = 1 / 0.0254 * -vertex.y
+			'aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
 		End If
-
-
-
-		'------
-		'NOTE: Works for:
-		'      survivor_producer
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * aVector.x
-		'phyVertex.y = 1 / 0.0254 * aVector.z
-		'phyVertex.z = 1 / 0.0254 * -aVector.y
-		'------
-		'NOTE: These two lines match orientation for cstrike it_lampholder1 model, 
-		'      but still doesn't compile properly.
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * aVector.z
-		'phyVertex.y = 1 / 0.0254 * -aVector.x
-		'phyVertex.z = 1 / 0.0254 * -aVector.y
-		'------
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * aVector.y
-		'phyVertex.y = 1 / 0.0254 * aVector.x
-		'phyVertex.z = 1 / 0.0254 * -aVector.z
-		'------
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * aVector.x
-		'phyVertex.y = 1 / 0.0254 * aVector.y
-		'phyVertex.z = 1 / 0.0254 * -aVector.z
-		'------
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * -aVector.y
-		'phyVertex.y = 1 / 0.0254 * aVector.x
-		'phyVertex.z = 1 / 0.0254 * aVector.z
-		'------
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * -aVector.y
-		'phyVertex.y = 1 / 0.0254 * aVector.x
-		'phyVertex.z = 1 / 0.0254 * aVector.z
-		'------
-		'NOTE: Does not work for:
-		'      w_smg_uzi()
-		'phyVertex.x = 1 / 0.0254 * aVector.z
-		'phyVertex.y = 1 / 0.0254 * aVector.y
-		'phyVertex.z = 1 / 0.0254 * aVector.x
-		'------
-		'NOTE: Works for:
-		'      w_smg_uzi()
-		'NOTE: Does not work for:
-		'      survivor_producer
-		'phyVertex.x = 1 / 0.0254 * aVector.z
-		'phyVertex.y = 1 / 0.0254 * -aVector.y
-		'phyVertex.z = 1 / 0.0254 * aVector.x
-		'------
-		'phyVertex.x = 1 / 0.0254 * aVector.z
-		'phyVertex.y = 1 / 0.0254 * -aVector.y
-		'phyVertex.z = 1 / 0.0254 * -aVector.x
-		'------
-		''TODO: Find some rationale for why phys model is rotated differently for different models.
-		''      Possibly due to rotation needed to transfrom from pose to bone position.
-		''If Me.theSourceEngineModel.theMdlFileHeader.theAnimationDescs.Count < 2 Then
-		''If (theSourceEngineModel.theMdlFileHeader.flags And SourceMdlFileHeader.STUDIOHDR_FLAGS_STATIC_PROP) > 0 Then
-		'If Me.theSourceEngineModel.thePhyFileHeader.theSourcePhyIsCollisionModel Then
-		'	'TEST: Does not rotate L4D2's van phys mesh correctly.
-		'	'aVector.x = 1 / 0.0254 * phyVertex.vertex.x
-		'	'aVector.y = 1 / 0.0254 * phyVertex.vertex.y
-		'	'aVector.z = 1 / 0.0254 * phyVertex.vertex.z
-		'	'TEST:  Does not rotate L4D2's van phys mesh correctly.
-		'	'aVector.x = 1 / 0.0254 * phyVertex.vertex.y
-		'	'aVector.y = 1 / 0.0254 * -phyVertex.vertex.x
-		'	'aVector.z = 1 / 0.0254 * phyVertex.vertex.z
-		'	'TEST: Does not rotate L4D2's van phys mesh correctly.
-		'	'aVector.x = 1 / 0.0254 * phyVertex.vertex.z
-		'	'aVector.y = 1 / 0.0254 * -phyVertex.vertex.y
-		'	'aVector.z = 1 / 0.0254 * phyVertex.vertex.x
-		'	'TEST: Does not rotate L4D2's van phys mesh correctly.
-		'	'aVector.x = 1 / 0.0254 * phyVertex.vertex.x
-		'	'aVector.y = 1 / 0.0254 * phyVertex.vertex.z
-		'	'aVector.z = 1 / 0.0254 * -phyVertex.vertex.y
-		'	'TEST: Works for L4D2's van phys mesh.
-		'	'      Does not work for L4D2 w_model\weapons\w_minigun.mdl.
-		'	aVector.x = 1 / 0.0254 * vertex.z
-		'	aVector.y = 1 / 0.0254 * -vertex.x
-		'	aVector.z = 1 / 0.0254 * -vertex.y
-
-		'	aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-
-		'	'======
-
-		'	'Dim aVectorTransformed2 As SourceVector
-		'	''aVectorTransformed2 = New SourceVector()
-		'	''aVectorTransformed2 = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'	''aVectorTransformed2.x = aVector.x
-		'	''aVectorTransformed2.y = aVector.y
-		'	''aVectorTransformed2.z = aVector.z
-
-		'	'aVectorTransformed = MathModule.VectorTransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'	''aVectorTransformed = MathModule.VectorTransform(aVectorTransformed2, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'	''aVectorTransformed = New SourceVector()
-		'	''aVectorTransformed.x = aVectorTransformed2.x
-		'	''aVectorTransformed.y = aVectorTransformed2.y
-		'	''aVectorTransformed.z = aVectorTransformed2.z
-		'Else
-		'	'TEST: Does not work for L4D2 w_model\weapons\w_minigun.mdl.
-		'	aVector.x = 1 / 0.0254 * vertex.x
-		'	aVector.y = 1 / 0.0254 * vertex.z
-		'	aVector.z = 1 / 0.0254 * -vertex.y
-
-		'	aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		'End If
-		'------
-		'TEST: Does not rotate L4D2's van phys mesh correctly.
-		'aVector.x = 1 / 0.0254 * phyVertex.vertex.x
-		'aVector.y = 1 / 0.0254 * phyVertex.vertex.y
-		'aVector.z = 1 / 0.0254 * phyVertex.vertex.z
-		'TEST: Does not rotate L4D2's van phys mesh correctly.
-		'aVector.x = 1 / 0.0254 * phyVertex.vertex.y
-		'aVector.y = 1 / 0.0254 * -phyVertex.vertex.x
-		'aVector.z = 1 / 0.0254 * phyVertex.vertex.z
-		'TEST: works for survivor_producer; matches ref and phy meshes of van, but both are rotated 90 degrees on z-axis
-		'aVector.x = 1 / 0.0254 * phyVertex.vertex.x
-		'aVector.y = 1 / 0.0254 * phyVertex.vertex.z
-		'aVector.z = 1 / 0.0254 * -phyVertex.vertex.y
-
-		'aVectorTransformed = MathModule.VectorITransform(aVector, aBone.poseToBoneColumn0, aBone.poseToBoneColumn1, aBone.poseToBoneColumn2, aBone.poseToBoneColumn3)
-		''------
-		'''TEST: Only rotate by -90 deg if bone is a root bone.  Do not know why.
-		''If aBone.parentBoneIndex = -1 Then
-		''	aVectorTransformed = MathModule.RotateAboutZAxis(aVectorTransformed, MathModule.DegreesToRadians(-90), aBone)
-		''End If
 
 		Return aVectorTransformed
 	End Function
 
-	'static void CalcAnimation( const CStudioHdr *pStudioHdr,	Vector *pos, Quaternion *q, 
-	'	mstudioseqdesc_t &seqdesc,
-	'	int sequence, int animation,
-	'	float cycle, int boneMask )
-	'{
-	'	int					i;
-	'
-	'	mstudioanimdesc_t &animdesc = pStudioHdr->pAnimdesc( animation );
-	'	mstudiobone_t *pbone = pStudioHdr->pBone( 0 );
-	'	mstudioanim_t *panim = animdesc.pAnim( );
-	'
-	'	int					iFrame;
-	'	float				s;
-	'
-	'	float fFrame = cycle * (animdesc.numframes - 1);
-	'
-	'	iFrame = (int)fFrame;
-	'	s = (fFrame - iFrame);
-	'
-	'	float *pweight = seqdesc.pBoneweight( 0 );
-	'
-	'	for (i = 0; i < pStudioHdr->numbones(); i++, pbone++, pweight++)
-	'	{
-	'		if (panim && panim->bone == i)
-	'		{
-	'			if (*pweight > 0 && (pbone->flags & boneMask))
-	'			{
-	'				CalcBoneQuaternion( iFrame, s, pbone, panim, q[i] );
-	'				CalcBonePosition  ( iFrame, s, pbone, panim, pos[i] );
-	'			}
-	'			panim = panim->pNext();
-	'		}
-	'		else if (*pweight > 0 && (pbone->flags & boneMask))
-	'		{
-	'			if (animdesc.flags & STUDIO_DELTA)
-	'			{
-	'				q[i].Init( 0.0f, 0.0f, 0.0f, 1.0f );
-	'				pos[i].Init( 0.0f, 0.0f, 0.0f );
-	'			}
-	'			else
-	'			{
-	'				q[i] = pbone->quat;
-	'				pos[i] = pbone->pos;
-	'			}
-	'		}
-	'	}
-	'}
-	'======
-	'FROM: SourceEngine2007_source\src_main\public\bone_setup.cpp
-	'//-----------------------------------------------------------------------------
-	'// Purpose: Find and decode a sub-frame of animation
-	'//-----------------------------------------------------------------------------
-	'
-	'static void CalcAnimation( const CStudioHdr *pStudioHdr,	Vector *pos, Quaternion *q, 
-	'	mstudioseqdesc_t &seqdesc,
-	'	int sequence, int animation,
-	'	float cycle, int boneMask )
-	'{
-	'#ifdef STUDIO_ENABLE_PERF_COUNTERS
-	'	pStudioHdr->m_nPerfAnimationLayers++;
-	'#endif
-	'
-	'	virtualmodel_t *pVModel = pStudioHdr->GetVirtualModel();
-	'
-	'	if (pVModel)
-	'	{
-	'		CalcVirtualAnimation( pVModel, pStudioHdr, pos, q, seqdesc, sequence, animation, cycle, boneMask );
-	'		return;
-	'	}
-	'
-	'	mstudioanimdesc_t &animdesc = pStudioHdr->pAnimdesc( animation );
-	'	mstudiobone_t *pbone = pStudioHdr->pBone( 0 );
-	'	const mstudiolinearbone_t *pLinearBones = pStudioHdr->pLinearBones();
-	'
-	'	int					i;
-	'	int					iFrame;
-	'	float				s;
-	'
-	'	float fFrame = cycle * (animdesc.numframes - 1);
-	'
-	'	iFrame = (int)fFrame;
-	'	s = (fFrame - iFrame);
-	'
-	'	int iLocalFrame = iFrame;
-	'	float flStall;
-	'	mstudioanim_t *panim = animdesc.pAnim( &iLocalFrame, flStall );
-	'
-	'	float *pweight = seqdesc.pBoneweight( 0 );
-	'
-	'	// if the animation isn't available, look for the zero frame cache
-	'	if (!panim)
-	'	{
-	'		// Msg("zeroframe %s\n", animdesc.pszName() );
-	'		// pre initialize
-	'		for (i = 0; i < pStudioHdr->numbones(); i++, pbone++, pweight++)
-	'		{
-	'			if (*pweight > 0 && (pStudioHdr->boneFlags(i) & boneMask))
-	'			{
-	'				if (animdesc.flags & STUDIO_DELTA)
-	'				{
-	'					q[i].Init( 0.0f, 0.0f, 0.0f, 1.0f );
-	'					pos[i].Init( 0.0f, 0.0f, 0.0f );
-	'				}
-	'				else
-	'				{
-	'					q[i] = pbone->quat;
-	'					pos[i] = pbone->pos;
-	'				}
-	'			}
-	'		}
-	'
-	'		CalcZeroframeData( pStudioHdr, pStudioHdr->GetRenderHdr(), NULL, pStudioHdr->pBone( 0 ), animdesc, fFrame, pos, q, boneMask, 1.0 );
-	'
-	'		return;
-	'	}
-	'
-	'	// BUGBUG: the sequence, the anim, and the model can have all different bone mappings.
-	'	for (i = 0; i < pStudioHdr->numbones(); i++, pbone++, pweight++)
-	'	{
-	'		if (panim && panim->bone == i)
-	'		{
-	'			if (*pweight > 0 && (pStudioHdr->boneFlags(i) & boneMask))
-	'			{
-	'				CalcBoneQuaternion( iLocalFrame, s, pbone, pLinearBones, panim, q[i] );
-	'				CalcBonePosition  ( iLocalFrame, s, pbone, pLinearBones, panim, pos[i] );
-	'#ifdef STUDIO_ENABLE_PERF_COUNTERS
-	'				pStudioHdr->m_nPerfAnimatedBones++;
-	'				pStudioHdr->m_nPerfUsedBones++;
-	'#endif
-	'			}
-	'			panim = panim->pNext();
-	'		}
-	'		else if (*pweight > 0 && (pStudioHdr->boneFlags(i) & boneMask))
-	'		{
-	'			if (animdesc.flags & STUDIO_DELTA)
-	'			{
-	'				q[i].Init( 0.0f, 0.0f, 0.0f, 1.0f );
-	'				pos[i].Init( 0.0f, 0.0f, 0.0f );
-	'			}
-	'			else
-	'			{
-	'				q[i] = pbone->quat;
-	'				pos[i] = pbone->pos;
-	'			}
-	'#ifdef STUDIO_ENABLE_PERF_COUNTERS
-	'			pStudioHdr->m_nPerfUsedBones++;
-	'#endif
-	'		}
-	'	}
-	'
-	'	// cross fade in previous zeroframe data
-	'	if (flStall > 0.0f)
-	'	{
-	'		CalcZeroframeData( pStudioHdr, pStudioHdr->GetRenderHdr(), NULL, pStudioHdr->pBone( 0 ), animdesc, fFrame, pos, q, boneMask, flStall );
-	'	}
-	'
-	'	if (animdesc.numlocalhierarchy)
-	'	{
-	'		matrix3x4_t *boneToWorld = g_MatrixPool.Alloc();
-	'		CBoneBitList boneComputed;
-	'
-	'		int i;
-	'		for (i = 0; i < animdesc.numlocalhierarchy; i++)
-	'		{
-	'			mstudiolocalhierarchy_t *pHierarchy = animdesc.pHierarchy( i );
-	'
-	'			if ( !pHierarchy )
-	'				break;
-	'
-	'			if (pStudioHdr->boneFlags(pHierarchy->iBone) & boneMask)
-	'			{
-	'				if (pStudioHdr->boneFlags(pHierarchy->iNewParent) & boneMask)
-	'				{
-	'					CalcLocalHierarchyAnimation( pStudioHdr, boneToWorld, boneComputed, pos, q, pbone, pHierarchy, pHierarchy->iBone, pHierarchy->iNewParent, cycle, iFrame, s, boneMask );
-	'				}
-	'			}
-	'		}
-	'
-	'		g_MatrixPool.Free( boneToWorld );
-	'	}
-	'
-	'}
 	Private Sub CalcAnimation(ByVal aSequenceDesc As SourceMdlSequenceDesc, ByVal anAnimationDesc As SourceMdlAnimationDesc52, ByVal frameIndex As Integer)
 		Dim s As Double
 		Dim animIndex As Integer

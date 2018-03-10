@@ -1,29 +1,24 @@
-Crowbar 0.55 - 2018-02-28_0.55
+Crowbar 0.56 - 2018-03-10_0.56
 
 Changelog:
 
-=== Set Up Games ===
-
-    ADDED: Tactical Intervention game setup.
-
-
-=== Unpack ===
-
-    ADDED: Unpacking of Tactical Intervention FPX package files.
-    ADDED: Unpacking of Garry's Mod GMA package files. Includes "unpacking" of an "addon.json" file that does not exist in the GMA package as a file, but as meta-data.
-
-
 === Decompile ===
 
-    ADDED: MDL v10 - Checkbox for using UV values specifically for DoomMusic's model compiler, which handles the UVs slightly differently than the Valve compiler.
-    ADDED: MDL v52 - Titanfall animation SMD files.
-    ADDED: MDL v53 - Titanfall 2 reference and LoD meshes, animation SMD files, and (probably incomplete) QC file.
-    FIXED: MDL v44 - Missing translational root-bone movement (walkframe LX LY LZ). (Rotational root-bone movement has not been fixed.)
-    FIXED: MDL v44, v45, v46, v48, v49, v52 - Missing name value for $sequence ikrule attachment option.
-    FIXED: MDL v44, v45, v46, v48, v49, v52 - Incorrect custom normals (smoothing groups) of concave physics mesh that has shared vertexes between convex sections.
-    FIXED: All MDL versions - The rotate x value for $attachment sometimes is NaN instead of a number.
+    FIXED: MDL v53 - Some models fail to decompile.
+    FIXED: Wording of the tooltip for "Use UVs for DoomMusic's model compiler (GoldSource)" option.
+    FIXED: Some models have path in material names in mesh SMD files.
+
+
+=== Compile ===
+
+    FIXED: Moving the splitter on Compile tab down at some point shows parts of the command-line/options area incorrectly.
 
 
 === Options ===
 
-    ADDED: Option to restrict to single instance (only one Crowbar open at a time).
+    ADDED: Auto-open for FPX and GMA packages.
+
+
+=== About ===
+
+    FIXED: Corrected which packages Crowbar can unpack.

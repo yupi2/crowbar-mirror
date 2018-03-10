@@ -226,6 +226,48 @@ Public Class SourceModel53
 		Return status
 	End Function
 
+	Public Overrides Function WriteVertexAnimationVtaFiles(ByVal modelOutputPath As String) As AppEnums.StatusMessage
+		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+
+		Dim aBodyPart As SourceMdlBodyPart
+		Dim vtaFileName As String
+		Dim vtaPath As String
+		Dim vtaPathFileName As String
+
+		Try
+			For aBodyPartIndex As Integer = 0 To Me.theMdlFileData.theBodyParts.Count - 1
+				aBodyPart = Me.theMdlFileData.theBodyParts(aBodyPartIndex)
+
+				If aBodyPart.theFlexFrames Is Nothing OrElse aBodyPart.theFlexFrames.Count = 0 Then
+					Continue For
+				End If
+
+				vtaFileName = SourceFileNamesModule.GetVtaFileName(Me.Name, aBodyPartIndex)
+				vtaPathFileName = Path.Combine(modelOutputPath, vtaFileName)
+				vtaPath = FileManager.GetPath(vtaPathFileName)
+				If FileManager.OutputPathIsUsable(vtaPath) Then
+					Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, vtaPathFileName)
+					'NOTE: Check here in case writing is canceled in the above event.
+					If Me.theWritingIsCanceled Then
+						status = StatusMessage.Canceled
+						Return status
+					ElseIf Me.theWritingSingleFileIsCanceled Then
+						Me.theWritingSingleFileIsCanceled = False
+						Continue For
+					End If
+
+					Me.WriteVertexAnimationVtaFile(vtaPathFileName, aBodyPart)
+
+					Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, vtaPathFileName)
+				End If
+			Next
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		End Try
+
+		Return status
+	End Function
+
 	Public Overrides Function GetTextureFolders() As List(Of String)
 		Dim textureFolders As New List(Of String)()
 
@@ -372,7 +414,7 @@ Public Class SourceModel53
 		mdlFile.ReadUnreadBytes()
 
 		' Post-processing.
-		'mdlFile.CreateFlexFrameList()
+		mdlFile.CreateFlexFrameList()
 		Common.ProcessTexturePaths(Me.theMdlFileData.theTexturePaths, Me.theMdlFileData.theTextures, Me.theMdlFileData.theModifiedTexturePaths, Me.theMdlFileData.theModifiedTextureFileNames)
 	End Sub
 
@@ -442,7 +484,8 @@ Public Class SourceModel53
 			'	qcFile.WriteBodyGroupCommand(0)
 			'End If
 			qcFile.WriteBodyGroupCommand()
-			qcFile.WriteGroup("lod", AddressOf qcFile.WriteGroupLod, False, False)
+			'TODO: LOD option "replacebone" is wrong because bone.flags is read-in incorrectly.
+			'qcFile.WriteGroup("lod", AddressOf qcFile.WriteGroupLod, False, False)
 
 			qcFile.WriteSurfacePropCommand()
 			qcFile.WriteJointSurfacePropCommand()

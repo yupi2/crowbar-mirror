@@ -346,8 +346,8 @@ Public Class SourceQcFile53
 						If anEyeball.theTextureIndex = -1 Then
 							eyeballTextureName = "[unknown_texture]"
 						Else
-							eyeballTextureName = Me.theMdlFileData.theTextures(anEyeball.theTextureIndex).thePathFileName
-							'eyeballTextureName = Path.GetFileName(theSourceEngineModel.theMdlFileHeader.theTextures(anEyeball.theTextureIndex).theName)
+							'eyeballTextureName = Me.theMdlFileData.theTextures(anEyeball.theTextureIndex).thePathFileName
+							eyeballTextureName = Me.theMdlFileData.theModifiedTextureFileNames(anEyeball.theTextureIndex)
 						End If
 
 						line = vbTab
@@ -1051,9 +1051,6 @@ Public Class SourceQcFile53
 		'  replacemodel "producer_model_merged.dmx" "lod3_producer_model_merged.dmx"
 		'}
 		If Me.theVtxFileData IsNot Nothing AndAlso Me.theMdlFileData.theBodyParts IsNot Nothing Then
-			'Dim referenceSmdFileName As String
-			'Dim lodSmdFileName As String
-
 			If Me.theVtxFileData.theVtxBodyParts Is Nothing Then
 				Return
 			End If
@@ -1064,64 +1061,18 @@ Public Class SourceQcFile53
 				Return
 			End If
 
-			'referenceSmdFileName = theSourceEngineModel.GetBodyGroupSmdFileName(0, 0, 0)
-
-			'line = ""
-			'Me.theOutputFileStreamWriter.WriteLine(line)
-
-			''NOTE: Start loop at 1 to skip first LOD, which isn't needed for the $lod command.
-			'For lodIndex As Integer = 1 To theSourceEngineModel.theVtxFileHeader.lodCount - 1
-			'	Dim switchPoint As Single
-			'	'TODO: Need to check that each of these objects exist first before using them.
-			'	If lodIndex >= theSourceEngineModel.theVtxFileHeader.theVtxBodyParts(0).theVtxModels(0).theVtxModelLods.Count Then
-			'		Return
-			'	End If
-
-			'	switchPoint = theSourceEngineModel.theVtxFileHeader.theVtxBodyParts(0).theVtxModels(0).theVtxModelLods(lodIndex).switchPoint
-
-			'	lodSmdFileName = theSourceEngineModel.GetBodyGroupSmdFileName(0, 0, lodIndex)
-
-			'	line = ""
-			'	If switchPoint = -1 Then
-			'		'// Shadow lod reserves -1 as switch value
-			'		'// which uniquely identifies a shadow lod
-			'		'newLOD.switchValue = -1.0f;
-			'		line += "$shadowlod"
-			'	Else
-			'If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
-			'	line += "$LOD "
-			'Else
-			'	line += "$lod "
-			'End If
-			'		line += switchPoint.ToString("0.######", TheApp.InternalNumberFormat)
-			'	End If
-			'	Me.theOutputFileStreamWriter.WriteLine(line)
-
-			'	line = "{"
-			'	Me.theOutputFileStreamWriter.WriteLine(line)
-
-			'	line = vbTab
-			'	line += "replacemodel "
-			'	line += """"
-			'	line += referenceSmdFileName
-			'	line += """ """
-			'	line += lodSmdFileName
-			'	line += """"
-			'	Me.theOutputFileStreamWriter.WriteLine(line)
-
-			'	line = "}"
-			'	Me.theOutputFileStreamWriter.WriteLine(line)
-			'Next
-			'======
 			Dim aBodyPart As SourceVtxBodyPart
 			Dim aVtxModel As SourceVtxModel
 			Dim aBodyModel As SourceMdlModel
+			Dim lodIndex As Integer
 			Dim aLodQcInfo As LodQcInfo
 			Dim aLodQcInfoList As List(Of LodQcInfo)
 			Dim aLodList As SortedList(Of Single, List(Of LodQcInfo))
+			Dim aLodListOfFacialFlags As SortedList(Of Single, Boolean)
 			Dim switchPoint As Single
 
 			aLodList = New SortedList(Of Single, List(Of LodQcInfo))()
+			aLodListOfFacialFlags = New SortedList(Of Single, Boolean)()
 			For bodyPartIndex As Integer = 0 To Me.theVtxFileData.theVtxBodyParts.Count - 1
 				aBodyPart = Me.theVtxFileData.theVtxBodyParts(bodyPartIndex)
 
@@ -1137,26 +1088,17 @@ Public Class SourceQcFile53
 							End If
 
 							'NOTE: Start loop at 1 to skip first LOD, which isn't needed for the $lod command.
-							For lodIndex As Integer = 1 To Me.theVtxFileData.lodCount - 1
+							For lodIndex = 1 To Me.theVtxFileData.lodCount - 1
 								'TODO: Why would this count be different than the file header count?
 								If lodIndex >= aVtxModel.theVtxModelLods.Count Then
 									Exit For
 								End If
 
-								'If lodIndex = 0 Then
-								'    If Not TheApp.Settings.DecompileReferenceMeshSmdFileIsChecked Then
-								'        Continue For
-								'    End If
-								'ElseIf lodIndex > 0 Then
-								'    If Not TheApp.Settings.DecompileLodMeshSmdFilesIsChecked Then
-								'        Exit For
-								'    End If
-								'End If
-
 								switchPoint = aVtxModel.theVtxModelLods(lodIndex).switchPoint
 								If Not aLodList.ContainsKey(switchPoint) Then
 									aLodQcInfoList = New List(Of LodQcInfo)()
 									aLodList.Add(switchPoint, aLodQcInfoList)
+									aLodListOfFacialFlags.Add(switchPoint, aVtxModel.theVtxModelLods(lodIndex).theVtxModelLodUsesFacial)
 								Else
 									aLodQcInfoList = aLodList(switchPoint)
 								End If
@@ -1179,6 +1121,7 @@ Public Class SourceQcFile53
 			Dim lodQcInfoListOfShadowLod As List(Of LodQcInfo)
 			lodQcInfoListOfShadowLod = Nothing
 
+			lodIndex = 0
 			For lodListIndex As Integer = 0 To aLodList.Count - 1
 				switchPoint = aLodList.Keys(lodListIndex)
 				If switchPoint = -1 Then
@@ -1186,6 +1129,7 @@ Public Class SourceQcFile53
 					lodQcInfoListOfShadowLod = aLodList.Values(lodListIndex)
 					Continue For
 				End If
+				lodIndex += 1
 
 				aLodQcInfoList = aLodList.Values(lodListIndex)
 
@@ -1199,25 +1143,13 @@ Public Class SourceQcFile53
 
 				line = "{"
 				Me.theOutputFileStreamWriter.WriteLine(line)
-
-				For i As Integer = 0 To aLodQcInfoList.Count - 1
-					aLodQcInfo = aLodQcInfoList(i)
-
-					line = vbTab
-					line += "replacemodel "
-					line += """"
-					line += aLodQcInfo.referenceFileName
-					line += """ """
-					line += aLodQcInfo.lodFileName
-					line += """"
-					Me.theOutputFileStreamWriter.WriteLine(line)
-				Next
-
+				Me.WriteLodOptions(lodIndex, aLodListOfFacialFlags.Values(lodListIndex), aLodQcInfoList)
 				line = "}"
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			Next
 
 			'NOTE: As a requirement for the compiler, write $shadowlod last.
+			lodIndex = aLodList.Count - 1
 			If lodQcInfoListOfShadowLod IsNot Nothing Then
 				'// Shadow lod reserves -1 as switch value
 				'// which uniquely identifies a shadow lod
@@ -1231,23 +1163,104 @@ Public Class SourceQcFile53
 
 				line = "{"
 				Me.theOutputFileStreamWriter.WriteLine(line)
-
-				For i As Integer = 0 To lodQcInfoListOfShadowLod.Count - 1
-					aLodQcInfo = lodQcInfoListOfShadowLod(i)
-
-					line = vbTab
-					line += "replacemodel "
-					line += """"
-					line += aLodQcInfo.referenceFileName
-					line += """ """
-					line += aLodQcInfo.lodFileName
-					line += """"
-					Me.theOutputFileStreamWriter.WriteLine(line)
-				Next
-
+				Me.WriteLodOptions(lodIndex, False, lodQcInfoListOfShadowLod)
 				line = "}"
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			End If
+		End If
+	End Sub
+
+	Private Sub WriteLodOptions(ByVal lodIndex As Integer, ByVal lodUsesFacial As Boolean, ByVal aLodQcInfoList As List(Of LodQcInfo))
+		Dim line As String = ""
+		Dim aLodQcInfo As LodQcInfo
+
+		For i As Integer = 0 To aLodQcInfoList.Count - 1
+			aLodQcInfo = aLodQcInfoList(i)
+
+			If aLodQcInfo.lodFileName = "" Then
+				line = vbTab
+				line += "removemodel "
+				line += """"
+				line += aLodQcInfo.referenceFileName
+				line += """"
+			Else
+				line = vbTab
+				line += "replacemodel "
+				line += """"
+				line += aLodQcInfo.referenceFileName
+				line += """ """
+				line += aLodQcInfo.lodFileName
+				line += """"
+			End If
+
+			Me.theOutputFileStreamWriter.WriteLine(line)
+		Next
+
+		Try
+			Dim materialReplacementList As SourceVtxMaterialReplacementList07
+			materialReplacementList = Me.theVtxFileData.theVtxMaterialReplacementLists(lodIndex)
+			If materialReplacementList.theVtxMaterialReplacements IsNot Nothing Then
+				For Each materialReplacement As SourceVtxMaterialReplacement07 In materialReplacementList.theVtxMaterialReplacements
+					line = vbTab
+					line += "replacematerial "
+					line += """"
+					line += Me.theMdlFileData.theModifiedTextureFileNames(materialReplacement.materialIndex)
+					line += """ """
+					line += materialReplacement.theName
+					line += """"
+
+					Me.theOutputFileStreamWriter.WriteLine(line)
+				Next
+			End If
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		End Try
+
+		For Each aBone As SourceMdlBone In Me.theMdlFileData.theBones
+			If (lodIndex = 1 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD1) = 0) _
+				OrElse (lodIndex = 2 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD2) = 0) _
+				OrElse (lodIndex = 3 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD3) = 0) _
+				OrElse (lodIndex = 4 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD4) = 0) _
+				OrElse (lodIndex = 5 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD5) = 0) _
+				OrElse (lodIndex = 6 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD6) = 0) _
+				OrElse (lodIndex = 7 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD7) = 0) Then
+				'replacebone "ValveBiped.Bip01_Neck1" "ValveBiped.Bip01_Head1"
+				line = vbTab
+				line += "replacebone "
+				line += """"
+				line += aBone.theName
+				line += """ """
+				line += Me.theMdlFileData.theBones(aBone.parentBoneIndex).theName
+				line += """"
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			End If
+		Next
+
+		line = vbTab
+		If lodUsesFacial Then
+			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+				line += "Facial"
+			Else
+				line += "facial"
+			End If
+		Else
+			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+				line += "NoFacial"
+			Else
+				line += "nofacial"
+			End If
+		End If
+		Me.theOutputFileStreamWriter.WriteLine(line)
+
+		If (Me.theMdlFileData.flags And SourceMdlFileData.STUDIOHDR_FLAGS_USE_SHADOWLOD_MATERIALS) > 0 Then
+			Me.theOutputFileStreamWriter.WriteLine()
+
+			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+				line = "Use_ShadowLOD_Materials"
+			Else
+				line = "use_shadowlod_materials"
+			End If
+			Me.theOutputFileStreamWriter.WriteLine(line)
 		End If
 	End Sub
 

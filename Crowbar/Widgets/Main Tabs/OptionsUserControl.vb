@@ -23,6 +23,8 @@ Public Class OptionsUserControl
 		' Auto-Open
 
 		Me.AutoOpenVpkFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsAutoOpenVpkFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
+		Me.AutoOpenGmaFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsAutoOpenGmaFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
+		Me.AutoOpenFpxFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsAutoOpenFpxFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.AutoOpenMdlFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsAutoOpenMdlFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.AutoOpenMdlFileForPreviewCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsAutoOpenMdlFileForPreviewIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.AutoOpenMdlFileForDecompileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "OptionsAutoOpenMdlFileForDecompileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
@@ -91,6 +93,9 @@ Public Class OptionsUserControl
 
 		' Auto-Open
 
+		Me.AutoOpenVpkFileCheckBox.DataBindings.Clear()
+		Me.AutoOpenGmaFileCheckBox.DataBindings.Clear()
+		Me.AutoOpenFpxFileCheckBox.DataBindings.Clear()
 		Me.AutoOpenMdlFileCheckBox.DataBindings.Clear()
 		Me.AutoOpenMdlFileForPreviewCheckBox.DataBindings.Clear()
 		Me.AutoOpenMdlFileForDecompileCheckBox.DataBindings.Clear()
@@ -203,6 +208,10 @@ Public Class OptionsUserControl
 			TheApp.SaveAppSettings()
 		ElseIf e.PropertyName = "OptionsAutoOpenVpkFileIsChecked" Then
 			Me.ApplyAutoOpenVpkFileOptions()
+		ElseIf e.PropertyName = "OptionsAutoOpenGmaFileIsChecked" Then
+			Me.ApplyAutoOpenGmaFileOptions()
+		ElseIf e.PropertyName = "OptionsAutoOpenFpxFileIsChecked" Then
+			Me.ApplyAutoOpenFpxFileOptions()
 		ElseIf e.PropertyName = "OptionsAutoOpenMdlFileIsChecked" Then
 			Me.ApplyAutoOpenMdlFileOptions()
 		ElseIf e.PropertyName = "OptionsAutoOpenQcFileIsChecked" Then
@@ -219,6 +228,22 @@ Public Class OptionsUserControl
 			Win32Api.CreateFileAssociation("vpk", "vpkFile", "VPK File", Application.ExecutablePath)
 		Else
 			Win32Api.DeleteFileAssociation("vpk", "vpkFile", "VPK File", Application.ExecutablePath)
+		End If
+	End Sub
+
+	Private Sub ApplyAutoOpenGmaFileOptions()
+		If TheApp.Settings.OptionsAutoOpenGmaFileIsChecked Then
+			Win32Api.CreateFileAssociation("gma", "gmaFile", "GMA File", Application.ExecutablePath)
+		Else
+			Win32Api.DeleteFileAssociation("gma", "gmaFile", "GMA File", Application.ExecutablePath)
+		End If
+	End Sub
+
+	Private Sub ApplyAutoOpenFpxFileOptions()
+		If TheApp.Settings.OptionsAutoOpenFpxFileIsChecked Then
+			Win32Api.CreateFileAssociation("fpx", "fpxFile", "FPX File", Application.ExecutablePath)
+		Else
+			Win32Api.DeleteFileAssociation("fpx", "fpxFile", "FPX File", Application.ExecutablePath)
 		End If
 	End Sub
 
@@ -240,6 +265,8 @@ Public Class OptionsUserControl
 
 	Private Sub ApplyAllAutoOpenOptions()
 		Me.ApplyAutoOpenVpkFileOptions()
+		Me.ApplyAutoOpenGmaFileOptions()
+		Me.ApplyAutoOpenFpxFileOptions()
 		Me.ApplyAutoOpenMdlFileOptions()
 		Me.ApplyAutoOpenQcFileOptions()
 
@@ -249,6 +276,12 @@ Public Class OptionsUserControl
 	Private Sub UpdateApplyPanel()
 		Dim vpkFileAssociationIsAlreadyAssigned As Boolean
 		vpkFileAssociationIsAlreadyAssigned = Win32Api.FileAssociationIsAlreadyAssigned("vpk", "vpkFile", "VPK File", Application.ExecutablePath)
+
+		Dim gmaFileAssociationIsAlreadyAssigned As Boolean
+		gmaFileAssociationIsAlreadyAssigned = Win32Api.FileAssociationIsAlreadyAssigned("gma", "gmaFile", "GMA File", Application.ExecutablePath)
+
+		Dim fpxFileAssociationIsAlreadyAssigned As Boolean
+		fpxFileAssociationIsAlreadyAssigned = Win32Api.FileAssociationIsAlreadyAssigned("fpx", "fpxFile", "FPX File", Application.ExecutablePath)
 
 		Dim mdlFileAssociationIsAlreadyAssigned As Boolean
 		mdlFileAssociationIsAlreadyAssigned = Win32Api.FileAssociationIsAlreadyAssigned("mdl", "mdlFile", "MDL File", Application.ExecutablePath)
@@ -260,6 +293,10 @@ Public Class OptionsUserControl
 		Dim applyPanelShouldBeVisible As Boolean
 		applyPanelShouldBeVisible = False
 		If vpkFileAssociationIsAlreadyAssigned <> TheApp.Settings.OptionsAutoOpenVpkFileIsChecked Then
+			applyPanelShouldBeVisible = True
+		ElseIf gmaFileAssociationIsAlreadyAssigned <> TheApp.Settings.OptionsAutoOpenGmaFileIsChecked Then
+			applyPanelShouldBeVisible = True
+		ElseIf fpxFileAssociationIsAlreadyAssigned <> TheApp.Settings.OptionsAutoOpenFpxFileIsChecked Then
 			applyPanelShouldBeVisible = True
 		ElseIf mdlFileAssociationIsAlreadyAssigned <> TheApp.Settings.OptionsAutoOpenMdlFileIsChecked Then
 			applyPanelShouldBeVisible = True

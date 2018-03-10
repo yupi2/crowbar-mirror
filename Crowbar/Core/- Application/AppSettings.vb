@@ -30,7 +30,7 @@ Public Class AppSettings
 		Me.theSetUpGamesGameSetupSelectedIndex = 0
 
 		Me.theUnpackContainerType = ContainerType.VPK
-		Me.theUnpackVpkPathFolderOrFileName = ""
+		Me.theUnpackPackagePathFolderOrFileName = ""
 		'Me.theUnpackOutputFolderOption = OutputFolderOptions.SubfolderName
 		Me.theUnpackOutputFolderOption = UnpackOutputPathOptions.WorkFolder
 		Me.SetDefaultUnpackOutputSubfolderName()
@@ -186,23 +186,13 @@ Public Class AppSettings
 		End Set
 	End Property
 
-	Public Property UnpackContainerType() As ContainerType
+	Public Property UnpackPackagePathFolderOrFileName() As String
 		Get
-			Return Me.theUnpackContainerType
-		End Get
-		Set(ByVal value As ContainerType)
-			Me.theUnpackContainerType = value
-			NotifyPropertyChanged("UnpackContainerType")
-		End Set
-	End Property
-
-	Public Property UnpackVpkPathFolderOrFileName() As String
-		Get
-			Return Me.theUnpackVpkPathFolderOrFileName
+			Return Me.theUnpackPackagePathFolderOrFileName
 		End Get
 		Set(ByVal value As String)
-			Me.theUnpackVpkPathFolderOrFileName = value
-			NotifyPropertyChanged("UnpackVpkPathFolderOrFileName")
+			Me.theUnpackPackagePathFolderOrFileName = value
+			NotifyPropertyChanged("UnpackPackagePathFolderOrFileName")
 		End Set
 	End Property
 
@@ -878,6 +868,30 @@ Public Class AppSettings
 		End Set
 	End Property
 
+	Public Property OptionsAutoOpenGmaFileIsChecked() As Boolean
+		Get
+			Return Me.theOptionsAutoOpenGmaFileIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			If Me.theOptionsAutoOpenGmaFileIsChecked <> value Then
+				Me.theOptionsAutoOpenGmaFileIsChecked = value
+				NotifyPropertyChanged("OptionsAutoOpenGmaFileIsChecked")
+			End If
+		End Set
+	End Property
+
+	Public Property OptionsAutoOpenFpxFileIsChecked() As Boolean
+		Get
+			Return Me.theOptionsAutoOpenFpxFileIsChecked
+		End Get
+		Set(ByVal value As Boolean)
+			If Me.theOptionsAutoOpenFpxFileIsChecked <> value Then
+				Me.theOptionsAutoOpenFpxFileIsChecked = value
+				NotifyPropertyChanged("OptionsAutoOpenFpxFileIsChecked")
+			End If
+		End Set
+	End Property
+
 	Public Property OptionsAutoOpenMdlFileIsChecked() As Boolean
 		Get
 			Return Me.theOptionsAutoOpenMdlFileIsChecked
@@ -1189,6 +1203,8 @@ Public Class AppSettings
 	Public Sub SetDefaultOptionsAutoOpenOptions()
 		'NOTE: Call the properties so the NotifyPropertyChanged events are raised.
 		Me.OptionsAutoOpenVpkFileIsChecked = True
+		Me.OptionsAutoOpenGmaFileIsChecked = True
+		Me.OptionsAutoOpenFpxFileIsChecked = True
 
 		Me.OptionsAutoOpenMdlFileIsChecked = True
 		Me.OptionsAutoOpenMdlFileForPreviewIsChecked = True
@@ -1264,12 +1280,12 @@ Public Class AppSettings
 	' Unpack tab
 
 	Private theUnpackContainerType As ContainerType
-	Private theUnpackVpkPathFolderOrFileName As String
+	Private theUnpackPackagePathFolderOrFileName As String
 	'Private theUnpackOutputFolderOption As OutputFolderOptions
 	Private theUnpackOutputFolderOption As UnpackOutputPathOptions
 	Private theUnpackOutputSubfolderName As String
 	Private theUnpackOutputFullPath As String
-	Private theUnpackVpkPathFileName As String
+	Private theUnpackPackagePathFileName As String
 	Private theUnpackGameSetupSelectedIndex As Integer
 
 	'Private theUnpackExtractIsChecked As Boolean
@@ -1370,6 +1386,8 @@ Public Class AppSettings
 	' Options tab
 
 	Private theOptionsAutoOpenVpkFileIsChecked As Boolean
+	Private theOptionsAutoOpenGmaFileIsChecked As Boolean
+	Private theOptionsAutoOpenFpxFileIsChecked As Boolean
 
 	Private theOptionsAutoOpenMdlFileIsChecked As Boolean
 	Private theOptionsAutoOpenMdlFileForPreviewIsChecked As Boolean

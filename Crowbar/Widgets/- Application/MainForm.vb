@@ -68,7 +68,7 @@ Public Class MainForm
 		Dim commandLineValues As New ReadOnlyCollection(Of String)(System.Environment.GetCommandLineArgs())
 		Me.Startup(commandLineValues)
 
-		Me.UnpackUserControl1.RunUnpackerToGetListOfVpkContents()
+		Me.UnpackUserControl1.RunUnpackerToGetListOfPackageContents()
 		Me.PreviewViewUserControl.RunDataViewer()
 		Me.ViewViewUserControl.RunDataViewer()
 
@@ -258,7 +258,33 @@ Public Class MainForm
 				vpkAction = ActionType.Unpack
 			End If
 			If vpkAction = ActionType.Unpack Then
-				TheApp.Settings.UnpackVpkPathFolderOrFileName = pathFileName
+				TheApp.Settings.UnpackPackagePathFolderOrFileName = pathFileName
+				Me.MainTabControl.SelectTab(Me.UnpackTabPage)
+			End If
+		ElseIf extension = ".gma" Then
+			Dim vpkAction As ActionType = ActionType.Unknown
+			If setViaAutoOpen Then
+				If TheApp.Settings.OptionsAutoOpenGmaFileIsChecked Then
+					vpkAction = ActionType.Unpack
+				End If
+			Else
+				vpkAction = ActionType.Unpack
+			End If
+			If vpkAction = ActionType.Unpack Then
+				TheApp.Settings.UnpackPackagePathFolderOrFileName = pathFileName
+				Me.MainTabControl.SelectTab(Me.UnpackTabPage)
+			End If
+		ElseIf extension = ".fpx" Then
+			Dim vpkAction As ActionType = ActionType.Unknown
+			If setViaAutoOpen Then
+				If TheApp.Settings.OptionsAutoOpenFpxFileIsChecked Then
+					vpkAction = ActionType.Unpack
+				End If
+			Else
+				vpkAction = ActionType.Unpack
+			End If
+			If vpkAction = ActionType.Unpack Then
+				TheApp.Settings.UnpackPackagePathFolderOrFileName = pathFileName
 				Me.MainTabControl.SelectTab(Me.UnpackTabPage)
 			End If
 		ElseIf extension = ".mdl" Then
@@ -385,7 +411,7 @@ Public Class MainForm
 		End Try
 
 		If folderAction = ActionType.Unpack Then
-			TheApp.Settings.UnpackVpkPathFolderOrFileName = pathFileName
+			TheApp.Settings.UnpackPackagePathFolderOrFileName = pathFileName
 			Me.MainTabControl.SelectTab(Me.UnpackTabPage)
 		ElseIf folderAction = ActionType.Decompile Then
 			TheApp.Settings.DecompileMdlPathFileName = pathFileName

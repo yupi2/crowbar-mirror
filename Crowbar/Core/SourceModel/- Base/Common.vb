@@ -356,7 +356,8 @@ Module Common
 		End If
 
 		If TheApp.Settings.DecompileRemovePathFromSmdMaterialFileNamesIsChecked Then
-			SourceFileNamesModule.CopyPathsFromTextureFileNamesToTexturePaths(theModifiedTexturePaths, theModifiedTextureFileNames)
+			'SourceFileNamesModule.CopyPathsFromTextureFileNamesToTexturePaths(theModifiedTexturePaths, theModifiedTextureFileNames)
+			SourceFileNamesModule.MovePathsFromTextureFileNamesToTexturePaths(theModifiedTexturePaths, theModifiedTextureFileNames)
 		End If
 	End Sub
 
