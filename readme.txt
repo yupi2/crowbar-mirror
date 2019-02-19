@@ -1,5 +1,5 @@
 Crowbar - by ZeqMacaw
-http://steamcommunity.com/id/zeqmacaw
+http://steamcommunity.com/id/zeqmacaw (76561198000923153)
 http://steamcommunity.com/groups/CrowbarTool
 
 ============================================
