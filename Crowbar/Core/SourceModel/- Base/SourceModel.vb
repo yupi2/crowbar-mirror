@@ -5,11 +5,17 @@ Public MustInherit Class SourceModel
 
 #Region "Shared"
 
-	Public Shared Function Create(ByVal mdlPathFileName As String, ByRef version As Integer) As SourceModel
+	Public Shared Function Create(ByVal mdlPathFileName As String, ByVal overrideVersion As SupportedMdlVersion, ByRef version As Integer) As SourceModel
 		Dim model As SourceModel = Nothing
+		Dim storedVersion As Integer
 
 		Try
-			version = SourceModel.GetVersion(mdlPathFileName)
+			storedVersion = SourceModel.GetVersion(mdlPathFileName)
+			If overrideVersion = SupportedMdlVersion.DoNotOverride Then
+				version = storedVersion
+			Else
+				version = CInt(EnumHelper.GetDescription(overrideVersion))
+			End If
 
 			If version = 4 Then
 				'NOT IMPLEMENTED YET.
@@ -18,6 +24,9 @@ Public MustInherit Class SourceModel
 				model = New SourceModel06(mdlPathFileName, version)
 			ElseIf version = 10 Then
 				model = New SourceModel10(mdlPathFileName, version)
+			ElseIf version = 11 Then
+				'NOT IMPLEMENTED YET.
+				'model = New SourceModel10(mdlPathFileName, version)
 			ElseIf version = 14 Then
 				'NOT IMPLEMENTED YET.
 				'model = New SourceModel14(mdlPathFileName, version)
@@ -404,11 +413,16 @@ Public MustInherit Class SourceModel
 
 	Public Overridable Function WriteQcFile(ByVal qcPathFileName As String) As AppEnums.StatusMessage
 		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+		Dim writeStatus As String
 
 		Me.theQcPathFileName = qcPathFileName
 		Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, qcPathFileName)
-		Me.WriteTextFile(qcPathFileName, AddressOf Me.WriteQcFile)
-		Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, qcPathFileName)
+		writeStatus = Me.WriteTextFile(qcPathFileName, AddressOf Me.WriteQcFile)
+		If writeStatus = "Success" Then
+			Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, qcPathFileName)
+		Else
+			Me.NotifySourceModelProgress(ProgressOptions.WritingFileFailed, writeStatus)
+		End If
 
 		Return status
 	End Function
@@ -425,13 +439,15 @@ Public MustInherit Class SourceModel
 		Return status
 	End Function
 
-	Public Overridable Function WriteMeshSmdFile(ByVal smdPathFileName As String, ByVal lodIndex As Integer, ByVal aVtxModel As SourceVtxModel, ByVal aModel As SourceMdlModel, ByVal bodyPartVertexIndexStart As Integer) As AppEnums.StatusMessage
-		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+	Public Overridable Function WriteMeshSmdFile(ByVal smdPathFileName As String, ByVal lodIndex As Integer, ByVal aVtxModel As SourceVtxModel, ByVal aModel As SourceMdlModel, ByVal bodyPartVertexIndexStart As Integer) As String
+		Dim status As String = "Success"
 
 		Try
 			Me.theOutputFileTextWriter = File.CreateText(smdPathFileName)
 
 			Me.WriteMeshSmdFile(lodIndex, aVtxModel, aModel, bodyPartVertexIndexStart)
+		Catch ex As PathTooLongException
+			status = "ERROR: Crowbar tried to create """ + smdPathFileName + """ but the system gave this message: " + ex.Message
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		Finally
@@ -462,44 +478,44 @@ Public MustInherit Class SourceModel
 		Return status
 	End Function
 
-	Public Overridable Function WriteBoneAnimationSmdFile(ByVal smdPathFileName As String, ByVal aSequenceDesc As SourceMdlSequenceDescBase, ByVal anAnimationDesc As SourceMdlAnimationDescBase) As AppEnums.StatusMessage
-		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+	Public Overridable Function WriteBoneAnimationSmdFile(ByVal smdPathFileName As String, ByVal aSequenceDesc As SourceMdlSequenceDescBase, ByVal anAnimationDesc As SourceMdlAnimationDescBase) As String
+		Dim status As String = "Success"
 
 		Try
-			theOutputFileTextWriter = File.CreateText(smdPathFileName)
+			Me.theOutputFileTextWriter = File.CreateText(smdPathFileName)
 
 			Me.WriteBoneAnimationSmdFile(aSequenceDesc, anAnimationDesc)
 		Catch ex As PathTooLongException
-			Dim debug As Integer = 4242
-			'TODO: Show warning to user explaining that file was not created and why.
+			status = "ERROR: Crowbar tried to create """ + smdPathFileName + """ but the system gave this message: " + ex.Message
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		Finally
-			If theOutputFileTextWriter IsNot Nothing Then
-				theOutputFileTextWriter.Flush()
-				theOutputFileTextWriter.Close()
+			If Me.theOutputFileTextWriter IsNot Nothing Then
+				If Me.theOutputFileTextWriter.BaseStream IsNot Nothing Then
+					Me.theOutputFileTextWriter.Flush()
+				End If
+				Me.theOutputFileTextWriter.Close()
 			End If
 		End Try
 
 		Return status
 	End Function
 
-	Public Overridable Function WriteVertexAnimationVtaFile(ByVal vtaPathFileName As String, ByVal bodyPart As SourceMdlBodyPart) As AppEnums.StatusMessage
-		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+	Public Overridable Function WriteVertexAnimationVtaFile(ByVal vtaPathFileName As String, ByVal bodyPart As SourceMdlBodyPart) As String
+		Dim status As String = "Success"
 
 		Try
-			theOutputFileTextWriter = File.CreateText(vtaPathFileName)
+			Me.theOutputFileTextWriter = File.CreateText(vtaPathFileName)
 
 			Me.WriteVertexAnimationVtaFile(bodyPart)
 		Catch ex As PathTooLongException
-			Dim debug As Integer = 4242
-			'TODO: Show warning to user explaining that file was not created and why.
+			status = "ERROR: Crowbar tried to create """ + vtaPathFileName + """ but the system gave this message: " + ex.Message
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		Finally
-			If theOutputFileTextWriter IsNot Nothing Then
-				theOutputFileTextWriter.Flush()
-				theOutputFileTextWriter.Close()
+			If Me.theOutputFileTextWriter IsNot Nothing Then
+				Me.theOutputFileTextWriter.Flush()
+				Me.theOutputFileTextWriter.Close()
 			End If
 		End Try
 
@@ -769,11 +785,15 @@ Public MustInherit Class SourceModel
 		End Try
 	End Sub
 
-	Protected Sub WriteTextFile(ByVal outputPathFileName As String, ByVal writeTextFileAction As WriteTextFileDelegate)
+	Protected Function WriteTextFile(ByVal outputPathFileName As String, ByVal writeTextFileAction As WriteTextFileDelegate) As String
+		Dim status As String = "Success"
+
 		Try
 			Me.theOutputFileTextWriter = File.CreateText(outputPathFileName)
 
 			writeTextFileAction.Invoke()
+		Catch ex As PathTooLongException
+			status = "ERROR: Crowbar tried to create """ + outputPathFileName + """ but the system gave this message: " + ex.Message
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		Finally
@@ -782,14 +802,16 @@ Public MustInherit Class SourceModel
 				Me.theOutputFileTextWriter.Close()
 			End If
 		End Try
-	End Sub
+
+		Return status
+	End Function
 
 	Protected Sub NotifySourceModelProgress(ByVal progress As ProgressOptions, ByVal message As String)
 		RaiseEvent SourceModelProgress(Me, New SourceModelProgressEventArgs(progress, message))
 	End Sub
 
-	Protected Function WriteAccessedBytesDebugFile(ByVal debugPathFileName As String, ByVal fileSeekLog As FileSeekLog) As AppEnums.StatusMessage
-		Dim status As AppEnums.StatusMessage = StatusMessage.Success
+	Protected Function WriteAccessedBytesDebugFile(ByVal debugPathFileName As String, ByVal fileSeekLog As FileSeekLog) As String
+		Dim status As String = "Success"
 
 		Try
 			Me.theOutputFileTextWriter = File.CreateText(debugPathFileName)
@@ -797,6 +819,8 @@ Public MustInherit Class SourceModel
 			Dim debugFile As New AccessedBytesDebugFile(Me.theOutputFileTextWriter)
 			debugFile.WriteHeaderComment()
 			debugFile.WriteFileSeekLog(fileSeekLog)
+		Catch ex As PathTooLongException
+			status = "ERROR: Crowbar tried to create """ + debugPathFileName + """ but the system gave this message: " + ex.Message
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		Finally

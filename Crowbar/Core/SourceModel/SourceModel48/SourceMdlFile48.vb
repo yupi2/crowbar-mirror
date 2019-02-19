@@ -2213,7 +2213,7 @@ Public Class SourceMdlFile48
 		Next
 
 		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-		Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aSeqDesc.theAutoLayers " + aSeqDesc.theAutoLayers.Count.ToString())
+		Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "[" + aSeqDesc.theName + "] " + "aSeqDesc.theAutoLayers " + aSeqDesc.theAutoLayers.Count.ToString())
 	End Sub
 
 	Private Sub ReadMdlAnimBoneWeights(ByVal seqInputFileStreamPosition As Long, ByVal aSeqDesc As SourceMdlSequenceDesc)

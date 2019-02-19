@@ -26,6 +26,10 @@ Public NotInheritable Class EnumHelper
 		Return list
 	End Function
 
+	Public Shared Sub InsertIntoList(ByVal index As Integer, ByVal value As System.Enum, ByRef list As IList)
+		list.Insert(index, New KeyValuePair(Of System.Enum, String)(value, GetDescription(value)))
+	End Sub
+
 	Public Shared Sub RemoveFromList(ByVal value As System.Enum, ByRef list As IList)
 		list.Remove(New KeyValuePair(Of System.Enum, String)(value, GetDescription(value)))
 	End Sub

@@ -404,7 +404,7 @@ Public Class FileManager
 		Return cleanedPath
 	End Function
 
-	Public Shared Function GetCleanPathFileName(ByVal givenPathFileName As String) As String
+	Public Shared Function GetCleanPathFileName(ByVal givenPathFileName As String, Optional ByVal returnFullPathFileName As Boolean = True) As String
 		Dim cleanPathFileName As String
 
 		Dim cleanedPathGivenPathFileName As String
@@ -412,11 +412,13 @@ Public Class FileManager
 		For Each invalidChar As Char In Path.GetInvalidPathChars()
 			cleanedPathGivenPathFileName = cleanedPathGivenPathFileName.Replace(invalidChar, "")
 		Next
-		Try
-			cleanedPathGivenPathFileName = Path.GetFullPath(cleanedPathGivenPathFileName)
-		Catch ex As Exception
-			cleanedPathGivenPathFileName = cleanedPathGivenPathFileName.Replace(":", "")
-		End Try
+		If returnFullPathFileName Then
+			Try
+				cleanedPathGivenPathFileName = Path.GetFullPath(cleanedPathGivenPathFileName)
+			Catch ex As Exception
+				cleanedPathGivenPathFileName = cleanedPathGivenPathFileName.Replace(":", "")
+			End Try
+		End If
 
 		Dim cleanedGivenFileName As String
 		cleanedGivenFileName = Path.GetFileName(cleanedPathGivenPathFileName)
@@ -461,7 +463,12 @@ Public Class FileManager
 			topNonextantPath = iPath
 			Dim shorterPath As String
 			shorterPath = FileManager.GetPath(iPath)
-			Return FileManager.GetLongestExtantPath(shorterPath, topNonextantPath)
+			'NOTE: This "If" handles cases such as iPath = "F:\" when "F" is not a valid drive.
+			If shorterPath = iPath Then
+				iPath = ""
+			Else
+				iPath = FileManager.GetLongestExtantPath(shorterPath, topNonextantPath)
+			End If
 		End If
 		Return iPath
 	End Function

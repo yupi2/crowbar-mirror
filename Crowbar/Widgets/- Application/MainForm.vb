@@ -144,6 +144,10 @@ Public Class MainForm
 
 	Private Sub MainForm_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 		Me.Init()
+
+		'TEST [UNHANDLED EXCEPTION] Use these lines to raise an exception and show the unhandled exception window.
+		'Dim documentsPath As String
+		'documentsPath = Path.Combine("debug", "<")
 	End Sub
 
 	Private Sub MainForm_FormClosed(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosedEventArgs) Handles Me.FormClosed

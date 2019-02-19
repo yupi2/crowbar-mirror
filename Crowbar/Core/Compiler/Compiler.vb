@@ -291,6 +291,7 @@ Public Class Compiler
 			If Me.theLogFileStream IsNot Nothing Then
 				Me.theLogFileStream.Flush()
 				Me.theLogFileStream.Close()
+				Me.theLogFileStream = Nothing
 			End If
 		End Try
 
@@ -366,29 +367,33 @@ Public Class Compiler
 			Dim compiledMdlPath As String
 			qcFile = New SourceQcFile()
 			qcModelName = qcFile.GetQcModelName(qcPathFileName)
-			compiledMdlPathFileName = Path.GetFullPath(qcModelName)
-			'qcModelTopFolderPath = FileManager.GetTopFolderPath(qcModelName)
-			If compiledMdlPathFileName <> qcModelName Then
-				If gameSetup.GameEngine = GameEngine.GoldSource Then
-					'	- The compiler does not create folders, so Crowbar needs to create the relative or absolute path found in $modelname, 
-					'		starting in the "current folder" [SetCurrentDirectory()].
-					'		* For example, with $modelname "C:\valve/models/barney.mdl", need to create "C:\valve\models" path.
-					'		* For example, with $modelname "valve/models/barney.mdl", need to create "[current folder]\valve\models" path.
-					compiledMdlPathFileName = Path.Combine(qcPath, qcModelName)
+			Try
+				compiledMdlPathFileName = Path.GetFullPath(qcModelName)
+				'qcModelTopFolderPath = FileManager.GetTopFolderPath(qcModelName)
+				If compiledMdlPathFileName <> qcModelName Then
+					If gameSetup.GameEngine = GameEngine.GoldSource Then
+						'	- The compiler does not create folders, so Crowbar needs to create the relative or absolute path found in $modelname, 
+						'		starting in the "current folder" [SetCurrentDirectory()].
+						'		* For example, with $modelname "C:\valve/models/barney.mdl", need to create "C:\valve\models" path.
+						'		* For example, with $modelname "valve/models/barney.mdl", need to create "[current folder]\valve\models" path.
+						compiledMdlPathFileName = Path.Combine(qcPath, qcModelName)
+						'If qcModelTopFolderPath <> "" Then
+						'	qcModelTopFolderPath = Path.Combine(qcPath, qcModelTopFolderPath)
+						'End If
+					Else
+						compiledMdlPathFileName = Path.Combine(gameModelsPath, qcModelName)
+						'If qcModelTopFolderPath <> "" Then
+						'	qcModelTopFolderPath = Path.Combine(gameModelsPath, qcModelTopFolderPath)
+						'End If
+					End If
+					compiledMdlPathFileName = Path.GetFullPath(compiledMdlPathFileName)
 					'If qcModelTopFolderPath <> "" Then
-					'	qcModelTopFolderPath = Path.Combine(qcPath, qcModelTopFolderPath)
-					'End If
-				Else
-					compiledMdlPathFileName = Path.Combine(gameModelsPath, qcModelName)
-					'If qcModelTopFolderPath <> "" Then
-					'	qcModelTopFolderPath = Path.Combine(gameModelsPath, qcModelTopFolderPath)
+					'	qcModelTopFolderPath = Path.GetFullPath(qcModelTopFolderPath)
 					'End If
 				End If
-				compiledMdlPathFileName = Path.GetFullPath(compiledMdlPathFileName)
-				'If qcModelTopFolderPath <> "" Then
-				'	qcModelTopFolderPath = Path.GetFullPath(qcModelTopFolderPath)
-				'End If
-			End If
+			Catch ex As Exception
+				compiledMdlPathFileName = ""
+			End Try
 			compiledMdlPath = FileManager.GetPath(compiledMdlPathFileName)
 			qcModelLongestExtantPath = FileManager.GetLongestExtantPath(compiledMdlPath, qcModelTopNonextantPath)
 			If qcModelTopNonextantPath <> "" Then
@@ -469,7 +474,7 @@ Public Class Compiler
 			'	End If
 		End Try
 
-		Return status
+			Return status
 	End Function
 
 	Private Sub RunStudioMdlApp(ByVal qcPath As String, ByVal qcFileName As String)
@@ -684,6 +689,12 @@ Public Class Compiler
 				'TEST: 
 				'Else
 				'	Dim i As Integer = 42
+
+				'NOTE: This works for handling CSGO's studiomdl when an MDL file exists where the new one is being compiled, but the new one has fewer sequences.
+				'      Not sure why the line "Please confirm sequence deletion: [y/n]" does not show until after Crowbar writes the "y".
+				If line.StartsWith("WARNING: This model has fewer sequences than its predecessor.") Then
+					myProcess.StandardInput.Write("y")
+				End If
 			End If
 		Catch ex As Exception
 			Dim debug As Integer = 4242

@@ -63,7 +63,7 @@ Public Class App
         'Me.theModelViewer = New Viewer()
 
         Dim documentsPath As String
-        documentsPath = Path.Combine(Me.theAppPath, "Documents")
+		documentsPath = Path.Combine(Me.theAppPath, "Documents")
 		AppConstants.HelpTutorialLink = Path.Combine(documentsPath, AppConstants.HelpTutorialLink)
         AppConstants.HelpContentsLink = Path.Combine(documentsPath, AppConstants.HelpContentsLink)
         AppConstants.HelpIndexLink = Path.Combine(documentsPath, AppConstants.HelpIndexLink)

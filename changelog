@@ -1,24 +1,26 @@
-Crowbar 0.56 - 2018-03-10_0.56
+Crowbar 0.57 - 2019-01-20_0.57
 
 Changelog:
 
+=== General ===
+FIXED: When a user changes text in a file name textbox and then drags a file onto Crowbar, the text reverts back to the text before the change.
+FIXED: Clicking any Browse button when the path does not exist, e.g. "F:\" when drive F is invalid, crashes Crowbar.
+FIXED: With some Windows themes, background colors are not consistent throughout app.
+UPDATED: Changed "Crowbar Internal Error" window to explain how to properly report a bug via Bug Report forum.
+
+=== Unpack ===
+FIXED: Double-clicking to open a file within a VPK does not do anything if the VPK file name does not have an underscore.
+FIXED: Unpacking a VPK does not do anything if the VPK file name does not have an underscore.
+
 === Decompile ===
+ADDED: An "Override MDL Version" option for when the stored version is incorrect or not currently supported.
+ADDED: MDL v10 - PS2 Half-Life model decompiling, including those using sequence groups.
+FIXED: "Only changed materials in $texturegroup lines" and "Use MixedCase for keywords" options do not disable when "QC file" option is disabled.
+FIXED: "Remove path from material file names" and "Use UVs for DoomMusic's model compiler (GoldSource)" options do not disable when "Reference mesh SMD file" option is disabled.
+FIXED: Sometimes Crowbar will raise an exception error of "Cannot write to a closed TextWriter."
 
-    FIXED: MDL v53 - Some models fail to decompile.
-    FIXED: Wording of the tooltip for "Use UVs for DoomMusic's model compiler (GoldSource)" option.
-    FIXED: Some models have path in material names in mesh SMD files.
-
-
-=== Compile ===
-
-    FIXED: Moving the splitter on Compile tab down at some point shows parts of the command-line/options area incorrectly.
-
-
-=== Options ===
-
-    ADDED: Auto-open for FPX and GMA packages.
-
-
-=== About ===
-
-    FIXED: Corrected which packages Crowbar can unpack.
+=== Compile === 
+FIXED: Compile tab freezes when compiling with CSGO's studiomdl and the MDL file already exists, but the new one has fewer sequences.
+Caused by Crowbar not giving a response that studiomdl expects.
+FIXED: When compiling a QC file that is missing a $modelname line or missing the $modelname final double-quote, Crowbar will not show studiomdl.exe output in the log box.
+FIXED: Sometimes Crowbar will raise an exception error of "Cannot write to a closed TextWriter."

@@ -92,7 +92,7 @@ Namespace My.Resources
         '''	* Decompiler of MDL and related files.
         '''	* Compiler interface to StudioMDL.exe tool.
         '''	* Model viewer interface to Half-Life Model Viewer tool.
-        '''	* Unpacker of FPX, GMA, and VPK package files..
+        '''	* Unpacker of Tactical Intervention FPX, Garry&apos;s Mod GMA, and Source-engine VPK package files..
         '''</summary>
         Friend ReadOnly Property About_ProductDescription() As String
             Get
@@ -106,6 +106,15 @@ Namespace My.Resources
         Friend ReadOnly Property About_ProductLink() As String
             Get
                 Return ResourceManager.GetString("About_ProductLink", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to https://steamcommunity.com/groups/CrowbarTool/discussions/1/.
+        '''</summary>
+        Friend ReadOnly Property BugReportLink() As String
+            Get
+                Return ResourceManager.GetString("BugReportLink", resourceCulture)
             End Get
         End Property
         

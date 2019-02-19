@@ -2,6 +2,10 @@ Imports System.Windows.Forms
 
 Public Class UnhandledExceptionWindow
 
+	Private Sub LinkLabel1_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles LinkLabel1.LinkClicked
+		System.Diagnostics.Process.Start(My.Resources.BugReportLink)
+	End Sub
+
 	Private Sub CloseButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ExitButton.Click
 		Me.DialogResult = System.Windows.Forms.DialogResult.OK
 		Me.Close()

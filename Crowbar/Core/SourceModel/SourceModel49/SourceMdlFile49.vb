@@ -923,11 +923,8 @@ Public Class SourceMdlFile49
 				Me.theMdlFileData.theBoneTableByName.Add(index)
 			Next
 
-
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
 			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theBoneTableByName")
-
-			Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "theMdlFileData.theBoneTableByName alignment")
 		End If
 	End Sub
 
@@ -988,8 +985,6 @@ Public Class SourceMdlFile49
 
 		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
 		Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theAnimationDescs " + Me.theMdlFileData.theAnimationDescs.Count.ToString())
-
-		Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "theMdlFileData.theAnimationDescs alignment")
 	End Sub
 
 	Public Sub ReadAnimationSections()
@@ -2051,7 +2046,7 @@ Public Class SourceMdlFile49
 		End Try
 	End Sub
 
-	Protected Function ReadMdlMovements(ByVal animInputFileStreamPosition As Long, ByVal anAnimationDesc As SourceMdlAnimationDesc49) As Long
+	Protected Sub ReadMdlMovements(ByVal animInputFileStreamPosition As Long, ByVal anAnimationDesc As SourceMdlAnimationDesc49)
 		If anAnimationDesc.movementCount > 0 Then
 			Dim movementInputFileStreamPosition As Long
 			Dim fileOffsetStart As Long
@@ -2085,12 +2080,8 @@ Public Class SourceMdlFile49
 
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
 			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAnimationDesc.theMovements " + anAnimationDesc.theMovements.Count.ToString())
-
-			Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "anAnimationDesc.theMovements alignment")
-
-			Return Me.theInputFileReader.BaseStream.Position - 1
 		End If
-	End Function
+	End Sub
 
 	Protected Function ReadLocalHierarchies(ByVal animInputFileStreamPosition As Long, ByVal anAnimationDesc As SourceMdlAnimationDesc49) As Long
 		If anAnimationDesc.localHierarchyCount > 0 Then
@@ -2395,6 +2386,20 @@ Public Class SourceMdlFile49
 			anAutoLayer.influenceTail = Me.theInputFileReader.ReadSingle()
 			anAutoLayer.influenceEnd = Me.theInputFileReader.ReadSingle()
 			aSeqDesc.theAutoLayers.Add(anAutoLayer)
+
+			'NOTE: Change NaN to 0. This is needed for HL2DM\HL2\hl2_misc_dir.vpk\models\combine_soldier_anims.mdl for its "Man_Gun" $sequence.
+			If Double.IsNaN(anAutoLayer.influenceStart) Then
+				anAutoLayer.influenceStart = 0
+			End If
+			If Double.IsNaN(anAutoLayer.influencePeak) Then
+				anAutoLayer.influencePeak = 0
+			End If
+			If Double.IsNaN(anAutoLayer.influenceTail) Then
+				anAutoLayer.influenceTail = 0
+			End If
+			If Double.IsNaN(anAutoLayer.influenceEnd) Then
+				anAutoLayer.influenceEnd = 0
+			End If
 
 			'inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 

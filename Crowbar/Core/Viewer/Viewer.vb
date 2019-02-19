@@ -211,7 +211,7 @@ Public Class Viewer
 		Dim version As Integer
 		Try
 			If File.Exists(Me.theInputMdlPathFileName) Then
-				model = SourceModel.Create(Me.theInputMdlPathFileName, version)
+				model = SourceModel.Create(Me.theInputMdlPathFileName, SupportedMdlVersion.DoNotOverride, version)
 				If model IsNot Nothing Then
 					Dim textLines As List(Of String)
 					textLines = model.GetOverviewTextLines(Me.theInputMdlPathFileName)
@@ -400,7 +400,7 @@ Public Class Viewer
 				Dim model As SourceModel = Nothing
 				Dim version As Integer
 				Try
-					model = SourceModel.Create(Me.theInputMdlPathFileName, version)
+					model = SourceModel.Create(Me.theInputMdlPathFileName, SupportedMdlVersion.DoNotOverride, version)
 					If model IsNot Nothing Then
 						model.WriteMdlFileNameToMdlFile(replacementMdlPathFileName, replacementMdlRelativePathFileName)
 						model.WriteAniFileNameToMdlFile(replacementMdlPathFileName, replacementMdlRelativePathFileName)

@@ -181,7 +181,15 @@ Public Class Decompiler
 		progressDescriptionText = "Decompiling with " + TheApp.GetProductNameAndVersion() + ": "
 
 		Try
-			If TheApp.Settings.DecompileMode = InputOptions.FolderRecursion Then
+			If Me.theInputMdlPathName = "" Then
+				'Can get here if mdlPathFileName exists, but only with parts of the path using "Length8.3" names.
+				'Somehow when drag-dropping such a pathFileName, even though Windows shows full names in the path, Crowbar shows it with "Length8.3" names.
+				progressDescriptionText += """" + mdlPathFileName + """"
+				Me.UpdateProgressStart(progressDescriptionText + " ...")
+				Me.UpdateProgress()
+				Me.UpdateProgress(1, "ERROR: Failed because actual path is too long.")
+				status = StatusMessage.Error
+			ElseIf TheApp.Settings.DecompileMode = InputOptions.FolderRecursion Then
 				progressDescriptionText += """" + Me.theInputMdlPathName + """ (folder + subfolders)"
 				Me.UpdateProgressStart(progressDescriptionText + " ...")
 
@@ -212,6 +220,7 @@ Public Class Decompiler
 			If Me.theLogFileStream IsNot Nothing Then
 				Me.theLogFileStream.Flush()
 				Me.theLogFileStream.Close()
+				Me.theLogFileStream = Nothing
 			End If
 		End Try
 
@@ -297,9 +306,13 @@ Public Class Decompiler
 			Dim model As SourceModel = Nothing
 			Dim version As Integer
 			Try
-				model = SourceModel.Create(mdlPathFileName, version)
+				model = SourceModel.Create(mdlPathFileName, TheApp.Settings.DecompileOverrideMdlVersion, version)
 				If model IsNot Nothing Then
-					Me.UpdateProgress(2, "Model version " + CStr(model.Version) + " detected.")
+					If TheApp.Settings.DecompileOverrideMdlVersion = SupportedMdlVersion.DoNotOverride Then
+						Me.UpdateProgress(2, "Model version " + CStr(model.Version) + " detected.")
+					Else
+						Me.UpdateProgress(2, "Model version overridden to be " + CStr(model.Version) + ".")
+					End If
 				Else
 					Me.UpdateProgress(2, "ERROR: Model version " + CStr(version) + " not currently supported.")
 					Me.UpdateProgress(1, "... Decompiling """ + mdlRelativePathFileName + """ FAILED.")
@@ -1013,6 +1026,8 @@ Public Class Decompiler
 		'		'Else
 		'		'	Me.UpdateProgress(4, "Writing """ + fileName + """ file ...")
 		'	End If
+		ElseIf e.Progress = ProgressOptions.WritingFileFailed Then
+			Me.UpdateProgress(4, e.Message)
 		ElseIf e.Progress = ProgressOptions.WritingFileFinished Then
 			Dim pathFileName As String
 			Dim fileName As String

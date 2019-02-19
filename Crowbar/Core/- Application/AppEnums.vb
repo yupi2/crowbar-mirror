@@ -110,6 +110,7 @@ Public Module AppEnums
 		WarningPhyFileChecksumDoesNotMatchMdlFileChecksum
 
 		WritingFileStarted
+		WritingFileFailed
 		WritingFileFinished
 	End Enum
 
@@ -122,6 +123,32 @@ Public Module AppEnums
 		<Description("GoldSource")> GoldSource
 		<Description("Source")> Source
 		<Description("Source 2")> Source2
+	End Enum
+
+	Public Enum SupportedMdlVersion
+		<Description("Do not override")> DoNotOverride
+		<Description("06")> MDLv06
+		<Description("10")> MDLv10
+		<Description("2531")> MDLv2531
+		<Description("27")> MDLv27
+		<Description("28")> MDLv28
+		<Description("29")> MDLv29
+		<Description("30")> MDLv30
+		<Description("31")> MDLv31
+		<Description("32")> MDLv32
+		<Description("35")> MDLv35
+		<Description("36")> MDLv36
+		<Description("37")> MDLv37
+		<Description("38")> MDLv38
+		<Description("44")> MDLv44
+		<Description("45")> MDLv45
+		<Description("46")> MDLv46
+		<Description("47")> MDLv47
+		<Description("48")> MDLv48
+		<Description("49")> MDLv49
+		<Description("52")> MDLv52
+		<Description("53")> MDLv53
+		<Description("57")> MDLv57
 	End Enum
 
 End Module

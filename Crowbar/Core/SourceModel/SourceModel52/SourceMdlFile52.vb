@@ -929,11 +929,8 @@ Public Class SourceMdlFile52
 				Me.theMdlFileData.theBoneTableByName.Add(index)
 			Next
 
-
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
 			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theBoneTableByName")
-
-			Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "theMdlFileData.theBoneTableByName alignment")
 		End If
 	End Sub
 

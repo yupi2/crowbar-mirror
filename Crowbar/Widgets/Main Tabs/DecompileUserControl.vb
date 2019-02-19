@@ -75,6 +75,13 @@ Public Class DecompileUserControl
 		Me.LogFileCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileLogFileIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.DebugInfoCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileDebugInfoFilesIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
 		Me.FormatForStricterImportersCheckBox.DataBindings.Add("Checked", TheApp.Settings, "DecompileStricterFormatIsChecked", False, DataSourceUpdateMode.OnPropertyChanged)
+
+		Dim anEnumList As IList
+		anEnumList = EnumHelper.ToList(GetType(SupportedMdlVersion))
+		Me.OverrideMdlVersionComboBox.DisplayMember = "Value"
+		Me.OverrideMdlVersionComboBox.ValueMember = "Key"
+		Me.OverrideMdlVersionComboBox.DataSource = anEnumList
+		Me.OverrideMdlVersionComboBox.DataBindings.Add("SelectedValue", TheApp.Settings, "DecompileOverrideMdlVersion", False, DataSourceUpdateMode.OnPropertyChanged)
 	End Sub
 
 	Private Sub Free()
@@ -93,7 +100,7 @@ Public Class DecompileUserControl
 
 		Me.DecompileComboBox.DataBindings.Clear()
 
-		Me.DecompiledFilesComboBox.DataBindings.Clear()
+		Me.DecompiledFilesComboBox.DataSource = Nothing
 	End Sub
 
 	Private Sub FreeDecompilerOptions()
@@ -120,6 +127,8 @@ Public Class DecompileUserControl
 		Me.LogFileCheckBox.DataBindings.Clear()
 		Me.DebugInfoCheckBox.DataBindings.Clear()
 		Me.FormatForStricterImportersCheckBox.DataBindings.Clear()
+
+		Me.OverrideMdlVersionComboBox.DataBindings.Clear()
 	End Sub
 
 #End Region
@@ -271,7 +280,6 @@ Public Class DecompileUserControl
 	End Sub
 
 	Private Sub UseAllInCompileButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles UseAllInCompileButton.Click
-		'TODO: Use the output folder (including file name when needed) as the compiler's QC file or folder input.
 		TheApp.Settings.CompileQcPathFileName = TheApp.Decompiler.GetOutputPathFolderOrFileName()
 	End Sub
 
@@ -280,7 +288,6 @@ Public Class DecompileUserControl
 	End Sub
 
 	Private Sub UseInCompileButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles UseInCompileButton.Click
-		'TODO: Use the selected QC file as Compile tab's input QC file.
 		TheApp.Settings.CompileQcPathFileName = TheApp.Decompiler.GetOutputPathFileName(Me.theDecompiledRelativePathFileNames(Me.DecompiledFilesComboBox.SelectedIndex))
 	End Sub
 
@@ -455,7 +462,13 @@ Public Class DecompileUserControl
 		Me.ReCreateFilesGroupBox.Enabled = Not decompilerIsRunning
 		Me.GroupIntoQciFilesCheckBox.Enabled = TheApp.Settings.DecompileQcFileIsChecked
 		Me.SkinFamilyOnSingleLineCheckBox.Enabled = TheApp.Settings.DecompileQcFileIsChecked
+		Me.OnlyChangedMaterialsInTextureGroupLinesCheckBox.Enabled = TheApp.Settings.DecompileQcFileIsChecked
 		Me.IncludeDefineBoneLinesCheckBox.Enabled = TheApp.Settings.DecompileQcFileIsChecked
+		Me.UseMixedCaseForKeywordsCheckBox.Enabled = TheApp.Settings.DecompileQcFileIsChecked
+
+		Me.RemovePathFromMaterialFileNamesCheckBox.Enabled = TheApp.Settings.DecompileReferenceMeshSmdFileIsChecked
+		Me.UseUvsForDoomMusicCompilerCheckBox.Enabled = TheApp.Settings.DecompileReferenceMeshSmdFileIsChecked
+
 		Me.PlaceInAnimsSubfolderCheckBox.Enabled = TheApp.Settings.DecompileBoneAnimationSmdFilesIsChecked
 
 		Me.OptionsGroupBox.Enabled = Not decompilerIsRunning

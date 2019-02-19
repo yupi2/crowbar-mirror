@@ -503,6 +503,8 @@ Public Class SourceQcFile48
 						'	frameIndex = 0
 						'End If
 						'TODO: For "Crowbar Bug Reports\2017-11-25\[...]\tfa_ow_mercy.mdl", theName is blank, but it should be "upper_right", because 3 flex rules use it (%upper_right_raiser, %upper_right_neutral, %upper_right_lowerer).
+						'      Not sure how the model was compiled without the name, but maybe it was compiled via DMX instead of SMD.
+						'      POSSIBLE FIX: If empty, then assign correct name.
 						eyelidName = Me.theMdlFileData.theFlexDescs(anEyeball.upperLidFlexDesc).theName
 
 						line = vbTab
@@ -1668,7 +1670,7 @@ Public Class SourceQcFile48
 				Dim aTexture As SourceMdlTexture
 				aTexture = Me.theMdlFileData.theTextures(j)
 				line = "// """
-				line += aTexture.thePathFileName
+				line += FileManager.GetCleanPathFileName(aTexture.thePathFileName, False)
 				line += ".vmt"""
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			Next
@@ -3021,7 +3023,12 @@ Public Class SourceQcFile48
 				layer = aSeqDesc.theAutoLayers(j)
 				otherSequenceName = Me.theMdlFileData.theSequenceDescs(layer.sequenceIndex).theName
 
-				If layer.flags = 0 AndAlso layer.influenceStart = 0 AndAlso layer.influencePeak = 0 AndAlso layer.influenceTail = 0 AndAlso layer.influenceEnd = 0 Then
+				'NOTE: [WriteSequenceLayerInfo] [22-Jul-2018] Is there any reason to distinguish addlayer and blendlayer options by checking influnceStart, -Peak, -Tail, and -End?
+				'      Yes! Example: blendlayer 1 2 3 4
+				'      Instead of checking all influence* values, check instead "if influenceStart = influenceEnd" because of this line in the source code [simplify.cpp AccumulateSeqLayers() line 5365]:
+				'          if (pLayer->start != pLayer->end)
+				'If layer.flags = 0 AndAlso layer.influenceStart = 0 AndAlso layer.influencePeak = 0 AndAlso layer.influenceTail = 0 AndAlso layer.influenceEnd = 0 Then
+				If layer.flags = 0 AndAlso layer.influenceStart = layer.influenceEnd Then
 					'addlayer <string|other $sequence name>
 					line = vbTab
 					'line += "// "

@@ -226,6 +226,7 @@ Public Class SourceModel2531
 		Dim smdPath As String
 		'Dim smdFileName As String
 		Dim smdPathFileName As String
+		Dim writeStatus As String
 
 		For anAnimDescIndex As Integer = 0 To Me.theMdlFileData.theAnimationDescs.Count - 1
 			Try
@@ -244,9 +245,13 @@ Public Class SourceModel2531
 					Continue For
 				End If
 
-				Me.WriteBoneAnimationSmdFile(smdPathFileName, Nothing, anAnimationDesc)
+				writeStatus = Me.WriteBoneAnimationSmdFile(smdPathFileName, Nothing, anAnimationDesc)
 
-				Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, smdPathFileName)
+				If writeStatus = "Success" Then
+					Me.NotifySourceModelProgress(ProgressOptions.WritingFileFinished, smdPathFileName)
+				Else
+					Me.NotifySourceModelProgress(ProgressOptions.WritingFileFailed, writeStatus)
+				End If
 			Catch ex As Exception
 				Dim debug As Integer = 4242
 			End Try

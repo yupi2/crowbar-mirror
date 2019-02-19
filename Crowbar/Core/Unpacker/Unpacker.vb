@@ -849,9 +849,15 @@ Public Class Unpacker
 		Dim archiveDirectoryPathFileName As String
 		Dim vpkFileNameWithoutExtension As String
 		Dim vpkFileNamePrefix As String
+		Dim underscoreIndex As Integer
 
 		vpkFileNameWithoutExtension = Path.GetFileNameWithoutExtension(archivePathFileName)
-		vpkFileNamePrefix = vpkFileNameWithoutExtension.Substring(0, vpkFileNameWithoutExtension.LastIndexOf("_"))
+		underscoreIndex = vpkFileNameWithoutExtension.LastIndexOf("_")
+		If underscoreIndex >= 0 Then
+			vpkFileNamePrefix = vpkFileNameWithoutExtension.Substring(0, underscoreIndex)
+		Else
+			vpkFileNamePrefix = ""
+		End If
 
 		If vpkFileNamePrefix <> Me.theArchiveDirectoryFileNamePrefix Then
 			Me.CloseArchiveDirectoryFile()

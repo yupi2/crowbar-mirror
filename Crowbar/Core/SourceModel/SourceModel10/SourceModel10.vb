@@ -125,6 +125,7 @@ Public Class SourceModel10
 		Dim mdlPath As String
 		Dim sequenceGroupMdlFileName As String
 		Dim sequenceGroupMdlPathFileName As String
+		Dim extension As String
 
 		'NOTE: Start at index 1 because sequence group 0 is in the main MDL file.
 		For sequenceGroupIndex As Integer = 1 To Me.theMdlFileData.sequenceGroupCount - 1
@@ -132,6 +133,15 @@ Public Class SourceModel10
 			mdlPath = FileManager.GetPath(Me.theMdlPathFileName)
 			sequenceGroupMdlFileName = Path.GetFileName(aSequenceGroup.theFileName)
 			sequenceGroupMdlPathFileName = Path.Combine(mdlPath, sequenceGroupMdlFileName)
+
+			'NOTE: PS2 Half-Life models that use sequence groups store "DOL" extension internally instead of "MDL".
+			If Not File.Exists(sequenceGroupMdlPathFileName) Then
+				extension = Path.GetExtension(aSequenceGroup.theFileName)
+				If extension.ToLower() = ".dol" Then
+					sequenceGroupMdlPathFileName = Path.ChangeExtension(sequenceGroupMdlPathFileName, ".mdl")
+				End If
+			End If
+
 			status = Me.ReadSequenceGroupMdlFile(sequenceGroupMdlPathFileName, sequenceGroupIndex)
 		Next
 

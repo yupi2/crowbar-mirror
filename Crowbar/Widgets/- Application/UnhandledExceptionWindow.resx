@@ -112,16 +112,21 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="TextBox1.Text" xml:space="preserve">
+  <data name="LinkLabel1.Text" xml:space="preserve">
     <value>An internal error occurred. Crowbar will now exit to prevent corruption to user data. Apologies for the inconvenience.
 
-Please copy the following text in the "Error Report" box and paste into a Steam message to ZeqMacaw or into an email to zeqmacaw@gmail.com.
+To report this bug:
+Please copy the text in the "Error Report" box below.
+Go to Crowbar's Bug Report forum and click "Start a New Discussion" button.
+Paste the text into the body of the post and enter a useful title for the post, such as "[BUG] Error after pressing Decompile button".
+At the designated sections in the pasted text, write what you tried to do and what you expected to happen.
+Click "Post Discussion" button to finish the bug report.
 
-You can also find the error report (and older ones) in the file,  "decompile error.txt", of the output folder.</value>
+You can also find the error report (and older ones) in the file, "decompile error.txt", of the output folder.</value>
   </data>
 </root>

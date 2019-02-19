@@ -138,7 +138,7 @@ Partial Class OptionsUserControl
 		'
 		'Panel7
 		'
-		Me.Panel7.BackColor = System.Drawing.SystemColors.ControlLight
+		Me.Panel7.BackColor = System.Drawing.SystemColors.Control
 		Me.Panel7.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
 		Me.Panel7.Controls.Add(Me.OptionsContextMenuCompileFolderAndSubfoldersCheckBox)
 		Me.Panel7.Controls.Add(Me.OptionsContextMenuCompileFolderCheckBox)
@@ -298,7 +298,7 @@ Partial Class OptionsUserControl
 		'
 		'Panel2
 		'
-		Me.Panel2.BackColor = System.Drawing.SystemColors.ControlLight
+		Me.Panel2.BackColor = System.Drawing.SystemColors.Control
 		Me.Panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
 		Me.Panel2.Controls.Add(Me.AutoOpenFolderForCompileRadioButton)
 		Me.Panel2.Controls.Add(Me.AutoOpenFolderForDecompileRadioButton)
@@ -343,7 +343,7 @@ Partial Class OptionsUserControl
 		'
 		'Label6
 		'
-		Me.Label6.BackColor = System.Drawing.SystemColors.ControlLight
+		Me.Label6.BackColor = System.Drawing.SystemColors.Control
 		Me.Label6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
 		Me.Label6.Location = New System.Drawing.Point(77, 109)
 		Me.Label6.Margin = New System.Windows.Forms.Padding(3)
@@ -354,7 +354,7 @@ Partial Class OptionsUserControl
 		'
 		'Label4
 		'
-		Me.Label4.BackColor = System.Drawing.SystemColors.ControlLight
+		Me.Label4.BackColor = System.Drawing.SystemColors.Control
 		Me.Label4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
 		Me.Label4.Location = New System.Drawing.Point(77, 276)
 		Me.Label4.Margin = New System.Windows.Forms.Padding(3)
@@ -387,7 +387,7 @@ Partial Class OptionsUserControl
 		'
 		'Panel1
 		'
-		Me.Panel1.BackColor = System.Drawing.SystemColors.ControlLight
+		Me.Panel1.BackColor = System.Drawing.SystemColors.Control
 		Me.Panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
 		Me.Panel1.Controls.Add(Me.Label9)
 		Me.Panel1.Controls.Add(Me.Label8)
@@ -524,7 +524,7 @@ Partial Class OptionsUserControl
 		'
 		'Panel3
 		'
-		Me.Panel3.BackColor = System.Drawing.SystemColors.ControlLight
+		Me.Panel3.BackColor = System.Drawing.SystemColors.Control
 		Me.Panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
 		Me.Panel3.Controls.Add(Me.Label10)
 		Me.Panel3.Controls.Add(Me.Label11)
@@ -638,7 +638,7 @@ Partial Class OptionsUserControl
 		'
 		'Panel4
 		'
-		Me.Panel4.BackColor = System.Drawing.SystemColors.ControlLight
+		Me.Panel4.BackColor = System.Drawing.SystemColors.Control
 		Me.Panel4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
 		Me.Panel4.Controls.Add(Me.DragAndDropFolderForCompileRadioButton)
 		Me.Panel4.Controls.Add(Me.DragAndDropFolderForDecompileRadioButton)
@@ -723,7 +723,7 @@ Partial Class OptionsUserControl
 		'
 		'Label7
 		'
-		Me.Label7.BackColor = System.Drawing.SystemColors.ControlLight
+		Me.Label7.BackColor = System.Drawing.SystemColors.Control
 		Me.Label7.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
 		Me.Label7.Location = New System.Drawing.Point(77, 132)
 		Me.Label7.Margin = New System.Windows.Forms.Padding(3)
@@ -744,7 +744,7 @@ Partial Class OptionsUserControl
 		'
 		'Label14
 		'
-		Me.Label14.BackColor = System.Drawing.SystemColors.ControlLight
+		Me.Label14.BackColor = System.Drawing.SystemColors.Control
 		Me.Label14.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
 		Me.Label14.Location = New System.Drawing.Point(77, 155)
 		Me.Label14.Margin = New System.Windows.Forms.Padding(3)

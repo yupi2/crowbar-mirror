@@ -581,6 +581,16 @@ Public Class AppSettings
 		End Set
 	End Property
 
+	Public Property DecompileOverrideMdlVersion() As SupportedMdlVersion
+		Get
+			Return Me.theDecompileOverrideMdlVersion
+		End Get
+		Set(ByVal value As SupportedMdlVersion)
+			Me.theDecompileOverrideMdlVersion = value
+			NotifyPropertyChanged("DecompileOverrideMdlVersion")
+		End Set
+	End Property
+
 	Public Property DecompileMode() As InputOptions
 		Get
 			Return Me.theDecompileMode
@@ -1337,6 +1347,8 @@ Public Class AppSettings
 	Private theDecompileLogFileIsChecked As Boolean
 	Private theDecompileDebugInfoFilesIsChecked As Boolean
 	Private theDecompileStricterFormatIsChecked As Boolean
+
+	Private theDecompileOverrideMdlVersion As SupportedMdlVersion
 
 	Private theDecompileMode As InputOptions
 	Private theDecompilerIsRunning As Boolean

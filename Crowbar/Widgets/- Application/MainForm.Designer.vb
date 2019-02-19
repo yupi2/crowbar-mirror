@@ -91,10 +91,10 @@ Partial Class MainForm
 		'
 		'SetUpGamesTabPage
 		'
+		Me.SetUpGamesTabPage.BackColor = System.Drawing.SystemColors.Control
 		Me.SetUpGamesTabPage.Controls.Add(Me.SetUpGamesUserControl1)
 		resources.ApplyResources(Me.SetUpGamesTabPage, "SetUpGamesTabPage")
 		Me.SetUpGamesTabPage.Name = "SetUpGamesTabPage"
-		Me.SetUpGamesTabPage.UseVisualStyleBackColor = True
 		'
 		'SetUpGamesUserControl1
 		'
@@ -103,11 +103,10 @@ Partial Class MainForm
 		'
 		'UnpackTabPage
 		'
-		Me.UnpackTabPage.BackColor = System.Drawing.SystemColors.ControlLight
+		Me.UnpackTabPage.BackColor = System.Drawing.SystemColors.Control
 		Me.UnpackTabPage.Controls.Add(Me.UnpackUserControl1)
 		resources.ApplyResources(Me.UnpackTabPage, "UnpackTabPage")
 		Me.UnpackTabPage.Name = "UnpackTabPage"
-		Me.UnpackTabPage.UseVisualStyleBackColor = True
 		'
 		'UnpackUserControl1
 		'
@@ -116,26 +115,24 @@ Partial Class MainForm
 		'
 		'PreviewTabPage
 		'
-		Me.PreviewTabPage.BackColor = System.Drawing.SystemColors.ControlLight
+		Me.PreviewTabPage.BackColor = System.Drawing.SystemColors.Control
 		Me.PreviewTabPage.Controls.Add(Me.PreviewViewUserControl)
 		resources.ApplyResources(Me.PreviewTabPage, "PreviewTabPage")
 		Me.PreviewTabPage.Name = "PreviewTabPage"
-		Me.PreviewTabPage.UseVisualStyleBackColor = True
 		'
 		'PreviewViewUserControl
 		'
-		Me.PreviewViewUserControl.BackColor = System.Drawing.SystemColors.ControlLight
+		Me.PreviewViewUserControl.BackColor = System.Drawing.SystemColors.Control
 		resources.ApplyResources(Me.PreviewViewUserControl, "PreviewViewUserControl")
 		Me.PreviewViewUserControl.Name = "PreviewViewUserControl"
 		Me.PreviewViewUserControl.ViewerType = Crowbar.AppEnums.ViewerType.Preview
 		'
 		'DecompileTabPage
 		'
-		Me.DecompileTabPage.BackColor = System.Drawing.SystemColors.ControlLight
+		Me.DecompileTabPage.BackColor = System.Drawing.SystemColors.Control
 		Me.DecompileTabPage.Controls.Add(Me.DecompilerUserControl1)
 		resources.ApplyResources(Me.DecompileTabPage, "DecompileTabPage")
 		Me.DecompileTabPage.Name = "DecompileTabPage"
-		Me.DecompileTabPage.UseVisualStyleBackColor = True
 		'
 		'DecompilerUserControl1
 		'
@@ -144,11 +141,10 @@ Partial Class MainForm
 		'
 		'CompileTabPage
 		'
-		Me.CompileTabPage.BackColor = System.Drawing.SystemColors.ControlLight
+		Me.CompileTabPage.BackColor = System.Drawing.SystemColors.Control
 		Me.CompileTabPage.Controls.Add(Me.CompilerUserControl1)
 		resources.ApplyResources(Me.CompileTabPage, "CompileTabPage")
 		Me.CompileTabPage.Name = "CompileTabPage"
-		Me.CompileTabPage.UseVisualStyleBackColor = True
 		'
 		'CompilerUserControl1
 		'
@@ -157,26 +153,24 @@ Partial Class MainForm
 		'
 		'ViewTabPage
 		'
-		Me.ViewTabPage.BackColor = System.Drawing.SystemColors.ControlLight
+		Me.ViewTabPage.BackColor = System.Drawing.SystemColors.Control
 		Me.ViewTabPage.Controls.Add(Me.ViewViewUserControl)
 		resources.ApplyResources(Me.ViewTabPage, "ViewTabPage")
 		Me.ViewTabPage.Name = "ViewTabPage"
-		Me.ViewTabPage.UseVisualStyleBackColor = True
 		'
 		'ViewViewUserControl
 		'
-		Me.ViewViewUserControl.BackColor = System.Drawing.SystemColors.ControlLight
+		Me.ViewViewUserControl.BackColor = System.Drawing.SystemColors.Control
 		resources.ApplyResources(Me.ViewViewUserControl, "ViewViewUserControl")
 		Me.ViewViewUserControl.Name = "ViewViewUserControl"
 		Me.ViewViewUserControl.ViewerType = Crowbar.AppEnums.ViewerType.View
 		'
 		'OptionsTabPage
 		'
-		Me.OptionsTabPage.BackColor = System.Drawing.SystemColors.ControlLight
+		Me.OptionsTabPage.BackColor = System.Drawing.SystemColors.Control
 		Me.OptionsTabPage.Controls.Add(Me.OptionsUserControl1)
 		resources.ApplyResources(Me.OptionsTabPage, "OptionsTabPage")
 		Me.OptionsTabPage.Name = "OptionsTabPage"
-		Me.OptionsTabPage.UseVisualStyleBackColor = True
 		'
 		'OptionsUserControl1
 		'
@@ -185,11 +179,10 @@ Partial Class MainForm
 		'
 		'HelpTabPage
 		'
-		Me.HelpTabPage.BackColor = System.Drawing.SystemColors.ControlLight
+		Me.HelpTabPage.BackColor = System.Drawing.SystemColors.Control
 		Me.HelpTabPage.Controls.Add(Me.HelpUserControl1)
 		resources.ApplyResources(Me.HelpTabPage, "HelpTabPage")
 		Me.HelpTabPage.Name = "HelpTabPage"
-		Me.HelpTabPage.UseVisualStyleBackColor = True
 		'
 		'HelpUserControl1
 		'
@@ -198,11 +191,10 @@ Partial Class MainForm
 		'
 		'AboutTabPage
 		'
-		Me.AboutTabPage.BackColor = System.Drawing.SystemColors.ControlLight
+		Me.AboutTabPage.BackColor = System.Drawing.SystemColors.Control
 		Me.AboutTabPage.Controls.Add(Me.AboutUserControl1)
 		resources.ApplyResources(Me.AboutTabPage, "AboutTabPage")
 		Me.AboutTabPage.Name = "AboutTabPage"
-		Me.AboutTabPage.UseVisualStyleBackColor = True
 		'
 		'AboutUserControl1
 		'

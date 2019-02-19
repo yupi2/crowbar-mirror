@@ -21,4 +21,11 @@
 	'	Next
 	'End Sub
 
+	'NOTE: Without this, when a user changes text in a textbox and then drags a file onto Crowbar, the text reverts back to the text before the change.
+	'      With this, the changed text is kept.
+	Protected Overrides Sub OnDeactivate(e As EventArgs)
+		MyBase.OnDeactivate(e)
+		Me.Validate()
+	End Sub
+
 End Class

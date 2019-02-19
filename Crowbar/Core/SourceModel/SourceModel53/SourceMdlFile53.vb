@@ -897,11 +897,8 @@ Public Class SourceMdlFile53
 				Me.theMdlFileData.theBoneTableByName.Add(index)
 			Next
 
-
 			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
 			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theBoneTableByName")
-
-			Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "theMdlFileData.theBoneTableByName alignment")
 		End If
 	End Sub
 
@@ -962,8 +959,6 @@ Public Class SourceMdlFile53
 
 		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
 		Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theAnimationDescs " + Me.theMdlFileData.theAnimationDescs.Count.ToString())
-
-		Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "theMdlFileData.theAnimationDescs alignment")
 	End Sub
 
 	Public Sub ReadAnimationSections()
@@ -2019,40 +2014,40 @@ Public Class SourceMdlFile53
 	End Sub
 
 	Protected Sub ReadMdlMovements(ByVal animInputFileStreamPosition As Long, ByVal anAnimationDesc As SourceMdlAnimationDesc52)
-		Dim movementInputFileStreamPosition As Long
-		Dim fileOffsetStart As Long
-		Dim fileOffsetEnd As Long
+		If anAnimationDesc.movementCount > 0 Then
+			Dim movementInputFileStreamPosition As Long
+			Dim fileOffsetStart As Long
+			Dim fileOffsetEnd As Long
 
-		Me.theInputFileReader.BaseStream.Seek(animInputFileStreamPosition + anAnimationDesc.movementOffset, SeekOrigin.Begin)
-		fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+			Me.theInputFileReader.BaseStream.Seek(animInputFileStreamPosition + anAnimationDesc.movementOffset, SeekOrigin.Begin)
+			fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
-		anAnimationDesc.theMovements = New List(Of SourceMdlMovement)(anAnimationDesc.movementCount)
-		For j As Integer = 0 To anAnimationDesc.movementCount - 1
-			movementInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
-			Dim aMovement As New SourceMdlMovement()
+			anAnimationDesc.theMovements = New List(Of SourceMdlMovement)(anAnimationDesc.movementCount)
+			For j As Integer = 0 To anAnimationDesc.movementCount - 1
+				movementInputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+				Dim aMovement As New SourceMdlMovement()
 
-			aMovement.endframeIndex = Me.theInputFileReader.ReadInt32()
-			aMovement.motionFlags = Me.theInputFileReader.ReadInt32()
-			aMovement.v0 = Me.theInputFileReader.ReadSingle()
-			aMovement.v1 = Me.theInputFileReader.ReadSingle()
-			aMovement.angle = Me.theInputFileReader.ReadSingle()
+				aMovement.endframeIndex = Me.theInputFileReader.ReadInt32()
+				aMovement.motionFlags = Me.theInputFileReader.ReadInt32()
+				aMovement.v0 = Me.theInputFileReader.ReadSingle()
+				aMovement.v1 = Me.theInputFileReader.ReadSingle()
+				aMovement.angle = Me.theInputFileReader.ReadSingle()
 
-			aMovement.vector = New SourceVector()
-			aMovement.vector.x = Me.theInputFileReader.ReadSingle()
-			aMovement.vector.y = Me.theInputFileReader.ReadSingle()
-			aMovement.vector.z = Me.theInputFileReader.ReadSingle()
-			aMovement.position = New SourceVector()
-			aMovement.position.x = Me.theInputFileReader.ReadSingle()
-			aMovement.position.y = Me.theInputFileReader.ReadSingle()
-			aMovement.position.z = Me.theInputFileReader.ReadSingle()
+				aMovement.vector = New SourceVector()
+				aMovement.vector.x = Me.theInputFileReader.ReadSingle()
+				aMovement.vector.y = Me.theInputFileReader.ReadSingle()
+				aMovement.vector.z = Me.theInputFileReader.ReadSingle()
+				aMovement.position = New SourceVector()
+				aMovement.position.x = Me.theInputFileReader.ReadSingle()
+				aMovement.position.y = Me.theInputFileReader.ReadSingle()
+				aMovement.position.z = Me.theInputFileReader.ReadSingle()
 
-			anAnimationDesc.theMovements.Add(aMovement)
-		Next
+				anAnimationDesc.theMovements.Add(aMovement)
+			Next
 
-		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-		Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAnimationDesc.theMovements")
-
-		Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "anAnimationDesc.theMovements alignment")
+			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "anAnimationDesc.theMovements")
+		End If
 	End Sub
 
 	Protected Sub ReadLocalHierarchies(ByVal animInputFileStreamPosition As Long, ByVal anAnimationDesc As SourceMdlAnimationDesc52)

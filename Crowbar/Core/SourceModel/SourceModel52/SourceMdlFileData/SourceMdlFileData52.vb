@@ -496,6 +496,7 @@
 	'	mutable void		*animblockModel;
 	Public animBlockModelP As Integer
 
+	'NOTE: Probably not used or used for something else.
 	'	int					bonetablebynameindex;
 	Public boneTableByNameOffset As Integer
 

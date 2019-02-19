@@ -2957,7 +2957,8 @@ Public Class SourceQcFile49
 				layer = aSeqDesc.theAutoLayers(j)
 				otherSequenceName = Me.theMdlFileData.theSequenceDescs(layer.sequenceIndex).theName
 
-				If layer.flags = 0 AndAlso layer.influenceStart = 0 AndAlso layer.influencePeak = 0 AndAlso layer.influenceTail = 0 AndAlso layer.influenceEnd = 0 Then
+				'NOTE: See SourceQcFile48 for description of why the "if" is done this way.
+				If layer.flags = 0 AndAlso layer.influenceStart = layer.influenceEnd Then
 					'addlayer <string|other $sequence name>
 					line = vbTab
 					'line += "// "

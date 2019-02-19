@@ -125,7 +125,7 @@
     <value>About Crowbar</value>
   </data>
   <data name="AboutCrowbarToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>147, 22</value>
+    <value>155, 22</value>
   </data>
   <data name="AboutCrowbarToolStripMenuItem1.Text" xml:space="preserve">
     <value>About Crowbar</value>
@@ -147,7 +147,7 @@
     <value>0, 0</value>
   </data>
   <data name="SetUpGamesUserControl1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>784, 542</value>
+    <value>784, 546</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="SetUpGamesUserControl1.TabIndex" type="System.Int32, mscorlib">
@@ -157,7 +157,7 @@
     <value>SetUpGamesUserControl1</value>
   </data>
   <data name="&gt;&gt;SetUpGamesUserControl1.Type" xml:space="preserve">
-    <value>Crowbar.SetUpGamesUserControl, Crowbar, Version=0.54.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Crowbar.SetUpGamesUserControl, Crowbar, Version=0.57.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;SetUpGamesUserControl1.Parent" xml:space="preserve">
     <value>SetUpGamesTabPage</value>
@@ -169,7 +169,7 @@
     <value>4, 22</value>
   </data>
   <data name="SetUpGamesTabPage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>784, 542</value>
+    <value>784, 546</value>
   </data>
   <data name="SetUpGamesTabPage.TabIndex" type="System.Int32, mscorlib">
     <value>15</value>
@@ -199,7 +199,7 @@
     <value>0, 0</value>
   </data>
   <data name="UnpackUserControl1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>784, 542</value>
+    <value>784, 546</value>
   </data>
   <data name="UnpackUserControl1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -208,7 +208,7 @@
     <value>UnpackUserControl1</value>
   </data>
   <data name="&gt;&gt;UnpackUserControl1.Type" xml:space="preserve">
-    <value>Crowbar.UnpackUserControl, Crowbar, Version=0.54.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Crowbar.UnpackUserControl, Crowbar, Version=0.57.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;UnpackUserControl1.Parent" xml:space="preserve">
     <value>UnpackTabPage</value>
@@ -220,7 +220,7 @@
     <value>4, 22</value>
   </data>
   <data name="UnpackTabPage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>784, 542</value>
+    <value>784, 546</value>
   </data>
   <data name="UnpackTabPage.TabIndex" type="System.Int32, mscorlib">
     <value>13</value>
@@ -250,7 +250,7 @@
     <value>0, 0</value>
   </data>
   <data name="PreviewViewUserControl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>784, 542</value>
+    <value>784, 546</value>
   </data>
   <data name="PreviewViewUserControl.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -259,7 +259,7 @@
     <value>PreviewViewUserControl</value>
   </data>
   <data name="&gt;&gt;PreviewViewUserControl.Type" xml:space="preserve">
-    <value>Crowbar.ViewUserControl, Crowbar, Version=0.54.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Crowbar.ViewUserControl, Crowbar, Version=0.57.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PreviewViewUserControl.Parent" xml:space="preserve">
     <value>PreviewTabPage</value>
@@ -271,7 +271,7 @@
     <value>4, 22</value>
   </data>
   <data name="PreviewTabPage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>784, 542</value>
+    <value>784, 546</value>
   </data>
   <data name="PreviewTabPage.TabIndex" type="System.Int32, mscorlib">
     <value>12</value>
@@ -301,7 +301,7 @@
     <value>0, 0</value>
   </data>
   <data name="DecompilerUserControl1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>784, 542</value>
+    <value>784, 546</value>
   </data>
   <data name="DecompilerUserControl1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -310,7 +310,7 @@
     <value>DecompilerUserControl1</value>
   </data>
   <data name="&gt;&gt;DecompilerUserControl1.Type" xml:space="preserve">
-    <value>Crowbar.DecompileUserControl, Crowbar, Version=0.54.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Crowbar.DecompileUserControl, Crowbar, Version=0.57.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;DecompilerUserControl1.Parent" xml:space="preserve">
     <value>DecompileTabPage</value>
@@ -322,7 +322,7 @@
     <value>4, 22</value>
   </data>
   <data name="DecompileTabPage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>784, 542</value>
+    <value>784, 546</value>
   </data>
   <data name="DecompileTabPage.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -352,7 +352,7 @@
     <value>0, 0</value>
   </data>
   <data name="CompilerUserControl1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>784, 542</value>
+    <value>784, 546</value>
   </data>
   <data name="CompilerUserControl1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -361,7 +361,7 @@
     <value>CompilerUserControl1</value>
   </data>
   <data name="&gt;&gt;CompilerUserControl1.Type" xml:space="preserve">
-    <value>Crowbar.CompileUserControl, Crowbar, Version=0.54.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Crowbar.CompileUserControl, Crowbar, Version=0.57.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;CompilerUserControl1.Parent" xml:space="preserve">
     <value>CompileTabPage</value>
@@ -373,7 +373,7 @@
     <value>4, 22</value>
   </data>
   <data name="CompileTabPage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>784, 542</value>
+    <value>784, 546</value>
   </data>
   <data name="CompileTabPage.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -403,7 +403,7 @@
     <value>0, 0</value>
   </data>
   <data name="ViewViewUserControl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>784, 542</value>
+    <value>784, 546</value>
   </data>
   <data name="ViewViewUserControl.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -412,7 +412,7 @@
     <value>ViewViewUserControl</value>
   </data>
   <data name="&gt;&gt;ViewViewUserControl.Type" xml:space="preserve">
-    <value>Crowbar.ViewUserControl, Crowbar, Version=0.54.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Crowbar.ViewUserControl, Crowbar, Version=0.57.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ViewViewUserControl.Parent" xml:space="preserve">
     <value>ViewTabPage</value>
@@ -424,7 +424,7 @@
     <value>4, 22</value>
   </data>
   <data name="ViewTabPage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>784, 542</value>
+    <value>784, 546</value>
   </data>
   <data name="ViewTabPage.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -454,7 +454,7 @@
     <value>0, 0</value>
   </data>
   <data name="OptionsUserControl1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>784, 542</value>
+    <value>784, 546</value>
   </data>
   <data name="OptionsUserControl1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -463,7 +463,7 @@
     <value>OptionsUserControl1</value>
   </data>
   <data name="&gt;&gt;OptionsUserControl1.Type" xml:space="preserve">
-    <value>Crowbar.OptionsUserControl, Crowbar, Version=0.54.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Crowbar.OptionsUserControl, Crowbar, Version=0.57.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;OptionsUserControl1.Parent" xml:space="preserve">
     <value>OptionsTabPage</value>
@@ -475,7 +475,7 @@
     <value>4, 22</value>
   </data>
   <data name="OptionsTabPage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>784, 542</value>
+    <value>784, 546</value>
   </data>
   <data name="OptionsTabPage.TabIndex" type="System.Int32, mscorlib">
     <value>10</value>
@@ -505,7 +505,7 @@
     <value>0, 0</value>
   </data>
   <data name="HelpUserControl1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>784, 542</value>
+    <value>784, 546</value>
   </data>
   <data name="HelpUserControl1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -514,7 +514,7 @@
     <value>HelpUserControl1</value>
   </data>
   <data name="&gt;&gt;HelpUserControl1.Type" xml:space="preserve">
-    <value>Crowbar.HelpUserControl, Crowbar, Version=0.54.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Crowbar.HelpUserControl, Crowbar, Version=0.57.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;HelpUserControl1.Parent" xml:space="preserve">
     <value>HelpTabPage</value>
@@ -526,7 +526,7 @@
     <value>4, 22</value>
   </data>
   <data name="HelpTabPage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>784, 542</value>
+    <value>784, 546</value>
   </data>
   <data name="HelpTabPage.TabIndex" type="System.Int32, mscorlib">
     <value>14</value>
@@ -556,7 +556,7 @@
     <value>0, 0</value>
   </data>
   <data name="AboutUserControl1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>784, 542</value>
+    <value>784, 546</value>
   </data>
   <data name="AboutUserControl1.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -565,7 +565,7 @@
     <value>AboutUserControl1</value>
   </data>
   <data name="&gt;&gt;AboutUserControl1.Type" xml:space="preserve">
-    <value>Crowbar.AboutUserControl, Crowbar, Version=0.54.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Crowbar.AboutUserControl, Crowbar, Version=0.57.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;AboutUserControl1.Parent" xml:space="preserve">
     <value>AboutTabPage</value>
@@ -577,7 +577,7 @@
     <value>4, 22</value>
   </data>
   <data name="AboutTabPage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>784, 542</value>
+    <value>784, 546</value>
   </data>
   <data name="AboutTabPage.TabIndex" type="System.Int32, mscorlib">
     <value>11</value>
@@ -604,7 +604,7 @@
     <value>0, 0</value>
   </data>
   <data name="MainTabControl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>792, 568</value>
+    <value>792, 572</value>
   </data>
   <data name="MainTabControl.TabIndex" type="System.Int32, mscorlib">
     <value>12</value>
@@ -646,7 +646,7 @@
     <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>792, 568</value>
+    <value>792, 572</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -3222,6 +3222,6 @@
     <value>MainForm</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>Crowbar.BaseForm, Crowbar, Version=0.54.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Crowbar.BaseForm, Crowbar, Version=0.57.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

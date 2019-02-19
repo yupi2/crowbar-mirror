@@ -31,6 +31,8 @@ Partial Class DecompileUserControl
 		Me.UseMixedCaseForKeywordsCheckBox = New System.Windows.Forms.CheckBox()
 		Me.RemovePathFromMaterialFileNamesCheckBox = New System.Windows.Forms.CheckBox()
 		Me.UseUvsForDoomMusicCompilerCheckBox = New System.Windows.Forms.CheckBox()
+		Me.OverrideMdlVersionLabel = New System.Windows.Forms.Label()
+		Me.OverrideMdlVersionComboBox = New System.Windows.Forms.ComboBox()
 		Me.Panel2 = New System.Windows.Forms.Panel()
 		Me.MdlPathFileNameTextBox = New Crowbar.TextBoxEx()
 		Me.GotoOutputPathButton = New System.Windows.Forms.Button()
@@ -166,6 +168,26 @@ Partial Class DecompileUserControl
 		Me.ToolTip1.SetToolTip(Me.UseUvsForDoomMusicCompilerCheckBox, "For DoomMusic's compiler, UV calculation is slightly different, so tick this for " & _
 		"better results.")
 		Me.UseUvsForDoomMusicCompilerCheckBox.UseVisualStyleBackColor = True
+		'
+		'OverrideMdlVersionLabel
+		'
+		Me.OverrideMdlVersionLabel.AutoSize = True
+		Me.OverrideMdlVersionLabel.Location = New System.Drawing.Point(3, 188)
+		Me.OverrideMdlVersionLabel.Name = "OverrideMdlVersionLabel"
+		Me.OverrideMdlVersionLabel.Size = New System.Drawing.Size(114, 13)
+		Me.OverrideMdlVersionLabel.TabIndex = 46
+		Me.OverrideMdlVersionLabel.Text = "Override MDL version:"
+		Me.ToolTip1.SetToolTip(Me.OverrideMdlVersionLabel, "Decompile based on this selected version instead of what is stored in MDL file.")
+		'
+		'OverrideMdlVersionComboBox
+		'
+		Me.OverrideMdlVersionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+		Me.OverrideMdlVersionComboBox.FormattingEnabled = True
+		Me.OverrideMdlVersionComboBox.Location = New System.Drawing.Point(123, 185)
+		Me.OverrideMdlVersionComboBox.Name = "OverrideMdlVersionComboBox"
+		Me.OverrideMdlVersionComboBox.Size = New System.Drawing.Size(100, 21)
+		Me.OverrideMdlVersionComboBox.TabIndex = 45
+		Me.ToolTip1.SetToolTip(Me.OverrideMdlVersionComboBox, "Decompile based on this selected version instead of what is stored in MDL file.")
 		'
 		'Panel2
 		'
@@ -340,9 +362,9 @@ Partial Class DecompileUserControl
 			Or System.Windows.Forms.AnchorStyles.Left) _
 			Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
 		Me.OptionsGroupBox.Controls.Add(Me.Panel3)
-		Me.OptionsGroupBox.Location = New System.Drawing.Point(551, 0)
+		Me.OptionsGroupBox.Location = New System.Drawing.Point(528, 0)
 		Me.OptionsGroupBox.Name = "OptionsGroupBox"
-		Me.OptionsGroupBox.Size = New System.Drawing.Size(219, 243)
+		Me.OptionsGroupBox.Size = New System.Drawing.Size(242, 243)
 		Me.OptionsGroupBox.TabIndex = 6
 		Me.OptionsGroupBox.TabStop = False
 		Me.OptionsGroupBox.Text = "Options"
@@ -350,6 +372,8 @@ Partial Class DecompileUserControl
 		'Panel3
 		'
 		Me.Panel3.AutoScroll = True
+		Me.Panel3.Controls.Add(Me.OverrideMdlVersionLabel)
+		Me.Panel3.Controls.Add(Me.OverrideMdlVersionComboBox)
 		Me.Panel3.Controls.Add(Me.FolderForEachModelCheckBox)
 		Me.Panel3.Controls.Add(Me.DebugInfoCheckBox)
 		Me.Panel3.Controls.Add(Me.LogFileCheckBox)
@@ -358,7 +382,7 @@ Partial Class DecompileUserControl
 		Me.Panel3.Dock = System.Windows.Forms.DockStyle.Fill
 		Me.Panel3.Location = New System.Drawing.Point(3, 17)
 		Me.Panel3.Name = "Panel3"
-		Me.Panel3.Size = New System.Drawing.Size(213, 223)
+		Me.Panel3.Size = New System.Drawing.Size(236, 223)
 		Me.Panel3.TabIndex = 0
 		'
 		'FolderForEachModelCheckBox
@@ -421,7 +445,7 @@ Partial Class DecompileUserControl
 		Me.ReCreateFilesGroupBox.Controls.Add(Me.Panel1)
 		Me.ReCreateFilesGroupBox.Location = New System.Drawing.Point(0, 0)
 		Me.ReCreateFilesGroupBox.Name = "ReCreateFilesGroupBox"
-		Me.ReCreateFilesGroupBox.Size = New System.Drawing.Size(545, 243)
+		Me.ReCreateFilesGroupBox.Size = New System.Drawing.Size(522, 243)
 		Me.ReCreateFilesGroupBox.TabIndex = 0
 		Me.ReCreateFilesGroupBox.TabStop = False
 		Me.ReCreateFilesGroupBox.Text = "Re-Create Files"
@@ -451,7 +475,7 @@ Partial Class DecompileUserControl
 		Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
 		Me.Panel1.Location = New System.Drawing.Point(3, 17)
 		Me.Panel1.Name = "Panel1"
-		Me.Panel1.Size = New System.Drawing.Size(539, 223)
+		Me.Panel1.Size = New System.Drawing.Size(516, 223)
 		Me.Panel1.TabIndex = 11
 		'
 		'OnlyChangedMaterialsInTextureGroupLinesCheckBox
@@ -486,7 +510,7 @@ Partial Class DecompileUserControl
 		'
 		'DecompileOptionsUseDefaultsButton
 		'
-		Me.DecompileOptionsUseDefaultsButton.Location = New System.Drawing.Point(318, 197)
+		Me.DecompileOptionsUseDefaultsButton.Location = New System.Drawing.Point(213, 197)
 		Me.DecompileOptionsUseDefaultsButton.Name = "DecompileOptionsUseDefaultsButton"
 		Me.DecompileOptionsUseDefaultsButton.Size = New System.Drawing.Size(90, 23)
 		Me.DecompileOptionsUseDefaultsButton.TabIndex = 37
@@ -496,7 +520,7 @@ Partial Class DecompileUserControl
 		'ComboBox2
 		'
 		Me.ComboBox2.FormattingEnabled = True
-		Me.ComboBox2.Location = New System.Drawing.Point(411, 170)
+		Me.ComboBox2.Location = New System.Drawing.Point(80, 199)
 		Me.ComboBox2.Name = "ComboBox2"
 		Me.ComboBox2.Size = New System.Drawing.Size(125, 21)
 		Me.ComboBox2.TabIndex = 15
@@ -505,7 +529,7 @@ Partial Class DecompileUserControl
 		'Label2
 		'
 		Me.Label2.AutoSize = True
-		Me.Label2.Location = New System.Drawing.Point(334, 173)
+		Me.Label2.Location = New System.Drawing.Point(3, 202)
 		Me.Label2.Name = "Label2"
 		Me.Label2.Size = New System.Drawing.Size(74, 13)
 		Me.Label2.TabIndex = 23
@@ -745,5 +769,7 @@ Partial Class DecompileUserControl
 	Friend WithEvents OnlyChangedMaterialsInTextureGroupLinesCheckBox As System.Windows.Forms.CheckBox
 	Friend WithEvents OutputSubfolderTextBox As Crowbar.TextBoxEx
 	Friend WithEvents UseUvsForDoomMusicCompilerCheckBox As System.Windows.Forms.CheckBox
+	Friend WithEvents OverrideMdlVersionLabel As System.Windows.Forms.Label
+	Friend WithEvents OverrideMdlVersionComboBox As System.Windows.Forms.ComboBox
 
 End Class
