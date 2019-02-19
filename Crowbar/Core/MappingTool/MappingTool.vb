@@ -155,10 +155,11 @@ Public Class MappingTool
 		arguments += " -nop4"
 		arguments += " -game """
 		arguments += gamePath
-		'arguments += """ "
-		'arguments += mappingToolOptions
+        arguments += """"
+        'arguments += " "
+        'arguments += mappingToolOptions
 
-		Me.theMappingToolProcess = New Process()
+        Me.theMappingToolProcess = New Process()
 		Dim myProcessStartInfo As New ProcessStartInfo(mappingToolPathFileName, arguments)
 		myProcessStartInfo.CreateNoWindow = True
 		myProcessStartInfo.RedirectStandardError = True

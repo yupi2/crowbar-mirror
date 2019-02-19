@@ -776,7 +776,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="My Project\app.manifest" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
@@ -794,13 +793,10 @@
     <Content Include="- Documents\License.txt" />
     <Content Include="- Documents\History 2014.txt" />
     <Content Include="- Documents\Specifications.txt" />
-    <Content Include="- Documents\String Resources.txt" />
-    <Content Include="- Documents\ToDo.txt" />
     <Content Include="Data\Crowbar Settings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="resources\CrowbarGuideBanner.png" />
-    <Content Include="resources\Datamodel.NET.dll" />
     <Content Include="resources\Find.png" />
     <Content Include="resources\Refresh.png" />
     <None Include="resources\EnterArrow.png" />
@@ -810,9 +806,7 @@
     <None Include="resources\macaw.png" />
     <None Include="resources\crowbar_icon.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Documents\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

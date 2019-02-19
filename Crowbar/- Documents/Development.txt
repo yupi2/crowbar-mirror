@@ -1,10 +1,58 @@
 
 
 
+
+### Info
+################################################################################
+
+* Built using Visual Studio Community 2017
+* Programmed in Visual Basic .NET
+* Targetted to .NET Framework 4
+* Only uses "Release" Solution Configuration
+
+
+
+### Script error windows appear in VS Community 2017 when running code via "Start" button.
+################################################################################
+
+[20-Jan-2019]
+Workaround: Uncheck the option:"Tools > Options > Debugging > General > Enable Diagnostic Tools while debugging"
+
+
+
+###### How to workaround: textboxes fail to resize their right sides
+################################################################################
+
 ### [2017-12-19] Visual Studio builds Crowbar where Decompile and Compile input textboxes fail to resize their right sides.
 
 Solution: Open the MainForm designer (where it should show something changed, even without changing anything).
 	Save the changes. Looking in the Undo list shows that Compile and Decompile controls were resized.
+
+
+
+###### How to insert a new string resource
+################################################################################
+
+### Method 1:
+PROJECT > Crowbar Properties > Resources > Strings
+Click in the * (new) row and name the new string resource.
+
+### Method 2:
+Solution Explorer 
+	Show All Files
+	Crowbar
+		MyProject
+			Resources.resx > View Code
+
+The new string resource should look something like the following. 
+Note that it should have the xml:space="preserve" attribute for the data element so copy-pasted text keeps the newlines and tabs.
+ <data name="About_ProductDescription" xml:space="preserve">
+    <value>Source Engine Model Toolset:
+	Decompiler of Valve's MDL and Related Files
+	Compiler Interface to Valve's StudioMDL.exe Tool
+	Model Viewer Interface to Valve's Half-Life Model Viewer Tool
+</value>
+  </data>
 
 
 
@@ -42,20 +90,3 @@ Solution: Open the MainForm designer (where it should show something changed, ev
 #Region "Data"
 
 #End Region
-
-
-
-
-### Info
-################################################################################
-
-* Built using Visual Studio 2005 Professional Edition
-* Programmed in Visual Basic .NET
-* Targetted to .NET Framework 2.0
-* Only uses "Release" Solution Configuration
-* Uses a special "My Project\app1.config" file that has the following lines 
-	so that tool will work when later versions of the Framework are installed:
-    <startup useLegacyV2RuntimeActivationPolicy="true">
-       <supportedRuntime version="v2.0"/>
-       <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.0"/>
-    </startup>

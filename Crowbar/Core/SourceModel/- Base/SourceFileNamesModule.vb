@@ -313,9 +313,9 @@ Module SourceFileNamesModule
 		For fileNameIndex As Integer = 0 To texturePathFileNames.Count - 1
 			Dim aTexturePathFileName As String
 			aTexturePathFileName = texturePathFileNames(fileNameIndex)
-			aTexturePathFileName = FileManager.GetCleanPathFileName(aTexturePathFileName)
+            aTexturePathFileName = FileManager.GetCleanPathFileName(aTexturePathFileName, False)
 
-			Dim aTexturePath As String
+            Dim aTexturePath As String
 			Dim aTextureFileName As String
 			aTexturePath = FileManager.GetPath(aTexturePathFileName)
 			aTextureFileName = Path.GetFileName(aTexturePathFileName)

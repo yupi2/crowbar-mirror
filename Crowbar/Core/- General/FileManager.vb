@@ -404,47 +404,47 @@ Public Class FileManager
 		Return cleanedPath
 	End Function
 
-	Public Shared Function GetCleanPathFileName(ByVal givenPathFileName As String, Optional ByVal returnFullPathFileName As Boolean = True) As String
-		Dim cleanPathFileName As String
+    Public Shared Function GetCleanPathFileName(ByVal givenPathFileName As String, ByVal returnFullPathFileName As Boolean) As String
+        Dim cleanPathFileName As String
 
-		Dim cleanedPathGivenPathFileName As String
-		cleanedPathGivenPathFileName = givenPathFileName
-		For Each invalidChar As Char In Path.GetInvalidPathChars()
-			cleanedPathGivenPathFileName = cleanedPathGivenPathFileName.Replace(invalidChar, "")
-		Next
-		If returnFullPathFileName Then
-			Try
-				cleanedPathGivenPathFileName = Path.GetFullPath(cleanedPathGivenPathFileName)
-			Catch ex As Exception
-				cleanedPathGivenPathFileName = cleanedPathGivenPathFileName.Replace(":", "")
-			End Try
-		End If
+        Dim cleanedPathGivenPathFileName As String
+        cleanedPathGivenPathFileName = givenPathFileName
+        For Each invalidChar As Char In Path.GetInvalidPathChars()
+            cleanedPathGivenPathFileName = cleanedPathGivenPathFileName.Replace(invalidChar, "")
+        Next
+        If returnFullPathFileName Then
+            Try
+                cleanedPathGivenPathFileName = Path.GetFullPath(cleanedPathGivenPathFileName)
+            Catch ex As Exception
+                cleanedPathGivenPathFileName = cleanedPathGivenPathFileName.Replace(":", "")
+            End Try
+        End If
 
-		Dim cleanedGivenFileName As String
-		cleanedGivenFileName = Path.GetFileName(cleanedPathGivenPathFileName)
-		For Each invalidChar As Char In Path.GetInvalidFileNameChars()
-			cleanedGivenFileName = cleanedGivenFileName.Replace(invalidChar, "")
-		Next
+        Dim cleanedGivenFileName As String
+        cleanedGivenFileName = Path.GetFileName(cleanedPathGivenPathFileName)
+        For Each invalidChar As Char In Path.GetInvalidFileNameChars()
+            cleanedGivenFileName = cleanedGivenFileName.Replace(invalidChar, "")
+        Next
 
-		Dim cleanedGivenPath As String
-		cleanedGivenPath = FileManager.GetPath(cleanedPathGivenPathFileName)
+        Dim cleanedGivenPath As String
+        cleanedGivenPath = FileManager.GetPath(cleanedPathGivenPathFileName)
 
-		If cleanedGivenFileName = "" Then
-			cleanPathFileName = cleanedPathGivenPathFileName
-		Else
-			cleanPathFileName = Path.Combine(cleanedGivenPath, cleanedGivenFileName)
-		End If
+        If cleanedGivenFileName = "" Then
+            cleanPathFileName = cleanedPathGivenPathFileName
+        Else
+            cleanPathFileName = Path.Combine(cleanedGivenPath, cleanedGivenFileName)
+        End If
 
-		Return cleanPathFileName
-	End Function
+        Return cleanPathFileName
+    End Function
 
-	Public Shared Sub ParsePathFileName(ByVal sender As Object, ByVal e As ConvertEventArgs)
+    Public Shared Sub ParsePathFileName(ByVal sender As Object, ByVal e As ConvertEventArgs)
 		If e.DesiredType IsNot GetType(String) Then
 			Exit Sub
 		End If
 		If CStr(e.Value) <> "" Then
-			e.Value = FileManager.GetCleanPathFileName(CStr(e.Value))
-		End If
+            e.Value = FileManager.GetCleanPathFileName(CStr(e.Value), True)
+        End If
 	End Sub
 
 	Public Shared Function GetNormalizedPathFileName(ByVal givenPathFileName As String) As String
