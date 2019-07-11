@@ -1,3 +1,10 @@
+As of 2019-07-09 there is an official github repository from ZeqMacaw
+@ https://github.com/ZeqMacaw/Crowbar
+
+The yupi2/crowbar-mirror repository will likely cease to be updated.
+
+============================================
+
 Crowbar - by ZeqMacaw
 http://steamcommunity.com/id/zeqmacaw (76561198000923153)
 http://steamcommunity.com/groups/CrowbarTool

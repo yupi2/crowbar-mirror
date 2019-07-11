@@ -1,6 +1,4 @@
-Crowbar 0.61 - 2019-07-07_0.61
-
-Changelog:
+Crowbar 0.62 - 2019-07-08_0.62
 
 === Pack ===
 FIXED: "Parent of child folders" option does not pack anything.
