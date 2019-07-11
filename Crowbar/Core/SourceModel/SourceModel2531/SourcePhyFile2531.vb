@@ -8,6 +8,8 @@ Public Class SourcePhyFile2531
 	Public Sub New(ByVal phyFileReader As BinaryReader, ByVal phyFileData As SourcePhyFileData)
 		Me.theInputFileReader = phyFileReader
 		Me.thePhyFileData = phyFileData
+
+		Me.thePhyFileData.theFileSeekLog.FileSize = Me.theInputFileReader.BaseStream.Length
 	End Sub
 
 #End Region
@@ -15,12 +17,11 @@ Public Class SourcePhyFile2531
 #Region "Methods"
 
 	Public Sub ReadSourcePhyHeader()
-		' Offsets: 0x00, 0x04, 0x08, 0x0C (12)
-		'FROM: Zoey_TeenAngst
-		'10 00 00 00 
-		'00 00 00 00 
-		'12 00 00 00 
-		'1f de 9d 20 
+		Dim fileOffsetStart As Long
+		Dim fileOffsetEnd As Long
+
+		fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+
 		Me.thePhyFileData.size = Me.theInputFileReader.ReadInt32()
 		Me.thePhyFileData.id = Me.theInputFileReader.ReadInt32()
 		Me.thePhyFileData.solidCount = Me.theInputFileReader.ReadInt32()
@@ -28,10 +29,14 @@ Public Class SourcePhyFile2531
 
 		'NOTE: If header size ever increases, this will at least skip over extra stuff.
 		Me.theInputFileReader.BaseStream.Seek(Me.thePhyFileData.size, SeekOrigin.Begin)
+
+		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+		Me.thePhyFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "Header")
 	End Sub
 
 	Public Sub ReadSourceCollisionData()
-		'Me.thePhyCollisionDataList = New List(Of SourcePhyCollisionData)()
+		Dim fileOffsetStart As Long
+		Dim fileOffsetEnd As Long
 
 		Dim ivpsId(3) As Char
 		Dim triangleCount As Integer
@@ -42,26 +47,20 @@ Public Class SourcePhyFile2531
 		Dim faceDataStreamPosition As Long
 		Dim vertexDataStreamPosition As Long
 		Dim vertexDataOffset As Long
-		'Dim boneIndexIsSet As Boolean
 		Dim faceSection As SourcePhyFaceSection
 
+		'Me.thePhyFileData.theSourcePhyMaxConvexPieces = 0
 		Me.thePhyFileData.theSourcePhyCollisionDatas = New List(Of SourcePhyCollisionData)()
 		For solidIndex As Integer = 0 To Me.thePhyFileData.solidCount - 1
 			Dim collisionData As New SourcePhyCollisionData()
-			'collisionData.theFaces = New List(Of SourcePhyFace)()
 			collisionData.theFaceSections = New List(Of SourcePhyFaceSection)()
-			'collisionData.theVertices = New List(Of SourceVector)()
 			collisionData.theVertices = New List(Of SourcePhyVertex)()
-			'boneIndexIsSet = False
+
+			fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
 			'b8 01 00 00   size
 			collisionData.size = Me.theInputFileReader.ReadInt32()
 			nextSolidDataStreamPosition = Me.theInputFileReader.BaseStream.Position + collisionData.size
-
-
-			'Me.theInputFileReader.ReadBytes(size)
-
-			'======
 
 			phyDataStreamPosition = Me.theInputFileReader.BaseStream.Position
 			'56 50 48 59   VPHY
@@ -78,7 +77,6 @@ Public Class SourcePhyFile2531
 			ivpsId = Me.theInputFileReader.ReadChars(4)
 
 			vertices = New List(Of Integer)()
-			'faceDataStreamPosition = Me.theInputFileReader.BaseStream.Position + collisionData.size
 			vertexDataStreamPosition = Me.theInputFileReader.BaseStream.Position + collisionData.size
 			While Me.theInputFileReader.BaseStream.Position < vertexDataStreamPosition
 				faceSection = New SourcePhyFaceSection()
@@ -89,10 +87,8 @@ Public Class SourcePhyFile2531
 				'29 00 00 00 
 				'04 15 00 00 
 				vertexDataOffset = Me.theInputFileReader.ReadInt32()
-				'vertexDataStreamPosition = Me.theInputFileReader.BaseStream.Position + faceDataOffset - 4
 				vertexDataStreamPosition = faceDataStreamPosition + vertexDataOffset
 
-				'faceSection.theBoneIndex = Me.theInputFileReader.ReadInt32()
 				'TODO: Verify why this is using "- 1". Needed for L4D2 survivor_teenangst.
 				faceSection.theBoneIndex = Me.theInputFileReader.ReadInt32() - 1
 				If faceSection.theBoneIndex < 0 Then
@@ -175,6 +171,10 @@ Public Class SourcePhyFile2531
 				Next
 				collisionData.theFaceSections.Add(faceSection)
 			End While
+
+			'If Me.thePhyFileData.theSourcePhyMaxConvexPieces < collisionData.theFaceSections.Count Then
+			'	Me.thePhyFileData.theSourcePhyMaxConvexPieces = collisionData.theFaceSections.Count
+			'End If
 
 			Me.theInputFileReader.BaseStream.Seek(vertexDataStreamPosition, SeekOrigin.Begin)
 
@@ -305,42 +305,10 @@ Public Class SourcePhyFile2531
 				collisionData.theVertices.Add(phyVertex)
 			Next
 
-
-
-			'TODO: Figure out this section.
-			' Section after vertex section. Presumably, this section contains normal data, but still unsure how it is arranged.
-			' It does not seem to be arranged by count of face sections.
-			' First 32-bits seems to be size of list or pointer to next list.
-			' Example data from two-cubes (concavity_test from Bang).
-			' One list of Two structs.
-			'Address: 0x0490
-			'38 00 00 00   ' Size of list or pointer to next list of structs, which in this case is last section of CollisionData below.
-			'70 fd ff ff 
-			'00 00 80 31 
-			'a9 13 d0 bd 7a ec 1d 3d 1c 12 89 3e 
-			'60 bf 84 00 
-			'------
-			'00 00 00 00    ' Zero offset to indicate last struct?
-			'b4 fb ff ff 
-			'00 00 00 00 
-			'00 00 00 00 00 00 00 00 26 33 34 3e 
-			'91 91 91 00 
-
-
-
-			'TODO: Figure out this section.
-			' Last section of the CollisionData.
-			' Example data from two-cubes (concavity_test from Bang).
-			'Address: 0x04c8
-			'00 00 00 00 
-			'68 fc ff ff 
-			'00 00 00 32 
-			'a9 13 50 be 79 ec 9d 3d 26 33 34 3e 
-			'91 91 91 00
-
-
-
 			Me.thePhyFileData.theSourcePhyCollisionDatas.Add(collisionData)
+
+			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+			Me.thePhyFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "Solid(" + solidIndex.ToString() + ")")
 
 			Me.theInputFileReader.BaseStream.Seek(nextSolidDataStreamPosition, SeekOrigin.Begin)
 		Next
@@ -446,6 +414,11 @@ Public Class SourcePhyFile2531
 	End Sub
 
 	Public Sub ReadSourcePhysCollisionModels()
+		Dim fileOffsetStart As Long
+		Dim fileOffsetEnd As Long
+
+		fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+
 		Try
 			Dim line As String
 			Dim thereIsAValue As Boolean = True
@@ -552,9 +525,17 @@ Public Class SourcePhyFile2531
 			Throw
 			'Finally
 		End Try
+
+		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+		Me.thePhyFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "Properties")
 	End Sub
 
 	Public Sub ReadSourcePhyRagdollConstraintDescs()
+		Dim fileOffsetStart As Long
+		Dim fileOffsetEnd As Long
+
+		fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+
 		Try
 			Dim line As String
 			Dim thereIsAValue As Boolean = True
@@ -622,9 +603,19 @@ Public Class SourcePhyFile2531
 		Catch
 		Finally
 		End Try
+
+		If fileOffsetStart < Me.theInputFileReader.BaseStream.Position Then
+			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+			Me.thePhyFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "Ragdoll constraints")
+		End If
 	End Sub
 
 	Public Sub ReadSourcePhyCollisionRules()
+		Dim fileOffsetStart As Long
+		Dim fileOffsetEnd As Long
+
+		fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+
 		Try
 			Dim line As String
 			Dim thereIsAValue As Boolean = True
@@ -671,9 +662,19 @@ Public Class SourcePhyFile2531
 		Catch
 		Finally
 		End Try
+
+		If fileOffsetStart < Me.theInputFileReader.BaseStream.Position Then
+			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+			Me.thePhyFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "Collision rules")
+		End If
 	End Sub
 
 	Public Sub ReadSourcePhyEditParamsSection()
+		Dim fileOffsetStart As Long
+		Dim fileOffsetEnd As Long
+
+		fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+
 		Try
 			Dim line As String
 			Dim thereIsAValue As Boolean = True
@@ -718,9 +719,19 @@ Public Class SourcePhyFile2531
 		Catch
 		Finally
 		End Try
+
+		If fileOffsetStart < Me.theInputFileReader.BaseStream.Position Then
+			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+			Me.thePhyFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "Edit params")
+		End If
 	End Sub
 
 	Public Sub ReadCollisionTextSection()
+		Dim fileOffsetStart As Long
+		Dim fileOffsetEnd As Long
+
+		fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+
 		'Dim streamLastPosition As Long
 
 		'Try
@@ -733,6 +744,11 @@ Public Class SourcePhyFile2531
 		'End Try
 
 		Me.thePhyFileData.theSourcePhyCollisionText = Common.ReadPhyCollisionTextSection(Me.theInputFileReader, Me.theInputFileReader.BaseStream.Length() - 1)
+
+		If fileOffsetStart < Me.theInputFileReader.BaseStream.Position Then
+			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+			Me.thePhyFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "Collision text")
+		End If
 	End Sub
 
 	Public Sub ReadUnreadBytes()

@@ -126,7 +126,7 @@ Public Class SourceMdlFile10
 
 					aBone.name = Me.theInputFileReader.ReadChars(32)
 					aBone.theName = aBone.name
-					aBone.theName = StringClass.ConvertFromNullTerminatedString(aBone.theName)
+					aBone.theName = StringClass.ConvertFromNullTerminatedOrFullLengthString(aBone.theName)
 					aBone.parentBoneIndex = Me.theInputFileReader.ReadInt32()
 					aBone.flags = Me.theInputFileReader.ReadInt32()
 					For boneControllerIndexIndex As Integer = 0 To aBone.boneControllerIndex.Length - 1
@@ -223,7 +223,7 @@ Public Class SourceMdlFile10
 
 				anAttachment.name = Me.theInputFileReader.ReadChars(32)
 				anAttachment.theName = anAttachment.name
-				anAttachment.theName = StringClass.ConvertFromNullTerminatedString(anAttachment.theName)
+				anAttachment.theName = StringClass.ConvertFromNullTerminatedOrFullLengthString(anAttachment.theName)
 				anAttachment.type = Me.theInputFileReader.ReadInt32()
 				anAttachment.boneIndex = Me.theInputFileReader.ReadInt32()
 
@@ -312,7 +312,7 @@ Public Class SourceMdlFile10
 
 					aSequence.name = Me.theInputFileReader.ReadChars(32)
 					aSequence.theName = aSequence.name
-					aSequence.theName = StringClass.ConvertFromNullTerminatedString(aSequence.theName)
+					aSequence.theName = StringClass.ConvertFromNullTerminatedOrFullLengthString(aSequence.theName)
 
 					aSequence.fps = Me.theInputFileReader.ReadSingle()
 

@@ -46,7 +46,7 @@ Public Class SourceMdlFile46
 
 		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
 		If logDescription <> "" Then
-			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, logDescription)
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, logDescription + " (Actual version: " + Me.theMdlFileData.version.ToString() + "; expected version: 46)")
 		End If
 	End Sub
 
@@ -332,7 +332,7 @@ Public Class SourceMdlFile46
 					If Me.theMdlFileData.version = 10 Then
 						aBone.name = Me.theInputFileReader.ReadChars(32)
 						aBone.theName = aBone.name
-						aBone.theName = StringClass.ConvertFromNullTerminatedString(aBone.theName)
+						aBone.theName = StringClass.ConvertFromNullTerminatedOrFullLengthString(aBone.theName)
 						aBone.parentBoneIndex = Me.theInputFileReader.ReadInt32()
 						aBone.flags = Me.theInputFileReader.ReadInt32()
 						For j As Integer = 0 To 5
@@ -739,7 +739,7 @@ Public Class SourceMdlFile46
 				If Me.theMdlFileData.version = 10 Then
 					anAttachment.name = Me.theInputFileReader.ReadChars(32)
 					anAttachment.theName = anAttachment.name
-					anAttachment.theName = StringClass.ConvertFromNullTerminatedString(anAttachment.theName)
+					anAttachment.theName = StringClass.ConvertFromNullTerminatedOrFullLengthString(anAttachment.theName)
 					anAttachment.type = Me.theInputFileReader.ReadInt32()
 					anAttachment.bone = Me.theInputFileReader.ReadInt32()
 
@@ -3111,7 +3111,7 @@ Public Class SourceMdlFile46
 	End Sub
 
 	Public Sub ReadSkinFamilies()
-		If Me.theMdlFileData.skinFamilyCount > 0 Then
+		If Me.theMdlFileData.skinFamilyCount > 0 AndAlso Me.theMdlFileData.skinReferenceCount > 0 Then
 			Dim skinFamilyInputFileStreamPosition As Long
 			'Dim inputFileStreamPosition As Long
 			Dim fileOffsetStart As Long

@@ -79,8 +79,6 @@ Public Class SourceModel10
 			mdlFileNameWithoutExtension = Path.GetFileNameWithoutExtension(Me.theMdlPathFileName)
 			mdlExtension = Path.GetExtension(Me.theMdlPathFileName)
 
-			'TODO: Fill theSequenceGroupMdlPathFileNames with actual names stored as is done in ReadSequenceGroupMdlFiles().
-			'      Requires reading in the SequenceGroup data.
 			Me.theSequenceGroupMdlPathFileNames = New List(Of String)(Me.theMdlFileData.sequenceGroupCount)
 
 			Me.theSequenceGroupMdlPathFileNames.Add(Me.theMdlPathFileName)
@@ -90,6 +88,8 @@ Public Class SourceModel10
 				Dim aSequenceGroupMdlPathFileName As String
 				'sequenceGroupMdlFileName = Path.GetFileName(aSequenceGroup.theFileName)
 				'sequenceGroupMdlPathFileName = Path.Combine(mdlPath, sequenceGroupMdlFileName)
+				'NOTE: Ignore internal name for sequence group file names and use file name of MDL file (not the internal name).
+				'      This seems to be how it is handled by Half-Life and all the tools for it.
 				aSequenceGroupMdlFileName = mdlFileNameWithoutExtension + sequenceGroupIndex.ToString("00") + mdlExtension
 				aSequenceGroupMdlPathFileName = Path.Combine(mdlPath, aSequenceGroupMdlFileName)
 				'If Not File.Exists(aSequenceGroupMdlPathFileName) Then
@@ -125,22 +125,28 @@ Public Class SourceModel10
 		Dim mdlPath As String
 		Dim sequenceGroupMdlFileName As String
 		Dim sequenceGroupMdlPathFileName As String
-		Dim extension As String
+		'Dim extension As String
 
 		'NOTE: Start at index 1 because sequence group 0 is in the main MDL file.
 		For sequenceGroupIndex As Integer = 1 To Me.theMdlFileData.sequenceGroupCount - 1
 			aSequenceGroup = Me.theMdlFileData.theSequenceGroups(sequenceGroupIndex)
-			mdlPath = FileManager.GetPath(Me.theMdlPathFileName)
-			sequenceGroupMdlFileName = Path.GetFileName(aSequenceGroup.theFileName)
-			sequenceGroupMdlPathFileName = Path.Combine(mdlPath, sequenceGroupMdlFileName)
 
-			'NOTE: PS2 Half-Life models that use sequence groups store "DOL" extension internally instead of "MDL".
-			If Not File.Exists(sequenceGroupMdlPathFileName) Then
-				extension = Path.GetExtension(aSequenceGroup.theFileName)
-				If extension.ToLower() = ".dol" Then
-					sequenceGroupMdlPathFileName = Path.ChangeExtension(sequenceGroupMdlPathFileName, ".mdl")
-				End If
-			End If
+			'mdlPath = FileManager.GetPath(Me.theMdlPathFileName)
+			'sequenceGroupMdlFileName = Path.GetFileName(aSequenceGroup.theFileName)
+			'sequenceGroupMdlPathFileName = Path.Combine(mdlPath, sequenceGroupMdlFileName)
+			''NOTE: PS2 Half-Life models that use sequence groups store "DOL" extension internally instead of "MDL".
+			'If Not File.Exists(sequenceGroupMdlPathFileName) Then
+			'	extension = Path.GetExtension(aSequenceGroup.theFileName)
+			'	If extension.ToLower() = ".dol" Then
+			'		sequenceGroupMdlPathFileName = Path.ChangeExtension(sequenceGroupMdlPathFileName, ".mdl")
+			'	End If
+			'End If
+			'======
+			'NOTE: Ignore internal name for sequence group file names and use file name of MDL file (not the internal name).
+			'      This seems to be how it is handled by Half-Life and all the tools for it.
+			mdlPath = FileManager.GetPath(Me.theMdlPathFileName)
+			sequenceGroupMdlFileName = Path.GetFileNameWithoutExtension(Me.theMdlPathFileName) + sequenceGroupIndex.ToString("00") + ".mdl"
+			sequenceGroupMdlPathFileName = Path.Combine(mdlPath, sequenceGroupMdlFileName)
 
 			status = Me.ReadSequenceGroupMdlFile(sequenceGroupMdlPathFileName, sequenceGroupIndex)
 		Next
@@ -283,7 +289,7 @@ Public Class SourceModel10
 
 					smdPathFileName = Path.Combine(modelOutputPath, aSequenceDesc.theSmdRelativePathFileNames(blendIndex))
 					smdPath = FileManager.GetPath(smdPathFileName)
-					If FileManager.OutputPathIsUsable(smdPath) Then
+					If FileManager.PathExistsAfterTryToCreate(smdPath) Then
 						Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
 						'NOTE: Check here in case writing is canceled in the above event.
 						If Me.theWritingIsCanceled Then
@@ -327,7 +333,7 @@ Public Class SourceModel10
 				aTexture = aTextureList(textureIndex)
 				texturePathFileName = Path.Combine(modelOutputPath, aTexture.theFileName)
 				texturePath = FileManager.GetPath(texturePathFileName)
-				If FileManager.OutputPathIsUsable(texturePath) Then
+				If FileManager.PathExistsAfterTryToCreate(texturePath) Then
 					Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, texturePathFileName)
 					'NOTE: Check here in case writing is canceled in the above event.
 					If Me.theWritingIsCanceled Then

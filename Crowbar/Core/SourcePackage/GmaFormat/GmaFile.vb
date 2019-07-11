@@ -1,4 +1,5 @@
-﻿Imports System.IO
+﻿Imports System.ComponentModel
+Imports System.IO
 Imports System.Text
 
 Public Class GmaFile
@@ -96,7 +97,7 @@ Public Class GmaFile
 	'					iOffset += entry.iSize;
 	'					iFileNumber++;
 	'				}
-	Public Overrides Sub ReadEntries()
+	Public Overrides Sub ReadEntries(ByVal bw As BackgroundWorker)
 		If Not Me.theGmaFileData.IsSourcePackage Then
 			Exit Sub
 		End If
@@ -154,7 +155,10 @@ Public Class GmaFile
 				entryDataOutputText.Append(" fnumber=0")
 				entryDataOutputText.Append(" ofs=0x" + entry.offset.ToString("X8"))
 				entryDataOutputText.Append(" sz=" + entry.size.ToString("G0"))
+
 				Me.theGmaFileData.theEntryDataOutputTexts.Add(entryDataOutputText.ToString())
+				NotifyPackEntryRead(entry, entryDataOutputText.ToString())
+
 				entryDataOutputText.Clear()
 			End While
 

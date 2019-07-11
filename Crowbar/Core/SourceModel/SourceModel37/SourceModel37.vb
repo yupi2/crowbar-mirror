@@ -242,7 +242,7 @@ Public Class SourceModel37
 				anAnimationDesc.theSmdRelativePathFileName = SourceFileNamesModule.CreateAnimationSmdRelativePathFileName(anAnimationDesc.theSmdRelativePathFileName, Me.Name, anAnimationDesc.theName)
 				smdPathFileName = Path.Combine(modelOutputPath, anAnimationDesc.theSmdRelativePathFileName)
 				smdPath = FileManager.GetPath(smdPathFileName)
-				If FileManager.OutputPathIsUsable(smdPath) Then
+				If FileManager.PathExistsAfterTryToCreate(smdPath) Then
 					Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
 					'NOTE: Check here in case writing is canceled in the above event.
 					If Me.theWritingIsCanceled Then
@@ -384,8 +384,8 @@ Public Class SourceModel37
 		mdlFile.ReadTextures()
 		mdlFile.ReadSkinFamilies()
 
-		'' Read what WriteKeyValues() writes.
-		'mdlFile.ReadKeyValues()
+		' Read what WriteKeyValues() writes.
+		mdlFile.ReadKeyValues()
 
 		'mdlFile.ReadFinalBytesAlignment()
 		mdlFile.ReadUnreadBytes()
@@ -479,7 +479,7 @@ Public Class SourceModel37
 
 			qcFile.WriteGroup("collision", AddressOf qcFile.WriteGroupCollision, False, False)
 
-			'qcFile.WriteKeyValues(Me.theMdlFileData.theKeyValuesText, "$KeyValues")
+			qcFile.WriteKeyValues(Me.theMdlFileData.theKeyValuesText, "$KeyValues")
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		Finally

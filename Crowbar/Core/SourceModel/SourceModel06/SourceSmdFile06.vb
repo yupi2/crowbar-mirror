@@ -114,6 +114,8 @@ Public Class SourceSmdFile06
 		Dim anAnimation As SourceMdlAnimation06
 		Dim position As New SourceVector()
 		Dim rotation As New SourceVector()
+		Dim scale As Double
+		Dim tempValue As Double
 
 		'skeleton
 		line = "skeleton"
@@ -133,9 +135,27 @@ Public Class SourceSmdFile06
 				anAnimation = aSequenceDesc.theAnimations(boneIndex)
 
 				If aBone.parentBoneIndex = -1 Then
-					position.x = anAnimation.theBonePositionsAndRotations(frameIndex).position.y
-					position.y = -anAnimation.theBonePositionsAndRotations(frameIndex).position.x
+					'position.x = anAnimation.theBonePositionsAndRotations(frameIndex).position.y
+					'position.y = -anAnimation.theBonePositionsAndRotations(frameIndex).position.x
+					'position.z = anAnimation.theBonePositionsAndRotations(frameIndex).position.z
+					'======
+					position.x = anAnimation.theBonePositionsAndRotations(frameIndex).position.x
+					position.y = anAnimation.theBonePositionsAndRotations(frameIndex).position.y
 					position.z = anAnimation.theBonePositionsAndRotations(frameIndex).position.z
+					scale = frameIndex / (aSequenceDesc.frameCount - 1)
+					If (aSequenceDesc.motiontype And SourceModule10.STUDIO_LX) = SourceModule10.STUDIO_LX Then
+						position.x += scale * aSequenceDesc.linearmovement.x
+					End If
+					If (aSequenceDesc.motiontype And SourceModule10.STUDIO_LY) = SourceModule10.STUDIO_LY Then
+						position.y += scale * aSequenceDesc.linearmovement.y
+					End If
+					If (aSequenceDesc.motiontype And SourceModule10.STUDIO_LZ) = SourceModule10.STUDIO_LZ Then
+						position.z += scale * aSequenceDesc.linearmovement.z
+					End If
+					'NOTE: cos(90) = 0; sin(90) = 1
+					tempValue = position.x
+					position.x = position.y
+					position.y = -tempValue
 
 					rotation.x = anAnimation.theBonePositionsAndRotations(frameIndex).rotation.x
 					rotation.y = anAnimation.theBonePositionsAndRotations(frameIndex).rotation.y
@@ -344,8 +364,8 @@ Public Class SourceSmdFile06
 			line += " "
 			line += texCoordX.ToString("0.000000", TheApp.InternalNumberFormat)
 			line += " "
-			'line += aVertex.texCoordY.ToString("0.000000", TheApp.InternalNumberFormat)
-			line += (1 - texCoordY).ToString("0.000000", TheApp.InternalNumberFormat)
+			'NOTE: Unlike all other versions, MDL v06 does not use (1 - texCoordY).
+			line += texCoordY.ToString("0.000000", TheApp.InternalNumberFormat)
 		Catch ex As Exception
 			line = "// " + line
 		End Try

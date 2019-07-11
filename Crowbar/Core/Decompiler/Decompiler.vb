@@ -106,7 +106,7 @@ Public Class Decompiler
 		If String.IsNullOrEmpty(TheApp.Settings.DecompileMdlPathFileName) Then
 			inputsAreValid = False
 		Else
-			inputsAreValid = FileManager.OutputPathIsUsable(Me.theOutputPath)
+			inputsAreValid = FileManager.PathExistsAfterTryToCreate(Me.theOutputPath)
 		End If
 
 		Return inputsAreValid
@@ -834,7 +834,7 @@ Public Class Decompiler
 			If model.HasBoneAnimationData Then
 				Dim outputPath As String
 				outputPath = Path.Combine(Me.theModelOutputPath, SourceFileNamesModule.GetAnimationSmdRelativePath(model.Name))
-				If FileManager.OutputPathIsUsable(outputPath) Then
+				If FileManager.PathExistsAfterTryToCreate(outputPath) Then
 					'Me.UpdateProgress(3, "Writing bone animation SMD files ...")
 					Me.UpdateProgress(3, "Bone animation files: ")
 					Me.theDecompiledFileType = DecompiledFileType.BoneAnimation

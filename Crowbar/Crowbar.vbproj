@@ -12,7 +12,7 @@
     <AssemblyName>Crowbar</AssemblyName>
     <MyType>WindowsFormsWithCustomSubMain</MyType>
     <OptionStrict>On</OptionStrict>
-    <ApplicationIcon>resources\crowbar_icon.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\crowbar_icon.ico</ApplicationIcon>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -51,10 +51,38 @@
   <PropertyGroup>
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+    <DebugType>Full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Steamworks.NET, Version=12.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Resources\Steamworks.NET.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -75,6 +103,9 @@
     <Compile Include="Core\- Application\AppExceptionHandler.vb" />
     <Compile Include="Core\- Application\SingleInstanceApplication.vb" />
     <Compile Include="Core\- Application\SingleInstanceEventArgs.vb" />
+    <Compile Include="Core\- General\BackgroundWorkerEx.vb">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Core\- General\Bitmap\BitmapFile.vb" />
     <Compile Include="Core\- General\Bitmap\BitmapFileHeader.vb" />
     <Compile Include="Core\- General\Bitmap\BitmapInfoHeader.vb" />
@@ -84,11 +115,10 @@
     <Compile Include="Core\- General\GenericsModule.vb" />
     <Compile Include="Core\- General\StringClass.vb" />
     <Compile Include="Core\Compiler\CompilerOutputInfo.vb" />
+    <Compile Include="Core\Compiler\ParseMeshSmdInfo.vb" />
+    <Compile Include="Core\Compiler\ParseSMD.vb" />
     <Compile Include="Core\GameSetup\GameInfoTxtFile.vb" />
     <Compile Include="Core\GameSetup\SteamLibraryPath.vb" />
-    <Compile Include="Core\Debug\AppDebug1File.vb" />
-    <Compile Include="Core\Debug\AppDebug2File.vb" />
-    <Compile Include="Core\Debug\AppDebug3File.vb" />
     <Compile Include="Core\- Application\AppSettings.vb" />
     <Compile Include="Core\Compiler\Compiler.vb">
       <SubType>Component</SubType>
@@ -111,6 +141,11 @@
     <Compile Include="Core\Decompiler\Decompiler.vb">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Core\Packer\Packer.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Core\Packer\PackerInputInfo.vb" />
+    <Compile Include="Core\Packer\PackerOutputInfo.vb" />
     <Compile Include="Core\SourceModel\SourceModel14\SourceMdlFile14.vb" />
     <Compile Include="Core\SourceModel\SourceModel14\SourceMdlFileData\SourceMdlBodyPart14.vb" />
     <Compile Include="Core\SourceModel\SourceModel14\SourceMdlFileData\SourceMdlFileData14.vb" />
@@ -144,7 +179,7 @@
     <Compile Include="Core\SourceModel\- Base\SourceMdlAnimationDescBase.vb" />
     <Compile Include="Core\SourceModel\- Base\SourceMdlFileDataBase.vb" />
     <Compile Include="Core\SourceModel\- Base\SourceMdlSequenceDescBase.vb" />
-    <Compile Include="Core\SourceModel\- Debug\AccessedBytesDebugFile.vb" />
+    <Compile Include="Core\Debug\AccessedBytesDebugFile.vb" />
     <Compile Include="Core\SourceModel\- Base\SourceModelProgressEventArgs.vb" />
     <Compile Include="Core\SourceModel\- Base\SourceModelProgressEventHandler.vb" />
     <Compile Include="Core\SourceModel\- Base\SourceFileNamesModule.vb" />
@@ -331,8 +366,6 @@
     <Compile Include="Core\SourceModel\SourceModel45\SourceVtaFile45.vb" />
     <Compile Include="Core\SourceModel\SourceModel45\SourceVtxFile45.vb" />
     <Compile Include="Core\SourceModel\SourceModel45\SourceVtxFileData\SourceVtxFileData45.vb" />
-    <Compile Include="Core\SourceModel\SourceModel45\SourceVvdFile45.vb" />
-    <Compile Include="Core\SourceModel\SourceModel45\SourceVvdFileData\SourceVvdFileData45.vb" />
     <Compile Include="Core\SourceModel\SourceModel46\SourceAniFile46.vb" />
     <Compile Include="Core\SourceModel\SourceModel46\SourceAniFileData\SourceAniFileData46.vb" />
     <Compile Include="Core\SourceModel\SourceModel46\SourceMdlFile46.vb" />
@@ -345,8 +378,6 @@
     <Compile Include="Core\SourceModel\SourceModel46\SourceVtaFile46.vb" />
     <Compile Include="Core\SourceModel\SourceModel46\SourceVtxFile46.vb" />
     <Compile Include="Core\SourceModel\SourceModel46\SourceVtxFileData\SourceVtxFileData46.vb" />
-    <Compile Include="Core\SourceModel\SourceModel46\SourceVvdFile46.vb" />
-    <Compile Include="Core\SourceModel\SourceModel46\SourceVvdFileData\SourceVvdFileData46.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceMdlFile48.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceModel48.vb" />
     <Compile Include="Core\SourceModel\SourceModel52\SourceAniFile52.vb" />
@@ -444,8 +475,7 @@
     <Compile Include="Core\SourceModel\SourceModel44\SourceVtaFile44.vb" />
     <Compile Include="Core\SourceModel\SourceModel44\SourceVtxFile44.vb" />
     <Compile Include="Core\SourceModel\SourceModel44\SourceVtxFileData\SourceVtxFileData44.vb" />
-    <Compile Include="Core\SourceModel\SourceModel44\SourceVvdFile44.vb" />
-    <Compile Include="Core\SourceModel\SourceModel44\SourceVvdFileData\SourceVvdFileData44.vb" />
+    <Compile Include="Core\SourceModel\SourceVvdFile\SourceVvdFile04\SourceVvdFile04.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceAniFileData\SourceAniFileData48.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceMdlFileData\SourceMdlAnimationDesc48.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceMdlFileData\SourceMdlFileData48.vb" />
@@ -455,19 +485,16 @@
     <Compile Include="Core\SourceModel\SourceModel10\SourceModel10.vb" />
     <Compile Include="Core\SourceModel\SourceModel2531\SourceModel2531.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceVtxFileData\SourceVtxFileData48.vb" />
-    <Compile Include="Core\SourceModel\SourceModel48\SourceVvdFileData\SourceVvdFileData48.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceAniFile48.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceQcFile48.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceSmdFile48.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceVrdFile48.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceVtaFile48.vb" />
     <Compile Include="Core\SourceModel\SourceModel48\SourceVtxFile48.vb" />
-    <Compile Include="Core\SourceModel\SourceModel48\SourceVvdFile48.vb" />
     <Compile Include="Core\SourceModel\SourceModel49\SourceAniFileData\SourceAniFileData49.vb" />
     <Compile Include="Core\SourceModel\SourceModel49\SourceMdlFileData\SourceMdlAnimationDesc49.vb" />
     <Compile Include="Core\SourceModel\SourceModel49\SourceMdlFileData\SourceMdlFileData49.vb" />
     <Compile Include="Core\SourceModel\SourceVtxFile\SourceVtxFile07\SourceVtxFileData07.vb" />
-    <Compile Include="Core\SourceModel\SourceModel49\SourceVvdFileData\SourceVvdFileData49.vb" />
     <Compile Include="Core\SourceModel\SourceModel49\SourceModel49.vb" />
     <Compile Include="Core\SourceModel\SourceModel49\SourceAniFile49.vb" />
     <Compile Include="Core\SourceModel\SourceModel49\SourceMdlFile49.vb" />
@@ -477,9 +504,23 @@
     <Compile Include="Core\SourceModel\SourceModel49\SourceVrdFile49.vb" />
     <Compile Include="Core\SourceModel\SourceModel49\SourceVtaFile49.vb" />
     <Compile Include="Core\SourceModel\SourceVtxFile\SourceVtxFile07\SourceVtxFile07.vb" />
-    <Compile Include="Core\SourceModel\SourceModel49\SourceVvdFile49.vb" />
     <Compile Include="Core\SourcePackage\HfsFormat\HfsMainDirectoryEntry.vb" />
+    <Compile Include="Core\SourcePackage\SourcePackageEventArgs.vb" />
+    <Compile Include="Core\SteamAppInfos\AnarchyArcadeSteamAppInfo.vb" />
+    <Compile Include="Core\SteamAppInfos\BlackMesaSteamAppInfo.vb" />
+    <Compile Include="Core\SteamAppInfos\ContagionSteamAppInfo.vb" />
+    <Compile Include="Core\SteamAppInfos\GarrysModSteamAppInfo.vb" />
+    <Compile Include="Core\SteamAppInfos\Left4Dead2SteamAppInfo.vb" />
+    <Compile Include="Core\SteamAppInfos\SteamAppInfoBase.vb" />
+    <Compile Include="Core\Steam\BackgroundSteamPipe.vb" />
+    <Compile Include="Core\Steam\SteamAppUserInfo.vb" />
+    <Compile Include="Core\Steam\SteamPipe.vb" />
+    <Compile Include="Core\Steam\SteamPipeEventArgs.vb" />
+    <Compile Include="Core\Steam\SteamRemoteStorage_PublishedFileDetails_Json.vb" />
+    <Compile Include="Core\Steam\WorkshopItem.vb" />
+    <Compile Include="Core\Steam\WorkshopItemBindingList.vb" />
     <Compile Include="Core\Unpacker\UnpackerInputInfo.vb" />
+    <Compile Include="Core\Unpacker\SearchOutputInfo.vb" />
     <Compile Include="Core\Unpacker\UnpackerOutputInfo.vb" />
     <Compile Include="Core\Unpacker\Unpacker.vb">
       <SubType>Component</SubType>
@@ -530,7 +571,7 @@
     <Compile Include="Core\SourceModel\SourcePhyFile\SourcePhyFileData\SourcePhyFaceSection.vb" />
     <Compile Include="Core\SourceModel\SourcePhyFile\SourcePhyFileData\SourcePhyFace.vb" />
     <Compile Include="Core\SourceModel\SourcePhyFile\SourcePhyFileData\SourcePhyVertex.vb" />
-    <Compile Include="Core\SourceModel\SourceCommon\SourceVvdFileData\SourceVvdFileData.vb" />
+    <Compile Include="Core\SourceModel\SourceVvdFile\SourceVvdFile04\SourceVvdFileData04.vb" />
     <Compile Include="Core\SourceModel\SourceCommon\SourceVtxFileData\SourceVtxBoneStateChange.vb" />
     <Compile Include="Core\SourceModel\SourceCommon\SourceVtxFileData\SourceVtxMaterialReplacement.vb" />
     <Compile Include="Core\SourceModel\SourceCommon\SourceVtxFileData\SourceVtxBodyPart.vb" />
@@ -542,10 +583,16 @@
     <Compile Include="Core\SourceModel\SourceCommon\SourceVtxFileData\SourceVtxStrip.vb" />
     <Compile Include="Core\SourceModel\SourceCommon\SourceVtxFileData\SourceVtxVertex.vb" />
     <Compile Include="Core\SourceModel\SourceCommon\SourceVtxFileData\SourceVtxFileData.vb" />
-    <Compile Include="Core\SourceModel\SourceCommon\SourceVvdFileData\SourceVvdFixup.vb" />
+    <Compile Include="Core\SourceModel\SourceVvdFile\SourceVvdFile04\SourceVvdFixup04.vb" />
     <Compile Include="Core\SourcePackage\VpkFormat\VpkDirectoryEntry.vb" />
     <Compile Include="Core\SourcePackage\VpkFormat\VpkFile.vb" />
     <Compile Include="Core\SourcePackage\VpkFormat\VpkFileData.vb" />
+    <Compile Include="Widgets\- Application\AgreementRequiresAcceptanceForm.Designer.vb">
+      <DependentUpon>AgreementRequiresAcceptanceForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\- Application\AgreementRequiresAcceptanceForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Widgets\- Application\BaseForm.Designer.vb">
       <DependentUpon>BaseForm.vb</DependentUpon>
     </Compile>
@@ -558,13 +605,34 @@
     <Compile Include="Widgets\- Application\BaseUserControl.vb">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Widgets\- Application\DeleteItemForm.Designer.vb">
+      <DependentUpon>DeleteItemForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\- Application\DeleteItemForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Widgets\- Application\FolderAndFileListViewItemComparer.vb" />
     <Compile Include="Widgets\- Application\NodeSorter.vb" />
+    <Compile Include="Widgets\- General\CheckBoxEx.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Widgets\- General\DateTimeTextBoxEx.vb">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Widgets\- General\FileDragDropHelper.vb" />
+    <Compile Include="Widgets\- General\GroupBoxEx.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Widgets\- General\ProgressBarEx.vb">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Widgets\- General\RichTextBoxEx.vb">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Widgets\- Application\MacroDataGridView.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Widgets\- General\SplitContainerEx.vb">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Widgets\- General\TextBoxEx.vb">
@@ -583,6 +651,18 @@
       <DependentUpon>CompileUserControl.vb</DependentUpon>
     </Compile>
     <Compile Include="Widgets\Main Tabs\CompileUserControl.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Widgets\Main Tabs\DownloadUserControl.Designer.vb">
+      <DependentUpon>DownloadUserControl.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\Main Tabs\DownloadUserControl.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Widgets\Main Tabs\PublishUserControl.Designer.vb">
+      <DependentUpon>PublishUserControl.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\Main Tabs\PublishUserControl.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Widgets\Main Tabs\SetUpGamesUserControl.Designer.vb">
@@ -705,8 +785,62 @@
     <Compile Include="Widgets\- Application\UnhandledExceptionWindow.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Widgets\Publish SteamApp Tags\AnarchyArcadeTagsUserControl.Designer.vb">
+      <DependentUpon>AnarchyArcadeTagsUserControl.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\Publish SteamApp Tags\AnarchyArcadeTagsUserControl.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Widgets\Publish SteamApp Tags\Base\Base_TagsUserControl.Designer.vb">
+      <DependentUpon>Base_TagsUserControl.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\Publish SteamApp Tags\Base\Base_TagsUserControl.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Widgets\Publish SteamApp Tags\BlackMesaTagsUserControl.Designer.vb">
+      <DependentUpon>BlackMesaTagsUserControl.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\Publish SteamApp Tags\BlackMesaTagsUserControl.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Widgets\Publish SteamApp Tags\ContagionTagsUserControl.Designer.vb">
+      <DependentUpon>ContagionTagsUserControl.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\Publish SteamApp Tags\ContagionTagsUserControl.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Widgets\Publish SteamApp Tags\EstrangedActITagsUserControl.Designer.vb">
+      <DependentUpon>EstrangedActITagsUserControl.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\Publish SteamApp Tags\EstrangedActITagsUserControl.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Widgets\Publish SteamApp Tags\GarrysModTagsUserControl.Designer.vb">
+      <DependentUpon>GarrysModTagsUserControl.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\Publish SteamApp Tags\GarrysModTagsUserControl.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Widgets\Publish SteamApp Tags\Left4Dead2TagsUserControl.Designer.vb">
+      <DependentUpon>Left4Dead2TagsUserControl.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\Publish SteamApp Tags\Left4Dead2TagsUserControl.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Widgets\Publish SteamApp Tags\SourceFilmmakerTagsUserControl.Designer.vb">
+      <DependentUpon>SourceFilmmakerTagsUserControl.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Widgets\Publish SteamApp Tags\SourceFilmmakerTagsUserControl.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Widgets\- Application\AgreementRequiresAcceptanceForm.resx">
+      <DependentUpon>AgreementRequiresAcceptanceForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Widgets\- Application\DeleteItemForm.resx">
+      <DependentUpon>DeleteItemForm.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Widgets\- Application\MainForm.de-DE.resx">
       <DependentUpon>MainForm.vb</DependentUpon>
     </EmbeddedResource>
@@ -720,6 +854,12 @@
     <EmbeddedResource Include="Widgets\Main Tabs\CompileUserControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>CompileUserControl.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Widgets\Main Tabs\DownloadUserControl.resx">
+      <DependentUpon>DownloadUserControl.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Widgets\Main Tabs\PublishUserControl.resx">
+      <DependentUpon>PublishUserControl.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Widgets\Main Tabs\SetUpGamesUserControl.resx">
       <DependentUpon>SetUpGamesUserControl.vb</DependentUpon>
@@ -774,6 +914,24 @@
       <DependentUpon>UnhandledExceptionWindow.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Widgets\Publish SteamApp Tags\Base\Base_TagsUserControl.resx">
+      <DependentUpon>Base_TagsUserControl.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Widgets\Publish SteamApp Tags\BlackMesaTagsUserControl.resx">
+      <DependentUpon>BlackMesaTagsUserControl.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Widgets\Publish SteamApp Tags\ContagionTagsUserControl.resx">
+      <DependentUpon>ContagionTagsUserControl.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Widgets\Publish SteamApp Tags\GarrysModTagsUserControl.resx">
+      <DependentUpon>GarrysModTagsUserControl.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Widgets\Publish SteamApp Tags\Left4Dead2TagsUserControl.resx">
+      <DependentUpon>Left4Dead2TagsUserControl.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Widgets\Publish SteamApp Tags\SourceFilmmakerTagsUserControl.resx">
+      <DependentUpon>SourceFilmmakerTagsUserControl.vb</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="My Project\app.manifest" />
@@ -793,18 +951,22 @@
     <Content Include="- Documents\License.txt" />
     <Content Include="- Documents\History 2014.txt" />
     <Content Include="- Documents\Specifications.txt" />
-    <Content Include="Data\Crowbar Settings.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="resources\CrowbarGuideBanner.png" />
-    <Content Include="resources\Find.png" />
-    <Content Include="resources\Refresh.png" />
-    <None Include="resources\EnterArrow.png" />
-    <None Include="resources\FindPrevious.png" />
-    <None Include="resources\FindNext.png" />
-    <None Include="resources\crowbar_icon_large.png" />
-    <None Include="resources\macaw.png" />
-    <None Include="resources\crowbar_icon.ico" />
+    <None Include="Resources\CrowbarSteamPipe.exe" />
+    <Content Include="Resources\Steamworks.NET.dll" />
+    <Content Include="Resources\steam_api.dll" />
+    <None Include="Resources\Crowbar Settings.xml" />
+    <None Include="Resources\CancelRefresh.png" />
+    <None Include="Resources\CancelSearch.png" />
+    <Content Include="Resources\CrowbarGuideBanner.png" />
+    <Content Include="Resources\Find.png" />
+    <Content Include="Resources\lzma.exe" />
+    <Content Include="Resources\Refresh.png" />
+    <None Include="Resources\EnterArrow.png" />
+    <None Include="Resources\FindPrevious.png" />
+    <None Include="Resources\FindNext.png" />
+    <None Include="Resources\crowbar_icon_large.png" />
+    <None Include="Resources\macaw.png" />
+    <None Include="Resources\crowbar_icon.ico" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />

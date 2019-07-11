@@ -47,7 +47,7 @@ Public Class SourceVtxFile07
 		Me.theVtxFileData.bodyPartOffset = Me.theInputFileReader.ReadInt32()
 
 		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-		Me.theVtxFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "VTX File Header")
+		Me.theVtxFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "VTX File Header (Actual version: " + Me.theVtxFileData.version.ToString() + "; expected version: 7)")
 	End Sub
 
 	Public Sub ReadSourceVtxBodyParts()
@@ -582,7 +582,9 @@ Public Class SourceVtxFile07
 
 				inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 
-				Me.ReadSourceVtxBoneStateChanges(stripInputFileStreamPosition, aStrip)
+				'TODO: Commented-out due to using a ton of memory and long time to read incorrectly the model 
+				'      from this bug report: 2019-03-08 bad decompile\alyx_sfm
+				'Me.ReadSourceVtxBoneStateChanges(stripInputFileStreamPosition, aStrip)
 
 				Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
 			Next
@@ -630,6 +632,11 @@ Public Class SourceVtxFile07
 	End Sub
 
 	Private Sub ReadSourceVtxBoneStateChanges(ByVal stripInputFileStreamPosition As Long, ByVal aStrip As SourceVtxStrip)
+		'TODO: On an alyx.mdl from SFM, aStrip.boneStateChangeCount is over 800,000, so maybe when astrip.flag has bit flag 4 set, skip this reading.
+		If ((aStrip.flags And 1) = 0) OrElse ((aStrip.flags And 4) > 0) Then
+			Exit Sub
+		End If
+
 		'NOTE: It seems that if boneCount = 0 then a SourceVtxBoneStateChange is stored.
 		Dim boneStateChangeCount As Integer
 		boneStateChangeCount = aStrip.boneStateChangeCount

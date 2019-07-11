@@ -1,9 +1,68 @@
-Crowbar 0.58 - 2019-02-17_0.58
+Crowbar 0.61 - 2019-07-07_0.61
 
 Changelog:
 
-=== Decompile ===
-FIXED: Crowbar writes into some $cdmaterials the full path to Crowbar.exe.
+=== General ===
+UPDATED: Settings file and other files used by Crowbar are stored within Crowbar.exe, so there is only file needed for distribution.
+FIXED: Crowbar does not save if the XML file exists in Data folder, but it is not writeable. Now, the Data folder is not used.
+FIXED: Double-clicking a file with any caps in the extension that opens Crowbar or drag-dropping one that Crowbar can use always sets up and opens Decompile tab instead of correct tab.
+FIXED: Improved speed of redrawing when resizing main window, particularly noticeable when using Windows Aero mode.
 
-=== Preview and View === 
-FIXED: Calls Hammer with "-disallowhwmorph" as part of the game path when it should not.
+=== Set Up Games ===
+ADDED: Button for a Source game, 'Create "models" folder tree from this game's VPKs', that creates all "models" subfolders from a game's VPKs,
+to allow viewing of models in a VPK via HLMV.
+FIXED: In Set Up Games window, click Browse button when GameInfo.txt textbox is blank. Select a file name and click Open button. Crowbar opens exception window instead of filling-in the GameInfo.txt textbox.
+
+=== Download ===
+ADDED: New Download tab. Copy-paste a Steam Workshop item ID or web link and download the item's content.
+
+=== Unpack ===
+ADDED: List and unpack "Vampire: The Masquerade - Bloodlines" VPK files.
+ADDED: Added Output option "Same folder" that unpacks package file into same folder as the package file, just like the default behavior of vpk.exe or gmad.exe.
+ADDED: Option to unpack each package file into its own subfolder of output folder.
+ADDED: Refresh/Cancel button to Refresh and Cancel showing of package contents.
+ADDED: Search button turns into Cancel Search button when search is active.
+ADDED: Opening any file of a multi-file VPK (one that uses filenames such as pak01_000, pak01_001, and pak01_dir) shows the contents of all of them;
+previously (and in GCFScape) only opening the "pak01_dir" file would show any contents.
+UPDATED: When opening not via double-click of a package file, Crowbar will not show a package listing from previous run; user can click Refresh button to show the listing.
+FIXED: Selecting a "<Found>" treeview item shows an extra '/' in the selected internal path textbox.
+
+=== Decompile ===
+FIXED: MDL v10 - For QC file $modelname, ignore internal model name and instead write file name of MDL file.
+FIXED: MDL v10 - For sequence group files, tries to read files based on internal file name instead of MDL file name with suffixes.
+FIXED: MDL v06 - No root-bone movement.
+FIXED: MDL v06 - UV-mapping is upside-down.
+FIXED: MDL v10 - Sequences with exactly 32 characters in name fail to be decompiled to SMD files and are not written into QC file.
+FIXED: MDL v10 - Missing $sequence blend value in Ricochet "player\male.mdl". For example, wrote "blend 90 0" (without quotes) but should have written "blend N 90 0" (without quotes).
+FIXED: MDL v27, v28, v44, v48, v49, v52, v53 - Sometimes tries to write incorrect $LOD replacebone option in QC that prevents full QC file from being written.
+FIXED: MDL v32, v35, v36, v37, v44, v45, v46, v48 - Re-compiling some models gives "mismatched number of IK rules" error message.
+FIXED: MDL v37 - Only first mesh of a multi-mesh model is decompiled to SMD file.
+FIXED: MDL v37 - No root bone movement decompiled.
+FIXED: MDL v37 - QC $KeyValues is not decompiled.
+FIXED: MDL v37 - HL2 beta leak "hl2\models\Police.mdl" decompiles with several NaN values in QC $sequence ikrule option.
+FIXED: MDL v49 - In QC file, an eyeball line has "[unknown_texture]" for its material name. This occurs when the material name is the same as another eyeball's material name.
+For example, the "eye" in these lines:
+	eyeball "eye_r" "ValveBiped.Bip01_Head1" -2.04 -2.92 67.31 "eye" 2  4 "iris_unused" 1.7
+	eyeball "eye_l" "ValveBiped.Bip01_Head1"  2.04 -2.92 67.31 "eye" 2 -4 "iris_unused" 1.7
+
+=== Compile ===
+FIXED: If QC file's $modelname value does not end with ".mdl" (e.g. $modelname "name" instead of $modelname "name.mdl"),
+then Crowbar does not list MDL file in the drop-down box below log box and does not enable "Use in View" button.
+
+=== Preview and View ===
+FIXED: Drag-dropping an MDL file onto an open Preview or View tab that has info displayed sometimes shows info twice mixed together.
+
+=== Pack ===
+ADDED: New Pack tab. Select a folder to pack into VPK or GMA.
+
+=== Publish ===
+ADDED: New Publish tab. Publish items to Steam Workshop of 4 games: Black Mesa, Contagion, Garry's Mod, and Left 4 Dead 2.
+
+=== Options ===
+UPDATED: Change default of ticked boxes for both MDL file Set Up options to just Decompile.
+FIXED: Crowbar does not detect when default right-click action of related file extensions has been changed from "Open".
+FIXED: Crowbar does not change the default right-click action of related file extensions to "Open" if another one has been set.
+
+=== About ===
+ADDED: List of new features.
+ADDED: Several more names to "Special Thanks" section.

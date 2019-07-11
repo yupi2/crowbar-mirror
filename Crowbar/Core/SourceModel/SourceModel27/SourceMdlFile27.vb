@@ -41,7 +41,7 @@ Public Class SourceMdlFile27
 
 		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
 		If logDescription <> "" Then
-			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, logDescription)
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, logDescription + " (Actual version: " + Me.theMdlFileData.version.ToString() + "; expected version: 27)")
 		End If
 	End Sub
 
@@ -824,13 +824,13 @@ Public Class SourceMdlFile27
 
 					'DEBUG: This is filler.
 					Me.theInputFileReader.ReadInt32()
-					Me.theInputFileReader.ReadInt32()
-					Me.theInputFileReader.ReadInt32()
-					Me.theInputFileReader.ReadInt32()
-					Me.theInputFileReader.ReadInt32()
-					Me.theInputFileReader.ReadInt32()
-					Me.theInputFileReader.ReadInt32()
-					Me.theInputFileReader.ReadInt32()
+					'Me.theInputFileReader.ReadInt32()
+					'Me.theInputFileReader.ReadInt32()
+					'Me.theInputFileReader.ReadInt32()
+					'Me.theInputFileReader.ReadInt32()
+					'Me.theInputFileReader.ReadInt32()
+					'Me.theInputFileReader.ReadInt32()
+					'Me.theInputFileReader.ReadInt32()
 
 					Me.theMdlFileData.theAnimationDescs.Add(anAnimationDesc)
 
@@ -1408,7 +1408,7 @@ Public Class SourceMdlFile27
 	End Sub
 
 	Public Sub ReadSkinFamilies()
-		If Me.theMdlFileData.skinFamilyCount > 0 Then
+		If Me.theMdlFileData.skinFamilyCount > 0 AndAlso Me.theMdlFileData.skinReferenceCount > 0 Then
 			Dim skinFamilyInputFileStreamPosition As Long
 			'Dim inputFileStreamPosition As Long
 			Dim fileOffsetStart As Long

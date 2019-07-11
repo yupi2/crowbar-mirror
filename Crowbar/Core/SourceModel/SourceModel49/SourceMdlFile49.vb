@@ -45,7 +45,7 @@ Public Class SourceMdlFile49
 
 		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
 		If logDescription <> "" Then
-			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, logDescription)
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, logDescription + " (Actual version: " + Me.theMdlFileData.version.ToString() + "; expected version: 49)")
 		End If
 	End Sub
 
@@ -734,7 +734,7 @@ Public Class SourceMdlFile49
 				If Me.theMdlFileData.version = 10 Then
 					anAttachment.name = Me.theInputFileReader.ReadChars(32)
 					anAttachment.theName = anAttachment.name
-					anAttachment.theName = StringClass.ConvertFromNullTerminatedString(anAttachment.theName)
+					anAttachment.theName = StringClass.ConvertFromNullTerminatedOrFullLengthString(anAttachment.theName)
 					anAttachment.type = Me.theInputFileReader.ReadInt32()
 					anAttachment.bone = Me.theInputFileReader.ReadInt32()
 

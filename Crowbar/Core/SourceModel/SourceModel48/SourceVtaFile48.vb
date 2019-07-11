@@ -4,7 +4,7 @@ Public Class SourceVtaFile48
 
 #Region "Creation and Destruction"
 
-	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal mdlFileData As SourceMdlFileData48, ByVal vvdFileData As SourceVvdFileData48)
+	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal mdlFileData As SourceMdlFileData48, ByVal vvdFileData As SourceVvdFileData04)
 		Me.theOutputFileStreamWriter = outputFileStream
 		Me.theMdlFileData = mdlFileData
 		Me.theVvdFileData = vvdFileData
@@ -746,7 +746,7 @@ Public Class SourceVtaFile48
 
 	Private theOutputFileStreamWriter As StreamWriter
 	Private theMdlFileData As SourceMdlFileData48
-	Private theVvdFileData As SourceVvdFileData48
+	Private theVvdFileData As SourceVvdFileData04
 
 #End Region
 

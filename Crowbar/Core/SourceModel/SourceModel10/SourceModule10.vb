@@ -96,7 +96,8 @@ Module SourceModule10
 			Return "ZR"
 		End If
 
-		Return ""
+		'Type can be -1 if original QC did not use any of the control texts above, so use a control text that is not one of the above.
+		Return "N"
 	End Function
 
 	Public Function GetMultipleControlText(ByVal type As Integer) As String

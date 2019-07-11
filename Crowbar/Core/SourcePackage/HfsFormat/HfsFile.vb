@@ -1,4 +1,5 @@
-﻿Imports System.IO
+﻿Imports System.ComponentModel
+Imports System.IO
 Imports System.Text
 
 Public Class HfsFile
@@ -56,7 +57,7 @@ Public Class HfsFile
 		'Me.theHfsFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "HFS File Header")
 	End Sub
 
-	Public Overrides Sub ReadEntries()
+	Public Overrides Sub ReadEntries(ByVal bw As BackgroundWorker)
 		If Not Me.theHfsFileData.IsSourcePackage Then
 			Exit Sub
 		End If
@@ -177,7 +178,10 @@ Public Class HfsFile
 				entryDataOutputText.Append(" fnumber=0")
 				entryDataOutputText.Append(" ofs=0x" + entry.offset.ToString("X8"))
 				entryDataOutputText.Append(" sz=" + entry.decompressedFileSize.ToString("G0"))
+
 				Me.theHfsFileData.theEntryDataOutputTexts.Add(entryDataOutputText.ToString())
+				NotifyPackEntryRead(entry, entryDataOutputText.ToString())
+
 				entryDataOutputText.Clear()
 
 				Me.theInputFileReader.BaseStream.Seek(nextMainDirectoryEntryOffset, SeekOrigin.Begin)

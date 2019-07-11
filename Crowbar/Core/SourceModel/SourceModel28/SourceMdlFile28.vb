@@ -41,7 +41,7 @@ Public Class SourceMdlFile28
 
 		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
 		If logDescription <> "" Then
-			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, logDescription)
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, logDescription + " (Actual version: " + Me.theMdlFileData.version.ToString() + "; expected version: 28)")
 		End If
 	End Sub
 
@@ -588,9 +588,9 @@ Public Class SourceMdlFile28
 					aSeqDesc.keyValueOffset = Me.theInputFileReader.ReadInt32()
 					aSeqDesc.keyValueSize = Me.theInputFileReader.ReadInt32()
 
-					'For x As Integer = 0 To aSeqDesc.unused.Length - 1
-					'	aSeqDesc.unused(x) = Me.theInputFileReader.ReadInt32()
-					'Next
+					For x As Integer = 0 To aSeqDesc.unused.Length - 1
+						aSeqDesc.unused(x) = Me.theInputFileReader.ReadInt32()
+					Next
 
 					'NOTE: Unknown.
 					inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
@@ -1365,7 +1365,7 @@ Public Class SourceMdlFile28
 	End Sub
 
 	Public Sub ReadSkinFamilies()
-		If Me.theMdlFileData.skinFamilyCount > 0 Then
+		If Me.theMdlFileData.skinFamilyCount > 0 AndAlso Me.theMdlFileData.skinReferenceCount > 0 Then
 			Dim skinFamilyInputFileStreamPosition As Long
 			'Dim inputFileStreamPosition As Long
 			Dim fileOffsetStart As Long

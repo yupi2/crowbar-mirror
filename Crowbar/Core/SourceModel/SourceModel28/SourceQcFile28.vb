@@ -466,7 +466,7 @@ Public Class SourceQcFile28
 			line = ""
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
-			line = "// This list shows the VMT files used in the SMD files."
+			line = "// This list shows the VMT file names used in the SMD files."
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
 			For j As Integer = 0 To Me.theMdlFileData.theTextures.Count - 1
@@ -675,13 +675,14 @@ Public Class SourceQcFile28
 		Next
 
 		For Each aBone As SourceMdlBone31 In Me.theMdlFileData.theBones
-			If (lodIndex = 1 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD1) = 0) _
+			If aBone.parentBoneIndex >= 0 _
+				AndAlso ((lodIndex = 1 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD1) = 0) _
 				OrElse (lodIndex = 2 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD2) = 0) _
 				OrElse (lodIndex = 3 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD3) = 0) _
 				OrElse (lodIndex = 4 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD4) = 0) _
 				OrElse (lodIndex = 5 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD5) = 0) _
 				OrElse (lodIndex = 6 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD6) = 0) _
-				OrElse (lodIndex = 7 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD7) = 0) Then
+				OrElse (lodIndex = 7 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD7) = 0)) Then
 				'replacebone "ValveBiped.Bip01_Neck1" "ValveBiped.Bip01_Head1"
 				line = vbTab
 				line += "replacebone "

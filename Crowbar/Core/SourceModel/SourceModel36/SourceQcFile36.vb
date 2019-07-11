@@ -1449,7 +1449,7 @@ Public Class SourceQcFile36
 			line = ""
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
-			line = "// This list shows the VMT files used in the SMD files."
+			line = "// This list shows the VMT file names used in the SMD files."
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
 			For j As Integer = 0 To Me.theMdlFileData.theTextures.Count - 1
@@ -2306,7 +2306,9 @@ Public Class SourceQcFile36
 
 		Dim firstAnimDesc As SourceMdlAnimationDesc36
 		firstAnimDesc = Me.theMdlFileData.theAnimationDescs(0)
-		Me.WriteAnimationOptions(aSequenceDesc, firstAnimDesc, impliedAnimDesc)
+		If impliedAnimDesc IsNot Nothing Then
+			Me.WriteAnimationOptions(aSequenceDesc, firstAnimDesc, impliedAnimDesc)
+		End If
 	End Sub
 
 	'angles

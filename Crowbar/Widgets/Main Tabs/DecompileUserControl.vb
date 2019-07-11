@@ -91,14 +91,13 @@ Public Class DecompileUserControl
 		RemoveHandler TheApp.Decompiler.ProgressChanged, AddressOf Me.DecompilerBackgroundWorker_ProgressChanged
 		RemoveHandler TheApp.Decompiler.RunWorkerCompleted, AddressOf Me.DecompilerBackgroundWorker_RunWorkerCompleted
 
+		Me.DecompileComboBox.DataBindings.Clear()
 		Me.MdlPathFileNameTextBox.DataBindings.Clear()
 
 		Me.OutputPathTextBox.DataBindings.Clear()
 		Me.OutputSubfolderTextBox.DataBindings.Clear()
 
 		Me.FreeDecompilerOptions()
-
-		Me.DecompileComboBox.DataBindings.Clear()
 
 		Me.DecompiledFilesComboBox.DataSource = Nothing
 	End Sub
@@ -138,6 +137,13 @@ Public Class DecompileUserControl
 #End Region
 
 #Region "Widget Event Handlers"
+
+	Private Sub DecompileUserControl_Load(sender As Object, e As EventArgs) Handles Me.Load
+		'NOTE: This code prevents Visual Studio often inexplicably extending the right side of these textboxes.
+		Me.MdlPathFileNameTextBox.Size = New System.Drawing.Size(Me.BrowseForMdlPathFolderOrFileNameButton.Left - Me.BrowseForMdlPathFolderOrFileNameButton.Margin.Left - Me.MdlPathFileNameTextBox.Margin.Right - Me.MdlPathFileNameTextBox.Left, 21)
+		Me.OutputPathTextBox.Size = New System.Drawing.Size(Me.BrowseForOutputPathButton.Left - Me.BrowseForOutputPathButton.Margin.Left - Me.OutputPathTextBox.Margin.Right - Me.OutputPathTextBox.Left, 21)
+		Me.OutputSubfolderTextBox.Size = New System.Drawing.Size(Me.BrowseForOutputPathButton.Left - Me.BrowseForOutputPathButton.Margin.Left - Me.OutputSubfolderTextBox.Margin.Right - Me.OutputSubfolderTextBox.Left, 21)
+	End Sub
 
 #End Region
 

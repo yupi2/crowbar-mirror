@@ -1,4 +1,5 @@
-﻿Imports System.IO
+﻿Imports System.ComponentModel
+Imports System.IO
 Imports System.Text
 
 Public Class VpkFile
@@ -27,7 +28,7 @@ Public Class VpkFile
 #Region "Methods"
 
 	Public Overrides Sub ReadHeader()
-		'Dim inputFileStreamPosition As Long
+		Dim inputFileStreamPosition As Long
 		Dim fileOffsetStart As Long
 		Dim fileOffsetEnd As Long
 		'Dim fileOffsetStart2 As Long
@@ -36,6 +37,21 @@ Public Class VpkFile
 		fileOffsetStart = Me.theInputFileReader.BaseStream.Position
 
 		Me.theVpkFileData.id = Me.theInputFileReader.ReadUInt32()
+
+		'NOTE: The arrangement of this 'if" block is weird, but it keeps the order of checks like this: Valve VPK, Vtmb VPK, non-directory multi-file Valve VPK.
+		inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
+		If Me.theVpkFileData.PackageHasID Then
+			Me.ReadValveVpkHeader()
+		ElseIf Not Me.IsVtmbVpk() Then
+			Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
+			Me.ReadValveVpkHeader()
+		End If
+
+		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+		Me.theVpkFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "VPK File Header")
+	End Sub
+
+	Private Sub ReadValveVpkHeader()
 		Me.theVpkFileData.version = Me.theInputFileReader.ReadUInt32()
 		Me.theVpkFileData.directoryLength = Me.theInputFileReader.ReadUInt32()
 
@@ -49,10 +65,44 @@ Public Class VpkFile
 		End If
 
 		Me.theVpkFileData.theDirectoryOffset = Me.theInputFileReader.BaseStream.Position
-
-		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-		Me.theVpkFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "VPK File Header")
 	End Sub
+
+	Private Function IsVtmbVpk() As Boolean
+		Dim theVpkIsVtmb As Boolean = False
+
+		Me.theInputFileReader.BaseStream.Seek(-1, SeekOrigin.End)
+		Dim vtmbVpkType As Integer = Me.theInputFileReader.ReadByte()
+		'NOTE: Skip reading vtmbVpkType = 1 because it is just a directory of entries with no data.
+		If vtmbVpkType = 0 OrElse vtmbVpkType = 1 Then
+			Dim directoryEndOffset As Long = Me.theInputFileReader.BaseStream.Seek(-9, SeekOrigin.End)
+			Me.theVpkFileData.theEntryCount = Me.theInputFileReader.ReadUInt32()
+			Me.theVpkFileData.theDirectoryOffset = Me.theInputFileReader.ReadUInt32()
+			'TODO: It is VTMB VPK package if offsets and lengths match in the directory at end of file.
+			'      Would need to check that offsets and lengths are within file length boundaries.
+			theVpkIsVtmb = True
+			Dim entryPathFileNameLength As UInteger
+			Try
+				Me.theInputFileReader.BaseStream.Seek(Me.theVpkFileData.theDirectoryOffset, SeekOrigin.Begin)
+				For i As UInteger = 0 To CUInt(Me.theVpkFileData.theEntryCount - 1)
+					entryPathFileNameLength = Me.theInputFileReader.ReadUInt32()
+					'entry.thePathFileName = Me.theInputFileReader.ReadChars(CInt(entryPathFileNameLength))
+					'entry.dataOffset = Me.theInputFileReader.ReadUInt32()
+					'entry.dataLength = Me.theInputFileReader.ReadUInt32()
+					Me.theInputFileReader.BaseStream.Seek(entryPathFileNameLength + 8, SeekOrigin.Current)
+				Next
+				'NOTE: Do not accept 'vtmbVpkType = 1' as a valid VtmbVpk because it is just a directory of entries with no data.
+				If Me.theInputFileReader.BaseStream.Position <> directoryEndOffset OrElse vtmbVpkType = 1 Then
+					Me.theVpkFileData.theEntryCount = 0
+					theVpkIsVtmb = False
+				End If
+			Catch ex As Exception
+				Me.theVpkFileData.theEntryCount = 0
+				theVpkIsVtmb = False
+			End Try
+		End If
+
+		Return theVpkIsVtmb
+	End Function
 
 	'Example output:
 	'addonimage.jpg crc=0x50ea4a15 metadatasz=0 fnumber=32767 ofs=0x0 sz=10749
@@ -61,7 +111,7 @@ Public Class VpkFile
 	'materials/models/weapons/melee/crowbar.vmt crc=0x4aaf5f0 metadatasz=0 fnumber=32767 ofs=0x515a sz=566
 	'materials/models/weapons/melee/crowbar.vtf crc=0xded2e058 metadatasz=0 fnumber=32767 ofs=0x5390 sz=174920
 	'materials/models/weapons/melee/crowbar_normal.vtf crc=0x7ac0e054 metadatasz=0 fnumber=32767 ofs=0x2fed8 sz=1398196
-	Public Overrides Sub ReadEntries()
+	Public Overrides Sub ReadEntries(ByVal bw As BackgroundWorker)
 		'Dim inputFileStreamPosition As Long
 		'Dim fileOffsetStart As Long
 		'Dim fileOffsetEnd As Long
@@ -77,18 +127,25 @@ Public Class VpkFile
 			Exit Sub
 		End If
 
+		If Not Me.theVpkFileData.PackageHasID Then
+			ReadVtmbEntries(bw)
+			Exit Sub
+		End If
+
 		Dim vpkFileHasMoreToRead As Boolean = True
 		Dim entryExtension As String = ""
 		Dim entryPath As String = ""
 		Dim entryFileName As String = ""
 		Dim entry As VpkDirectoryEntry
-		'Dim entryDataOutputText As String
 		Dim entryDataOutputText As New StringBuilder
 		While vpkFileHasMoreToRead
 			Try
 				entryExtension = FileManager.ReadNullTerminatedString(Me.theInputFileReader)
 				If String.IsNullOrEmpty(entryExtension) Then
 					Exit While
+				End If
+				If bw IsNot Nothing AndAlso bw.CancellationPending Then
+					vpkFileHasMoreToRead = False
 				End If
 			Catch ex As Exception
 				'vpkFileHasMoreToRead = False
@@ -101,6 +158,9 @@ Public Class VpkFile
 					If String.IsNullOrEmpty(entryPath) Then
 						Exit While
 					End If
+					If bw IsNot Nothing AndAlso bw.CancellationPending Then
+						vpkFileHasMoreToRead = False
+					End If
 				Catch ex As Exception
 					vpkFileHasMoreToRead = False
 					Exit While
@@ -111,6 +171,9 @@ Public Class VpkFile
 						entryFileName = FileManager.ReadNullTerminatedString(Me.theInputFileReader)
 						If String.IsNullOrEmpty(entryFileName) Then
 							Exit While
+						End If
+						If bw IsNot Nothing AndAlso bw.CancellationPending Then
+							vpkFileHasMoreToRead = False
 						End If
 					Catch ex As Exception
 						vpkFileHasMoreToRead = False
@@ -154,27 +217,68 @@ Public Class VpkFile
 					End If
 					Me.theVpkFileData.theEntries.Add(entry)
 
-					'entryDataOutputText = entry.thePathFileName
-					'entryDataOutputText += " crc=0x" + entry.crc.ToString("X8")
-					'entryDataOutputText += " metadatasz=" + entry.preloadBytes.ToString("G0")
-					'entryDataOutputText += " fnumber=" + entry.archiveIndex.ToString("G0")
-					'entryDataOutputText += " ofs=0x" + entry.dataOffset.ToString("X8")
-					'entryDataOutputText += " sz=" + entry.dataLength.ToString("G0")
-					'Me.theVpkFileData.theEntryDataOutputTexts.Add(entryDataOutputText)
 					entryDataOutputText.Append(entry.thePathFileName)
 					entryDataOutputText.Append(" crc=0x" + entry.crc.ToString("X8"))
 					entryDataOutputText.Append(" metadatasz=" + entry.preloadByteCount.ToString("G0"))
 					entryDataOutputText.Append(" fnumber=" + entry.archiveIndex.ToString("G0"))
 					entryDataOutputText.Append(" ofs=0x" + entry.dataOffset.ToString("X8"))
 					entryDataOutputText.Append(" sz=" + (entry.preloadByteCount + entry.dataLength).ToString("G0"))
+
 					Me.theVpkFileData.theEntryDataOutputTexts.Add(entryDataOutputText.ToString())
+					NotifyPackEntryRead(entry, entryDataOutputText.ToString())
+
 					entryDataOutputText.Clear()
+
+					If bw IsNot Nothing AndAlso bw.CancellationPending Then
+						vpkFileHasMoreToRead = False
+					End If
 				End While
 			End While
 		End While
 
 		'fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
 		'Me.theVpkFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "VPK File Header")
+	End Sub
+
+	Private Sub ReadVtmbEntries(ByVal bw As BackgroundWorker)
+		Dim entryPathFileNameLength As UInteger
+		Dim entryFileName As String = ""
+		Dim entry As VpkDirectoryEntry
+		Dim entryDataOutputText As New StringBuilder
+
+		Me.theInputFileReader.BaseStream.Seek(Me.theVpkFileData.theDirectoryOffset, SeekOrigin.Begin)
+		For i As UInteger = 0 To CUInt(Me.theVpkFileData.theEntryCount - 1)
+			entry = New VpkDirectoryEntry()
+
+			entryPathFileNameLength = Me.theInputFileReader.ReadUInt32()
+			entry.thePathFileName = Me.theInputFileReader.ReadChars(CInt(entryPathFileNameLength))
+			entry.dataOffset = Me.theInputFileReader.ReadUInt32()
+			entry.dataLength = Me.theInputFileReader.ReadUInt32()
+
+			entry.crc = 0
+			entry.preloadByteCount = 0
+			'entry.archiveIndex = &H7FFF
+			entry.endBytes = 0
+			entry.isVtmbVpk = True
+
+			Me.theVpkFileData.theEntries.Add(entry)
+
+			entryDataOutputText.Append(entry.thePathFileName)
+			entryDataOutputText.Append(" crc=0x" + entry.crc.ToString("X8"))
+			entryDataOutputText.Append(" metadatasz=" + entry.preloadByteCount.ToString("G0"))
+			entryDataOutputText.Append(" fnumber=" + entry.archiveIndex.ToString("G0"))
+			entryDataOutputText.Append(" ofs=0x" + entry.dataOffset.ToString("X8"))
+			entryDataOutputText.Append(" sz=" + (entry.preloadByteCount + entry.dataLength).ToString("G0"))
+
+			Me.theVpkFileData.theEntryDataOutputTexts.Add(entryDataOutputText.ToString())
+			NotifyPackEntryRead(entry, entryDataOutputText.ToString())
+
+			entryDataOutputText.Clear()
+
+			If bw IsNot Nothing AndAlso bw.CancellationPending Then
+				Exit For
+			End If
+		Next
 	End Sub
 
 	Public Overrides Sub UnpackEntryDataToFile(ByVal iEntry As BasePackageDirectoryEntry, ByVal outputPathFileName As String)
@@ -194,7 +298,7 @@ Public Class VpkFile
 						preloadBytes = Me.theArchiveDirectoryInputFileReader.ReadBytes(CInt(entry.preloadByteCount))
 						Me.theOutputFileWriter.Write(preloadBytes)
 					End If
-					If entry.archiveIndex = &H7FFF Then
+					If entry.archiveIndex = &H7FFF AndAlso Not entry.isVtmbVpk Then
 						Me.theInputFileReader.BaseStream.Seek(Me.theVpkFileData.theDirectoryOffset + Me.theVpkFileData.directoryLength + entry.dataOffset, SeekOrigin.Begin)
 					Else
 						Me.theInputFileReader.BaseStream.Seek(entry.dataOffset, SeekOrigin.Begin)

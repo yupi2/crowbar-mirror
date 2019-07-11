@@ -1,4 +1,5 @@
-﻿Imports System.IO
+﻿Imports System.ComponentModel
+Imports System.IO
 
 Public MustInherit Class BasePackageFile
 
@@ -41,7 +42,17 @@ Public MustInherit Class BasePackageFile
 #End Region
 
 	Public MustOverride Sub ReadHeader()
-	Public MustOverride Sub ReadEntries()
+	Public MustOverride Sub ReadEntries(ByVal bw As BackgroundWorker)
 	Public MustOverride Sub UnpackEntryDataToFile(ByVal iEntry As BasePackageDirectoryEntry, ByVal outputPathFileName As String)
+
+#Region "Events"
+
+	Public Delegate Sub PackEntryReadEventHandler(ByVal sender As Object, ByVal e As SourcePackageEventArgs)
+	Public Event PackEntryRead As PackEntryReadEventHandler
+	Protected Sub NotifyPackEntryRead(ByVal entry As BasePackageDirectoryEntry, ByVal entryDataOutputText As String)
+		RaiseEvent PackEntryRead(Me, New SourcePackageEventArgs(entry, entryDataOutputText.ToString()))
+	End Sub
+
+#End Region
 
 End Class

@@ -422,15 +422,19 @@ Public Class SourceQcFile10
 		Dim line As String = ""
 		Dim modelPathFileName As String
 
-		modelPathFileName = Me.theMdlFileData.theModelName
+		'NOTE: Ignore internal model name ($modelname) and instead use file name of MDL file.
+		'      This seems to be how it is handled by Half-Life and all the tools for it.
+		'modelPathFileName = Me.theMdlFileData.theModelName
+		modelPathFileName = Me.theMdlFileData.theFileName + ".mdl"
 
 		Me.theOutputFileStreamWriter.WriteLine()
 
-		If Path.GetExtension(modelPathFileName) <> ".mdl" Then
-			line = "// Stored modelname (without quotes): """ + modelPathFileName + """"
+		'If Path.GetExtension(modelPathFileName) <> ".mdl" Then
+		If modelPathFileName <> Me.theMdlFileData.theModelName Then
+			line = "// Stored modelname (without quotes): """ + Me.theMdlFileData.theModelName + """"
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
-			modelPathFileName = Me.theMdlFileData.theFileName + ".mdl"
+			'modelPathFileName = Me.theMdlFileData.theFileName + ".mdl"
 		End If
 
 		If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then

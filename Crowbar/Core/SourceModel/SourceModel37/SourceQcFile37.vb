@@ -1465,7 +1465,7 @@ Public Class SourceQcFile37
 			line = ""
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
-			line = "// This list shows the VMT files used in the SMD files."
+			line = "// This list shows the VMT file names used in the SMD files."
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
 			For j As Integer = 0 To Me.theMdlFileData.theTextures.Count - 1
@@ -2284,7 +2284,10 @@ Public Class SourceQcFile37
 
 		Dim firstAnimDesc As SourceMdlAnimationDesc37
 		firstAnimDesc = Me.theMdlFileData.theAnimationDescs(aSequenceDesc.theAnimDescIndexes(0))
-		Me.WriteAnimationOptions(aSequenceDesc, firstAnimDesc, impliedAnimDesc)
+		'Me.WriteAnimationOptions(aSequenceDesc, firstAnimDesc, impliedAnimDesc)
+		If impliedAnimDesc IsNot Nothing Then
+			Me.WriteAnimationOptions(aSequenceDesc, firstAnimDesc, impliedAnimDesc)
+		End If
 	End Sub
 
 	'angles
@@ -2662,9 +2665,9 @@ Public Class SourceQcFile37
 
 	Private Sub WriteIkChainCommand()
 		Dim line As String = ""
-		'Dim offsetX As Double
-		'Dim offsetY As Double
-		'Dim offsetZ As Double
+		Dim offsetX As Double
+		Dim offsetY As Double
+		Dim offsetZ As Double
 
 		Try
 			If Me.theMdlFileData.theIkChains IsNot Nothing Then
@@ -2673,9 +2676,9 @@ Public Class SourceQcFile37
 
 				For i As Integer = 0 To Me.theMdlFileData.theIkChains.Count - 1
 					Dim boneIndex As Integer = Me.theMdlFileData.theIkChains(i).theLinks(Me.theMdlFileData.theIkChains(i).theLinks.Count - 1).boneIndex
-					'offsetX = Math.Round(Me.theMdlFileData.theIkChains(i).theLinks(0).idealBendingDirection.x, 3)
-					'offsetY = Math.Round(Me.theMdlFileData.theIkChains(i).theLinks(0).idealBendingDirection.y, 3)
-					'offsetZ = Math.Round(Me.theMdlFileData.theIkChains(i).theLinks(0).idealBendingDirection.z, 3)
+					offsetX = Math.Round(Me.theMdlFileData.theIkChains(i).theLinks(0).contact.x, 3)
+					offsetY = Math.Round(Me.theMdlFileData.theIkChains(i).theLinks(0).contact.y, 3)
+					offsetZ = Math.Round(Me.theMdlFileData.theIkChains(i).theLinks(0).contact.z, 3)
 
 					If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
 						line = "$IKChain """
@@ -2687,12 +2690,12 @@ Public Class SourceQcFile37
 					line += Me.theMdlFileData.theBones(boneIndex).theName
 					line += """"
 
-					'line += " knee "
-					'line += offsetX.ToString("0.######", TheApp.InternalNumberFormat)
-					'line += " "
-					'line += offsetY.ToString("0.######", TheApp.InternalNumberFormat)
-					'line += " "
-					'line += offsetZ.ToString("0.######", TheApp.InternalNumberFormat)
+					line += " knee "
+					line += offsetX.ToString("0.######", TheApp.InternalNumberFormat)
+					line += " "
+					line += offsetY.ToString("0.######", TheApp.InternalNumberFormat)
+					line += " "
+					line += offsetZ.ToString("0.######", TheApp.InternalNumberFormat)
 					'------
 					'		GetToken(false);
 					'

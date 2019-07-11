@@ -1484,7 +1484,7 @@ Public Class SourceQcFile31
 	'		line = ""
 	'		Me.theOutputFileStreamWriter.WriteLine(line)
 
-	'		line = "// This list shows the VMT files used in the SMD files."
+	'		line = "// This list shows the VMT file names used in the SMD files."
 	'		Me.theOutputFileStreamWriter.WriteLine(line)
 
 	'		For j As Integer = 0 To Me.theMdlFileData.theTextures.Count - 1

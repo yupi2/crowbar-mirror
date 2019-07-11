@@ -2427,7 +2427,9 @@ Public Class SourceQcFile46
 
 		Dim firstAnimDesc As SourceMdlAnimationDesc46
 		firstAnimDesc = Me.theMdlFileData.theAnimationDescs(aSequenceDesc.theAnimDescIndexes(0))
-		Me.WriteAnimationOptions(aSequenceDesc, firstAnimDesc, impliedAnimDesc)
+		If impliedAnimDesc IsNot Nothing Then
+			Me.WriteAnimationOptions(aSequenceDesc, firstAnimDesc, impliedAnimDesc)
+		End If
 	End Sub
 
 	'angles

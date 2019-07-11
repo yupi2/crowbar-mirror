@@ -590,7 +590,7 @@ Public Class SourceMdlFile2531
 					Me.theMdlFileData.theSequences.Add(aSequence)
 
 					fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-					Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aSequence")
+					'Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aSequence")
 
 					inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 
@@ -605,6 +605,9 @@ Public Class SourceMdlFile2531
 					Else
 						aSequence.theName = ""
 					End If
+
+					'NOTE: Moved this line here so can show the name in the log.
+					Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "aSequence [" + aSequence.theName + "]")
 
 					If aSequence.activityNameOffset <> 0 Then
 						Me.theInputFileReader.BaseStream.Seek(seqInputFileStreamPosition + aSequence.activityNameOffset, SeekOrigin.Begin)
@@ -888,7 +891,7 @@ Public Class SourceMdlFile2531
 	End Sub
 
 	Public Sub ReadSkins()
-		If Me.theMdlFileData.skinFamilyCount > 0 Then
+		If Me.theMdlFileData.skinFamilyCount > 0 AndAlso Me.theMdlFileData.skinReferenceCount > 0 Then
 			Dim skinFamilyInputFileStreamPosition As Long
 			'Dim inputFileStreamPosition As Long
 			Dim fileOffsetStart As Long

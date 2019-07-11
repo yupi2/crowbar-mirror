@@ -771,6 +771,289 @@ Public Class SourceQcFile2531
 		End If
 	End Sub
 
+	Public Sub WriteCollisionModelOrCollisionJointsCommand()
+		Dim line As String = ""
+
+		'NOTE: Data is from PHY file.
+		If Me.thePhyFileData IsNot Nothing AndAlso Me.thePhyFileData.solidCount > 0 Then
+			Me.theOutputFileStreamWriter.WriteLine(line)
+
+			If Me.thePhyFileData.theSourcePhyIsCollisionModel Then
+				If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+					line = "$CollisionModel "
+				Else
+					line = "$collisionmodel "
+				End If
+			Else
+				If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+					line = "$CollisionJoints "
+				Else
+					line = "$collisionjoints "
+				End If
+			End If
+			line += """"
+			Me.thePhyFileData.thePhysicsMeshSmdFileName = SourceFileNamesModule.CreatePhysicsSmdFileName(Me.thePhyFileData.thePhysicsMeshSmdFileName, Me.theModelName)
+			line += Me.thePhyFileData.thePhysicsMeshSmdFileName
+			line += """"
+			Me.theOutputFileStreamWriter.WriteLine(line)
+			line = "{"
+			Me.theOutputFileStreamWriter.WriteLine(line)
+
+			Me.WriteCollisionModelOrCollisionJointsOptions()
+
+			line = "}"
+			Me.theOutputFileStreamWriter.WriteLine(line)
+		End If
+	End Sub
+
+	Private Sub WriteCollisionModelOrCollisionJointsOptions()
+		Dim line As String = ""
+
+		line = vbTab
+		line += "$mass "
+		line += Me.thePhyFileData.theSourcePhyEditParamsSection.totalMass.ToString("0.######", TheApp.InternalNumberFormat)
+		Me.theOutputFileStreamWriter.WriteLine(line)
+		line = vbTab
+		line += "$inertia "
+		line += Me.thePhyFileData.theSourcePhyPhysCollisionModelMostUsedValues.theInertia.ToString("0.######", TheApp.InternalNumberFormat)
+		Me.theOutputFileStreamWriter.WriteLine(line)
+		line = vbTab
+		line += "$damping "
+		line += Me.thePhyFileData.theSourcePhyPhysCollisionModelMostUsedValues.theDamping.ToString("0.######", TheApp.InternalNumberFormat)
+		Me.theOutputFileStreamWriter.WriteLine(line)
+		line = vbTab
+		line += "$rotdamping "
+		line += Me.thePhyFileData.theSourcePhyPhysCollisionModelMostUsedValues.theRotDamping.ToString("0.######", TheApp.InternalNumberFormat)
+		Me.theOutputFileStreamWriter.WriteLine(line)
+		If Me.thePhyFileData.theSourcePhyEditParamsSection.rootName <> "" Then
+			line = vbTab
+			line += "$rootbone """
+			line += Me.thePhyFileData.theSourcePhyEditParamsSection.rootName
+			line += """"
+			Me.theOutputFileStreamWriter.WriteLine(line)
+		End If
+		If Me.thePhyFileData.theSourcePhyEditParamsSection.concave = "1" Then
+			line = vbTab
+			line += "$concave"
+			Me.theOutputFileStreamWriter.WriteLine(line)
+			line = vbTab
+			line += "$maxconvexpieces "
+			line += Me.thePhyFileData.theSourcePhyMaxConvexPieces.ToString()
+			Me.theOutputFileStreamWriter.WriteLine(line)
+		End If
+
+		For i As Integer = 0 To Me.thePhyFileData.theSourcePhyPhysCollisionModels.Count - 1
+			Dim aSourcePhysCollisionModel As SourcePhyPhysCollisionModel
+			aSourcePhysCollisionModel = Me.thePhyFileData.theSourcePhyPhysCollisionModels(i)
+
+			line = ""
+			Me.theOutputFileStreamWriter.WriteLine(line)
+
+			'If aSourcePhysCollisionModel.theDragCoefficientIsValid Then
+			'End If
+
+			If aSourcePhysCollisionModel.theMassBiasIsValid Then
+				line = vbTab
+				line += "$jointmassbias """
+				line += aSourcePhysCollisionModel.theName
+				line += """ "
+				line += aSourcePhysCollisionModel.theMassBias.ToString("0.######", TheApp.InternalNumberFormat)
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			End If
+
+			If aSourcePhysCollisionModel.theDamping <> Me.thePhyFileData.theSourcePhyPhysCollisionModelMostUsedValues.theDamping Then
+				line = vbTab
+				line += "$jointdamping """
+				line += aSourcePhysCollisionModel.theName
+				line += """ "
+				line += aSourcePhysCollisionModel.theDamping.ToString("0.######", TheApp.InternalNumberFormat)
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			End If
+
+			If aSourcePhysCollisionModel.theInertia <> Me.thePhyFileData.theSourcePhyPhysCollisionModelMostUsedValues.theInertia Then
+				line = vbTab
+				line += "$jointinertia """
+				line += aSourcePhysCollisionModel.theName
+				line += """ "
+				line += aSourcePhysCollisionModel.theInertia.ToString("0.######", TheApp.InternalNumberFormat)
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			End If
+
+			If aSourcePhysCollisionModel.theRotDamping <> Me.thePhyFileData.theSourcePhyPhysCollisionModelMostUsedValues.theRotDamping Then
+				line = vbTab
+				line += "$jointrotdamping """
+				line += aSourcePhysCollisionModel.theName
+				line += """ "
+				line += aSourcePhysCollisionModel.theRotDamping.ToString("0.######", TheApp.InternalNumberFormat)
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			End If
+
+			If Me.thePhyFileData.theSourcePhyRagdollConstraintDescs.ContainsKey(aSourcePhysCollisionModel.theIndex) Then
+				Dim aConstraint As SourcePhyRagdollConstraint
+				aConstraint = Me.thePhyFileData.theSourcePhyRagdollConstraintDescs(aSourcePhysCollisionModel.theIndex)
+				line = vbTab
+				line += "$jointconstrain """
+				line += aSourcePhysCollisionModel.theName
+				line += """ x limit "
+				line += aConstraint.theXMin.ToString("0.######", TheApp.InternalNumberFormat)
+				line += " "
+				line += aConstraint.theXMax.ToString("0.######", TheApp.InternalNumberFormat)
+				line += " "
+				line += aConstraint.theXFriction.ToString("0.######", TheApp.InternalNumberFormat)
+				Me.theOutputFileStreamWriter.WriteLine(line)
+				line = vbTab
+				line += "$jointconstrain """
+				line += aSourcePhysCollisionModel.theName
+				line += """ y limit "
+				line += aConstraint.theYMin.ToString("0.######", TheApp.InternalNumberFormat)
+				line += " "
+				line += aConstraint.theYMax.ToString("0.######", TheApp.InternalNumberFormat)
+				line += " "
+				line += aConstraint.theYFriction.ToString("0.######", TheApp.InternalNumberFormat)
+				Me.theOutputFileStreamWriter.WriteLine(line)
+				line = vbTab
+				line += "$jointconstrain """
+				line += aSourcePhysCollisionModel.theName
+				line += """ z limit "
+				line += aConstraint.theZMin.ToString("0.######", TheApp.InternalNumberFormat)
+				line += " "
+				line += aConstraint.theZMax.ToString("0.######", TheApp.InternalNumberFormat)
+				line += " "
+				line += aConstraint.theZFriction.ToString("0.######", TheApp.InternalNumberFormat)
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			End If
+		Next
+
+		If Not Me.thePhyFileData.theSourcePhySelfCollides Then
+			line = vbTab
+			line += "$noselfcollisions"
+			Me.theOutputFileStreamWriter.WriteLine(line)
+		Else
+			For Each aSourcePhyCollisionPair As SourcePhyCollisionPair In Me.thePhyFileData.theSourcePhyCollisionPairs
+				line = vbTab
+				line += "$jointcollide"
+				line += " "
+				line += """"
+				line += Me.thePhyFileData.theSourcePhyPhysCollisionModels(aSourcePhyCollisionPair.obj0).theName
+				line += """"
+				line += " "
+				line += """"
+				line += Me.thePhyFileData.theSourcePhyPhysCollisionModels(aSourcePhyCollisionPair.obj1).theName
+				line += """"
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			Next
+		End If
+	End Sub
+
+	Public Sub WriteCollisionTextCommand()
+		Dim line As String = ""
+
+		Try
+			If Me.thePhyFileData IsNot Nothing AndAlso Me.thePhyFileData.theSourcePhyCollisionText IsNot Nothing AndAlso Me.thePhyFileData.theSourcePhyCollisionText.Length > 0 Then
+				line = ""
+				Me.theOutputFileStreamWriter.WriteLine(line)
+
+				If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+					line = "$CollisionText"
+				Else
+					line = "$collisiontext"
+				End If
+				Me.theOutputFileStreamWriter.WriteLine(line)
+
+				line = "{"
+				Me.theOutputFileStreamWriter.WriteLine(line)
+
+				Me.WriteTextLines(Me.thePhyFileData.theSourcePhyCollisionText, 1)
+
+				line = "}"
+				Me.theOutputFileStreamWriter.WriteLine(line)
+			End If
+		Catch ex As Exception
+
+		End Try
+	End Sub
+
+	Private Sub WriteTextLines(ByVal text As String, ByVal indentCount As Integer)
+		Dim line As String = ""
+		Dim textChar As Char
+		Dim startIndex As Integer
+		Dim indentText As String
+		Dim lineQuoteCount As Integer
+		Dim lineWordCount As Integer
+		Dim beforeCloseBraceText As String
+
+		indentText = ""
+		For j As Integer = 1 To indentCount
+			indentText += vbTab
+		Next
+
+		startIndex = 0
+		lineQuoteCount = 0
+		lineWordCount = 0
+		For i As Integer = 0 To text.Length - 1
+			textChar = text(i)
+			If textChar = "{" Then
+				If i > startIndex Then
+					line = indentText
+					line += text.Substring(startIndex, i - startIndex)
+					Me.theOutputFileStreamWriter.WriteLine(line)
+				End If
+
+				line = indentText
+				line += "{"
+				Me.theOutputFileStreamWriter.WriteLine(line)
+
+				indentCount += 1
+				indentText = ""
+				For j As Integer = 1 To indentCount
+					indentText += vbTab
+				Next
+
+				startIndex = i + 1
+				lineQuoteCount = 0
+			ElseIf textChar = "}" Then
+				If i > startIndex Then
+					beforeCloseBraceText = text.Substring(startIndex, i - startIndex).Trim()
+					If beforeCloseBraceText <> "" Then
+						line = indentText
+						line += beforeCloseBraceText
+						Me.theOutputFileStreamWriter.WriteLine(line)
+					End If
+				End If
+
+				indentCount -= 1
+				indentText = ""
+				For j As Integer = 1 To indentCount
+					indentText += vbTab
+				Next
+
+				line = indentText
+				line += "}"
+				Me.theOutputFileStreamWriter.WriteLine(line)
+
+				startIndex = i + 1
+				lineQuoteCount = 0
+			ElseIf textChar = """" Then
+				lineQuoteCount += 1
+				If lineQuoteCount = 4 Then
+					If i > startIndex Then
+						line = indentText
+						line += text.Substring(startIndex, i - startIndex + 1).Trim()
+						Me.theOutputFileStreamWriter.WriteLine(line)
+					End If
+					startIndex = i + 1
+					lineQuoteCount = 0
+				End If
+				'If lineQuoteCount = 2 OrElse lineQuoteCount = 4 Then
+				'	lineWordCount += 1
+				'End If
+			ElseIf textChar = vbLf Then
+				startIndex = i + 1
+				lineQuoteCount = 0
+			End If
+		Next
+	End Sub
+
 #End Region
 
 #Region "Private Delegates"

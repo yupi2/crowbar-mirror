@@ -4,13 +4,14 @@
 	Public Sub New()
 		MyBase.New()
 
+		Me.theEntryCount = 0
 		'Me.theEntries = New List(Of VpkDirectoryEntry)()
 		'Me.theEntryDataOutputTexts = New List(Of String)()
 	End Sub
 
 	Public Overrides ReadOnly Property IsSourcePackage() As Boolean
 		Get
-			Return ((Me.id = VpkFileData.VPK_ID) OrElse (Me.id = VpkFileData.FPX_ID))
+			Return ((Me.id = VpkFileData.VPK_ID) OrElse (Me.id = VpkFileData.FPX_ID) OrElse Me.theEntryCount > 0)
 		End Get
 	End Property
 
@@ -41,6 +42,12 @@
 			Else
 				Return VpkFileData.TheVpkDirectoryFileNameSuffix + VpkFileData.TheVpkFileExtension
 			End If
+		End Get
+	End Property
+
+	Public ReadOnly Property PackageHasID() As Boolean
+		Get
+			Return ((Me.id = VpkFileData.VPK_ID) OrElse (Me.id = VpkFileData.FPX_ID))
 		End Get
 	End Property
 
@@ -109,6 +116,7 @@
 	Public md5Hash(15) As Byte
 
 
+	Public theEntryCount As UInteger
 	Public theDirectoryOffset As Long
 	'Public theEntries As List(Of VpkDirectoryEntry)
 	'Public theEntryDataOutputTexts As List(Of String)

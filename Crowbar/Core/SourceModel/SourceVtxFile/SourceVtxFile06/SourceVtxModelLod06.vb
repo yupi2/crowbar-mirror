@@ -18,5 +18,6 @@ Public Class SourceVtxModelLod06
 	Public switchPoint As Single
 
 	Public theVtxMeshes As List(Of SourceVtxMesh06)
+	Public theVtxModelLodUsesFacial As Boolean
 
 End Class

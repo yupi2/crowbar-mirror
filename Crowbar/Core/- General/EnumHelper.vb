@@ -38,8 +38,53 @@ Public NotInheritable Class EnumHelper
 		Return list.Contains(New KeyValuePair(Of System.Enum, String)(value, GetDescription(value)))
 	End Function
 
-	Public Shared Function IndexOf(ByVal value As System.Enum, ByVal list As IList) As Integer
-		Return list.IndexOf(New KeyValuePair(Of System.Enum, String)(value, GetDescription(value)))
+	Public Shared Function FindKeyFromDescription(ByVal description As String, ByVal list As IList) As System.Enum
+		Dim key As System.Enum = Nothing
+		For Each pair As KeyValuePair(Of System.Enum, String) In list
+			If pair.Value = description Then
+				key = pair.Key
+				Exit For
+			End If
+		Next
+		Return key
+	End Function
+
+	Public Shared Function IndexOf(ByVal key As System.Enum, ByVal list As IList) As Integer
+		Return list.IndexOf(New KeyValuePair(Of System.Enum, String)(key, GetDescription(key)))
+	End Function
+
+	Public Shared Function IndexOfKeyAsString(ByVal keyText As String, ByVal list As IList) As Integer
+		Dim index As Integer = -1
+		For pairIndex As Integer = 0 To list.Count - 1
+			Dim pair As KeyValuePair(Of System.Enum, String) = CType(list(pairIndex), KeyValuePair(Of [Enum], String))
+			If pair.Key.ToString() = keyText Then
+				index = pairIndex
+				Exit For
+			End If
+		Next
+		Return index
+	End Function
+
+	Public Shared Function IndexOfKeyAsCasInsensitiveString(ByVal keyText As String, ByVal list As IList) As Integer
+		Dim index As Integer = -1
+		For pairIndex As Integer = 0 To list.Count - 1
+			Dim pair As KeyValuePair(Of System.Enum, String) = CType(list(pairIndex), KeyValuePair(Of [Enum], String))
+			If pair.Key.ToString().ToLower() = keyText.ToLower() Then
+				index = pairIndex
+				Exit For
+			End If
+		Next
+		Return index
+	End Function
+
+	Public Shared Function IndexOf(ByVal description As String, ByVal list As IList) As Integer
+		Dim index As Integer = -1
+		Dim key As System.Enum = Nothing
+		key = FindKeyFromDescription(description, list)
+		If key IsNot Nothing Then
+			index = list.IndexOf(New KeyValuePair(Of System.Enum, String)(key, GetDescription(key)))
+		End If
+		Return index
 	End Function
 
 End Class

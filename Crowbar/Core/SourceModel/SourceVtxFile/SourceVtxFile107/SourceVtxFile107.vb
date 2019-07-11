@@ -7,6 +7,8 @@ Public Class SourceVtxFile107
 	Public Sub New(ByVal vtxFileReader As BinaryReader, ByVal vtxFileData As SourceVtxFileData107)
 		Me.theInputFileReader = vtxFileReader
 		Me.theVtxFileData = vtxFileData
+
+		Me.theVtxFileData.theFileSeekLog.FileSize = Me.theInputFileReader.BaseStream.Length
 	End Sub
 
 #End Region
@@ -39,7 +41,7 @@ Public Class SourceVtxFile107
 		Me.theVtxFileData.bodyPartOffset = Me.theInputFileReader.ReadInt32()
 
 		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-		Me.theVtxFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "VTX File Header")
+		Me.theVtxFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "VTX File Header (Actual version: " + Me.theVtxFileData.version.ToString() + "; expected version: 107)")
 	End Sub
 
 	Public Sub ReadSourceVtxBodyParts()
@@ -85,6 +87,10 @@ Public Class SourceVtxFile107
 				Dim debug As Integer = 4242
 			End Try
 		End If
+	End Sub
+
+	Public Sub ReadUnreadBytes()
+		Me.theVtxFileData.theFileSeekLog.LogUnreadBytes(Me.theInputFileReader)
 	End Sub
 
 #End Region

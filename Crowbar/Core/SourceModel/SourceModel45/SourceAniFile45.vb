@@ -11,6 +11,8 @@ Public Class SourceAniFile45
 		Me.theMdlFileData = CType(aniFileData, SourceMdlFileData45)
 		Me.theRealMdlFileData = CType(mdlFileData, SourceMdlFileData45)
 
+		Me.theMdlFileData.theFileSeekLog.FileSize = Me.theInputFileReader.BaseStream.Length
+
 		'NOTE: Need the bone data from the real MDL file because SourceAniFile inherits SourceMdlFile.ReadMdlAnimation() that uses the data.
 		Me.theMdlFileData.theBones = Me.theRealMdlFileData.theBones
 	End Sub

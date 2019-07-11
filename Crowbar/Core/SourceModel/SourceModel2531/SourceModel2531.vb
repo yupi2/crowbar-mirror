@@ -456,6 +456,7 @@ Public Class SourceModel2531
 
 		vtxFile.ReadSourceVtxHeader()
 		vtxFile.ReadSourceVtxBodyParts()
+		vtxFile.ReadUnreadBytes()
 	End Sub
 
 	Protected Overrides Sub WriteQcFile()
@@ -492,6 +493,9 @@ Public Class SourceModel2531
 			'qcFile.WriteSequenceGroupCommands()
 			qcFile.WriteSequenceCommands()
 			qcFile.WriteIncludeModelCommands()
+
+			qcFile.WriteCollisionModelOrCollisionJointsCommand()
+			qcFile.WriteCollisionTextCommand()
 		Catch ex As Exception
 			Dim debug As Integer = 4242
 		Finally

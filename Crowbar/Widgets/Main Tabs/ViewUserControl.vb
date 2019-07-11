@@ -85,6 +85,7 @@ Public Class ViewUserControl
 		theDataViewer = New Viewer()
 		AddHandler theDataViewer.ProgressChanged, AddressOf Me.DataViewerBackgroundWorker_ProgressChanged
 		AddHandler theDataViewer.RunWorkerCompleted, AddressOf Me.DataViewerBackgroundWorker_RunWorkerCompleted
+		Me.AppSettingDataViewerIsRunning = True
 		theDataViewer.Run(Me.AppSettingMdlPathFileName)
 
 		'TODO: If viewer is not running, give user indication of what prevents viewing.
@@ -190,7 +191,7 @@ Public Class ViewUserControl
 #Region "Core Event Handlers"
 
 	Private Sub AppSettings_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-		If e.PropertyName = Me.NameOfAppSettingMdlPathFileName Then
+		If e.PropertyName = Me.NameOfAppSettingMdlPathFileName AndAlso Not Me.AppSettingDataViewerIsRunning Then
 			Me.UpdateWidgets(Me.AppSettingViewerIsRunning)
 			Me.RunDataViewer()
 		End If
@@ -203,7 +204,7 @@ Public Class ViewUserControl
 		If e.ProgressPercentage = 0 Then
 			Me.InfoRichTextBox.Text = ""
 			Me.InfoRichTextBox.AppendText(line + vbCr)
-			Me.AppSettingDataViewerIsRunning = True
+			'Me.AppSettingDataViewerIsRunning = True
 		ElseIf e.ProgressPercentage = 1 Then
 			Me.InfoRichTextBox.AppendText(line + vbCr)
 		ElseIf e.ProgressPercentage = 100 Then

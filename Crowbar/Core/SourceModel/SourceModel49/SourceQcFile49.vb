@@ -340,6 +340,15 @@ Public Class SourceQcFile49
 
 						If anEyeball.theTextureIndex = -1 Then
 							eyeballTextureName = "[unknown_texture]"
+							'NOTE: Use texture name from a different eyeball because this eyeball's texture index was not stored in the MDL file.
+							For i As Integer = 0 To aModel.theEyeballs.Count - 1
+								If i = eyeballIndex Then
+									Continue For
+								ElseIf aModel.theEyeballs(i).theTextureIndex > -1 Then
+									eyeballTextureName = Me.theMdlFileData.theModifiedTextureFileNames(aModel.theEyeballs(i).theTextureIndex)
+									Exit For
+								End If
+							Next
 						Else
 							'eyeballTextureName = Me.theMdlFileData.theTextures(anEyeball.theTextureIndex).thePathFileName
 							eyeballTextureName = Me.theMdlFileData.theModifiedTextureFileNames(anEyeball.theTextureIndex)
@@ -1290,13 +1299,14 @@ Public Class SourceQcFile49
 		End Try
 
 		For Each aBone As SourceMdlBone In Me.theMdlFileData.theBones
-			If (lodIndex = 1 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD1) = 0) _
+			If aBone.parentBoneIndex >= 0 _
+				AndAlso ((lodIndex = 1 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD1) = 0) _
 				OrElse (lodIndex = 2 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD2) = 0) _
 				OrElse (lodIndex = 3 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD3) = 0) _
 				OrElse (lodIndex = 4 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD4) = 0) _
 				OrElse (lodIndex = 5 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD5) = 0) _
 				OrElse (lodIndex = 6 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD6) = 0) _
-				OrElse (lodIndex = 7 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD7) = 0) Then
+				OrElse (lodIndex = 7 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD7) = 0)) Then
 				'replacebone "ValveBiped.Bip01_Neck1" "ValveBiped.Bip01_Head1"
 				line = vbTab
 				line += "replacebone "
@@ -2591,10 +2601,174 @@ Public Class SourceQcFile49
 	'weightlist         // done
 	'worldspaceblend       //
 	'worldspaceblendloop   // 
+	'	while (TokenAvailable())
+	'	{
+	'		GetToken( false );
+	'		if (stricmp( token, "height" ) == 0)
+	'		{
+	'			GetToken( false );
+	'			pRule->height = verify_atof( token );
+	'		}
+	'		else if (stricmp( token, "target" ) == 0)
+	'		{
+	'			// slot
+	'			GetToken( false );
+	'			pRule->slot = verify_atoi( token );
+	'		}
+	'		else if (stricmp( token, "range" ) == 0)
+	'		{
+	'			// ramp
+	'			GetToken( false );
+	'			if (token[0] == '.')
+	'				pRule->start = -1;
+	'			else
+	'				pRule->start = verify_atoi( token );
+	'
+	'			GetToken( false );
+	'			if (token[0] == '.')
+	'				pRule->peak = -1;
+	'			else
+	'				pRule->peak = verify_atoi( token );
+	'	
+	'			GetToken( false );
+	'			if (token[0] == '.')
+	'				pRule->tail = -1;
+	'			else
+	'				pRule->tail = verify_atoi( token );
+	'
+	'			GetToken( false );
+	'			if (token[0] == '.')
+	'				pRule->end = -1;
+	'			else
+	'				pRule->end = verify_atoi( token );
+	'		}
+	'		else if (stricmp( token, "floor" ) == 0)
+	'		{
+	'			GetToken( false );
+	'			pRule->floor = verify_atof( token );
+	'		}
+	'		else if (stricmp( token, "pad" ) == 0)
+	'		{
+	'			GetToken( false );
+	'			pRule->radius = verify_atof( token ) / 2.0f;
+	'		}
+	'		else if (stricmp( token, "radius" ) == 0)
+	'		{
+	'			GetToken( false );
+	'			pRule->radius = verify_atof( token );
+	'		}
+	'		else if (stricmp( token, "contact" ) == 0)
+	'		{
+	'			GetToken( false );
+	'			pRule->contact = verify_atoi( token );
+	'		}
+	'		else if (stricmp( token, "usesequence" ) == 0)
+	'		{
+	'			pRule->usesequence = true;
+	'			pRule->usesource = false;
+	'		}
+	'		else if (stricmp( token, "usesource" ) == 0)
+	'		{
+	'			pRule->usesequence = false;
+	'			pRule->usesource = true;
+	'		}
+	'		else if (stricmp( token, "fakeorigin" ) == 0)
+	'		{
+	'			GetToken( false );
+	'			pRule->pos.x = verify_atof( token );
+	'			GetToken( false );
+	'			pRule->pos.y = verify_atof( token );
+	'			GetToken( false );
+	'			pRule->pos.z = verify_atof( token );
+	'
+	'			pRule->bone = -1;
+	'		}
+	'		else if (stricmp( token, "fakerotate" ) == 0)
+	'		{
+	'			QAngle ang;
+	'
+	'			GetToken( false );
+	'			ang.x = verify_atof( token );
+	'			GetToken( false );
+	'			ang.y = verify_atof( token );
+	'			GetToken( false );
+	'			ang.z = verify_atof( token );
+	'
+	'			AngleQuaternion( ang, pRule->q );
+	'
+	'			pRule->bone = -1;
+	'		}
+	'		else if (stricmp( token, "bone" ) == 0)
+	'		{
+	'			strcpy( pRule->bonename, token );
+	'		}
+	'		else
+	'		{
+	'			UnGetToken();
+	'			return;
+	'		}
+	'	}
+	'------
+	'		pikrule->slot	= srcanim->ikrule[j].slot;
+	'		pikrule->pos	= srcanim->ikrule[j].pos;
+	'		pikrule->q		= srcanim->ikrule[j].q;
+	'		pikrule->height	= srcanim->ikrule[j].height;
+	'		pikrule->floor	= srcanim->ikrule[j].floor;
+	'		pikrule->radius = srcanim->ikrule[j].radius;
+	'
+	'		if (srcanim->numframes > 1.0)
+	'		{
+	'			pikrule->start	= srcanim->ikrule[j].start / (srcanim->numframes - 1.0f);
+	'			pikrule->peak	= srcanim->ikrule[j].peak / (srcanim->numframes - 1.0f);
+	'			pikrule->tail	= srcanim->ikrule[j].tail / (srcanim->numframes - 1.0f);
+	'			pikrule->end	= srcanim->ikrule[j].end / (srcanim->numframes - 1.0f);
+	'			pikrule->contact= srcanim->ikrule[j].contact / (srcanim->numframes - 1.0f);
+	'		}
+	'		else
+	'		{
+	'			pikrule->start	= 0.0f;
+	'			pikrule->peak	= 0.0f;
+	'			pikrule->tail	= 1.0f;
+	'			pikrule->end	= 1.0f;
+	'			pikrule->contact= 0.0f;
+	'		}
+	'
+	'		pikrule->iStart = srcanim->ikrule[j].start;
+	'
+	'		if (strlen( srcanim->ikrule[j].attachment ) > 0)
+	'		{
+	'			// don't use string table, we're probably not in the same file.
+	'			int size = strlen( srcanim->ikrule[j].attachment ) + 1;
+	'			strcpy( (char *)pData, srcanim->ikrule[j].attachment );
+	'			pikrule->szattachmentindex = pData - (byte *)pikrule;
+	'			pData += size;
+	'		}
+	'------
+	'TODO: Other sub-options for ikrule option.
+	'	bone          - Looks like this data is not stored directly and might not be extractable from other data.
+	'	contact       /
+	'	fakeorigin    - 
+	'	fakerotate    - 
+	'	floor         /
+	'	height        /
+	'	pad           X redundant with radius; studiomdl radius = (pad / 2)
+	'	radius        /
+	'	range         /
+	'	target        /
+	'	usesequence   X baked-in   [converted into mstudiocompressedikerror_t?][Test to see if this is baked-in by doing test decompile+recompiles.]
+	'	usesource     X baked-in   [converted into mstudiocompressedikerror_t?][Test to see if this is baked-in by doing test decompile+recompiles.]
+	'If anIkRule.type = SourceMdlIkRule.IK_UNLATCH Then
+	'	line += " "
+	'	line += "usesource"
+	'End If
 	Private Sub WriteCmdListOptions(ByVal aSequenceDesc As SourceMdlSequenceDesc, ByVal anAnimationDesc As SourceMdlAnimationDesc49, ByVal impliedAnimDesc As SourceMdlAnimationDesc49)
 		Dim line As String = ""
 
 		If anAnimationDesc.theIkRules IsNot Nothing Then
+			Dim endFrameIndex As Integer
+			Dim tempInteger As Integer
+			endFrameIndex = anAnimationDesc.frameCount - 1
+
 			For Each anIkRule As SourceMdlIkRule In anAnimationDesc.theIkRules
 				line = vbTab
 				line += "ikrule"
@@ -2629,130 +2803,58 @@ Public Class SourceQcFile49
 					line += "unlatch"
 				End If
 
-				'	while (TokenAvailable())
-				'	{
-				'		GetToken( false );
-				'		if (stricmp( token, "height" ) == 0)
-				'		{
-				'			GetToken( false );
-				'			pRule->height = verify_atof( token );
-				'		}
-				'		else if (stricmp( token, "target" ) == 0)
-				'		{
-				'			// slot
-				'			GetToken( false );
-				'			pRule->slot = verify_atoi( token );
-				'		}
-				'		else if (stricmp( token, "range" ) == 0)
-				'		{
-				'			// ramp
-				'			GetToken( false );
-				'			if (token[0] == '.')
-				'				pRule->start = -1;
-				'			else
-				'				pRule->start = verify_atoi( token );
-				'
-				'			GetToken( false );
-				'			if (token[0] == '.')
-				'				pRule->peak = -1;
-				'			else
-				'				pRule->peak = verify_atoi( token );
-				'	
-				'			GetToken( false );
-				'			if (token[0] == '.')
-				'				pRule->tail = -1;
-				'			else
-				'				pRule->tail = verify_atoi( token );
-				'
-				'			GetToken( false );
-				'			if (token[0] == '.')
-				'				pRule->end = -1;
-				'			else
-				'				pRule->end = verify_atoi( token );
-				'		}
-				'		else if (stricmp( token, "floor" ) == 0)
-				'		{
-				'			GetToken( false );
-				'			pRule->floor = verify_atof( token );
-				'		}
-				'		else if (stricmp( token, "pad" ) == 0)
-				'		{
-				'			GetToken( false );
-				'			pRule->radius = verify_atof( token ) / 2.0f;
-				'		}
-				'		else if (stricmp( token, "radius" ) == 0)
-				'		{
-				'			GetToken( false );
-				'			pRule->radius = verify_atof( token );
-				'		}
-				'		else if (stricmp( token, "contact" ) == 0)
-				'		{
-				'			GetToken( false );
-				'			pRule->contact = verify_atoi( token );
-				'		}
-				'		else if (stricmp( token, "usesequence" ) == 0)
-				'		{
-				'			pRule->usesequence = true;
-				'			pRule->usesource = false;
-				'		}
-				'		else if (stricmp( token, "usesource" ) == 0)
-				'		{
-				'			pRule->usesequence = false;
-				'			pRule->usesource = true;
-				'		}
-				'		else if (stricmp( token, "fakeorigin" ) == 0)
-				'		{
-				'			GetToken( false );
-				'			pRule->pos.x = verify_atof( token );
-				'			GetToken( false );
-				'			pRule->pos.y = verify_atof( token );
-				'			GetToken( false );
-				'			pRule->pos.z = verify_atof( token );
-				'
-				'			pRule->bone = -1;
-				'		}
-				'		else if (stricmp( token, "fakerotate" ) == 0)
-				'		{
-				'			QAngle ang;
-				'
-				'			GetToken( false );
-				'			ang.x = verify_atof( token );
-				'			GetToken( false );
-				'			ang.y = verify_atof( token );
-				'			GetToken( false );
-				'			ang.z = verify_atof( token );
-				'
-				'			AngleQuaternion( ang, pRule->q );
-				'
-				'			pRule->bone = -1;
-				'		}
-				'		else if (stricmp( token, "bone" ) == 0)
-				'		{
-				'			strcpy( pRule->bonename, token );
-				'		}
-				'		else
-				'		{
-				'			UnGetToken();
-				'			return;
-				'		}
-				'	}
-				'TODO: Other sub-options for ikrule option.
-				'	height
-				'	target
-				'	range
-				'	floor
-				'	pad
-				'	radius
-				'	contact
-				'	usesequence   [converted into mstudiocompressedikerror_t?][Test to see if this is baked-in by doing test decompile+recompiles.]
-				'	usesource     [converted into mstudiocompressedikerror_t?][Test to see if this is baked-in by doing test decompile+recompiles.]
-				'	fakeorigin
-				'	fakerotate
-				'	bone
-				'If anIkRule.type = SourceMdlIkRule.IK_UNLATCH Then
-				'	line += " "
-				'	line += "usesource"
-				'End If
+				'NOTE: Writing all ikrule options because studiomdl will ignore any that are not used by a type.
+
+				tempInteger = CInt(Math.Round(anIkRule.contact * endFrameIndex))
+				line += " contact "
+				line += tempInteger.ToString(TheApp.InternalNumberFormat)
+
+				line += " fakeorigin "
+				line += anIkRule.pos.x.ToString("0.##", TheApp.InternalNumberFormat)
+				line += " "
+				line += anIkRule.pos.y.ToString("0.##", TheApp.InternalNumberFormat)
+				line += " "
+				line += anIkRule.pos.z.ToString("0.##", TheApp.InternalNumberFormat)
+
+				Dim angles As SourceVector
+				angles = MathModule.ToEulerAngles(anIkRule.q)
+				line += " fakerotate "
+				line += angles.x.ToString("0.##", TheApp.InternalNumberFormat)
+				line += " "
+				line += angles.y.ToString("0.##", TheApp.InternalNumberFormat)
+				line += " "
+				line += angles.z.ToString("0.##", TheApp.InternalNumberFormat)
+
+				line += " floor "
+				line += anIkRule.floor.ToString("0.##", TheApp.InternalNumberFormat)
+
+				line += " height "
+				line += anIkRule.height.ToString("0.##", TheApp.InternalNumberFormat)
+
+				'NOTE: Not using pad because radius option can be used instead.
+				''pRule->radius = verify_atof( token ) / 2.0f;
+				'line += " pad "
+				'line += (anIkRule.radius * 2).ToString("0.##", TheApp.InternalNumberFormat)
+
+				'pRule->radius = verify_atof( token );
+				line += " radius "
+				line += anIkRule.radius.ToString("0.##", TheApp.InternalNumberFormat)
+
+				line += " range "
+				tempInteger = CInt(Math.Round(anIkRule.influenceStart * endFrameIndex))
+				line += tempInteger.ToString(TheApp.InternalNumberFormat)
+				line += " "
+				tempInteger = CInt(Math.Round(anIkRule.influencePeak * endFrameIndex))
+				line += tempInteger.ToString(TheApp.InternalNumberFormat)
+				line += " "
+				tempInteger = CInt(Math.Round(anIkRule.influenceTail * endFrameIndex))
+				line += tempInteger.ToString(TheApp.InternalNumberFormat)
+				line += " "
+				tempInteger = CInt(Math.Round(anIkRule.influenceEnd * endFrameIndex))
+				line += tempInteger.ToString(TheApp.InternalNumberFormat)
+
+				line += " target "
+				line += anIkRule.slot.ToString(TheApp.InternalNumberFormat)
 
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			Next
@@ -2928,6 +3030,9 @@ Public Class SourceQcFile49
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			End If
 
+			'TODO: [2019-06-12] Probably should remove this in favor of different workaround as indicated by this workshop guide:
+			'      "Workaround to Recompile Models that Have Problems Due to Delta Animations"
+			'      https://steamcommunity.com/sharedfiles/filedetails/?id=1774302855
 			'NOTE: [2017-12-15] Added this code to fix the issue of the jigglebones+delta problem when recompiling L4D2 survivor_teenangst_light.
 			Dim anAnimationDesc As SourceMdlAnimationDesc49
 			anAnimationDesc = Me.theMdlFileData.theAnimationDescs(aSequenceDesc.theAnimDescIndexes(0))

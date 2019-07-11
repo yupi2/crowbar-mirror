@@ -1,5 +1,57 @@
 Module MathModule
 
+    Public Function UnixTimeStampToDateTime(ByVal unixTimeStamp As Long) As DateTime
+		Dim dtDateTime As System.DateTime = New DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)
+		dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime()
+		Return dtDateTime
+    End Function
+
+	Public Function DateTimeToUnixTimeStamp(ByVal iDateTime As DateTime) As Long
+		Dim dtDateTime As System.DateTime = New DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)
+		Dim span As TimeSpan = (iDateTime.ToUniversalTime() - dtDateTime)
+		Return CLng(span.TotalSeconds)
+	End Function
+
+	'Public Function ByteUnitsConversion(ByVal iBytes As ULong) As String
+	'	Dim value As Double = iBytes
+	'	Dim suffix() As String = {"Bytes", "KB", "MB", "TB", "PB", "EB"}
+	'	Dim factor As ULong = 1024
+	'	Dim index As Integer = 0
+	'	Dim suffixIndex As Integer = 0
+
+	'	While iBytes > factor And index < suffix.Length
+	'		value = iBytes / factor
+	'		suffixIndex = index
+
+	'		factor *= 1024UL
+	'		index = index + 1
+	'	End While
+	'	'If index > 0 Then
+	'	'	value = iBytes / factor
+	'	'End If
+
+	'	Return value.ToString("####.##") + " " + suffix(suffixIndex)
+	'End Function
+
+	Public Function ByteUnitsConversion(ByVal iBytes As ULong) As String
+		Dim value As Double = iBytes
+		Dim suffix As String = "Bytes"
+
+		If iBytes >= 1073741824 Then
+			value = iBytes / (1024 * 1024 * 1024)
+			suffix = "GB"
+		ElseIf iBytes >= 1048576 Then
+			value = iBytes / (1024 * 1024)
+			suffix = "MB"
+		ElseIf iBytes >= 1024 Then
+			value = iBytes / 1024
+			suffix = "KB"
+		End If
+
+		'Return value.ToString("####.##") + " " + suffix
+		Return value.ToString("N2") + " " + suffix
+	End Function
+
 	Public Function AlignLong(ByVal currentValue As Long, ByVal alignmentValue As Long) As Long
 		' File seek to next nearest start of 4-byte block. 
 		'      In C++: #define ALIGN4( a ) a = (byte *)((int)((byte *)a + 3) & ~ 3)

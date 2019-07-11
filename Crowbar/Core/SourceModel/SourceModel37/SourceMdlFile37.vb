@@ -41,7 +41,7 @@ Public Class SourceMdlFile37
 
 		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
 		If logDescription <> "" Then
-			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, logDescription)
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, logDescription + " (Actual version: " + Me.theMdlFileData.version.ToString() + "; expected version: 37)")
 		End If
 	End Sub
 
@@ -1476,7 +1476,7 @@ Public Class SourceMdlFile37
 	End Sub
 
 	Public Sub ReadSkinFamilies()
-		If Me.theMdlFileData.skinFamilyCount > 0 Then
+		If Me.theMdlFileData.skinFamilyCount > 0 AndAlso Me.theMdlFileData.skinReferenceCount > 0 Then
 			Dim skinFamilyInputFileStreamPosition As Long
 			'Dim inputFileStreamPosition As Long
 			Dim fileOffsetStart As Long
@@ -1536,6 +1536,27 @@ Public Class SourceMdlFile37
 			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theSkinFamilies")
 
 			Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "theMdlFileData.theSkinFamilies alignment")
+		End If
+	End Sub
+
+	Public Sub ReadKeyValues()
+		If Me.theMdlFileData.keyValueSize > 0 Then
+			Dim fileOffsetStart As Long
+			Dim fileOffsetEnd As Long
+			Dim nullChar As Char
+
+			Me.theInputFileReader.BaseStream.Seek(Me.theMdlFileData.keyValueOffset, SeekOrigin.Begin)
+			fileOffsetStart = Me.theInputFileReader.BaseStream.Position
+
+			'NOTE: Use -1 to drop the null terminator character.
+			Me.theMdlFileData.theKeyValuesText = Me.theInputFileReader.ReadChars(Me.theMdlFileData.keyValueSize - 1)
+			'NOTE: Read the null terminator character.
+			nullChar = Me.theInputFileReader.ReadChar()
+
+			fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+			Me.theMdlFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "theMdlFileData.theKeyValuesText = " + Me.theMdlFileData.theKeyValuesText)
+
+			Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "theMdlFileData.theKeyValuesText alignment")
 		End If
 	End Sub
 
@@ -2206,6 +2227,23 @@ Public Class SourceMdlFile37
 					anIkRule.pivot = Me.theInputFileReader.ReadSingle()
 					anIkRule.release = Me.theInputFileReader.ReadSingle()
 
+					'NOTE: Change NaN to 0. This is needed for HL2 beta leak "hl2\models\Police.mdl" for various $animations.
+					If Double.IsNaN(anIkRule.influenceStart) Then
+						anIkRule.influenceStart = 0
+					End If
+					If Double.IsNaN(anIkRule.influencePeak) Then
+						anIkRule.influencePeak = 0
+					End If
+					If Double.IsNaN(anIkRule.influenceTail) Then
+						anIkRule.influenceTail = 0
+					End If
+					If Double.IsNaN(anIkRule.influenceEnd) Then
+						anIkRule.influenceEnd = 0
+					End If
+					If Double.IsNaN(anIkRule.contact) Then
+						anIkRule.contact = 0
+					End If
+
 					anAnimationDesc.theIkRules.Add(anIkRule)
 
 					inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
@@ -2234,12 +2272,16 @@ Public Class SourceMdlFile37
 		Dim ikErrorStart As Integer
 		Dim ikErrorEnd As Integer
 		Dim ikErrorCount As Integer
-		ikErrorStart = CInt(anIkRule.influenceStart * (frameCount - 1))
-		ikErrorEnd = CInt(anIkRule.influenceEnd * (frameCount - 1))
-		ikErrorCount = ikErrorEnd - ikErrorStart + 1
-		If ikErrorEnd >= frameCount Then
-			ikErrorCount += 2
-		End If
+		Try
+			ikErrorStart = CInt(anIkRule.influenceStart * (frameCount - 1))
+			ikErrorEnd = CInt(anIkRule.influenceEnd * (frameCount - 1))
+			ikErrorCount = ikErrorEnd - ikErrorStart + 1
+			If ikErrorEnd >= frameCount Then
+				ikErrorCount += 2
+			End If
+		Catch ex As Exception
+			Dim debug As Integer = 4242
+		End Try
 
 		If ikErrorCount > 0 Then
 			'Dim ikErrorInputFileStreamPosition As Long
@@ -2415,13 +2457,13 @@ Public Class SourceMdlFile37
 					Me.ReadEyeballs(modelInputFileStreamPosition, aModel)
 					Me.ReadMeshes(modelInputFileStreamPosition, aModel)
 
-					fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-					'NOTE: Although studiomdl source code indicates ALIGN64, it seems to align on 32.
-					Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 32, "aModel.theVertexes pre-alignment (NOTE: Should end at: " + CStr(modelInputFileStreamPosition + aModel.vertexOffset - 1) + ")")
+					'fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+					''NOTE: Although studiomdl source code indicates ALIGN64, it seems to align on 32.
+					'Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 32, "aModel.theVertexes pre-alignment (NOTE: Should end at: " + CStr(modelInputFileStreamPosition + aModel.vertexOffset - 1) + ")")
 					Me.ReadVertexes(modelInputFileStreamPosition, aModel)
 
-					fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-					Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "aModel.theTangents pre-alignment (NOTE: Should end at: " + CStr(modelInputFileStreamPosition + aModel.tangentOffset - 1) + ")")
+					'fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
+					'Me.theMdlFileData.theFileSeekLog.LogToEndAndAlignToNextStart(Me.theInputFileReader, fileOffsetEnd, 4, "aModel.theTangents pre-alignment (NOTE: Should end at: " + CStr(modelInputFileStreamPosition + aModel.tangentOffset - 1) + ")")
 					Me.ReadTangents(modelInputFileStreamPosition, aModel)
 
 					Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)

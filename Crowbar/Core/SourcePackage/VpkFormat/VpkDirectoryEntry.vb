@@ -1,6 +1,10 @@
 ﻿Public Class VpkDirectoryEntry
 	Inherits BasePackageDirectoryEntry
 
+	Public Sub New()
+		Me.isVtmbVpk = False
+	End Sub
+
 	'FROM: Nem's Tools\hllib245\HLLib\VPKFile.h
 	'		struct VPKDirectoryEntry
 	'		{
@@ -51,5 +55,7 @@
 
 	'Public thePathFileName As String
 	Public preloadBytesOffset As Long
+
+	Public isVtmbVpk As Boolean
 
 End Class

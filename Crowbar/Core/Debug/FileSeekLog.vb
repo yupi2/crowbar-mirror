@@ -102,6 +102,8 @@ Public Class FileSeekLog
 					byteValues = Me.GetByteValues(inputFileReader, offsetEnd + 1, offsetStart - 1, allZeroesWereFound)
 					If allZeroesWereFound Then
 						description += " (all zeroes)"
+					Else
+						description += " (non-zero)"
 					End If
 					description += byteValues
 
@@ -160,8 +162,15 @@ Public Class FileSeekLog
 			Next
 			If (fileOffsetEnd2 - fileOffsetStart2) > 20 Then
 				byteValues += " ..."
-				'NOTE: Indicate non-zeroes if more than 20 bytes unread because might be non-zeroes past the first 20.
-				allZeroesWereFound = False
+				''NOTE: Indicate non-zeroes if more than 20 bytes unread because might be non-zeroes past the first 20.
+				'allZeroesWereFound = False
+				For byteOffset As Long = adjustedFileOffsetEnd2 + 1 To fileOffsetEnd2
+					byteValue = inputFileReader.ReadByte()
+					If byteValue <> 0 Then
+						allZeroesWereFound = False
+						Exit For
+					End If
+				Next
 			End If
 			byteValues += " ]"
 

@@ -9,7 +9,7 @@ Public Class SourceSmdFile48
 		Me.theMdlFileData = mdlFileData
 	End Sub
 
-	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal mdlFileData As SourceMdlFileData48, ByVal vvdFileData As SourceVvdFileData48)
+	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal mdlFileData As SourceMdlFileData48, ByVal vvdFileData As SourceVvdFileData04)
 		Me.theOutputFileStreamWriter = outputFileStream
 		Me.theMdlFileData = mdlFileData
 		Me.theVvdFileData = vvdFileData
@@ -1951,7 +1951,7 @@ Public Class SourceSmdFile48
 	Private theMdlFileData As SourceMdlFileData48
 	Private thePhyFileData As SourcePhyFileData
 	'Private theVtxFileData As SourceVtxFileData48
-	Private theVvdFileData As SourceVvdFileData48
+	Private theVvdFileData As SourceVvdFileData04
 	'Private theModelName As String
 
 	Private theAnimationFrameLines As SortedList(Of Integer, AnimationFrameLine)

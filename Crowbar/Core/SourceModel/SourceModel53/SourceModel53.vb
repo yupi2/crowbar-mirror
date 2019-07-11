@@ -204,7 +204,7 @@ Public Class SourceModel53
 				anAnimationDesc.theSmdRelativePathFileName = SourceFileNamesModule.CreateAnimationSmdRelativePathFileName(anAnimationDesc.theSmdRelativePathFileName, Me.Name, anAnimationDesc.theName)
 				smdPathFileName = Path.Combine(modelOutputPath, anAnimationDesc.theSmdRelativePathFileName)
 				smdPath = FileManager.GetPath(smdPathFileName)
-				If FileManager.OutputPathIsUsable(smdPath) Then
+				If FileManager.PathExistsAfterTryToCreate(smdPath) Then
 					Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
 					'NOTE: Check here in case writing is canceled in the above event.
 					If Me.theWritingIsCanceled Then
@@ -250,7 +250,7 @@ Public Class SourceModel53
 				vtaFileName = SourceFileNamesModule.GetVtaFileName(Me.Name, aBodyPartIndex)
 				vtaPathFileName = Path.Combine(modelOutputPath, vtaFileName)
 				vtaPath = FileManager.GetPath(vtaPathFileName)
-				If FileManager.OutputPathIsUsable(vtaPath) Then
+				If FileManager.PathExistsAfterTryToCreate(vtaPath) Then
 					Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, vtaPathFileName)
 					'NOTE: Check here in case writing is canceled in the above event.
 					If Me.theWritingIsCanceled Then
@@ -460,10 +460,10 @@ Public Class SourceModel53
 
 	Protected Overrides Sub ReadVvdFile_Internal()
 		If Me.theVvdFileData49 Is Nothing Then
-			Me.theVvdFileData49 = New SourceVvdFileData49()
+			Me.theVvdFileData49 = New SourceVvdFileData04()
 		End If
 
-		Dim vvdFile As New SourceVvdFile49(Me.theInputFileReader, Me.theVvdFileData49, Me.theInputFileReader.BaseStream.Position)
+		Dim vvdFile As New SourceVvdFile04(Me.theInputFileReader, Me.theVvdFileData49, Me.theInputFileReader.BaseStream.Position)
 
 		vvdFile.ReadSourceVvdHeader()
 		vvdFile.ReadVertexes()
@@ -781,7 +781,7 @@ Public Class SourceModel53
 	Private theMdlFileData As SourceMdlFileData53
 	'Private thePhyFileData49 As SourcePhyFileData49
 	Private theVtxFileData As SourceVtxFileData07
-	Private theVvdFileData49 As SourceVvdFileData49
+	Private theVvdFileData49 As SourceVvdFileData04
 
 #End Region
 

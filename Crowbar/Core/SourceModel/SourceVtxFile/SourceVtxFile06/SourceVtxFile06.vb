@@ -45,7 +45,7 @@ Public Class SourceVtxFile06
 		Me.theVtxFileData.bodyPartOffset = Me.theInputFileReader.ReadInt32()
 
 		fileOffsetEnd = Me.theInputFileReader.BaseStream.Position - 1
-		Me.theVtxFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "VTX File Header")
+		Me.theVtxFileData.theFileSeekLog.Add(fileOffsetStart, fileOffsetEnd, "VTX File Header (Actual version: " + Me.theVtxFileData.version.ToString() + "; expected version: 6)")
 	End Sub
 
 	Public Sub ReadSourceVtxBodyParts()
@@ -192,6 +192,7 @@ Public Class SourceVtxFile06
 					aModelLod.meshCount = Me.theInputFileReader.ReadInt32()
 					aModelLod.meshOffset = Me.theInputFileReader.ReadInt32()
 					aModelLod.switchPoint = Me.theInputFileReader.ReadSingle()
+					aModelLod.theVtxModelLodUsesFacial = False
 
 					aModel.theVtxModelLods.Add(aModelLod)
 
@@ -236,7 +237,7 @@ Public Class SourceVtxFile06
 
 					inputFileStreamPosition = Me.theInputFileReader.BaseStream.Position
 
-					Me.ReadSourceVtxStripGroups(meshInputFileStreamPosition, aMesh)
+					Me.ReadSourceVtxStripGroups(meshInputFileStreamPosition, aModelLod, aMesh)
 
 					Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
 				Next
@@ -249,7 +250,7 @@ Public Class SourceVtxFile06
 		End If
 	End Sub
 
-	Private Sub ReadSourceVtxStripGroups(ByVal meshInputFileStreamPosition As Long, ByVal aMesh As SourceVtxMesh06)
+	Private Sub ReadSourceVtxStripGroups(ByVal meshInputFileStreamPosition As Long, ByVal aModelLod As SourceVtxModelLod06, ByVal aMesh As SourceVtxMesh06)
 		If aMesh.stripGroupCount > 0 AndAlso aMesh.stripGroupOffset <> 0 Then
 			Dim stripGroupInputFileStreamPosition As Long
 			Dim inputFileStreamPosition As Long
@@ -282,6 +283,24 @@ Public Class SourceVtxFile06
 					Me.ReadSourceVtxVertexes(stripGroupInputFileStreamPosition, aStripGroup)
 					Me.ReadSourceVtxIndexes(stripGroupInputFileStreamPosition, aStripGroup)
 					Me.ReadSourceVtxStrips(stripGroupInputFileStreamPosition, aStripGroup)
+
+					'TODO: Set whether stripgroup has flex vertexes in it or not for $lod facial and nofacial options.
+					If (aStripGroup.flags And SourceVtxStripGroup.SourceStripGroupFlexed) > 0 OrElse (aStripGroup.flags And SourceVtxStripGroup.SourceStripGroupDeltaFixed) > 0 Then
+						aModelLod.theVtxModelLodUsesFacial = True
+						'------
+						'Dim aVtxVertex As SourceVtxVertex
+						'For Each aVtxVertexIndex As UShort In aStripGroup.theVtxIndexes
+						'	aVtxVertex = aStripGroup.theVtxVertexes(aVtxVertexIndex)
+
+						'	' for (i = 0; i < pStudioMesh->numflexes; i++)
+						'	' for (j = 0; j < pflex[i].numverts; j++)
+						'	'The meshflexes are found in the MDL file > bodypart > model > mesh.theFlexes
+						'	For Each meshFlex As SourceMdlFlex In meshflexes
+
+						'	Next
+						'Next
+						''Dim debug As Integer = 4242
+					End If
 
 					Me.theInputFileReader.BaseStream.Seek(inputFileStreamPosition, SeekOrigin.Begin)
 				Next

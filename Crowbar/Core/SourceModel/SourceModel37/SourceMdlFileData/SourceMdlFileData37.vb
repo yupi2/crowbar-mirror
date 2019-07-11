@@ -247,6 +247,7 @@
 	Public theIkChains As List(Of SourceMdlIkChain37)
 	Public theIkLocks As List(Of SourceMdlIkLock37)
 	Public theIncludeModelFileNames As List(Of String)
+	Public theKeyValuesText As String
 	Public theMouths As List(Of SourceMdlMouth)
 	Public thePoseParamDescs As List(Of SourceMdlPoseParamDesc)
 	Public theSequenceDescs As List(Of SourceMdlSequenceDesc37)

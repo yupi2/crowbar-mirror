@@ -214,7 +214,7 @@ Public Class SourceModel27
 				anAnimationDesc.theSmdRelativePathFileName = SourceFileNamesModule.CreateAnimationSmdRelativePathFileName(anAnimationDesc.theSmdRelativePathFileName, Me.Name, anAnimationDesc.theName)
 				smdPathFileName = Path.Combine(modelOutputPath, anAnimationDesc.theSmdRelativePathFileName)
 				smdPath = FileManager.GetPath(smdPathFileName)
-				If FileManager.OutputPathIsUsable(smdPath) Then
+				If FileManager.PathExistsAfterTryToCreate(smdPath) Then
 					Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
 					'NOTE: Check here in case writing is canceled in the above event.
 					If Me.theWritingIsCanceled Then
@@ -419,7 +419,7 @@ Public Class SourceModel27
 
 	Protected Overrides Sub WriteQcFile()
 		'Dim qcFile As New SourceQcFile31(Me.theOutputFileTextWriter, Me.theQcPathFileName, Me.theMdlFileData, Me.thePhyFileData, Me.theVtxFileData, Me.theName)
-		Dim qcFile As New SourceQcFile27(Me.theOutputFileTextWriter, Me.theQcPathFileName, Me.theMdlFileData, Me.theName)
+		Dim qcFile As New SourceQcFile27(Me.theOutputFileTextWriter, Me.theQcPathFileName, Me.theMdlFileData, Me.theVtxFileData, Me.thePhyFileData, Me.theName)
 
 		Try
 			qcFile.WriteHeaderComment()

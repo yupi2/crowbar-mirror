@@ -204,7 +204,7 @@ Public Class SourceModel52
 				anAnimationDesc.theSmdRelativePathFileName = SourceFileNamesModule.CreateAnimationSmdRelativePathFileName(anAnimationDesc.theSmdRelativePathFileName, Me.Name, anAnimationDesc.theName)
 				smdPathFileName = Path.Combine(modelOutputPath, anAnimationDesc.theSmdRelativePathFileName)
 				smdPath = FileManager.GetPath(smdPathFileName)
-				If FileManager.OutputPathIsUsable(smdPath) Then
+				If FileManager.PathExistsAfterTryToCreate(smdPath) Then
 					Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
 					'NOTE: Check here in case writing is canceled in the above event.
 					If Me.theWritingIsCanceled Then
@@ -442,10 +442,10 @@ Public Class SourceModel52
 
 	Protected Overrides Sub ReadVvdFile_Internal()
 		If Me.theVvdFileData49 Is Nothing Then
-			Me.theVvdFileData49 = New SourceVvdFileData49()
+			Me.theVvdFileData49 = New SourceVvdFileData04()
 		End If
 
-		Dim vvdFile As New SourceVvdFile49(Me.theInputFileReader, Me.theVvdFileData49)
+		Dim vvdFile As New SourceVvdFile04(Me.theInputFileReader, Me.theVvdFileData49)
 
 		vvdFile.ReadSourceVvdHeader()
 		vvdFile.ReadVertexes()
@@ -726,7 +726,7 @@ Public Class SourceModel52
 	Private theMdlFileData As SourceMdlFileData52
 	'Private thePhyFileData49 As SourcePhyFileData
 	Private theVtxFileData As SourceVtxFileData07
-	Private theVvdFileData49 As SourceVvdFileData49
+	Private theVvdFileData49 As SourceVvdFileData04
 
 #End Region
 

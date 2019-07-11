@@ -6,11 +6,11 @@ Public Class SourceQcFile27
 
 #Region "Creation and Destruction"
 
-	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal outputPathFileName As String, ByVal mdlFileData As SourceMdlFileData27, ByVal modelName As String)
+	Public Sub New(ByVal outputFileStream As StreamWriter, ByVal outputPathFileName As String, ByVal mdlFileData As SourceMdlFileData27, ByVal vtxFileData As SourceVtxFileData06, ByVal phyFileData As SourcePhyFileData, ByVal modelName As String)
 		Me.theOutputFileStreamWriter = outputFileStream
 		Me.theMdlFileData = mdlFileData
-		'Me.thePhyFileData = phyFileData
-		'Me.theVtxFileData = vtxFileData
+		Me.thePhyFileData = phyFileData
+		Me.theVtxFileData = vtxFileData
 		Me.theModelName = modelName
 
 		Me.theOutputPath = FileManager.GetPath(outputPathFileName)
@@ -466,7 +466,7 @@ Public Class SourceQcFile27
 			line = ""
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
-			line = "// This list shows the VMT files used in the SMD files."
+			line = "// This list shows the VMT file names used in the SMD files."
 			Me.theOutputFileStreamWriter.WriteLine(line)
 
 			For j As Integer = 0 To Me.theMdlFileData.theTextures.Count - 1
@@ -549,9 +549,11 @@ Public Class SourceQcFile27
 			Dim aLodQcInfo As LodQcInfo
 			Dim aLodQcInfoList As List(Of LodQcInfo)
 			Dim aLodList As SortedList(Of Single, List(Of LodQcInfo))
+			Dim aLodListOfFacialFlags As SortedList(Of Single, Boolean)
 			Dim switchPoint As Single
 
 			aLodList = New SortedList(Of Single, List(Of LodQcInfo))()
+			aLodListOfFacialFlags = New SortedList(Of Single, Boolean)()
 			For bodyPartIndex As Integer = 0 To Me.theVtxFileData.theVtxBodyParts.Count - 1
 				aBodyPart = Me.theVtxFileData.theVtxBodyParts(bodyPartIndex)
 
@@ -577,6 +579,7 @@ Public Class SourceQcFile27
 								If Not aLodList.ContainsKey(switchPoint) Then
 									aLodQcInfoList = New List(Of LodQcInfo)()
 									aLodList.Add(switchPoint, aLodQcInfoList)
+									aLodListOfFacialFlags.Add(switchPoint, aVtxModel.theVtxModelLods(lodIndex).theVtxModelLodUsesFacial)
 								Else
 									aLodQcInfoList = aLodList(switchPoint)
 								End If
@@ -621,7 +624,7 @@ Public Class SourceQcFile27
 
 				line = "{"
 				Me.theOutputFileStreamWriter.WriteLine(line)
-				Me.WriteLodOptions(lodIndex, aLodQcInfoList)
+				Me.WriteLodOptions(lodIndex, aLodListOfFacialFlags.Values(lodListIndex), aLodQcInfoList)
 				line = "}"
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			Next
@@ -641,14 +644,14 @@ Public Class SourceQcFile27
 
 				line = "{"
 				Me.theOutputFileStreamWriter.WriteLine(line)
-				Me.WriteLodOptions(lodIndex, lodQcInfoListOfShadowLod)
+				Me.WriteLodOptions(lodIndex, False, lodQcInfoListOfShadowLod)
 				line = "}"
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			End If
 		End If
 	End Sub
 
-	Private Sub WriteLodOptions(ByVal lodIndex As Integer, ByVal aLodQcInfoList As List(Of LodQcInfo))
+	Private Sub WriteLodOptions(ByVal lodIndex As Integer, ByVal lodUsesFacial As Boolean, ByVal aLodQcInfoList As List(Of LodQcInfo))
 		Dim line As String = ""
 		Dim aLodQcInfo As LodQcInfo
 
@@ -675,13 +678,14 @@ Public Class SourceQcFile27
 		Next
 
 		For Each aBone As SourceMdlBone31 In Me.theMdlFileData.theBones
-			If (lodIndex = 1 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD1) = 0) _
+			If aBone.parentBoneIndex >= 0 _
+				AndAlso ((lodIndex = 1 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD1) = 0) _
 				OrElse (lodIndex = 2 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD2) = 0) _
 				OrElse (lodIndex = 3 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD3) = 0) _
 				OrElse (lodIndex = 4 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD4) = 0) _
 				OrElse (lodIndex = 5 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD5) = 0) _
 				OrElse (lodIndex = 6 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD6) = 0) _
-				OrElse (lodIndex = 7 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD7) = 0) Then
+				OrElse (lodIndex = 7 AndAlso (aBone.flags And SourceMdlBone.BONE_USED_BY_VERTEX_LOD7) = 0)) Then
 				'replacebone "ValveBiped.Bip01_Neck1" "ValveBiped.Bip01_Head1"
 				line = vbTab
 				line += "replacebone "
@@ -693,6 +697,22 @@ Public Class SourceQcFile27
 				Me.theOutputFileStreamWriter.WriteLine(line)
 			End If
 		Next
+
+		line = vbTab
+		If lodUsesFacial Then
+			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+				line += "Facial"
+			Else
+				line += "facial"
+			End If
+		Else
+			If TheApp.Settings.DecompileQcUseMixedCaseForKeywordsIsChecked Then
+				line += "NoFacial"
+			Else
+				line += "nofacial"
+			End If
+		End If
+		Me.theOutputFileStreamWriter.WriteLine(line)
 
 		If (Me.theMdlFileData.flags And SourceMdlFileData.STUDIOHDR_FLAGS_USE_SHADOWLOD_MATERIALS) > 0 Then
 			Me.theOutputFileStreamWriter.WriteLine()

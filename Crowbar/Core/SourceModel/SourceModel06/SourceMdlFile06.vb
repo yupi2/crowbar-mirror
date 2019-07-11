@@ -87,7 +87,7 @@ Public Class SourceMdlFile06
 
 					aBone.name = Me.theInputFileReader.ReadChars(32)
 					aBone.theName = aBone.name
-					aBone.theName = StringClass.ConvertFromNullTerminatedString(aBone.theName)
+					aBone.theName = StringClass.ConvertFromNullTerminatedOrFullLengthString(aBone.theName)
 					If aBone.theName = "" Then
 						aBone.theName = "unnamed_bone_" + boneIndex.ToString("000")
 					End If
@@ -175,7 +175,7 @@ Public Class SourceMdlFile06
 
 					aSequence.name = Me.theInputFileReader.ReadChars(32)
 					aSequence.theName = aSequence.name
-					aSequence.theName = StringClass.ConvertFromNullTerminatedString(aSequence.theName)
+					aSequence.theName = StringClass.ConvertFromNullTerminatedOrFullLengthString(aSequence.theName)
 
 					aSequence.fps = Me.theInputFileReader.ReadSingle()
 

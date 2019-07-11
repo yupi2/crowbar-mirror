@@ -269,7 +269,9 @@ Public Class Viewer
 		Dim arguments As String = ""
 		If gameFileName.ToLower() = "gameinfo.txt" Then
 			gamePath = FileManager.GetPath(Me.theGameSetup.GamePathFileName)
-			arguments += " -game """
+			'NOTE: The -olddialogs param adds "(Steam) Load Model" menu item, which usually means HLMV can then open a model from anywhere in file system via the "Load Model" menu item.
+			'      This also allows some HLMVs to open MDL v49 via the View button.
+			arguments += " -olddialogs -game """
 			arguments += gamePath
 			arguments += """"
 		End If
@@ -530,12 +532,10 @@ Public Class Viewer
 				gamePath = Me.GetTempGamePath()
 				gameMaterialsPath = Path.Combine(gamePath, "materials")
 
-				'Me.theGameMaterialsFolder.DeleteFolder(gameMaterialsPath)
 				If Me.theGameMaterialsFolder = gameMaterialsPath Then
 					Me.theGameMaterialsFolder = ""
 
 					If Directory.Exists(gameMaterialsPath) Then
-						'My.Computer.FileSystem.DeleteDirectory(gameMaterialsPath, FileIO.DeleteDirectoryOption.DeleteAllContents)
 						Directory.Delete(gameMaterialsPath, True)
 					End If
 				End If

@@ -121,7 +121,7 @@ Public Class SourceModel06
 
 					smdPathFileName = Path.Combine(modelOutputPath, aSequenceDesc.theSmdRelativePathFileName)
 					smdPath = FileManager.GetPath(smdPathFileName)
-					If FileManager.OutputPathIsUsable(smdPath) Then
+					If FileManager.PathExistsAfterTryToCreate(smdPath) Then
 						Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, smdPathFileName)
 						'NOTE: Check here in case writing is canceled in the above event.
 						If Me.theWritingIsCanceled Then
@@ -163,7 +163,7 @@ Public Class SourceModel06
 				aTexture = aTextureList(textureIndex)
 				texturePathFileName = Path.Combine(modelOutputPath, aTexture.theFileName)
 				texturePath = FileManager.GetPath(texturePathFileName)
-				If FileManager.OutputPathIsUsable(texturePath) Then
+				If FileManager.PathExistsAfterTryToCreate(texturePath) Then
 					Me.NotifySourceModelProgress(ProgressOptions.WritingFileStarted, texturePathFileName)
 					'NOTE: Check here in case writing is canceled in the above event.
 					If Me.theWritingIsCanceled Then

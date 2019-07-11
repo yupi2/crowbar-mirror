@@ -142,9 +142,9 @@ Public Class SourceSmdFile37
 									'------
 									'NOTE: studiomdl.exe will complain if texture name for eyeball is not at start of line.
 									materialLine = materialName
-									vertex1Line = Me.WriteVertexLine(aStripGroup, vtxIndexIndex, lodIndex, meshVertexIndexStart, bodyPartVertexIndexStart)
-									vertex2Line = Me.WriteVertexLine(aStripGroup, vtxIndexIndex + 2, lodIndex, meshVertexIndexStart, bodyPartVertexIndexStart)
-									vertex3Line = Me.WriteVertexLine(aStripGroup, vtxIndexIndex + 1, lodIndex, meshVertexIndexStart, bodyPartVertexIndexStart)
+									vertex1Line = Me.WriteVertexLine(aStripGroup, vtxIndexIndex, lodIndex, meshVertexIndexStart, bodyPartVertexIndexStart, aModel)
+									vertex2Line = Me.WriteVertexLine(aStripGroup, vtxIndexIndex + 2, lodIndex, meshVertexIndexStart, bodyPartVertexIndexStart, aModel)
+									vertex3Line = Me.WriteVertexLine(aStripGroup, vtxIndexIndex + 1, lodIndex, meshVertexIndexStart, bodyPartVertexIndexStart, aModel)
 									If vertex1Line.StartsWith("// ") OrElse vertex2Line.StartsWith("// ") OrElse vertex3Line.StartsWith("// ") Then
 										materialLine = "// " + materialLine
 										If Not vertex1Line.StartsWith("// ") Then
@@ -579,12 +579,17 @@ Public Class SourceSmdFile37
 					End If
 				Next
 
-				Dim tmp As New SourceVector()
-				tmp.x = iPosition.x + vecPos.x
-				tmp.y = iPosition.y + vecPos.y
-				tmp.z = iPosition.z + vecPos.z
-				'oRotation.z = iRotation.z + vecAngle.y
-				'oPosition = MathModule.VectorYawRotate(tmp, -vecAngle.y)
+				'TEST: Testing this in SourceSmdFile49.
+				'Dim tmp As New SourceVector()
+				'tmp.x = iPosition.x + vecPos.x
+				'tmp.y = iPosition.y + vecPos.y
+				'tmp.z = iPosition.z + vecPos.z
+				''oRotation.z = iRotation.z + vecAngle.y
+				''oPosition = MathModule.VectorYawRotate(tmp, -vecAngle.y)
+				oPosition.x = iPosition.x + vecPos.x
+				oPosition.y = iPosition.y + vecPos.y
+				oPosition.z = iPosition.z + vecPos.z
+				oRotation.z = iRotation.z + vecAngle.y
 			End If
 		End If
 	End Sub
@@ -614,7 +619,7 @@ Public Class SourceSmdFile37
 		End If
 	End Sub
 
-	Private Function WriteVertexLine(ByVal aStripGroup As SourceVtxStripGroup06, ByVal aVtxIndexIndex As Integer, ByVal lodIndex As Integer, ByVal meshVertexIndexStart As Integer, ByVal bodyPartVertexIndexStart As Integer) As String
+	Private Function WriteVertexLine(ByVal aStripGroup As SourceVtxStripGroup06, ByVal aVtxIndexIndex As Integer, ByVal lodIndex As Integer, ByVal meshVertexIndexStart As Integer, ByVal bodyPartVertexIndexStart As Integer, ByVal aBodyModel As SourceMdlModel37) As String
 		Dim aVtxVertexIndex As UShort
 		Dim aVtxVertex As SourceVtxVertex06
 		Dim aVertex As SourceMdlVertex37
@@ -625,8 +630,10 @@ Public Class SourceSmdFile37
 		Try
 			aVtxVertexIndex = aStripGroup.theVtxIndexes(aVtxIndexIndex)
 			aVtxVertex = aStripGroup.theVtxVertexes(aVtxVertexIndex)
-			vertexIndex = aVtxVertex.originalMeshVertexIndex + bodyPartVertexIndexStart + meshVertexIndexStart
-			aVertex = Me.theMdlFileData.theBodyParts(0).theModels(0).theVertexes(vertexIndex)
+			'vertexIndex = aVtxVertex.originalMeshVertexIndex + bodyPartVertexIndexStart + meshVertexIndexStart
+			'aVertex = Me.theMdlFileData.theBodyParts(0).theModels(0).theVertexes(vertexIndex)
+			vertexIndex = aVtxVertex.originalMeshVertexIndex + meshVertexIndexStart
+			aVertex = aBodyModel.theVertexes(vertexIndex)
 
 			line = "  "
 			line += aVertex.boneWeight.bone(0).ToString(TheApp.InternalNumberFormat)
