@@ -44,7 +44,7 @@ Public Class GarrysModSteamAppInfo
 			Dim steamPipe As New SteamPipe()
 			Dim result As String = steamPipe.Open("GetAppInstallPath", Nothing, "")
 			If result = "success" Then
-				'appInstallPath = steamPipe.GetAppInstallPath(GarrysModAppID.ToString())
+				appInstallPath = steamPipe.GetAppInstallPath(Me.ID.ToString())
 			End If
 			steamPipe.Shut()
 			If appInstallPath <> "" Then

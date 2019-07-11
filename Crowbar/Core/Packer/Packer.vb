@@ -268,21 +268,24 @@ Public Class Packer
 	End Function
 
 	Private Sub RunPackerApp(ByVal inputPath As String)
-		Dim currentFolder As String
-		currentFolder = Directory.GetCurrentDirectory()
-		Dim parentPath As String
-		parentPath = FileManager.GetPath(inputPath)
+		Dim currentFolder As String = Directory.GetCurrentDirectory()
+		Dim parentPath As String = FileManager.GetPath(inputPath)
+		Dim inputFolder As String = Path.GetFileName(inputPath)
 		Directory.SetCurrentDirectory(parentPath)
 
-		Dim gamePackerPathFileName As String
-		gamePackerPathFileName = Me.GetGamePackerPathFileName()
+		Dim gamePackerPathFileName As String = Me.GetGamePackerPathFileName()
+		Dim gamePackerFileName As String = Path.GetFileName(gamePackerPathFileName)
 
 		Dim arguments As String = ""
+		If gamePackerFileName = "gmad.exe" Then
+			arguments += "create -folder "
+		End If
+		arguments += """"
+		arguments += inputFolder
+		arguments += """"
+		arguments += " "
+		'NOTE: Gmad.exe and vpk.exe expect extra options after the input folder option.
 		arguments += TheApp.Settings.PackOptionsText
-		'arguments += " "
-		'arguments += """"
-		'arguments += inputPath
-		'arguments += """"
 
 		Dim myProcess As New Process()
 		Dim myProcessStartInfo As New ProcessStartInfo(gamePackerPathFileName, arguments)

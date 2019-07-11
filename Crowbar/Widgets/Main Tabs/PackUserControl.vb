@@ -362,27 +362,30 @@ Public Class PackUserControl
 	End Sub
 
 	Private Sub SetPackerOptionsText()
+		TheApp.Settings.PackOptionsText = ""
+		Me.PackerOptionsTextBox.Text = ""
+		If TheApp.Settings.PackMode = PackInputOptions.ParentFolder Then
+			For Each aChildPath As String In Directory.GetDirectories(TheApp.Settings.PackInputPath)
+				Me.SetPackerOptionsTextPerFolder(aChildPath)
+			Next
+		Else
+			Me.SetPackerOptionsTextPerFolder(TheApp.Settings.PackInputPath)
+		End If
+	End Sub
+
+	Private Sub SetPackerOptionsTextPerFolder(ByVal inputPath As String)
 		Dim selectedIndex As Integer = TheApp.Settings.PackGameSetupSelectedIndex
 		Dim gameSetup As GameSetup = TheApp.Settings.GameSetups(selectedIndex)
 		Dim gamePackerFileName As String = Path.GetFileName(gameSetup.PackerPathFileName)
+		Dim inputFolder As String = Path.GetFileName(inputPath)
 
-		Dim inputFileName As String = Path.GetFileName(TheApp.Settings.PackInputPath)
-
-		TheApp.Settings.PackOptionsText = " "
-		If gamePackerFileName = "gmad.exe" Then
-			TheApp.Settings.PackOptionsText += "create -folder "
-		End If
-		TheApp.Settings.PackOptionsText += """"
-		TheApp.Settings.PackOptionsText += inputFileName
-		TheApp.Settings.PackOptionsText += """"
-
-		'NOTE: Gmad.exe and vpk.exe expect extra options after the input folder option.
+		Dim packOptionsText As String = ""
 		'NOTE: Available in Framework 4.0:
 		'TheApp.Settings.PackOptionsText = String.Join(" ", Me.packerOptions)
 		'------
 		For Each packerOption As String In Me.theSelectedPackerOptions
-			TheApp.Settings.PackOptionsText += " "
-			TheApp.Settings.PackOptionsText += packerOption
+			packOptionsText += " "
+			packOptionsText += packerOption
 
 			'TODO: Special case for multi-file VPK option. Need to use "response" file.
 			'If packerOption = "M" AndAlso gamePackerFileName <> "gmad.exe" Then
@@ -393,16 +396,27 @@ Public Class PackUserControl
 			'End If
 		Next
 		If Me.DirectPackerOptionsTextBox.Text.Trim() <> "" Then
-			TheApp.Settings.PackOptionsText += " "
-			TheApp.Settings.PackOptionsText += Me.DirectPackerOptionsTextBox.Text
+			packOptionsText += " "
+			packOptionsText += Me.DirectPackerOptionsTextBox.Text
 		End If
 
-		Me.PackerOptionsTextBox.Text = """"
+		TheApp.Settings.PackOptionsText = packOptionsText
+
+		Me.PackerOptionsTextBox.Text += """"
 		Me.PackerOptionsTextBox.Text += gameSetup.PackerPathFileName
 		Me.PackerOptionsTextBox.Text += """"
-		If TheApp.Settings.PackOptionsText.Trim() <> "" Then
-			Me.PackerOptionsTextBox.Text += TheApp.Settings.PackOptionsText
+		Me.PackerOptionsTextBox.Text += " "
+		If gamePackerFileName = "gmad.exe" Then
+			Me.PackerOptionsTextBox.Text += "create -folder "
 		End If
+		Me.PackerOptionsTextBox.Text += """"
+		Me.PackerOptionsTextBox.Text += inputFolder
+		Me.PackerOptionsTextBox.Text += """"
+		Me.PackerOptionsTextBox.Text += " "
+		If TheApp.Settings.PackOptionsText.Trim() <> "" Then
+			Me.PackerOptionsTextBox.Text += packOptionsText
+		End If
+		Me.PackerOptionsTextBox.Text += vbCrLf
 	End Sub
 
 	Private Sub CreateVpkResponseFile()
